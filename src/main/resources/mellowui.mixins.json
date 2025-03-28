@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "melonystudios.mellowui.mixin",
+  "refmap": "mellowui.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [
+    "client.MUIMinecraftMixin",
+    "client.MUIPanoramaRendererMixin",
+    "forge.MUIForgeInGameGUIMixin",
+    "screen.MUIContainerScreen",
+    "screen.MUIEditGameRulesScreenMixin",
+    "screen.MUIGenericMessageScreen",
+    "screen.MUILoadingScreenMixin",
+    "screen.MUIPackScreenMixin",
+    "screen.MUIScreenMixin",
+    "screen.MUIWorldSelectionScreenMixin",
+    "screen.list.MUIAbstractListMixin",
+    "screen.list.MUIResourcePackListMixin",
+    "screen.list.MUIWorldSelectionListEntryMixin",
+    "updates.UpdatedMainMenuScreen",
+    "widget.MUIWidgetMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

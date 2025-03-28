@@ -1,0 +1,31 @@
+{
+  "title.credits": "Copyright Mojang AB. Do not distribute!",
+  "selectWorld.world_info": "%s (%s)",
+  "text_field.cursor": "_",
+
+  "menu.mellowui.options.title": "[Mellow UI] Options",
+  "menu.mellowui.forge_options": "Forge Options...",
+  "menu.mellowui.forge_options.title": "[Mellow UI] Options > Forge Options",
+  "menu.mellowui.mellow_ui_options": "Mellow UI Options...",
+  "menu.mellowui.mellow_ui_options.title": "[Mellow UI] Options > Mellow UI Options",
+
+  "config.mellowui.mod_list_sorting": "Sort: %s",
+  "config.mellowui.mod_list_sorting.none": "None",
+  "config.mellowui.mod_list_sorting.a_to_z": "A to Z",
+  "config.mellowui.mod_list_sorting.z_to_a": "Z to A",
+  "config.mellowui.main_menu_mod_button": "Main Menu Mod Button: %s",
+  "config.mellowui.main_menu_mod_button.adjacent": "Adjacent",
+  "config.mellowui.main_menu_mod_button.icon": "Icon",
+  "config.mellowui.main_menu_mod_button.replace_realms": "Replace Realms",
+  "config.mellowui.main_menu_mod_button.desc": "Where the 'Mods' button should be located in the main menu.\n%s",
+  "config.mellowui.main_menu_mod_button.adjacent.desc": "§lAdjacent§r: Places the mods button besides Realms as a button with text.",
+  "config.mellowui.main_menu_mod_button.icon.desc": "§lIcon§r: Places the mods button besides Realms as an icon button, like accessibility.",
+  "config.mellowui.main_menu_mod_button.replace_realms.desc": "§lReplace Realms§r: Replaces Realms with the mods button, as Realms doesn't work with Forge or in older versions.",
+  "config.mellowui.yellow_button_highlight": "Yellow Button Highlight",
+  "config.mellowui.yellow_button_highlight.desc": "When hovering a button, this will make the text have a slight yellow color, like in versions prior to 1.15.",
+  "config.mellowui.panorama_camera_pitch": "Panorama Camera Pitch: %s",
+  "config.mellowui.panorama_camera_pitch.pitch": "%sº",
+  "config.mellowui.panorama_camera_pitch.desc": "The pitch of the panorama camera. Defaults to 10º.",
+  "config.mellowui.monochrome_loading_screen_color": "Monochrome Loading Screen Color: %s",
+  "config.mellowui.monochrome_loading_screen_color.desc": "Changes the color of the loading screen to this color when the 'Monochrome Loading Screen' option is enabled."
+}
