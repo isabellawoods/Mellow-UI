@@ -8,6 +8,7 @@
   "client": [
     "client.MUIMinecraftMixin",
     "client.MUIPanoramaRendererMixin",
+    "client.MUISubtitleOverlayMixin",
     "forge.MUIForgeInGameGUIMixin",
     "screen.MUIContainerScreen",
     "screen.MUIEditGameRulesScreenMixin",
@@ -19,7 +20,9 @@
     "screen.list.MUIAbstractListMixin",
     "screen.list.MUIResourcePackListMixin",
     "screen.list.MUIWorldSelectionListEntryMixin",
+    "updates.UpdatedAdvancementsScreen",
     "updates.UpdatedMainMenuScreen",
+    "updates.UpdatedPauseMenuScreen",
     "widget.MUIWidgetMixin"
   ],
   "server": [],

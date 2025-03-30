@@ -14,6 +14,7 @@ public class MellowUtils {
     public static final RenderSkyboxCube CUBE_MAP = new RenderSkyboxCube(new ResourceLocation("textures/gui/title/background/panorama"));
     public static final RenderSkybox PANORAMA = new RenderSkybox(CUBE_MAP);
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
+    public static final int DEFAULT_TITLE_HEIGHT = 12;
 
     public static void scissor(Runnable toCut, int startX, int startY, int endX, int endY) {
         MainWindow window = Minecraft.getInstance().getWindow();

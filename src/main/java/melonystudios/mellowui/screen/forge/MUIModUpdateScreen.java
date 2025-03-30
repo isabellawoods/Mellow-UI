@@ -2,8 +2,10 @@ package melonystudios.mellowui.screen.forge;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.screen.updated.MUIModListScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MainMenuModButton;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -29,13 +31,10 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
     }
 
     public static NotificationModUpdateScreen create(@Nullable Screen screen, Button modsButton) {
-        if (screen instanceof MainMenuScreen) {
-            MUIModUpdateScreen updateScreen = new MUIModUpdateScreen(modsButton);
-            updateScreen.resize(screen.getMinecraft(), screen.width, screen.height);
-            updateScreen.init();
-            return updateScreen;
-        }
-        return null;
+        MUIModUpdateScreen updateScreen = new MUIModUpdateScreen(modsButton);
+        updateScreen.resize(screen.getMinecraft(), screen.width, screen.height);
+        updateScreen.init();
+        return updateScreen;
     }
 
     @Override
@@ -49,8 +48,9 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         if (this.checkerStatus == null || !this.checkerStatus.shouldDraw() || !FMLConfig.runVersionCheck()) return;
+        if (this.minecraft == null) return;
 
-        if (this.minecraft != null) this.minecraft.getTextureManager().bind(GUITextures.VERSION_CHECKER_ICONS);
+        this.minecraft.getTextureManager().bind(GUITextures.VERSION_CHECKER_ICONS);
         GL11.glColor4f(1, 1, 1, 1);
 
         int x = this.modsButton.x;
@@ -58,8 +58,10 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
         int width = this.modsButton.getWidth();
         int height = this.modsButton.getHeight();
 
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get() == MainMenuModButton.ICON) {
+        if (MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get() == MainMenuModButton.ICON && this.minecraft.screen instanceof MainMenuScreen) {
             blit(stack, x + 15, y - 3, this.checkerStatus.getSheetOffset() * 8, (this.checkerStatus.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
+        } else if (this.minecraft.screen instanceof MUIModListScreen && this.minecraft.getWindow().getGuiScale() == 4) {
+            blit(stack, x + this.modsButton.getWidth() - 5, y - 3, this.checkerStatus.getSheetOffset() * 8, (this.checkerStatus.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
         } else {
             blit(stack, x + width - (height / 2 + 4), y + (height / 2 - 4), this.checkerStatus.getSheetOffset() * 8, (this.checkerStatus.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
         }

@@ -13,6 +13,9 @@ public class GUITextures {
     public static final ResourceLocation TEXT_FIELD = gui("button/text_field");
     public static final ResourceLocation TEXT_FIELD_HIGHLIGHTED = gui("button/text_field_highlighted");
     public static final ResourceLocation MODS_BUTTON = gui("button/mods");
+    public static final ResourceLocation CONFIG_BUTTON = gui("button/config");
+    public static final ResourceLocation OPEN_MODS_FOLDER_BUTTON = gui("button/open_mods_folder");
+    public static final ResourceLocation CHANGELOGS_BUTTON = gui("button/changelogs");
 
     // Backgrounds
     public static final ResourceLocation MENU_BACKGROUND = gui("menu_background");

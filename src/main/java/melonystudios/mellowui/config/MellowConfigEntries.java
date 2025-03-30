@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.client.settings.SliderPercentageOption;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -26,10 +27,26 @@ public class MellowConfigEntries {
                 slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.mellowui.panorama_camera_pitch.desc"), 200));
                 return new TranslationTextComponent("config.mellowui.panorama_camera_pitch", new TranslationTextComponent("config.mellowui.panorama_camera_pitch.pitch", Math.round(slider.get(options))));
             });
-    public static final ColorTextFieldOption MONOCHROME_LOADING_SCREEN_COLOR = new ColorTextFieldOption("config.mellowui.monochrome_loading_screen_color",
+    public static final TextFieldOption MONOCHROME_LOADING_SCREEN_COLOR = new TextFieldOption("config.mellowui.monochrome_loading_screen_color",
             new TranslationTextComponent("config.mellowui.monochrome_loading_screen_color", new TranslationTextComponent("config.mellowui.monochrome_loading_screen_color.desc").withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.BOLD),
             CLIENT_CONFIGS.monochromeLoadingScreenColor.get().toString(),
-            newValue -> CLIENT_CONFIGS.monochromeLoadingScreenColor.set(Integer.valueOf(newValue)));
+            newValue -> CLIENT_CONFIGS.monochromeLoadingScreenColor.set(Integer.valueOf(newValue)),
+            (text, setter) -> {
+                try {
+                    int newValue = Integer.parseInt(text);
+                    setter.accept(Integer.toString(MathHelper.clamp(newValue, 0, 16777215)));
+                } catch (NumberFormatException ignored) {}
+            });
+    public static final TextFieldOption SPLASH_TEXT_COLOR = new TextFieldOption("config.mellowui.splash_text_color",
+            new TranslationTextComponent("config.mellowui.splash_text_color", new TranslationTextComponent("config.mellowui.splash_text_color.desc").withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.BOLD),
+            CLIENT_CONFIGS.splashTextColor.get().toString(),
+            newValue -> CLIENT_CONFIGS.splashTextColor.set(Integer.valueOf(newValue)),
+            (text, setter) -> {
+                try {
+                    int newValue = Integer.parseInt(text);
+                    setter.accept(Integer.toString(MathHelper.clamp(newValue, 0, 16777215)));
+                } catch (NumberFormatException ignored) {}
+            });
     public static final IteratableOption MAIN_MENU_MOD_BUTTON = new IteratableOption("config.mellowui.main_menu_mod_button",
             (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(MainMenuModButton.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
             (options, option) -> {

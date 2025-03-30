@@ -60,10 +60,10 @@ public abstract class MUIScreenMixin extends FocusableGui {
             RenderSystem.enableBlend();
             GL11.glColor4f(1, 1, 1, 1);
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            bufferbuilder.vertex(0, this.height, 0).uv(0, (float) this.height / 32 + (float) vOffset).color(64, 64, 64, 255).endVertex();
-            bufferbuilder.vertex(this.width, this.height, 0).uv((float) this.width / 32, (float) this.height / 32 + (float) vOffset).color(64, 64, 64, 255).endVertex();
-            bufferbuilder.vertex(this.width, 0, 0).uv((float) this.width / 32, (float) vOffset).color(64, 64, 64, 255).endVertex();
-            bufferbuilder.vertex(0, 0, 0).uv(0, (float) vOffset).color(64, 64, 64, 255).endVertex();
+            bufferbuilder.vertex(0, this.height, 0).uv(0, (float) this.height / 32 + (float) vOffset).color(255, 255, 255, 255).endVertex();
+            bufferbuilder.vertex(this.width, this.height, 0).uv((float) this.width / 32, (float) this.height / 32 + (float) vOffset).color(255, 255, 255, 255).endVertex();
+            bufferbuilder.vertex(this.width, 0, 0).uv((float) this.width / 32, (float) vOffset).color(255, 255, 255, 255).endVertex();
+            bufferbuilder.vertex(0, 0, 0).uv(0, (float) vOffset).color(255, 255, 255, 255).endVertex();
             tessellator.end();
             RenderSystem.disableBlend();
             MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(Minecraft.getInstance().screen, new MatrixStack()));

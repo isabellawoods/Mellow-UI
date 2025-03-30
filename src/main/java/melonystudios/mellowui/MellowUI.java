@@ -1,8 +1,7 @@
 package melonystudios.mellowui;
 
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.MellowOptionsScreen;
-import melonystudios.mellowui.screen.mellow.MellowForgeOptionsScreen;
+import melonystudios.mellowui.screen.option.MellowOptionsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;

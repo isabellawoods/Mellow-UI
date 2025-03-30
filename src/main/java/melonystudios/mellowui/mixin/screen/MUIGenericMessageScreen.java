@@ -29,7 +29,7 @@ public abstract class MUIGenericMessageScreen extends Screen {
         this.textBackground.setMaxLength(128);
         this.textBackground.setEditable(false);
         this.textBackground.x = this.width / 2 - this.textBackground.getWidth() / 2;
-        this.textBackground.y = ((this.height / 2) - 9 / 2) - 6;
+        this.textBackground.y = ((this.height / 2) - 9 / 2) - 7;
         this.children.add(this.textBackground);
     }
 

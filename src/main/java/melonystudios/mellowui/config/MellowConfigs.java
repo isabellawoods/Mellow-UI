@@ -17,6 +17,7 @@ public class MellowConfigs {
 
     // Mellow UI Configs
     public final ForgeConfigSpec.IntValue monochromeLoadingScreenColor;
+    public final ForgeConfigSpec.IntValue splashTextColor;
     public final ForgeConfigSpec.IntValue panoramaCameraPitch;
     public final ForgeConfigSpec.BooleanValue yellowButtonHighlight;
     public final ForgeConfigSpec.EnumValue<MainMenuModButton> mainMenuModButton;
@@ -37,6 +38,7 @@ public class MellowConfigs {
 
         builder.push("mellowUI");
         this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").defineInRange("monochromeLoadingScreenColor", 0, 0, 0xFFFFFF);
+        this.splashTextColor = builder.comment("The color to use for the splash text in the main menu.").defineInRange("splashTextColor", 0xFFFF00, 0, 0xFFFFFF);
         this.panoramaCameraPitch = builder.comment("The pitch used by the camera in the panorama. Defaults to 10.").defineInRange("panoramaCameraPitch", 10, -90, 90);
         this.yellowButtonHighlight = builder.comment("When enabled, hovering on buttons will make the text have a slight yellow tint.").define("yellowButtonHighlight", false);
         this.mainMenuModButton = builder.comment("Where the \"Mods\" button should be located in the main menu.").defineEnum("mainMenuModButton", MainMenuModButton.ADJACENT);

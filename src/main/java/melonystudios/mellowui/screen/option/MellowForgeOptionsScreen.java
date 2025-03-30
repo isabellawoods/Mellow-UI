@@ -1,11 +1,10 @@
-package melonystudios.mellowui.screen;
+package melonystudios.mellowui.screen.option;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.config.OpenMenuOption;
-import melonystudios.mellowui.screen.mellow.MellowForgeOptionsScreen;
-import melonystudios.mellowui.screen.mellow.MellowUIOptionsScreen;
+import melonystudios.mellowui.util.MellowUtils;
+import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
@@ -13,20 +12,22 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class MellowOptionsScreen extends SettingsScreen {
-    public final OpenMenuOption forgeSettings = new OpenMenuOption("menu.mellowui.forge_options", new MellowForgeOptionsScreen(this, Minecraft.getInstance().options));
-    public final OpenMenuOption mellowUISettings = new OpenMenuOption("menu.mellowui.mellow_ui_options", new MellowUIOptionsScreen(this, Minecraft.getInstance().options));
+import java.util.List;
+
+import static melonystudios.mellowui.config.MellowConfigEntries.MOD_LIST_SORTING;
+
+public class MellowForgeOptionsScreen extends SettingsScreen {
+    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MOD_LIST_SORTING);
     private OptionsRowList list;
 
-    public MellowOptionsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("menu.mellowui.options.title"));
+    public MellowForgeOptionsScreen(Screen screen, GameSettings options) {
+        super(screen, options, new TranslationTextComponent("menu.mellowui.forge_options.title"));
     }
 
     @Override
     protected void init() {
         this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addBig(this.forgeSettings);
-        this.list.addBig(this.mellowUISettings);
+        this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
         this.children.add(this.list);
 
         // Done button
@@ -38,7 +39,7 @@ public class MellowOptionsScreen extends SettingsScreen {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, 10, 0xFFFFFF);
+        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 }
