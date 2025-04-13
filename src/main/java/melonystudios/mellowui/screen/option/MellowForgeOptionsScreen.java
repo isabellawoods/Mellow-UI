@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
@@ -41,5 +42,7 @@ public class MellowForgeOptionsScreen extends SettingsScreen {
         this.list.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
+        List<IReorderingProcessor> processors = tooltipAt(this.list, mouseX, mouseY);
+        if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
     }
 }

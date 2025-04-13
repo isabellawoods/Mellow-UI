@@ -15,34 +15,27 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
-import static melonystudios.mellowui.config.MellowConfigEntries.*;
+import static melonystudios.mellowui.config.MellowConfigEntries.MELLO_SPLASH_TEXT_COLOR;
+import static melonystudios.mellowui.config.MellowConfigEntries.MOD_LIST_SORTING;
 
-public class MellowUIOptionsScreen extends SettingsScreen {
-    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MONOCHROME_LOADING_SCREEN_COLOR, YELLOW_BUTTON_HIGHLIGHT);
-    public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON);
-    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OUT_OF_MEMORY_MENU);
+public class MellomedleyOptionsScreen extends SettingsScreen {
+    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MELLO_SPLASH_TEXT_COLOR);
     private OptionsRowList list;
 
-    public MellowUIOptionsScreen(Screen screen, GameSettings options) {
-        super(screen, options, new TranslationTextComponent("menu.mellowui.mellow_ui_options.title"));
+    public MellomedleyOptionsScreen(Screen screen, GameSettings options) {
+        super(screen, options, new TranslationTextComponent("menu.mellowui.mellomedley_options.title"));
     }
 
     @Override
     public void tick() {
         super.tick();
-        MONOCHROME_LOADING_SCREEN_COLOR.tick();
-        SPLASH_TEXT_COLOR.tick();
+        MELLO_SPLASH_TEXT_COLOR.tick();
     }
 
     @Override
     protected void init() {
         this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addBig(PANORAMA_CAMERA_PITCH);
         this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
-        this.list.addBig(MAIN_MENU_SEPARATOR);
-        this.list.addSmall(MAIN_MENU.toArray(new AbstractOption[0]));
-        this.list.addBig(MENU_UPDATES_SEPARATOR);
-        this.list.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
         this.children.add(this.list);
 
         // Done button

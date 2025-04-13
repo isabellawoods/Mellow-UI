@@ -1,5 +1,6 @@
-package melonystudios.mellowui.config;
+package melonystudios.mellowui.config.option;
 
+import melonystudios.mellowui.screen.widget.TooltippedTextFieldWidget;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -22,6 +23,7 @@ public class TextFieldOption extends AbstractOption {
     @Nullable
     private final ITextComponent tooltipComponent;
     public TextFieldWidget textField;
+    public int maxValue = 128;
 
     public TextFieldOption(String translation, String getter, Consumer<String> setter, BiConsumer<String, Consumer<String>> responder) {
         this(translation, null, getter, setter, responder);
@@ -35,7 +37,7 @@ public class TextFieldOption extends AbstractOption {
         this.tooltipComponent = tooltipComponent;
     }
 
-    public void tickTextField() {
+    public void tick() {
         if (this.textField != null) this.textField.tick();
     }
 
@@ -44,8 +46,8 @@ public class TextFieldOption extends AbstractOption {
     public Widget createButton(GameSettings options, int x, int y, int width) {
         if (this.tooltipComponent != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, 200));
 
-        this.textField = new TextFieldWidget(Minecraft.getInstance().font, x, y, width, 20, this.getCaption());
-        this.textField.setMaxLength(128);
+        this.textField = new TooltippedTextFieldWidget(Minecraft.getInstance().font, x, y - 4, width - 2, 18, this.getCaption(), this);
+        this.textField.setMaxLength(this.maxValue);
         this.textField.setFocus(false);
         this.textField.setCanLoseFocus(true);
         this.textField.setValue(this.getter);

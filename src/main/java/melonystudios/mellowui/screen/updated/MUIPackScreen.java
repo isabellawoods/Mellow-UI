@@ -45,6 +45,11 @@ public class MUIPackScreen extends Screen {
     }
 
     @Override
+    public void onClose() {
+        if (this.minecraft != null) this.minecraft.setScreen(this.lastScreen);
+    }
+
+    @Override
     protected void init() {
         this.packList = new MUIPackList(this.minecraft, this.width, this.height, 32, this.height - 32, 36);
         this.children.add(this.packList);
@@ -56,7 +61,7 @@ public class MUIPackScreen extends Screen {
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        // this.renderBackground(stack);
+        this.renderBackground(stack);
         this.packList.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, 8, 0xFFFFFF);
         drawCenteredString(stack, this.font, new TranslationTextComponent("pack.dropInfo").withStyle(TextFormatting.GRAY), this.width / 2, 20, 0xFFFFFF);

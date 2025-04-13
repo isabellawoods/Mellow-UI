@@ -19,6 +19,11 @@ public class AttributionsScreen extends Screen {
     }
 
     @Override
+    public void onClose() {
+        if (this.minecraft != null) this.minecraft.setScreen(this.lastScreen);
+    }
+
+    @Override
     protected void init() {
         // Credits
         this.addButton(new Button(this.width / 2 - 105, 50, 210, 20, new TranslationTextComponent("button.mellowui.credits"),

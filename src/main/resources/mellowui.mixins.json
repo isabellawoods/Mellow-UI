@@ -22,7 +22,9 @@
     "screen.list.MUIWorldSelectionListEntryMixin",
     "updates.UpdatedAdvancementsScreen",
     "updates.UpdatedMainMenuScreen",
+    "updates.UpdatedOutOfMemoryScreen",
     "updates.UpdatedPauseMenuScreen",
+    "widget.MUITextFieldWidgetMixin",
     "widget.MUIWidgetMixin"
   ],
   "server": [],

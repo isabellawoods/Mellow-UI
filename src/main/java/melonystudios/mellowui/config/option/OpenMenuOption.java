@@ -1,11 +1,11 @@
-package melonystudios.mellowui.config;
+package melonystudios.mellowui.config.option;
 
+import melonystudios.mellowui.screen.widget.TooltippedButton;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -18,14 +18,16 @@ public class OpenMenuOption extends AbstractOption {
     @Nullable
     private final ITextComponent tooltipText;
     private final Screen optionsScreen;
+    private final boolean onlyInWorld;
 
     public OpenMenuOption(String translation, Screen optionsScreen) {
-        this(translation, null, optionsScreen);
+        this(translation, false, null, optionsScreen);
     }
 
-    public OpenMenuOption(String translation, @Nullable ITextComponent tooltipText, Screen optionsScreen) {
+    public OpenMenuOption(String translation, boolean onlyInWorld, @Nullable ITextComponent tooltipText, Screen optionsScreen) {
         super(translation);
         this.translation = translation;
+        this.onlyInWorld = onlyInWorld;
         this.tooltipText = tooltipText;
         this.optionsScreen = optionsScreen;
     }
@@ -34,7 +36,9 @@ public class OpenMenuOption extends AbstractOption {
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
         if (this.tooltipText != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, 200));
-        return new Button(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(TextFormatting.BOLD),
+        TooltippedButton menuButton = new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(TextFormatting.BOLD), this.tooltipText,
                 button -> Minecraft.getInstance().setScreen(this.optionsScreen));
+        menuButton.active = !this.onlyInWorld;
+        return menuButton;
     }
 }

@@ -1,12 +1,7 @@
 package melonystudios.mellowui.screen.forge;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.updated.MUIModListScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MainMenuModButton;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,14 +19,16 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
     private VersionChecker.Status checkerStatus = null;
     private boolean checkedForUpdates = false;
     private final Button modsButton;
+    private final boolean renderOnCorner;
 
-    public MUIModUpdateScreen(Button modsButton) {
+    public MUIModUpdateScreen(Button modsButton, boolean renderOnCorner) {
         super(modsButton);
         this.modsButton = modsButton;
+        this.renderOnCorner = renderOnCorner;
     }
 
-    public static NotificationModUpdateScreen create(@Nullable Screen screen, Button modsButton) {
-        MUIModUpdateScreen updateScreen = new MUIModUpdateScreen(modsButton);
+    public static NotificationModUpdateScreen create(@Nullable Screen screen, Button modsButton, boolean renderOnCorner) {
+        MUIModUpdateScreen updateScreen = new MUIModUpdateScreen(modsButton, renderOnCorner);
         updateScreen.resize(screen.getMinecraft(), screen.width, screen.height);
         updateScreen.init();
         return updateScreen;
@@ -58,9 +55,7 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
         int width = this.modsButton.getWidth();
         int height = this.modsButton.getHeight();
 
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get() == MainMenuModButton.ICON && this.minecraft.screen instanceof MainMenuScreen) {
-            blit(stack, x + 15, y - 3, this.checkerStatus.getSheetOffset() * 8, (this.checkerStatus.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
-        } else if (this.minecraft.screen instanceof MUIModListScreen && this.minecraft.getWindow().getGuiScale() == 4) {
+        if (this.renderOnCorner) {
             blit(stack, x + this.modsButton.getWidth() - 5, y - 3, this.checkerStatus.getSheetOffset() * 8, (this.checkerStatus.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
         } else {
             blit(stack, x + width - (height / 2 + 4), y + (height / 2 - 4), this.checkerStatus.getSheetOffset() * 8, (this.checkerStatus.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);

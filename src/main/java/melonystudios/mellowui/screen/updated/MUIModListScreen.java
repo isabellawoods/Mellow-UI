@@ -96,54 +96,60 @@ public class MUIModListScreen extends Screen {
     }
 
     @Override
+    public void onClose() {
+        if (this.minecraft != null) this.minecraft.setScreen(this.lastScreen);
+    }
+
+    @Override
     protected void init() {
         // Sort button
         IteratableOption config = MellowConfigEntries.MOD_LIST_SORTING;
-        this.addButton(new Button(10, 10, 150, 20, config.getMessage(this.minecraft.options), button -> {
+        this.addButton(new Button(10, 14, 100, 20, config.getMessage(this.minecraft.options), button -> {
             config.toggle(this.minecraft.options, 1);
             button.setMessage(config.getMessage(this.minecraft.options));
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }));
         // Search field
-        this.searchField = new TextFieldWidget(this.minecraft.font, 11, 34, 148, 20, new TranslationTextComponent("fml.menu.mods.search"));
+        this.searchField = new TextFieldWidget(this.minecraft.font, 11, 38, 98, 20, new TranslationTextComponent("fml.menu.mods.search"));
         this.searchField.setFocus(false);
         this.searchField.setCanLoseFocus(true);
         this.children.add(this.searchField);
 
         // Mod link buttons
-        boolean maxGUIScale = this.minecraft.getWindow().getGuiScale() == 4;
+        boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
         int width = maxGUIScale ? 100 : 150;
-        int leftOffset = maxGUIScale ? 38 : 0;
-        this.addButton(this.websiteButton = new Button(this.width / 2 - (width / 2) - width - 4 + leftOffset, 120, width, 20,
-                new TranslationTextComponent("button.mellowui.mod_website"), button -> this.getModWebsite()));
+        int buttonOffset = width + 4;
+        this.addButton(this.websiteButton = new Button(140, 120, width, 20,
+                new TranslationTextComponent("button.mellowui.website"), button -> this.getModWebsite()));
         this.websiteButton.active = false;
-        this.addButton(this.issueTrackerButton = new Button(this.width / 2 - (width / 2) + leftOffset, 120, width, 20,
-                new TranslationTextComponent("button.mellowui.mod_issue_tracker"), button -> this.getModIssueTracker()));
+        this.addButton(this.issueTrackerButton = new Button(140 + buttonOffset, 120, width, 20,
+                new TranslationTextComponent("button.mellowui.report_issues"), button -> this.getModIssueTracker()));
         this.issueTrackerButton.active = false;
-        this.addButton(this.updateModButton = new Button(this.width / 2 + (width / 2) + 4 + leftOffset, 120, width, 20,
-                new TranslationTextComponent("button.mellowui.update_mod").withStyle(Style.EMPTY.withColor(Color.fromRgb(0x41F384)).withUnderlined(true)), button -> this.getModUpdateSite()));
+        this.addButton(this.updateModButton = new Button(140 + buttonOffset * 2, 120, width, 20,
+                new TranslationTextComponent("button.mellowui.update_available").withStyle(Style.EMPTY.withColor(Color.fromRgb(0x41F384)).withUnderlined(true)), button -> this.getModUpdateSite()));
         this.updateModButton.active = false;
-        this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton);
-        this.addButton(this.changelogsButton = new DisableableImageButton(this.width / 2 + 233 + leftOffset, 120, 20, 20, 0, 0, 20,
+        this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton, maxGUIScale);
+        this.addButton(this.changelogsButton = new DisableableImageButton(140 + buttonOffset * 2 + buttonOffset, 120, 20, 20, 0, 0, 20,
                 GUITextures.CHANGELOGS_BUTTON, 32, 64, button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.changelogs.desc"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
+                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.changelogs"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
 
         // Icons
-        this.addButton(this.configButton = new DisableableImageButton(164, 10, 20, 20, 0, 0, 20,
+        this.addButton(this.configButton = new DisableableImageButton(113, 14, 20, 20, 0, 0, 20,
                 GUITextures.CONFIG_BUTTON, 32, 64, button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.configure.desc"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
+                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.configure"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
         this.configButton.active = false;
-        this.addButton(new DisableableImageButton(164, 34, 20, 20, 0, 0, 20,
-                GUITextures.OPEN_MODS_FOLDER_BUTTON, 32, 64, button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.open_mods_folder.desc"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
+        this.addButton(new DisableableImageButton(113, 38, 20, 20, 0, 0, 20,
+                GUITextures.OPEN_FOLDER_BUTTON, 32, 64, button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
+                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.open_mods_folder"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
         // List
-        this.list = new MUIModList(this, 174, this.height, 64, this.height - 10, this.font.lineHeight * 2 + 8);
+        this.list = new MUIModList(this, 124, this.height, 64, this.height - 28, this.font.lineHeight * 2 + 8);
         this.list.setLeftPos(10);
+        this.list.setRenderTopAndBottom(false);
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(10, this.height - 27, 124, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         this.updateCache();
@@ -152,7 +158,6 @@ public class MUIModListScreen extends Screen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
-
         this.renderModInformation(stack);
 
         this.list.render(stack, mouseX, mouseY, partialTicks);
@@ -168,7 +173,7 @@ public class MUIModListScreen extends Screen {
         // Background
         RenderSystem.enableBlend();
         this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_MENU_LIST_BACKGROUND : GUITextures.MENU_LIST_BACKGROUND);
-        blit(stack, 194, 20, 0, 0, this.width, this.height - 57, 32, 32); // / 2 + 79
+        blit(stack, 136, 0, 0, 0, this.width, this.height, 32, 32); // / 2 + 79
         RenderSystem.disableBlend();
 
         if (this.selectedMod == null) {
@@ -180,11 +185,10 @@ public class MUIModListScreen extends Screen {
         if (this.logoPath != null && this.selectedMod != null) {
             int logoWidth = this.logoDimension.width;
             int logoHeight = this.logoDimension.height;
-            int leftOffset = maxGUIScale ? 35 : 0;
             this.minecraft.getTextureManager().bind(this.logoPath);
             RenderSystem.enableBlend();
             RenderSystem.color4f(1, 1, 1, 1);
-            GuiUtils.drawInscribedRect(stack, leftOffset, 30, this.width, 50, logoWidth, logoHeight, true, false);
+            GuiUtils.drawInscribedRect(stack, 142, 30, this.width, 50, logoWidth, logoHeight, false, false);
             RenderSystem.disableBlend();
         }
 
@@ -196,7 +200,7 @@ public class MUIModListScreen extends Screen {
             stack.pushPose();
             stack.scale(2, 2, 2);
             IFormattableTextComponent modName = new StringTextComponent(info.getDisplayName()).withStyle(TextFormatting.BOLD);
-            this.font.drawShadow(stack, modName, 102, yOffset / 2F, 0xFFFFFF);
+            this.font.drawShadow(stack, modName, 75, yOffset / 2F, 0xFFFFFF);
             stack.popPose();
 
             // Authors | Mod ID | Version
@@ -206,13 +210,13 @@ public class MUIModListScreen extends Screen {
             IFormattableTextComponent version = new StringTextComponent(MavenVersionStringHelper.artifactVersionToString(info.getVersion())).withStyle(TextFormatting.WHITE);
 
             this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.mod_id_and_version", modID, version).withStyle(TextFormatting.GRAY),
-                    212 + this.font.width(modName) * 2, yOffset, 0xFFFFFF);
-            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.authors", authors).withStyle(TextFormatting.GRAY), 212 + this.font.width(modName) * 2,
+                    152 + this.font.width(modName) * 2, yOffset, 0xFFFFFF);
+            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.authors", authors).withStyle(TextFormatting.GRAY), 152 + this.font.width(modName) * 2,
                     yOffset + 10, 0xFFFFFF);
 
             // Description, child mods, license and credits
             List<IReorderingProcessor> descLines = Lists.newArrayList();
-            int lineWidth = 490;
+            int lineWidth = this.width - 140;
             if (maxGUIScale) descLines.addAll(this.font.split(new StringTextComponent(abbreviateMiddle(info.getDescription(), "...", 200)), lineWidth));
             else descLines.addAll(this.font.split(new StringTextComponent(info.getDescription()), lineWidth));
             descLines.addAll(this.font.split(new StringTextComponent(" "), lineWidth));
@@ -235,11 +239,11 @@ public class MUIModListScreen extends Screen {
                 if (maxGUIScale) {
                     stack.pushPose();
                     stack.scale(0.75F, 0.75F, 0.75F);
-                    this.font.drawShadow(stack, processor, 270, descYOffset, 0xFFFFFF);
+                    this.font.drawShadow(stack, processor, 202, descYOffset, 0xFFFFFF);
                     descYOffset += this.font.lineHeight + 2;
                     stack.popPose();
                 } else {
-                    this.font.drawShadow(stack, processor, 204, descYOffset, 0xFFFFFF);
+                    this.font.drawShadow(stack, processor, 142, descYOffset, 0xFFFFFF);
                     descYOffset += this.font.lineHeight + 2;
                 }
             }
@@ -377,17 +381,18 @@ public class MUIModListScreen extends Screen {
         this.logoDimension = logoData.getRight();
 
         // reposition buttons based on whether there's a logo ~isa 30-3-25
-        int width = this.minecraft.getWindow().getGuiScale() == 4 ? 100 : 150;
+        boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
+        int width = maxGUIScale ? 100 : 150;
         int yOffset = this.logoPath != null ? 100 : 25;
-        int leftOffset = this.minecraft.getWindow().getGuiScale() == 4 ? 38 : 0;
+        int buttonOffset = width + 4;
         this.websiteButton.y = yOffset + 20;
         this.issueTrackerButton.y = yOffset + 20;
         this.updateModButton.y = yOffset + 20;
         this.changelogsButton.y = yOffset + 20;
 
         // Changelogs
-        if (!this.updateModButton.visible) this.changelogsButton.x = this.width / 2 + (width / 2) + 4 + leftOffset;
-        else this.changelogsButton.x = this.width / 2 + (width / 2) + width + 8 + leftOffset;
+        if (!this.updateModButton.visible) this.changelogsButton.x = 140 + (buttonOffset * 2);
+        else this.changelogsButton.x = 140 + (buttonOffset * 2) + buttonOffset;
     }
 
     private void openLink(String url, boolean showWarning) {
