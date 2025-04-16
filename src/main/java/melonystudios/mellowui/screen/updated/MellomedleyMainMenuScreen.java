@@ -7,6 +7,7 @@ import melonystudios.mellowui.screen.backport.AttributionsScreen;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.DialogTexts;
@@ -176,7 +177,8 @@ public class MellomedleyMainMenuScreen extends Screen {
         float buttonAlpha = this.fading ? MathHelper.clamp(fade - 1, 0, 1) : 1;
         int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
         // Background
-        this.renderBackground(stack);
+        if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), 1);
+        else this.renderBackground(stack);
 
         // Logo
         RenderSystem.enableBlend();

@@ -9,6 +9,7 @@
   "loading_stage.forge.done": "Pronto",
 
   "error.mellowui.cannot_find_forge": "Não conseguiu achar o Forge, QUE!",
+  "error.mellowui.broken_config_screen": "Houve um error crítico ao tentar carregar o menu de configuração do '%s'",
 
   "menu.minecraft.credits": "Direitos autorais da Mojang AB. Não distribua!",
   "menu.minecraft.branding": "Minecraft %s/Forge (%s mods)",

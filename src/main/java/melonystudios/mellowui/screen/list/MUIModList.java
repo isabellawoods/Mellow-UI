@@ -27,7 +27,7 @@ public class MUIModList extends ExtendedList<MUIModList.Mod> {
 
     @Override
     protected int getScrollbarPosition() {
-        return this.listWidth + 6;
+        return this.listWidth;
     }
 
     @Override
@@ -69,8 +69,9 @@ public class MUIModList extends ExtendedList<MUIModList.Mod> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            this.parentScreen.setSelected(this);
-            MUIModList.this.setSelected(this);
+            Mod selectedMod = MUIModList.this.getSelected() == this ? null : this;
+            this.parentScreen.setSelected(selectedMod);
+            MUIModList.this.setSelected(selectedMod);
             return super.mouseClicked(mouseX, mouseY, button);
         }
 

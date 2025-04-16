@@ -69,7 +69,7 @@ public class MUIModListScreen extends Screen {
     private Button changelogsButton;
 
     public MUIModListScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("fml.menu.mods.title"));
+        super(new TranslationTextComponent("menu.mellowui.mods.title", ModList.get().getMods().size()));
         this.lastScreen = lastScreen;
         this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = this.mods;
@@ -129,7 +129,7 @@ public class MUIModListScreen extends Screen {
                 new TranslationTextComponent("button.mellowui.update_available").withStyle(Style.EMPTY.withColor(Color.fromRgb(0x41F384)).withUnderlined(true)), button -> this.getModUpdateSite()));
         this.updateModButton.active = false;
         this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton, maxGUIScale);
-        this.addButton(this.changelogsButton = new DisableableImageButton(140 + buttonOffset * 2 + buttonOffset, 120, 20, 20, 0, 0, 20,
+        this.addButton(this.changelogsButton = new DisableableImageButton(this.width - 24, this.height - 24, 20, 20, 0, 0, 20,
                 GUITextures.CHANGELOGS_BUTTON, 32, 64, button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
                 this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.changelogs"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
 
@@ -143,7 +143,7 @@ public class MUIModListScreen extends Screen {
                 this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.open_mods_folder"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
         // List
-        this.list = new MUIModList(this, 124, this.height, 64, this.height - 28, this.font.lineHeight * 2 + 8);
+        this.list = new MUIModList(this, 124, this.height, 64, this.height - 27, this.font.lineHeight * 2 + 8);
         this.list.setLeftPos(10);
         this.list.setRenderTopAndBottom(false);
         this.children.add(this.list);
@@ -169,7 +169,7 @@ public class MUIModListScreen extends Screen {
 
     public void renderModInformation(MatrixStack stack) {
         if (this.minecraft == null) return;
-        boolean maxGUIScale = this.minecraft.getWindow().getGuiScale() == 4;
+        boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
         // Background
         RenderSystem.enableBlend();
         this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_MENU_LIST_BACKGROUND : GUITextures.MENU_LIST_BACKGROUND);
@@ -188,7 +188,7 @@ public class MUIModListScreen extends Screen {
             this.minecraft.getTextureManager().bind(this.logoPath);
             RenderSystem.enableBlend();
             RenderSystem.color4f(1, 1, 1, 1);
-            GuiUtils.drawInscribedRect(stack, 142, 30, this.width, 50, logoWidth, logoHeight, false, false);
+            GuiUtils.drawInscribedRect(stack, 142, 30, this.width, 50, logoWidth, logoHeight, true, false);
             RenderSystem.disableBlend();
         }
 
@@ -200,7 +200,7 @@ public class MUIModListScreen extends Screen {
             stack.pushPose();
             stack.scale(2, 2, 2);
             IFormattableTextComponent modName = new StringTextComponent(info.getDisplayName()).withStyle(TextFormatting.BOLD);
-            this.font.drawShadow(stack, modName, 75, yOffset / 2F, 0xFFFFFF);
+            this.font.drawShadow(stack, modName, 70, yOffset / 2F, 0xFFFFFF);
             stack.popPose();
 
             // Authors | Mod ID | Version
@@ -210,13 +210,13 @@ public class MUIModListScreen extends Screen {
             IFormattableTextComponent version = new StringTextComponent(MavenVersionStringHelper.artifactVersionToString(info.getVersion())).withStyle(TextFormatting.WHITE);
 
             this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.mod_id_and_version", modID, version).withStyle(TextFormatting.GRAY),
-                    152 + this.font.width(modName) * 2, yOffset, 0xFFFFFF);
-            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.authors", authors).withStyle(TextFormatting.GRAY), 152 + this.font.width(modName) * 2,
+                    145 + this.font.width(modName) * 2, yOffset, 0xFFFFFF);
+            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.authors", authors).withStyle(TextFormatting.GRAY), 145 + this.font.width(modName) * 2,
                     yOffset + 10, 0xFFFFFF);
 
             // Description, child mods, license and credits
             List<IReorderingProcessor> descLines = Lists.newArrayList();
-            int lineWidth = this.width - 140;
+            int lineWidth = this.width - 150;
             if (maxGUIScale) descLines.addAll(this.font.split(new StringTextComponent(abbreviateMiddle(info.getDescription(), "...", 200)), lineWidth));
             else descLines.addAll(this.font.split(new StringTextComponent(info.getDescription()), lineWidth));
             descLines.addAll(this.font.split(new StringTextComponent(" "), lineWidth));
@@ -234,18 +234,10 @@ public class MUIModListScreen extends Screen {
                     .map(stage -> new TranslationTextComponent("loading_stage.forge." + stage.toString().toLowerCase(Locale.ROOT)).withStyle(Style.EMPTY.withBold(false))).orElse(new TranslationTextComponent(
                             "loading_stage.forge.none"))).withStyle(TextFormatting.BOLD), lineWidth));
 
-            int descYOffset = (int) ((yOffset + 50) * (maxGUIScale ? 1.375F : 1));
+            int descYOffset = yOffset + 50;
             for (IReorderingProcessor processor : descLines) {
-                if (maxGUIScale) {
-                    stack.pushPose();
-                    stack.scale(0.75F, 0.75F, 0.75F);
-                    this.font.drawShadow(stack, processor, 202, descYOffset, 0xFFFFFF);
-                    descYOffset += this.font.lineHeight + 2;
-                    stack.popPose();
-                } else {
-                    this.font.drawShadow(stack, processor, 142, descYOffset, 0xFFFFFF);
-                    descYOffset += this.font.lineHeight + 2;
-                }
+                this.font.drawShadow(stack, processor, 142, descYOffset, 0xFFFFFF);
+                descYOffset += this.font.lineHeight + 2;
             }
         }
     }
@@ -281,7 +273,7 @@ public class MUIModListScreen extends Screen {
             try {
                 ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
             } catch (final Exception exception) {
-                LogManager.getLogger().error("There was a critical issue trying to build the config GUI for {}", info.getModId(), exception);
+                LogManager.getLogger().error(new TranslationTextComponent("error.mellowui.broken_config_screen", info.getModId()).getString(), exception);
             }
         }
     }
@@ -381,18 +373,10 @@ public class MUIModListScreen extends Screen {
         this.logoDimension = logoData.getRight();
 
         // reposition buttons based on whether there's a logo ~isa 30-3-25
-        boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
-        int width = maxGUIScale ? 100 : 150;
         int yOffset = this.logoPath != null ? 100 : 25;
-        int buttonOffset = width + 4;
         this.websiteButton.y = yOffset + 20;
         this.issueTrackerButton.y = yOffset + 20;
         this.updateModButton.y = yOffset + 20;
-        this.changelogsButton.y = yOffset + 20;
-
-        // Changelogs
-        if (!this.updateModButton.visible) this.changelogsButton.x = 140 + (buttonOffset * 2);
-        else this.changelogsButton.x = 140 + (buttonOffset * 2) + buttonOffset;
     }
 
     private void openLink(String url, boolean showWarning) {

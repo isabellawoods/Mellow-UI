@@ -44,7 +44,8 @@ public abstract class UpdatedMainMenuScreen extends Screen {
     @Shadow @Final private static ResourceLocation MINECRAFT_EDITION;
     @Shadow @Final private static ResourceLocation PANORAMA_OVERLAY;
     @Mutable @Shadow @Final private RenderSkybox panorama;
-    @Shadow(remap = false) private NotificationModUpdateScreen modUpdateNotification;
+    @Shadow(remap = false)
+    private NotificationModUpdateScreen modUpdateNotification;
     @Shadow private boolean realmsNotificationsInitialized;
     @Shadow private Screen realmsNotificationsScreen;
     @Shadow @Final private boolean minceraftEasterEgg;

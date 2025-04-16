@@ -9,6 +9,7 @@
   "loading_stage.forge.done": "Done",
 
   "error.mellowui.cannot_find_forge": "Failed to find Forge, WHAT!",
+  "error.mellowui.broken_config_screen": "There was a critical issue trying to load the config screen for '%s'",
 
   "menu.minecraft.credits": "Copyright Mojang AB. Do not distribute!",
   "menu.minecraft.branding": "Minecraft %s/Forge (%s Mods)",
@@ -29,6 +30,7 @@
   "menu.mellowui.out_of_memory.message": "This could be caused by a bug in the game or by the Java Virtual Machine not being allocated enough memory.\n\nTo prevent world corruption, the current game has quit. We've tried to free up enough memory to let you go back to the main menu and back to playing, but this may not have worked.\n\nPlease restart the game if you see this message again.",
   "menu.mellowui.no_mod_selected": "No mod selected...",
   "menu.mellowui.no_child_mods_found": "No child mods found.",
+  "menu.mellowui.mods.title": "Mods (%s)",
   "menu.mellowui.mod.mod_id_and_version": "Mod ID: %s | Version: %s",
   "menu.mellowui.mod.authors": "by %s",
   "menu.mellowui.mod.credits": "Credits: %s",

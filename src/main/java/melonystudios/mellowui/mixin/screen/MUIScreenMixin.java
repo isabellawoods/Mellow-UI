@@ -3,12 +3,10 @@ package melonystudios.mellowui.mixin.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
-import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -57,9 +55,8 @@ public abstract class MUIScreenMixin extends FocusableGui {
     public void renderDirtBackground(int vOffset, CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
             callback.cancel();
-            if (Minecraft.getInstance().level == null)
-                MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), 1);
-            if (!(Minecraft.getInstance().screen instanceof MainMenuScreen) && !(Minecraft.getInstance().screen instanceof MellomedleyMainMenuScreen) && this.minecraft != null) {
+            if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), 1);
+            if (this.minecraft != null) {
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder buffer = tessellator.getBuilder();
                 this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_MENU_BACKGROUND : GUITextures.MENU_BACKGROUND);
