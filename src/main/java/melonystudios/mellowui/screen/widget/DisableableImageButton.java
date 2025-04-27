@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen;
+package melonystudios.mellowui.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -36,6 +36,9 @@ public class DisableableImageButton extends ImageButton {
             yTexStart += this.yOffset;
         }
 
+        RenderSystem.color4f(1, 1, 1, this.alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
         blit(stack, this.x, this.y, (float) this.xTexStart, (float) yTexStart, this.width, this.height, this.textureWidth, this.textureHeight);
         if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);

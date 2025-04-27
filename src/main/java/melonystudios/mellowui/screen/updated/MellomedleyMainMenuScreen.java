@@ -1,10 +1,12 @@
 package melonystudios.mellowui.screen.updated;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.IconSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
+import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
@@ -97,6 +99,11 @@ public class MellomedleyMainMenuScreen extends Screen {
         this.addButton(new ImageButton(130, 220, 20, 20, 0, 0, 20,
                 GUITextures.ACCESSIBILITY_BUTTON, 32, 64, button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)),
                 new TranslationTextComponent("narrator.button.accessibility")));
+
+        // Switch Style
+        this.addButton(new IconButton(this.width - 20, 8, 12, 12, IconSet.SWITCH_STYLE, new TranslationTextComponent("button.mellowui.switch_style"),
+                button -> IconSet.switchMainMenuStyle(), (button, stack, mouseX, mouseY) ->
+                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 
     private void defaultMenu() {
@@ -174,47 +181,62 @@ public class MellomedleyMainMenuScreen extends Screen {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         if (this.fadeInStart == 0L && this.fading) this.fadeInStart = Util.getMillis();
         float fade = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
+        float buttonFadeIn = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
         float buttonAlpha = this.fading ? MathHelper.clamp(fade - 1, 0, 1) : 1;
         int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
         // Background
-        if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), 1);
+        this.minecraft.getTextureManager().bind(GUITextures.PANORAMA_OVERLAY);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.color4f(1, 1, 1, this.fading ? (float) MathHelper.ceil(MathHelper.clamp(buttonFadeIn, 0, 1)) : 1);
+        blit(stack, 0, 0, this.width, this.height, 0, 0, 16, 128, 16, 128);
+        if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), MathHelper.clamp(buttonFadeIn, 0, 1));
         else this.renderBackground(stack);
 
-        // Logo
-        RenderSystem.enableBlend();
-        this.minecraft.textureManager.bind(GUITextures.MAIN_MENU_GRADIENT);
-        blit(stack, 0, 0, 0, 0, 220, this.height, 220, this.height);
+        if ((textAlpha & 0xFC000000) != 0) {
+            RenderSystem.color4f(1, 1, 1, buttonAlpha);
+            RenderSystem.enableBlend();
+            // Background Gradient
+            this.minecraft.textureManager.bind(GUITextures.MAIN_MENU_GRADIENT);
+            blit(stack, 0, 0, 0, 0, 220, this.height, 220, this.height);
 
-        this.minecraft.textureManager.bind(GUITextures.MELLOMEDLEY_LOGO);
-        blit(stack, 10, 16, 0, 0, 210, 75, 210, 75);
-        RenderSystem.disableBlend();
+            // Logo
+            this.minecraft.textureManager.bind(GUITextures.MELLOMEDLEY_LOGO);
+            blit(stack, 10, 16, 0, 0, 210, 75, 210, 75);
+            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.disableBlend();
 
-        // Splashes
-        if (this.splash != null) {
-            RenderSystem.pushMatrix();
-            RenderSystem.translatef(173, 80, 0);
-            RenderSystem.rotatef(-20, 0, 0, 1);
-            float splashSize = 1.8F - MathHelper.abs(MathHelper.sin((float) (Util.getMillis() % 1000L) / 1000 * ((float) Math.PI * 2F)) * 0.1F);
-            splashSize = splashSize * 100 / (float) (this.font.width(this.splash) + 32);
-            RenderSystem.scalef(splashSize, splashSize, splashSize);
-            drawCenteredString(stack, this.font, this.splash, 0, -8, MellowConfigs.CLIENT_CONFIGS.melloSplashTextColor.get() | textAlpha);
-            RenderSystem.popMatrix();
+            // Splashes
+            if (this.splash != null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {
+                RenderSystem.pushMatrix();
+                RenderSystem.translatef(173, 80, 0);
+                RenderSystem.rotatef(-20, 0, 0, 1);
+                float splashSize = 1.8F - MathHelper.abs(MathHelper.sin((float) (Util.getMillis() % 1000L) / 1000 * ((float) Math.PI * 2F)) * 0.1F);
+                splashSize = splashSize * 100 / (float) (this.font.width(this.splash) + 32);
+                RenderSystem.scalef(splashSize, splashSize, splashSize);
+                drawCenteredString(stack, this.font, this.splash, 0, -8, MellowConfigs.CLIENT_CONFIGS.melloSplashTextColor.get() | textAlpha);
+                RenderSystem.popMatrix();
+            }
+
+            // Text
+            boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height;
+            ITextComponent mellomedleyVersion = new TranslationTextComponent("menu.mellomedley.version.modpack");
+            ITextComponent vanillaVersion = new TranslationTextComponent(this.minecraft.isDemo() ? "menu.mellomedley.version.vanilla_demo" : "menu.mellomedley.version.vanilla", SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion());
+            drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 3, this.height - 30, 0xFFFFFF | textAlpha);
+            drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 3, this.height - 20, 0xFFFFFF | textAlpha);
+            drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, MellowUtils.getSelectableTextColor(copyrightTextHovered, true) | textAlpha);
+            if (copyrightTextHovered) {
+                fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, MellowUtils.getSelectableTextColor(true, true) | textAlpha);
+                fill(stack, this.copyrightX + 1, this.height - 1, this.copyrightX + this.copyrightWidth + 1, this.height, MellowUtils.getSelectableTextShadowColor(true, true) | textAlpha);
+            }
+
+            for (Widget widget : this.buttons) widget.setAlpha(buttonAlpha);
+            super.render(stack, mouseX, mouseY, partialTicks);
+            if (!this.minecraft.isDemo()) {
+                ((MUIModUpdateScreen) this.modUpdateScreen).alpha = buttonAlpha;
+                this.modUpdateScreen.render(stack, mouseX, mouseY, partialTicks);
+            }
         }
-
-        // Text
-        ITextComponent mellomedleyVersion = new TranslationTextComponent("menu.mellomedley.version.modpack");
-        ITextComponent vanillaVersion = new TranslationTextComponent(this.minecraft.isDemo() ? "menu.mellomedley.version.vanilla_demo" : "menu.mellomedley.version.vanilla", SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion());
-        drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 3, this.height - 30, 0xFFFFFF | textAlpha);
-        drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 3, this.height - 20, 0xFFFFFF | textAlpha);
-        drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, 0xFFFFFF | textAlpha);
-        if (mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height) {
-            fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, 0xFFFFFF | textAlpha);
-            fill(stack, this.copyrightX + 1, this.height - 1, this.copyrightX + this.copyrightWidth + 1, this.height, 0x3F3F3F | textAlpha);
-        }
-
-        for (Widget widget : this.buttons) widget.setAlpha(buttonAlpha);
-        super.render(stack, mouseX, mouseY, partialTicks);
-        if (!this.minecraft.isDemo()) this.modUpdateScreen.render(stack, mouseX, mouseY, partialTicks);
     }
 
     @Override

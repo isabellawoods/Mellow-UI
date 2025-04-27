@@ -1,4 +1,4 @@
-package melonystudios.mellowui.util;
+package melonystudios.mellowui.config.type;
 
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.api.distmarker.Dist;

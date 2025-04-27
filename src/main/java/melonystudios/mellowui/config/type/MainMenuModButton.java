@@ -1,13 +1,10 @@
-package melonystudios.mellowui.util;
+package melonystudios.mellowui.config.type;
 
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Comparator;
 
 @OnlyIn(Dist.CLIENT)
 public enum MainMenuModButton implements IStringSerializable {

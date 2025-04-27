@@ -18,9 +18,9 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowUIOptionsScreen extends SettingsScreen {
-    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MONOCHROME_LOADING_SCREEN_COLOR, YELLOW_BUTTON_HIGHLIGHT);
+    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON);
-    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OUT_OF_MEMORY_MENU);
+    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU);
     private OptionsRowList list;
 
     public MellowUIOptionsScreen(Screen screen, GameSettings options) {

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,6 +31,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+        drawCenteredString(stack, this.font, new TranslationTextComponent("gui.advancements"), this.width / 2, 16, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 }

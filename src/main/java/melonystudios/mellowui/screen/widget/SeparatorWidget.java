@@ -3,11 +3,10 @@ package melonystudios.mellowui.screen.widget;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.ITextComponent;
-
-import static net.minecraft.util.ColorHelper.PackedColor.*;
 
 public class SeparatorWidget extends Widget {
     public SeparatorWidget(int x, int y, int width, int height, ITextComponent text) {
@@ -33,18 +32,16 @@ public class SeparatorWidget extends Widget {
 
         // Lines
         fill(stack, this.x + 2, height, (this.x + this.width / 2) - (textWidth / 2) - 4, height + 1, 0xFF000000 + textColor);
-        fill(stack, this.x + 3, height + 1, (this.x + this.width / 2) - (textWidth / 2) - 3, height + 2, this.getShadowColor(textColor));
+        fill(stack, this.x + 3, height + 1, (this.x + this.width / 2) - (textWidth / 2) - 3, height + 2, MellowUtils.getShadowColor(textColor, this.alpha));
 
         fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 4, height, this.x + this.width - 2, height + 1, 0xFF000000 + textColor);
-        fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 5, height + 1, this.x + this.width - 1, height + 2, this.getShadowColor(textColor));
+        fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 5, height + 1, this.x + this.width - 1, height + 2, MellowUtils.getShadowColor(textColor, this.alpha));
 
         drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, textColor);
     }
 
-    private int getShadowColor(int color) {
-        float red = red(color) * 0.25F;
-        float green = green(color) * 0.25F;
-        float blue = blue(color) * 0.25F;
-        return color((int) (this.alpha * 255), (int) red, (int) green, (int) blue);
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return false;
     }
 }

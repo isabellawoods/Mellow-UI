@@ -27,7 +27,7 @@ public class MUIModList extends ExtendedList<MUIModList.Mod> {
 
     @Override
     protected int getScrollbarPosition() {
-        return this.listWidth;
+        return this.listWidth + 3;
     }
 
     @Override

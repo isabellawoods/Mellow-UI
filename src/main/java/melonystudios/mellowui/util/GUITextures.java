@@ -16,6 +16,10 @@ public class GUITextures {
     public static final ResourceLocation CONFIG_BUTTON = gui("button/config");
     public static final ResourceLocation OPEN_FOLDER_BUTTON = gui("button/open_folder");
     public static final ResourceLocation CHANGELOGS_BUTTON = gui("button/changelogs");
+    public static final ResourceLocation TAB = gui("button/tab");
+    public static final ResourceLocation TAB_HIGHLIGHTED = gui("button/tab_highlighted");
+    public static final ResourceLocation TAB_SELECTED = gui("button/tab_selected");
+    public static final ResourceLocation TAB_SELECTED_HIGHLIGHTED = gui("button/tab_selected_highlighted");
 
     // Backgrounds
     public static final ResourceLocation MENU_BACKGROUND = gui("menu_background");
@@ -44,6 +48,7 @@ public class GUITextures {
     public static final ResourceLocation ACCESSIBILITY_BUTTON = new ResourceLocation("textures/gui/accessibility.png");
     public static final ResourceLocation DEFAULT_PACK_ICON = new ResourceLocation("textures/misc/unknown_pack.png");
     public static final ResourceLocation VERSION_CHECKER_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
+    public static final ResourceLocation PANORAMA_OVERLAY = new ResourceLocation("textures/gui/title/background/panorama_overlay.png");
 
     // Mellomedley
     public static final ResourceLocation MAIN_MENU_GRADIENT = new ResourceLocation("mellomedley", "textures/gui/main_menu_gradient.png");

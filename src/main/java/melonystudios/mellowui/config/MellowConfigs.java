@@ -1,8 +1,8 @@
 package melonystudios.mellowui.config;
 
-import melonystudios.mellowui.util.MainMenuStyle;
-import melonystudios.mellowui.util.ModListSorting;
-import melonystudios.mellowui.util.MainMenuModButton;
+import melonystudios.mellowui.config.type.MainMenuStyle;
+import melonystudios.mellowui.config.type.ModListSorting;
+import melonystudios.mellowui.config.type.MainMenuModButton;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -20,7 +20,8 @@ public class MellowConfigs {
     public final ForgeConfigSpec.IntValue monochromeLoadingScreenColor;
     public final ForgeConfigSpec.IntValue splashTextColor;
     public final ForgeConfigSpec.IntValue panoramaCameraPitch;
-    public final ForgeConfigSpec.BooleanValue yellowButtonHighlight;
+    public final ForgeConfigSpec.BooleanValue legacyButtonColors;
+    public final ForgeConfigSpec.BooleanValue scrollingText;
     public final ForgeConfigSpec.EnumValue<MainMenuModButton> mainMenuModButton;
     public final ForgeConfigSpec.BooleanValue disableBranding;
 
@@ -30,6 +31,7 @@ public class MellowConfigs {
     // Screen Toggles
     public final ForgeConfigSpec.EnumValue<MainMenuStyle> mainMenuStyle;
     public final ForgeConfigSpec.BooleanValue updatePauseMenu;
+    public final ForgeConfigSpec.BooleanValue updateAccessibilityMenu;
     public final ForgeConfigSpec.BooleanValue updateOutOfMemoryMenu;
     public final ForgeConfigSpec.BooleanValue updateScreenBackground;
     public final ForgeConfigSpec.BooleanValue updateListBackground;
@@ -54,12 +56,14 @@ public class MellowConfigs {
         this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").defineInRange("monochromeLoadingScreenColor", 0, 0, 0xFFFFFF);
         this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").defineInRange("splashTextColor", 0xFFFF00, 0, 0xFFFFFF);
         this.panoramaCameraPitch = builder.comment("The pitch used by the camera in the panorama. Defaults to 10.").defineInRange("panoramaCameraPitch", 10, -90, 90);
-        this.yellowButtonHighlight = builder.comment("When enabled, hovering on buttons will make the text have a slight yellow tint.").define("yellowButtonHighlight", false);
+        this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
+        this.scrollingText = builder.comment("Whether the text in buttons should scroll if it's too long instead of rendering on top of other widgets.").define("scrollingText", true);
         this.mainMenuModButton = builder.comment("Where the \"Mods\" button should be located in the main menu.").defineEnum("mainMenuModButton", MainMenuModButton.ADJACENT);
         this.disableBranding = builder.comment("Whether to disable branding lines (the Forge and MCP versions) in the main menu.").define("disableBranding", true);
 
         this.mainMenuStyle = builder.comment("Which style to use for the main menu.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.").defineEnum("styles.mainMenu", MainMenuStyle.VANILLA);
         this.updatePauseMenu = builder.comment("Whether Mellow UI should update the pause menu.").define("updates.pauseMenu", true);
+        this.updateAccessibilityMenu = builder.comment("Whether Mellow UI should update the accessibility settings menu.").define("updates.accessibilityMenu", true);
         this.updateOutOfMemoryMenu = builder.comment("Whether Mellow UI should update the out of memory menu.").define("updates.outOfMemoryMenu", true);
         this.updateScreenBackground = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").define("updates.screenBackground", true);
         this.updateListBackground = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").define("updates.listBackground", true);

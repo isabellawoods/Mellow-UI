@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MainMenuStyle;
+import melonystudios.mellowui.config.type.MainMenuStyle;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.MainMenuScreen;

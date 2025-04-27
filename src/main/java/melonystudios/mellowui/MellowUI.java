@@ -35,6 +35,10 @@ public class MellowUI {
         return new ResourceLocation(MellowUI.MOD_ID, name);
     }
 
+    public static ResourceLocation gui(String name) {
+        return mellowUI("textures/gui/" + name + ".png");
+    }
+
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
     private void clientSetup(final FMLClientSetupEvent event) {}

@@ -80,9 +80,11 @@ public abstract class MUIAbstractListMixin extends FocusableGui {
 
             int leftRow = this.getRowLeft();
             int y = this.y0 + 4 - (int) this.getScrollAmount();
-            if (this.renderHeader) this.renderHeader(stack, leftRow, y, tessellator);
+            MellowUtils.scissor(() -> {
+                if (this.renderHeader) this.renderHeader(stack, leftRow, y, tessellator);
+                this.renderList(stack, leftRow, y, mouseX, mouseY, partialTicks);
+            }, this.x0, this.x1, this.y0, this.y1, this.height);
 
-            MellowUtils.scissor(() -> this.renderList(stack, leftRow, y, mouseX, mouseY, partialTicks), this.x0, this.x1, this.y0, this.y1, this.height);
             if (this.renderTopAndBottom) {
                 this.minecraft.getTextureManager().bind(GUITextures.TAB_HEADER_BACKGROUND);
                 RenderSystem.enableDepthTest();

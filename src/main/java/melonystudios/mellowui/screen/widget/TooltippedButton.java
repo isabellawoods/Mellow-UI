@@ -1,5 +1,6 @@
 package melonystudios.mellowui.screen.widget;
 
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IBidiTooltip;
 import net.minecraft.client.gui.widget.button.Button;
@@ -22,7 +23,7 @@ public class TooltippedButton extends Button implements IBidiTooltip {
 
     @Nonnull
     public Optional<List<IReorderingProcessor>> getTooltip() {
-       if (this.tooltipText != null) return Optional.of(Minecraft.getInstance().font.split(this.tooltipText, 200));
+       if (this.tooltipText != null) return Optional.of(Minecraft.getInstance().font.split(this.tooltipText, MellowUtils.TOOLTIP_MAX_WIDTH));
        return Optional.empty();
     }
 }

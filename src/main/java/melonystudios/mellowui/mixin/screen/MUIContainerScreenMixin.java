@@ -28,7 +28,7 @@ import java.util.Set;
 
 @SuppressWarnings("deprecation")
 @Mixin(ContainerScreen.class)
-public abstract class MUIContainerScreen<T extends Container> extends Screen implements IHasContainer<T> {
+public abstract class MUIContainerScreenMixin<T extends Container> extends Screen implements IHasContainer<T> {
     @Shadow protected int leftPos;
     @Shadow protected int topPos;
     @Shadow protected abstract void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY);
@@ -49,7 +49,7 @@ public abstract class MUIContainerScreen<T extends Container> extends Screen imp
     @Shadow private int snapbackStartX;
     @Shadow private int snapbackStartY;
 
-    public MUIContainerScreen(ITextComponent title) {
+    public MUIContainerScreenMixin(ITextComponent title) {
         super(title);
     }
 

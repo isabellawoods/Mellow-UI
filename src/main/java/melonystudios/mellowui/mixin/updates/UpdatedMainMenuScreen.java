@@ -4,13 +4,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.IconSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
+import melonystudios.mellowui.screen.updated.AttributionsScreen;
 import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
+import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MainMenuStyle;
+import melonystudios.mellowui.config.type.MainMenuStyle;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.MainMenuModButton;
+import melonystudios.mellowui.config.type.MainMenuModButton;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.screen.*;
@@ -42,7 +44,6 @@ import javax.annotation.Nullable;
 public abstract class UpdatedMainMenuScreen extends Screen {
     @Shadow @Final private static ResourceLocation MINECRAFT_LOGO;
     @Shadow @Final private static ResourceLocation MINECRAFT_EDITION;
-    @Shadow @Final private static ResourceLocation PANORAMA_OVERLAY;
     @Mutable @Shadow @Final private RenderSkybox panorama;
     @Shadow(remap = false)
     private NotificationModUpdateScreen modUpdateNotification;
@@ -65,7 +66,8 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
     @Inject(method = "<init>(Z)V", at = @At("TAIL"))
     public void constructor(boolean fading, CallbackInfo callback) {
-        this.panorama = MellowUtils.PANORAMA;
+        //this.panorama = MellowUtils.PANORAMA;
+        MellowUtils.PANORAMA = this.panorama;
     }
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
@@ -99,7 +101,7 @@ public abstract class UpdatedMainMenuScreen extends Screen {
                 } else if (buttonLocation == MainMenuModButton.ICON) {
                     modsButton = this.addButton(new ImageButton(this.width / 2 + 104, buttonsPos + 24 * 2, 20, 20, 0, 0, 20,
                             GUITextures.MODS_BUTTON, 32, 64, button -> this.minecraft.setScreen(MellowUtils.modList(this)),
-                            new TranslationTextComponent("fml.mods.mods")));
+                            new TranslationTextComponent("fml.menu.mods")));
                 }
             }
 
@@ -131,10 +133,13 @@ public abstract class UpdatedMainMenuScreen extends Screen {
                 this.realmsNotificationsInitialized = true;
             }
 
-            if (this.realmsNotificationsEnabled()) {
-                this.realmsNotificationsScreen.init(this.minecraft, this.width, this.height);
-            }
+            if (this.realmsNotificationsEnabled()) this.realmsNotificationsScreen.init(this.minecraft, this.width, this.height);
         }
+
+        // Switch Style
+        this.addButton(new IconButton(this.width - 20, 8, 12, 12, IconSet.SWITCH_STYLE, new TranslationTextComponent("button.mellowui.switch_style"),
+                button -> IconSet.switchMainMenuStyle(), (button, stack, mouseX, mouseY) ->
+                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
@@ -181,16 +186,16 @@ public abstract class UpdatedMainMenuScreen extends Screen {
             if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == MainMenuStyle.MELLOMEDLEY) return;
 
             int logoXPos = this.width / 2 - 137;
-            this.minecraft.getTextureManager().bind(PANORAMA_OVERLAY);
+            this.minecraft.getTextureManager().bind(GUITextures.PANORAMA_OVERLAY);
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             RenderSystem.color4f(1, 1, 1, this.fading ? (float) MathHelper.ceil(MathHelper.clamp(buttonFadeIn, 0, 1)) : 1);
             blit(stack, 0, 0, this.width, this.height, 0, 0, 16, 128, 16, 128);
-            float alpha = this.fading ? MathHelper.clamp(buttonFadeIn - 1, 0, 1) : 1;
-            int textAlpha = MathHelper.ceil(alpha * 255) << 24;
+            float buttonAlpha = this.fading ? MathHelper.clamp(buttonFadeIn - 1, 0, 1) : 1;
+            int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
             if ((textAlpha & 0xFC000000) != 0) {
                 this.minecraft.getTextureManager().bind(MINECRAFT_LOGO);
-                RenderSystem.color4f(1, 1, 1, alpha);
+                RenderSystem.color4f(1, 1, 1, buttonAlpha);
                 if (this.minceraftEasterEgg) {
                     this.blitOutlineBlack(logoXPos, 30, (i1, i2) -> {
                         this.blit(stack, i1, i2, 0, 0, 99, 44);
@@ -209,7 +214,7 @@ public abstract class UpdatedMainMenuScreen extends Screen {
                 this.minecraft.getTextureManager().bind(MINECRAFT_EDITION);
                 blit(stack, logoXPos + 88, 67, 0, 0, 98, 14, 128, 16);
                 ForgeHooksClient.renderMainMenu((MainMenuScreen) this.minecraft.screen, stack, this.font, this.width, this.height, textAlpha);
-                if (this.splash != null) {
+                if (this.splash != null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {
                     RenderSystem.pushMatrix();
                     RenderSystem.translatef((float) (this.width / 2 + 90), 70, 0);
                     RenderSystem.rotatef(-20, 0, 0, 1);
@@ -233,17 +238,19 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
                     drawString(stack, this.font, branding, 2, this.height - 10, 0xFFFFFF | textAlpha);
                 }
+                boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 10 && mouseY < this.height;
 
-                drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, 0xFFFFFF | textAlpha);
-                if (mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 10 && mouseY < this.height) {
-                    fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, 0xFFFFFF | textAlpha);
-                    fill(stack, this.copyrightX + 1, this.height - 1, this.copyrightX + this.copyrightWidth + 1, this.height, 0x3F3F3F | textAlpha);
+                drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, MellowUtils.getSelectableTextColor(copyrightTextHovered, true) | textAlpha);
+                if (copyrightTextHovered) {
+                    fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, MellowUtils.getSelectableTextColor(true, true) | textAlpha);
+                    fill(stack, this.copyrightX + 1, this.height - 1, this.copyrightX + this.copyrightWidth + 1, this.height, MellowUtils.getSelectableTextShadowColor(true, true) | textAlpha);
                 }
 
-                for (Widget widget : this.buttons) widget.setAlpha(alpha);
+                for (Widget widget : this.buttons) widget.setAlpha(buttonAlpha);
 
                 super.render(stack, mouseX, mouseY, partialTicks);
-                if (this.realmsNotificationsEnabled() && alpha >= 1) this.realmsNotificationsScreen.render(stack, mouseX, mouseY, partialTicks);
+                if (this.realmsNotificationsEnabled() && buttonAlpha >= 1) this.realmsNotificationsScreen.render(stack, mouseX, mouseY, partialTicks);
+                ((MUIModUpdateScreen) this.modUpdateNotification).alpha = buttonAlpha;
                 this.modUpdateNotification.render(stack, mouseX, mouseY, partialTicks);
             }
         }

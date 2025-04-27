@@ -10,7 +10,9 @@
     "client.MUIPanoramaRendererMixin",
     "client.MUISubtitleOverlayMixin",
     "forge.MUIForgeInGameGUIMixin",
-    "screen.MUIContainerScreen",
+    "screen.MUIAccessibilityScreenMixin",
+    "screen.MUIContainerScreenMixin",
+    "screen.MUICreditsScreenMixin",
     "screen.MUIEditGameRulesScreenMixin",
     "screen.MUIGenericMessageScreen",
     "screen.MUILoadingScreenMixin",
@@ -24,6 +26,7 @@
     "updates.UpdatedMainMenuScreen",
     "updates.UpdatedOutOfMemoryScreen",
     "updates.UpdatedPauseMenuScreen",
+    "widget.MUIImageButtonMixin",
     "widget.MUITextFieldWidgetMixin",
     "widget.MUIWidgetMixin"
   ],

@@ -1,6 +1,7 @@
 package melonystudios.mellowui.screen.forge;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -10,7 +11,6 @@ import net.minecraftforge.client.gui.NotificationModUpdateScreen;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.fml.loading.FMLConfig;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 
@@ -20,6 +20,7 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
     private boolean checkedForUpdates = false;
     private final Button modsButton;
     private final boolean renderOnCorner;
+    public float alpha = 1;
 
     public MUIModUpdateScreen(Button modsButton, boolean renderOnCorner) {
         super(modsButton);
@@ -48,7 +49,10 @@ public class MUIModUpdateScreen extends NotificationModUpdateScreen {
         if (this.minecraft == null) return;
 
         this.minecraft.getTextureManager().bind(GUITextures.VERSION_CHECKER_ICONS);
-        GL11.glColor4f(1, 1, 1, 1);
+        RenderSystem.color4f(1, 1, 1, this.alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
 
         int x = this.modsButton.x;
         int y = this.modsButton.y;

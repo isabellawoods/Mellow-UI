@@ -5,12 +5,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.DisableableImageButton;
+import melonystudios.mellowui.screen.widget.DisableableImageButton;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.screen.list.MUIModList;
 import melonystudios.mellowui.screen.option.ForgeOptionsScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.ModListSorting;
+import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.config.type.ModListSorting;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
 import net.minecraft.client.gui.screen.OptionsScreen;
@@ -109,11 +110,22 @@ public class MUIModListScreen extends Screen {
             button.setMessage(config.getMessage(this.minecraft.options));
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }));
+        // Configure button
+        this.addButton(this.configButton = new DisableableImageButton(113, 14, 20, 20, 0, 0, 20,
+                GUITextures.CONFIG_BUTTON, 32, 64, button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
+                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.configure"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
+        this.configButton.active = false;
+
         // Search field
         this.searchField = new TextFieldWidget(this.minecraft.font, 11, 38, 98, 20, new TranslationTextComponent("fml.menu.mods.search"));
         this.searchField.setFocus(false);
         this.searchField.setCanLoseFocus(true);
-        this.children.add(this.searchField);
+        this.addWidget(this.searchField);
+
+        // Open mods folder button
+        this.addButton(new DisableableImageButton(113, 38, 20, 20, 0, 0, 20,
+                GUITextures.OPEN_FOLDER_BUTTON, 32, 64, button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
+                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
         // Mod link buttons
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
@@ -131,18 +143,9 @@ public class MUIModListScreen extends Screen {
         this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton, maxGUIScale);
         this.addButton(this.changelogsButton = new DisableableImageButton(this.width - 24, this.height - 24, 20, 20, 0, 0, 20,
                 GUITextures.CHANGELOGS_BUTTON, 32, 64, button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.changelogs"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
+                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
 
-        // Icons
-        this.addButton(this.configButton = new DisableableImageButton(113, 14, 20, 20, 0, 0, 20,
-                GUITextures.CONFIG_BUTTON, 32, 64, button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.configure"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
-        this.configButton.active = false;
-        this.addButton(new DisableableImageButton(113, 38, 20, 20, 0, 0, 20,
-                GUITextures.OPEN_FOLDER_BUTTON, 32, 64, button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(stack, this.minecraft.font.split(new TranslationTextComponent("button.mellowui.open_mods_folder"), 200), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
-
-        // List
+        // Mods list
         this.list = new MUIModList(this, 124, this.height, 64, this.height - 27, this.font.lineHeight * 2 + 8);
         this.list.setLeftPos(10);
         this.list.setRenderTopAndBottom(false);
@@ -177,7 +180,7 @@ public class MUIModListScreen extends Screen {
         RenderSystem.disableBlend();
 
         if (this.selectedMod == null) {
-            IFormattableTextComponent noModSelected = new TranslationTextComponent("menu.mellowui.no_mod_selected");
+            IFormattableTextComponent noModSelected = new TranslationTextComponent("menu.mellowui.mods.no_mod_selected");
             this.font.drawShadow(stack, noModSelected.withStyle(TextFormatting.GRAY), this.width / 2 - (this.font.width(noModSelected) / 2), this.height / 2 - 10, 0xFFFFFF);
         }
 
@@ -188,7 +191,7 @@ public class MUIModListScreen extends Screen {
             this.minecraft.getTextureManager().bind(this.logoPath);
             RenderSystem.enableBlend();
             RenderSystem.color4f(1, 1, 1, 1);
-            GuiUtils.drawInscribedRect(stack, 142, 30, this.width, 50, logoWidth, logoHeight, true, false);
+            GuiUtils.drawInscribedRect(stack, 142, 30, this.width, 50, logoWidth, logoHeight, false, false);
             RenderSystem.disableBlend();
         }
 
@@ -209,28 +212,28 @@ public class MUIModListScreen extends Screen {
             IFormattableTextComponent modID = new StringTextComponent(info.getModId()).withStyle(TextFormatting.WHITE);
             IFormattableTextComponent version = new StringTextComponent(MavenVersionStringHelper.artifactVersionToString(info.getVersion())).withStyle(TextFormatting.WHITE);
 
-            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.mod_id_and_version", modID, version).withStyle(TextFormatting.GRAY),
+            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mods.mod_id_and_version", modID, version).withStyle(TextFormatting.GRAY),
                     145 + this.font.width(modName) * 2, yOffset, 0xFFFFFF);
-            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mod.authors", authors).withStyle(TextFormatting.GRAY), 145 + this.font.width(modName) * 2,
+            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mods.authors", authors).withStyle(TextFormatting.GRAY), 145 + this.font.width(modName) * 2,
                     yOffset + 10, 0xFFFFFF);
 
             // Description, child mods, license and credits
             List<IReorderingProcessor> descLines = Lists.newArrayList();
             int lineWidth = this.width - 150;
-            if (maxGUIScale) descLines.addAll(this.font.split(new StringTextComponent(abbreviateMiddle(info.getDescription(), "...", 200)), lineWidth));
+            if (maxGUIScale) descLines.addAll(this.font.split(new StringTextComponent(abbreviateMiddle(info.getDescription(), new TranslationTextComponent("menu.mellowui.ellipsis").getString(), 200)), lineWidth));
             else descLines.addAll(this.font.split(new StringTextComponent(info.getDescription()), lineWidth));
             descLines.addAll(this.font.split(new StringTextComponent(" "), lineWidth));
             if (info.getOwningFile() == null || info.getOwningFile().getMods().size() == 1) {
-                descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.no_child_mods_found").withStyle(TextFormatting.GRAY), lineWidth));
+                descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.no_child_mods_found").withStyle(TextFormatting.GRAY), lineWidth));
             } else {
-                descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mod.child_mods", new StringTextComponent(info.getOwningFile().getMods().stream().map(IModInfo::getDisplayName)
-                        .collect(Collectors.joining(", "))).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth));
+                descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.child_mods", new StringTextComponent(info.getOwningFile().getMods().stream().map(IModInfo::getDisplayName)
+                        .collect(Collectors.joining(new TranslationTextComponent("menu.mellowui.mods.delimiter").getString()))).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth));
             }
-            info.getConfigElement("credits").ifPresent(credits -> descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mod.credits",
+            info.getConfigElement("credits").ifPresent(credits -> descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.credits",
                     new StringTextComponent((String) credits).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth)));
-            descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mod.license",
+            descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.license",
                     new StringTextComponent(info.getOwningFile().getLicense()).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth));
-            descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mod.state", ModList.get().getModContainerById(info.getModId()).map(ModContainer::getCurrentState)
+            descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.state", ModList.get().getModContainerById(info.getModId()).map(ModContainer::getCurrentState)
                     .map(stage -> new TranslationTextComponent("loading_stage.forge." + stage.toString().toLowerCase(Locale.ROOT)).withStyle(Style.EMPTY.withBold(false))).orElse(new TranslationTextComponent(
                             "loading_stage.forge.none"))).withStyle(TextFormatting.BOLD), lineWidth));
 

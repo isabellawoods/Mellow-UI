@@ -1,6 +1,7 @@
 package melonystudios.mellowui.config.option;
 
 import melonystudios.mellowui.screen.widget.TooltippedButton;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -35,7 +36,7 @@ public class OpenMenuOption extends AbstractOption {
     @Override
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
-        if (this.tooltipText != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, 200));
+        if (this.tooltipText != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, MellowUtils.TOOLTIP_MAX_WIDTH));
         TooltippedButton menuButton = new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(TextFormatting.BOLD), this.tooltipText,
                 button -> Minecraft.getInstance().setScreen(this.optionsScreen));
         menuButton.active = !this.onlyInWorld;
