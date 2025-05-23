@@ -127,10 +127,10 @@ dependencies {
     // If this is any group other than 'net.minecraft', it is assumed that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The user development (userdev) artifact is a special name and will get all sorts of transformations applied to it.
     // If the group id is "net.minecraft" and the artifact id is "client", "server" or "joined", then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // Annotation Processors
-    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
     // You may put jars on which you depend on in ./libs, or you may define them like so:
     // compile "some.group:artifact:version:classifier"

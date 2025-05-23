@@ -1,7 +1,8 @@
-package melonystudios.mellowui.screen.option;
+package melonystudios.mellowui.screen.updated;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
@@ -15,35 +16,18 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
-import static melonystudios.mellowui.config.MellowConfigEntries.*;
-
-public class MellowUIOptionsScreen extends SettingsScreen {
-    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
-    public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
-    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
+public class OnlineOptionsScreen extends SettingsScreen {
+    private static final List<AbstractOption> SETTINGS = Lists.newArrayList(VanillaConfigEntries.REALMS_NEWS_AND_INVITES);
     private OptionsRowList list;
 
-    public MellowUIOptionsScreen(Screen screen, GameSettings options) {
-        super(screen, options, new TranslationTextComponent("menu.mellowui.mellow_ui_options.title"));
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        MONOCHROME_LOADING_SCREEN_COLOR.tick();
-        SPLASH_TEXT_COLOR.tick();
+    public OnlineOptionsScreen(Screen lastScreen, GameSettings options) {
+        super(lastScreen, options, new TranslationTextComponent("menu.mellowui.online_options.title"));
     }
 
     @Override
     protected void init() {
         this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addBig(PANORAMA_CAMERA_PITCH);
         this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
-        this.list.addBig(MAIN_MENU_SEPARATOR);
-        this.list.addSmall(MAIN_MENU.toArray(new AbstractOption[0]));
-        this.list.addBig(MENU_UPDATES_SEPARATOR);
-        this.list.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
-        this.list.addBig(REALMS_SEPARATOR);
         this.children.add(this.list);
 
         // Done button

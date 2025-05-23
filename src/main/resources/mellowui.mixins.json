@@ -7,6 +7,7 @@
   "mixins": [],
   "client": [
     "client.MUIMinecraftMixin",
+    "client.MUIMusicTickerMixin",
     "client.MUIPanoramaRendererMixin",
     "client.MUISubtitleOverlayMixin",
     "forge.MUIForgeInGameGUIMixin",
@@ -16,8 +17,10 @@
     "screen.MUIEditGameRulesScreenMixin",
     "screen.MUIGenericMessageScreen",
     "screen.MUILoadingScreenMixin",
+    "screen.MUIOptionsScreenMixin",
     "screen.MUIPackScreenMixin",
     "screen.MUIScreenMixin",
+    "screen.MUISkinCustomizationScreenMixin",
     "screen.MUIWorldSelectionScreenMixin",
     "screen.list.MUIAbstractListMixin",
     "screen.list.MUIResourcePackListMixin",

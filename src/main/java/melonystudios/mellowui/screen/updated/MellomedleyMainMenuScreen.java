@@ -4,7 +4,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.IconSet;
+import melonystudios.mellowui.renderer.LogoRenderer;
+import melonystudios.mellowui.renderer.SplashRenderer;
+import melonystudios.mellowui.screen.WidgetTextureSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
@@ -78,7 +80,7 @@ public class MellomedleyMainMenuScreen extends Screen {
 
         // Options
         this.addButton(new Button(10, 160, 140, 20, new TranslationTextComponent("menu.options"),
-                button -> this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options))));
+                button -> this.minecraft.setScreen(new MUIOptionsScreen(this, this.minecraft.options))));
 
         // Mods
         this.addButton(this.modsButton = new Button(10, 190, 110, 20, new TranslationTextComponent("fml.menu.mods"),
@@ -101,8 +103,8 @@ public class MellomedleyMainMenuScreen extends Screen {
                 new TranslationTextComponent("narrator.button.accessibility")));
 
         // Switch Style
-        this.addButton(new IconButton(this.width - 20, 8, 12, 12, IconSet.SWITCH_STYLE, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> IconSet.switchMainMenuStyle(), (button, stack, mouseX, mouseY) ->
+        this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
+                button -> WidgetTextureSet.switchMainMenuStyle(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 
@@ -181,33 +183,33 @@ public class MellomedleyMainMenuScreen extends Screen {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         if (this.fadeInStart == 0L && this.fading) this.fadeInStart = Util.getMillis();
         float fade = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
-        float buttonFadeIn = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
+        float overlayTransparency = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
         float buttonAlpha = this.fading ? MathHelper.clamp(fade - 1, 0, 1) : 1;
         int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
         // Background
-        this.minecraft.getTextureManager().bind(GUITextures.PANORAMA_OVERLAY);
+        /*this.minecraft.getTextureManager().bind(GUITextures.PANORAMA_OVERLAY);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.color4f(1, 1, 1, this.fading ? (float) MathHelper.ceil(MathHelper.clamp(buttonFadeIn, 0, 1)) : 1);
+        RenderSystem.color4f(1, 1, 1, this.fading ? (float) MathHelper.ceil(MathHelper.clamp(overlayTransparency, 0, 1)) : 1);
         blit(stack, 0, 0, this.width, this.height, 0, 0, 16, 128, 16, 128);
-        if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), MathHelper.clamp(buttonFadeIn, 0, 1));
-        else this.renderBackground(stack);
+        if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), MathHelper.clamp(overlayTransparency, 0, 1));
+        else this.renderBackground(stack);*/
+        MellowUtils.renderPanorama(stack, this.width, this.height, this.fading ? overlayTransparency : 1);
 
         if ((textAlpha & 0xFC000000) != 0) {
             RenderSystem.color4f(1, 1, 1, buttonAlpha);
             RenderSystem.enableBlend();
+
             // Background Gradient
             this.minecraft.textureManager.bind(GUITextures.MAIN_MENU_GRADIENT);
             blit(stack, 0, 0, 0, 0, 220, this.height, 220, this.height);
-
-            // Logo
-            this.minecraft.textureManager.bind(GUITextures.MELLOMEDLEY_LOGO);
-            blit(stack, 10, 16, 0, 0, 210, 75, 210, 75);
             RenderSystem.color4f(1, 1, 1, 1);
             RenderSystem.disableBlend();
 
+            LogoRenderer.renderMellomedleyLogo(stack, 10, 16, 210, 75, buttonAlpha);
+
             // Splashes
-            if (this.splash != null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {
+            /*if (this.splash != null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {
                 RenderSystem.pushMatrix();
                 RenderSystem.translatef(173, 80, 0);
                 RenderSystem.rotatef(-20, 0, 0, 1);
@@ -216,7 +218,8 @@ public class MellomedleyMainMenuScreen extends Screen {
                 RenderSystem.scalef(splashSize, splashSize, splashSize);
                 drawCenteredString(stack, this.font, this.splash, 0, -8, MellowConfigs.CLIENT_CONFIGS.melloSplashTextColor.get() | textAlpha);
                 RenderSystem.popMatrix();
-            }
+            }*/
+            if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) SplashRenderer.mellomedleySplash(stack, this.font, this.splash, textAlpha);
 
             // Text
             boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height;

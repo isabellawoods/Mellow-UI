@@ -15,10 +15,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
-import static melonystudios.mellowui.config.MellowConfigEntries.MOD_LIST_SORTING;
+import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowForgeOptionsScreen extends SettingsScreen {
-    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MOD_LIST_SORTING);
+    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MOD_LIST_SORTING, UPDATED_MOD_LIST_MENU);
     private OptionsRowList list;
 
     public MellowForgeOptionsScreen(Screen screen, GameSettings options) {

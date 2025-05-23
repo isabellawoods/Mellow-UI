@@ -12,7 +12,9 @@ import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
@@ -25,18 +27,9 @@ public class MellowConfigEntries {
     public static final IFormattableTextComponent REPLACE_REALMS_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.replace_realms.desc"));
 
     // Separators
-    public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption("separator.mellowui.main_menu");
-    public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption("separator.mellowui.menu_updates");
-
-    // Vanilla options
-    public static final BooleanOption MONOCHROME_LOADING_SCREEN = new BooleanOption("config.minecraft.monochrome_loading_screen", new TranslationTextComponent("config.minecraft.monochrome_loading_screen.desc"),
-            options -> CLIENT_CONFIGS.monochromeLoadingScreen.get(), (options, newValue) -> CLIENT_CONFIGS.monochromeLoadingScreen.set(newValue));
-    public static final SliderPercentageOption PANORAMA_SCROLL_SPEED = new SliderPercentageOption("config.minecraft.panorama_scroll_speed", 0, 1, 0.01F,
-            options -> CLIENT_CONFIGS.panoramaScrollSpeed.get(),
-            (options, newValue) -> CLIENT_CONFIGS.panoramaScrollSpeed.set(newValue),
-            (options, slider) -> new TranslationTextComponent("options.percent_value", new TranslationTextComponent("config.minecraft.panorama_scroll_speed"), (int) (slider.get(options) * 100)));
-    public static final BooleanOption HIDE_SPLASH_TEXTS = new BooleanOption("config.minecraft.hide_splash_texts", new TranslationTextComponent("config.minecraft.hide_splash_texts.desc"),
-            options -> CLIENT_CONFIGS.hideSplashTexts.get(), (options, newValue) -> CLIENT_CONFIGS.hideSplashTexts.set(newValue));
+    public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.main_menu"));
+    public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
+    public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.realms").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xE43DC3))));
 
     // Mellow UI options
     public static final SliderPercentageOption PANORAMA_CAMERA_PITCH = new SliderPercentageOption("config.mellowui.panorama_camera_pitch", -90, 90, 1,
@@ -68,8 +61,8 @@ public class MellowConfigEntries {
             });
     public static final TextFieldOption MELLO_SPLASH_TEXT_COLOR = new TextFieldOption("config.mellowui.mello_splash_text_color",
             new TranslationTextComponent("config.mellowui.mello_splash_text_color.desc"),
-            CLIENT_CONFIGS.melloSplashTextColor.get().toString(),
-            newValue -> CLIENT_CONFIGS.melloSplashTextColor.set(Integer.valueOf(newValue)),
+            CLIENT_CONFIGS.mellomedleySplashTextColor.get().toString(),
+            newValue -> CLIENT_CONFIGS.mellomedleySplashTextColor.set(Integer.valueOf(newValue)),
             (text, setter) -> {
                 try {
                     int newValue = Integer.parseInt(text);
@@ -98,8 +91,20 @@ public class MellowConfigEntries {
             (options, option) -> new TranslationTextComponent("config.mellowui." + CLIENT_CONFIGS.mainMenuStyle.get().toString() + "_style", new TranslationTextComponent("config.mellowui.main_menu_style")));
     public static final BooleanOption DISABLE_BRANDING = new BooleanOption("config.mellowui.disable_branding", new TranslationTextComponent("config.mellowui.disable_branding.desc"),
             options -> CLIENT_CONFIGS.disableBranding.get(), (options, newValue) -> CLIENT_CONFIGS.disableBranding.set(newValue));
+    public static final StyleBooleanOption UPDATED_MOD_LIST_MENU = new StyleBooleanOption("config.mellowui.updated_mod_list_menu", new TranslationTextComponent("config.mellowui.updated_mod_list_menu.desc"),
+            options -> CLIENT_CONFIGS.updateModListMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateModListMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_PAUSE_MENU = new StyleBooleanOption("config.mellowui.updated_pause_menu", new TranslationTextComponent("config.mellowui.updated_pause_menu.desc"),
             options -> CLIENT_CONFIGS.updatePauseMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updatePauseMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_OPTIONS_MENU = new StyleBooleanOption("config.mellowui.updated_options_menu", new TranslationTextComponent("config.mellowui.updated_options_menu.desc"),
+            options -> CLIENT_CONFIGS.updateOptionsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateOptionsMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_SKIN_CUSTOMIZATION_MENU = new StyleBooleanOption("config.mellowui.updated_skin_customization_menu", new TranslationTextComponent("config.mellowui.updated_skin_customization_menu.desc"),
+            options -> CLIENT_CONFIGS.updateSkinCustomizationMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateSkinCustomizationMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_MUSIC_AND_SOUNDS_MENU = new StyleBooleanOption("config.mellowui.updated_music_and_sounds_menu", new TranslationTextComponent("config.mellowui.updated_music_and_sounds_menu.desc"),
+            options -> CLIENT_CONFIGS.updateMusicAndSoundsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateMusicAndSoundsMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_CONTROLS_MENU = new StyleBooleanOption("config.mellowui.updated_controls_menu", new TranslationTextComponent("config.mellowui.updated_controls_menu.desc"),
+            options -> CLIENT_CONFIGS.updateControlsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateControlsMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_PACK_MENU = new StyleBooleanOption("config.mellowui.updated_pack_menu", new TranslationTextComponent("config.mellowui.updated_pack_menu.desc"),
+            options -> CLIENT_CONFIGS.updatePackMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updatePackMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_ACCESSIBILITY_MENU = new StyleBooleanOption("config.mellowui.updated_accessibility_menu", new TranslationTextComponent("config.mellowui.updated_accessibility_menu.desc"),
             options -> CLIENT_CONFIGS.updateAccessibilityMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateAccessibilityMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_OUT_OF_MEMORY_MENU = new StyleBooleanOption("config.mellowui.updated_out_of_memory_menu", new TranslationTextComponent("config.mellowui.updated_out_of_memory_menu.desc"),
@@ -108,6 +113,13 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.updateScreenBackground.get(), (options, newValue) -> CLIENT_CONFIGS.updateScreenBackground.set(newValue));
     public static final StyleBooleanOption UPDATED_LIST_BACKGROUND = new StyleBooleanOption("config.mellowui.updated_list_background", new TranslationTextComponent("config.mellowui.updated_list_background.desc"),
             options -> CLIENT_CONFIGS.updateListBackground.get(), (options, newValue) -> CLIENT_CONFIGS.updateListBackground.set(newValue));
+    public static final BooleanOption REPLACE_REALMS_NOTIFICATIONS = new BooleanOption("config.mellowui.replace_realms_notifications", new TranslationTextComponent("config.mellowui.replace_realms_notifications.desc"),
+            options -> CLIENT_CONFIGS.replaceRealmsNotifications.get(), (options, newValue) -> CLIENT_CONFIGS.replaceRealmsNotifications.set(newValue));
+    public static final StyleBooleanOption SPLASH_TEXT_POSITION = new StyleBooleanOption("config.mellowui.splash_text_position", new TranslationTextComponent("config.mellowui.splash_text_position.desc"),
+            options -> CLIENT_CONFIGS.splashTextPosition.get(), (options, newValue) -> CLIENT_CONFIGS.splashTextPosition.set(newValue));
+    public static final IteratableOption LOGO_STYLE = new TooltippedIterableOption("config.mellowui.logo_style", new TranslationTextComponent("config.mellowui.logo_style.desc"),
+            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(MainMenuStyle.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
+            (options, option) -> new TranslationTextComponent("config.mellowui." + CLIENT_CONFIGS.logoStyle.get().toString() + "_style", new TranslationTextComponent("config.mellowui.logo_style")));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslationTextComponent("config.mellowui.scrolling_text.desc"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));
 

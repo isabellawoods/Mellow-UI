@@ -26,4 +26,9 @@ public class MUICreditsScreenMixin extends Screen {
         this.onFinished.run();
         if (this.minecraft.screen == this) this.minecraft.setScreen(null);
     }
+
+    @Inject(method = "onClose", at = @At("TAIL"))
+    public void onClose(CallbackInfo callback) {
+        this.minecraft.getMusicManager().stopPlaying();
+    }
 }

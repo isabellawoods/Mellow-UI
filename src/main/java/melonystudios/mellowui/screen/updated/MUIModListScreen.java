@@ -5,7 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.widget.DisableableImageButton;
+import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.screen.list.MUIModList;
 import melonystudios.mellowui.screen.option.ForgeOptionsScreen;
@@ -111,8 +111,8 @@ public class MUIModListScreen extends Screen {
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }));
         // Configure button
-        this.addButton(this.configButton = new DisableableImageButton(113, 14, 20, 20, 0, 0, 20,
-                GUITextures.CONFIG_BUTTON, 32, 64, button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
+        this.addButton(this.configButton = new ImageSetButton(113, 14, 20, 20, GUITextures.CONFIGURE_SET,
+                button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.configure"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
         this.configButton.active = false;
 
@@ -123,8 +123,8 @@ public class MUIModListScreen extends Screen {
         this.addWidget(this.searchField);
 
         // Open mods folder button
-        this.addButton(new DisableableImageButton(113, 38, 20, 20, 0, 0, 20,
-                GUITextures.OPEN_FOLDER_BUTTON, 32, 64, button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
+        this.addButton(new ImageSetButton(113, 38, 20, 20, GUITextures.OPEN_FOLDER_SET,
+                button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
         // Mod link buttons
@@ -141,8 +141,8 @@ public class MUIModListScreen extends Screen {
                 new TranslationTextComponent("button.mellowui.update_available").withStyle(Style.EMPTY.withColor(Color.fromRgb(0x41F384)).withUnderlined(true)), button -> this.getModUpdateSite()));
         this.updateModButton.active = false;
         this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton, maxGUIScale);
-        this.addButton(this.changelogsButton = new DisableableImageButton(this.width - 24, this.height - 24, 20, 20, 0, 0, 20,
-                GUITextures.CHANGELOGS_BUTTON, 32, 64, button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
+        this.addButton(this.changelogsButton = new ImageSetButton(this.width - 24, this.height - 24, 20, 20, GUITextures.CHANGELOGS_SET,
+                button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
 
         // Mods list

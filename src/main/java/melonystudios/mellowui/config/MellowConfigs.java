@@ -15,6 +15,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue monochromeLoadingScreen;
     public final ForgeConfigSpec.DoubleValue panoramaScrollSpeed;
     public final ForgeConfigSpec.BooleanValue hideSplashTexts;
+    public final ForgeConfigSpec.BooleanValue showMusicToast;
 
     // Mellow UI Configs
     public final ForgeConfigSpec.IntValue monochromeLoadingScreenColor;
@@ -26,17 +27,24 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue disableBranding;
 
     // Mellomedley Configs
-    public final ForgeConfigSpec.IntValue melloSplashTextColor;
+    public final ForgeConfigSpec.IntValue mellomedleySplashTextColor;
 
     // Screen Toggles
     public final ForgeConfigSpec.EnumValue<MainMenuStyle> mainMenuStyle;
+    public final ForgeConfigSpec.BooleanValue updateModListMenu;
     public final ForgeConfigSpec.BooleanValue updatePauseMenu;
+    public final ForgeConfigSpec.BooleanValue updateOptionsMenu;
+    public final ForgeConfigSpec.BooleanValue updateSkinCustomizationMenu;
+    public final ForgeConfigSpec.BooleanValue updateMusicAndSoundsMenu;
+    public final ForgeConfigSpec.BooleanValue updateControlsMenu;
+    public final ForgeConfigSpec.BooleanValue updatePackMenu;
     public final ForgeConfigSpec.BooleanValue updateAccessibilityMenu;
     public final ForgeConfigSpec.BooleanValue updateOutOfMemoryMenu;
     public final ForgeConfigSpec.BooleanValue updateScreenBackground;
     public final ForgeConfigSpec.BooleanValue updateListBackground;
-    public final ForgeConfigSpec.BooleanValue modListStyle;
-    public final ForgeConfigSpec.BooleanValue packListStyle;
+    public final ForgeConfigSpec.BooleanValue replaceRealmsNotifications;
+    public final ForgeConfigSpec.BooleanValue splashTextPosition;
+    public final ForgeConfigSpec.EnumValue<MainMenuStyle> logoStyle;
 
     // Forge Configs
     public final ForgeConfigSpec.EnumValue<ModListSorting> modListSorting;
@@ -46,6 +54,7 @@ public class MellowConfigs {
         this.monochromeLoadingScreen = builder.comment("Changes the Mojang Studios loading screen color from red to the color defined in the monochrome loading screen color config.").define("monochromeLoadingScreen", false);
         this.panoramaScrollSpeed = builder.comment("Changes the scrolling speed of the panorama in the menus.").defineInRange("panoramaScrollSpeed", 1F, 0, 1);
         this.hideSplashTexts = builder.comment("Toggles the ability to show or hide splashes on the main menu.").define("hideSplashTexts", false);
+        this.showMusicToast = builder.comment("Shows a toast with the name of the currently playing song.").define("showMusicToast", false);
         builder.pop();
 
         builder.push("forgeOptions");
@@ -63,16 +72,23 @@ public class MellowConfigs {
 
         this.mainMenuStyle = builder.comment("Which style to use for the main menu.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.").defineEnum("styles.mainMenu", MainMenuStyle.VANILLA);
         this.updatePauseMenu = builder.comment("Whether Mellow UI should update the pause menu.").define("updates.pauseMenu", true);
+        this.updateOptionsMenu = builder.comment("Whether Mellow UI should update the options menu.").define("updates.options", true);
+        this.updateSkinCustomizationMenu = builder.comment("Whether Mellow UI should update the skin customization menu.").define("updates.skinCustomization", true);
+        this.updateMusicAndSoundsMenu = builder.comment("Whether Mellow UI should update the music & sounds menu.").define("updates.musicAndSounds", true);
+        this.updateControlsMenu = builder.comment("Whether Mellow UI should update the controls menu, making the old screen the 'key binds' menu.").define("updates.controls", true);
         this.updateAccessibilityMenu = builder.comment("Whether Mellow UI should update the accessibility settings menu.").define("updates.accessibilityMenu", true);
         this.updateOutOfMemoryMenu = builder.comment("Whether Mellow UI should update the out of memory menu.").define("updates.outOfMemoryMenu", true);
         this.updateScreenBackground = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").define("updates.screenBackground", true);
         this.updateListBackground = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").define("updates.listBackground", true);
-        this.modListStyle = builder.comment("Which style to use for the mod list.", "True = Mellow UI | False = Vanilla.").define("styles.modList", true);
-        this.packListStyle = builder.comment("Which style to use for the resource and data packs list.", "True = Mellow UI | False = Vanilla.").define("styles.packList", false);
+        this.replaceRealmsNotifications = builder.comment("Whether Mellow UI should replace the 'Realms Notifications' button on the options menu with the 'Online Settings' menu.").define("updates.realmsNotifications", true);
+        this.splashTextPosition = builder.comment("Where the splash texts should be located in the main menu.").define("splashTextPosition", true);
+        this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the current logo (1.16), new logo (1.20+), and the Mellomedley logo.").defineEnum("styles.logo", MainMenuStyle.MELLOW_UI);
+        this.updateModListMenu = builder.comment("Which style to use for the mod list.", "True = Mellow UI | False = Vanilla.").define("styles.modList", true);
+        this.updatePackMenu = builder.comment("Which style to use for the resource and data packs list.", "True = Mellow UI | False = Vanilla.").define("styles.packList", false);
         builder.pop();
 
         builder.push("mellomedley");
-        this.melloSplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").defineInRange("splashTextColor", 0xBDCF73, 0, 0xFFFFFF);
+        this.mellomedleySplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").defineInRange("splashTextColor", 0xBDCF73, 0, 0xFFFFFF);
         builder.pop();
     }
 }

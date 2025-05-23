@@ -1,6 +1,5 @@
 package melonystudios.mellowui.screen;
 
-import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
@@ -9,21 +8,24 @@ import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.util.ResourceLocation;
 
-public class IconSet {
-    public static final IconSet SWITCH_STYLE = new IconSet(MellowUI.gui("icon/main_menu/switch_style"), MellowUI.gui("icon/main_menu/switch_style_highlighted"), MellowUI.gui("icon/main_menu/switch_style_disabled"));
+public class WidgetTextureSet {
     private final ResourceLocation defaultTexture;
     private final ResourceLocation highlightedTexture;
-    private final ResourceLocation inactiveTexture;
+    private final ResourceLocation disabledTexture;
 
-    public IconSet(ResourceLocation defaultTexture, ResourceLocation highlightedTexture, ResourceLocation inactiveTexture) {
+    public WidgetTextureSet(ResourceLocation defaultTexture, ResourceLocation highlightedTexture, ResourceLocation disabledTexture) {
         this.defaultTexture = defaultTexture;
         this.highlightedTexture = highlightedTexture;
-        this.inactiveTexture = inactiveTexture;
+        this.disabledTexture = disabledTexture;
     }
 
-    public ResourceLocation getIconTexture(boolean highlighted, boolean active) {
+    public WidgetTextureSet(ResourceLocation defaultTexture, ResourceLocation highlightedTexture) {
+        this(defaultTexture, highlightedTexture, defaultTexture);
+    }
+
+    public ResourceLocation getWidgetTexture(boolean highlighted, boolean active) {
         if (!active) {
-            return this.inactiveTexture();
+            return this.disabledTexture();
         } else if (highlighted) {
             return this.highlightedTexture();
         } else {
@@ -39,8 +41,8 @@ public class IconSet {
         return this.highlightedTexture;
     }
 
-    public ResourceLocation inactiveTexture() {
-        return this.inactiveTexture;
+    public ResourceLocation disabledTexture() {
+        return this.disabledTexture;
     }
 
     public static void switchMainMenuStyle() {
