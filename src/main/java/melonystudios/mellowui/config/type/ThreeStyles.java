@@ -7,15 +7,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public enum MainMenuModButton implements IStringSerializable {
-    ADJACENT(0, "adjacent"),
-    ICON(1, "icon"),
-    REPLACE_REALMS(2, "replace_realms");
+public enum ThreeStyles implements IStringSerializable {
+    OPTION_1(0, "option_1"),
+    OPTION_2(1, "option_2"),
+    OPTION_3(2, "option_3");
 
     private final int id;
     private final String name;
 
-    MainMenuModButton(int id, String name) {
+    ThreeStyles(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -35,11 +35,11 @@ public enum MainMenuModButton implements IStringSerializable {
         return this.name;
     }
 
-    public static MainMenuModButton byId(int identifier) {
+    public static ThreeStyles byId(int identifier) {
         switch (identifier) {
-            case 1: return ICON;
-            case 2: return REPLACE_REALMS;
-            case 0: default: return ADJACENT;
+            case 1: return OPTION_2;
+            case 2: return OPTION_3;
+            case 0: default: return OPTION_1;
         }
     }
 }

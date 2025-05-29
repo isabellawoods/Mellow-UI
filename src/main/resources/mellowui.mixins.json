@@ -23,6 +23,7 @@
     "screen.MUISkinCustomizationScreenMixin",
     "screen.MUIWorldSelectionScreenMixin",
     "screen.list.MUIAbstractListMixin",
+    "screen.list.MUIOptionsListMixin",
     "screen.list.MUIResourcePackListMixin",
     "screen.list.MUIWorldSelectionListEntryMixin",
     "updates.UpdatedAdvancementsScreen",

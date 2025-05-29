@@ -42,9 +42,9 @@ minecraft {
     // Use non-default mappings at your own risk, they may not always work!
     // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: 'official', version: '1.16.5'
-    // An SRG named sources jar is made by default. Uncomment this to disable.
+    // A SRG named sources jar is made by default. Uncomment this to disable.
     // makeObfSourceJar = false
-    
+
     // This property enables access transformers for use in development, which will be applied to the Minecraft artifact.
     // The access transformer file can be anywhere in the project. However, it must be at "META-INF/accesstransformer.cfg" in the final mod jar to be loaded by Forge.
     // This default location is a best practice to automatically put the file in the right place in the final jar.
@@ -59,7 +59,7 @@ minecraft {
             workingDirectory project.file('run')
 
             // Recommended logging data for a user development environment.
-            // The markers can be added/remove as needed separated by commas.
+            // The markers can be added/removed as needed, and are separated by commas.
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
@@ -70,7 +70,7 @@ minecraft {
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
-            // Disables the ref map for mixins.
+            // Disables the reference map for mixins.
             property 'mixin.env.disableRefMap', 'true'
 
             mods {
@@ -90,10 +90,6 @@ minecraft {
                 // Your username/display name, this is the name that shows up in chat.
                 // Note: This is not your email, even if you have a Mojang account.
                 args '--username', project.getProperty('mc_username')
-            }
-            if (project.hasProperty('mc_accessToken')) {
-                // Your access token, you can find it in your '.minecraft/launcher_profiles.json' file.
-                args '--accessToken', project.getProperty('mc_accessToken')
             }
 
             args '--version', 'melony-studios-dev/mellow-ui'

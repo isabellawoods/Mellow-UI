@@ -2,6 +2,7 @@ package melonystudios.mellowui.mixin.updates;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.screen.WidgetTextureSet;
@@ -11,9 +12,7 @@ import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.config.type.MainMenuStyle;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.config.type.MainMenuModButton;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.screen.*;
@@ -70,12 +69,12 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == MainMenuStyle.MELLOMEDLEY) {
+        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3) {
             this.minecraft.setScreen(new MellomedleyMainMenuScreen(this.fading));
             return;
         }
 
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == MainMenuStyle.MELLOW_UI) {
+        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
             if (this.splash == null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) this.splash = this.minecraft.getSplashManager().getSplash();
 
@@ -89,14 +88,14 @@ public abstract class UpdatedMainMenuScreen extends Screen {
             } else {
                 this.createNormalMenuOptions(buttonsPos, 24);
                 // Mods
-                MainMenuModButton buttonLocation = MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get();
-                if (buttonLocation == MainMenuModButton.ADJACENT) {
+                ThreeStyles buttonLocation = MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get();
+                if (buttonLocation == ThreeStyles.OPTION_1) {
                     modsButton = this.addButton(new Button(this.width / 2 + 2, buttonsPos + 24 * 2, 98, 20,
                             new TranslationTextComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
-                } else if (buttonLocation == MainMenuModButton.REPLACE_REALMS) {
+                } else if (buttonLocation == ThreeStyles.OPTION_3) {
                     modsButton = this.addButton(new Button(this.width / 2 - 100, buttonsPos + 24 * 2, 200, 20,
                             new TranslationTextComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
-                } else if (buttonLocation == MainMenuModButton.ICON) {
+                } else if (buttonLocation == ThreeStyles.OPTION_2) {
                     modsButton = this.addButton(new ImageSetButton(this.width / 2 + 104, buttonsPos + 24 * 2, 20, 20,
                             GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
                             MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
@@ -104,7 +103,7 @@ public abstract class UpdatedMainMenuScreen extends Screen {
                 }
             }
 
-            this.modUpdateNotification = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get() == MainMenuModButton.ICON);
+            this.modUpdateNotification = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get() == ThreeStyles.OPTION_2);
 
             // Language
             this.addButton(new ImageButton(this.width / 2 - 124, buttonsPos + 72 + 12, 20, 20, 0, 106, 20,
@@ -143,7 +142,7 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
     private void createNormalMenuOptions(int y, int rowHeight, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == MainMenuStyle.MELLOW_UI) {
+        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
 
             // Singleplayer
@@ -163,9 +162,9 @@ public abstract class UpdatedMainMenuScreen extends Screen {
             }, multiplayerTooltip)).active = allowsMultiplayer;
 
             // Realms
-            MainMenuModButton buttonLocation = MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get();
-            if (buttonLocation != MainMenuModButton.REPLACE_REALMS) {
-                int width = buttonLocation == MainMenuModButton.ADJACENT ? 98 : 200;
+            ThreeStyles buttonLocation = MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get();
+            if (buttonLocation != ThreeStyles.OPTION_3) {
+                int width = buttonLocation == ThreeStyles.OPTION_1 ? 98 : 200;
                 this.addButton(new Button(this.width / 2 - 100, y + rowHeight * 2, width, 20,
                         new TranslationTextComponent("menu.online"), button -> this.realmsButtonClicked(), multiplayerTooltip)).active = allowsMultiplayer;
             }
@@ -174,8 +173,8 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() != MainMenuStyle.VANILLA) {
-            if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == MainMenuStyle.MELLOMEDLEY) return;
+        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() != ThreeStyles.OPTION_1) {
+            if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3) return;
             callback.cancel();
             if (this.fadeInStart == 0L && this.fading) this.fadeInStart = Util.getMillis();
 
@@ -185,13 +184,13 @@ public abstract class UpdatedMainMenuScreen extends Screen {
             int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
 
             switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
-                case VANILLA:
+                case OPTION_1: // Pre 1.19
                     LOGO_RENDERER.renderOldLogo(stack, this, this.width, buttonAlpha);
                     break;
-                case MELLOW_UI:
+                case OPTION_2: // 1.20 and above
                     LOGO_RENDERER.renderUpdatedLogo(stack, this.width, buttonAlpha);
                     break;
-                case MELLOMEDLEY:
+                case OPTION_3: // Mellomedley's logo
                     LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, buttonAlpha);
                     break;
             }
@@ -236,7 +235,7 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == MainMenuStyle.MELLOW_UI) {
+        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
             if (super.mouseClicked(mouseX, mouseY, button)) {
                 callback.setReturnValue(true);

@@ -50,8 +50,8 @@ public class WidgetTextureSet {
         IteratableOption option = MellowConfigEntries.MAIN_MENU_STYLE;
         option.toggle(minecraft.options, 1);
         switch (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get()) {
-            case MELLOMEDLEY: minecraft.setScreen(new MellomedleyMainMenuScreen());
-            case VANILLA: case MELLOW_UI: default: minecraft.setScreen(new MainMenuScreen());
+            case OPTION_3: minecraft.setScreen(new MellomedleyMainMenuScreen());
+            case OPTION_1: case OPTION_2: default: minecraft.setScreen(new MainMenuScreen());
         }
     }
 }

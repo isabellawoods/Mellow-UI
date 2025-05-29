@@ -57,13 +57,13 @@ public class MUIPackScreen extends Screen {
         this.children.add(this.packList);
 
         // Open Folder button
-        this.addButton(new ImageSetButton(this.width / 2 + 104, this.height - 27, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addButton(new ImageSetButton(this.width / 2 + 104, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(this.packDirectory), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_pack_folder"), mouseX, mouseY),
                 new TranslationTextComponent("button.mellowui.open_pack_folder")));
 
         // Done button
-        this.doneButton = this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.doneButton = this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

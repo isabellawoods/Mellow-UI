@@ -26,6 +26,6 @@ public class StyleBooleanOption extends BooleanOption {
     }
 
     public static IFormattableTextComponent styleStatus(ITextComponent widgetText, boolean on) {
-        return new TranslationTextComponent(on ? "config.mellowui.mellowui_style" : "config.mellowui.vanilla_style", widgetText);
+        return new TranslationTextComponent(on ? "config.mellowui.option_2_style" : "config.mellowui.option_1_style", widgetText);
     }
 }

@@ -25,7 +25,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     protected void init(CallbackInfo callback) {
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(new IngameMenuScreen(true))));
     }
 

@@ -28,7 +28,7 @@ public enum ModListSorting implements IStringSerializable, Comparator<ModInfo> {
     private final int id;
     private final String name;
 
-    ModListSorting(int id,String name) {
+    ModListSorting(int id, String name) {
         this.id = id;
         this.name = name;
     }

@@ -4,9 +4,7 @@ import melonystudios.mellowui.config.option.SeparatorOption;
 import melonystudios.mellowui.config.option.StyleBooleanOption;
 import melonystudios.mellowui.config.option.TextFieldOption;
 import melonystudios.mellowui.config.option.TooltippedIterableOption;
-import melonystudios.mellowui.config.type.MainMenuModButton;
-import melonystudios.mellowui.config.type.MainMenuStyle;
-import melonystudios.mellowui.config.type.ModListSorting;
+import melonystudios.mellowui.config.type.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.client.settings.IteratableOption;
@@ -16,18 +14,23 @@ import net.minecraft.util.text.Color;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.ModList;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 import static melonystudios.mellowui.util.MellowUtils.TOOLTIP_MAX_WIDTH;
 
 public class MellowConfigEntries {
     // Tooltips
-    public static final IFormattableTextComponent ADJACENT_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.adjacent.desc"));
-    public static final IFormattableTextComponent ICON_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.icon.desc"));
-    public static final IFormattableTextComponent REPLACE_REALMS_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.replace_realms.desc"));
+    public static final IFormattableTextComponent ADJACENT_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.option_1.desc"));
+    public static final IFormattableTextComponent MAIN_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.option_2.desc"));
+    public static final IFormattableTextComponent REPLACE_REALMS_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.option_3.desc"));
+    public static final IFormattableTextComponent REPLACE_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_1.desc"));
+    public static final IFormattableTextComponent PAUSE_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_2.desc"));
+    public static final IFormattableTextComponent MOD_LIST_STYLE_TOOLTIP = new TranslationTextComponent("config.mellowui.mod_list_style.desc");
 
     // Separators
     public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.main_menu"));
+    public static final SeparatorOption PAUSE_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.pause_menu"));
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
     public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.realms").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xE43DC3))));
 
@@ -70,29 +73,48 @@ public class MellowConfigEntries {
                 } catch (NumberFormatException ignored) {}
             });
     public static final IteratableOption MAIN_MENU_MOD_BUTTON = new IteratableOption("config.mellowui.main_menu_mod_button",
-            (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(MainMenuModButton.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(ThreeStyles.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.mainMenuModButton.get()) {
-                    case ADJACENT:
+                    case OPTION_1:
                         option.setTooltip(Minecraft.getInstance().font.split(ADJACENT_TOOLTIP, TOOLTIP_MAX_WIDTH));
                         break;
-                    case ICON:
-                        option.setTooltip(Minecraft.getInstance().font.split(ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                    case OPTION_2:
+                        option.setTooltip(Minecraft.getInstance().font.split(MAIN_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
                         break;
-                    case REPLACE_REALMS:
+                    case OPTION_3:
                         option.setTooltip(Minecraft.getInstance().font.split(REPLACE_REALMS_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 }
                 return new TranslationTextComponent("config.mellowui.main_menu_mod_button", new TranslationTextComponent("config.mellowui.main_menu_mod_button." + CLIENT_CONFIGS.mainMenuModButton.get().toString()));
             });
+    public static final IteratableOption PAUSE_MENU_MOD_BUTTON = new IteratableOption("config.mellowui.pause_menu_mod_button",
+            (options, identifier) -> CLIENT_CONFIGS.pauseMenuModButton.set(TwoStyles.byId(CLIENT_CONFIGS.pauseMenuModButton.get().getId() + identifier)),
+            (options, option) -> {
+                switch (CLIENT_CONFIGS.pauseMenuModButton.get()) {
+                    case OPTION_1:
+                        option.setTooltip(Minecraft.getInstance().font.split(REPLACE_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        break;
+                    case OPTION_2:
+                        option.setTooltip(Minecraft.getInstance().font.split(PAUSE_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                }
+                return new TranslationTextComponent("config.mellowui.pause_menu_mod_button", new TranslationTextComponent("config.mellowui.pause_menu_mod_button." + CLIENT_CONFIGS.pauseMenuModButton.get().toString()));
+            });
     public static final BooleanOption LEGACY_BUTTON_COLORS = new BooleanOption("config.mellowui.legacy_button_colors", new TranslationTextComponent("config.mellowui.legacy_button_colors.desc"),
             options -> CLIENT_CONFIGS.legacyButtonColors.get(), (options, newValue) -> CLIENT_CONFIGS.legacyButtonColors.set(newValue));
     public static final IteratableOption MAIN_MENU_STYLE = new TooltippedIterableOption("config.mellowui.main_menu_style", new TranslationTextComponent("config.mellowui.main_menu_style.desc"),
-            (options, identifier) -> CLIENT_CONFIGS.mainMenuStyle.set(MainMenuStyle.byId(CLIENT_CONFIGS.mainMenuStyle.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.mainMenuStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.mainMenuStyle.get().getId() + identifier)),
             (options, option) -> new TranslationTextComponent("config.mellowui." + CLIENT_CONFIGS.mainMenuStyle.get().toString() + "_style", new TranslationTextComponent("config.mellowui.main_menu_style")));
+    public static final IteratableOption MOD_LIST_STYLE = new IteratableOption("config.mellowui.mod_list_style",
+            (options, identifier) -> {
+                CLIENT_CONFIGS.modListStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.modListStyle.get().getId() + identifier));
+                if (CLIENT_CONFIGS.modListStyle.get() == ThreeStyles.OPTION_3 && !ModList.get().isLoaded("catalogue")) CLIENT_CONFIGS.modListStyle.set(ThreeStyles.OPTION_1);
+            },
+            (options, option) -> {
+                option.setTooltip(Minecraft.getInstance().font.split(MOD_LIST_STYLE_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                return new TranslationTextComponent("config.mellowui.mod_list_style", new TranslationTextComponent("config.mellowui.mod_list_style." + CLIENT_CONFIGS.modListStyle.get().toString()));
+            });
     public static final BooleanOption DISABLE_BRANDING = new BooleanOption("config.mellowui.disable_branding", new TranslationTextComponent("config.mellowui.disable_branding.desc"),
             options -> CLIENT_CONFIGS.disableBranding.get(), (options, newValue) -> CLIENT_CONFIGS.disableBranding.set(newValue));
-    public static final StyleBooleanOption UPDATED_MOD_LIST_MENU = new StyleBooleanOption("config.mellowui.updated_mod_list_menu", new TranslationTextComponent("config.mellowui.updated_mod_list_menu.desc"),
-            options -> CLIENT_CONFIGS.updateModListMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateModListMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_PAUSE_MENU = new StyleBooleanOption("config.mellowui.updated_pause_menu", new TranslationTextComponent("config.mellowui.updated_pause_menu.desc"),
             options -> CLIENT_CONFIGS.updatePauseMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updatePauseMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_OPTIONS_MENU = new StyleBooleanOption("config.mellowui.updated_options_menu", new TranslationTextComponent("config.mellowui.updated_options_menu.desc"),
@@ -118,7 +140,7 @@ public class MellowConfigEntries {
     public static final StyleBooleanOption SPLASH_TEXT_POSITION = new StyleBooleanOption("config.mellowui.splash_text_position", new TranslationTextComponent("config.mellowui.splash_text_position.desc"),
             options -> CLIENT_CONFIGS.splashTextPosition.get(), (options, newValue) -> CLIENT_CONFIGS.splashTextPosition.set(newValue));
     public static final IteratableOption LOGO_STYLE = new TooltippedIterableOption("config.mellowui.logo_style", new TranslationTextComponent("config.mellowui.logo_style.desc"),
-            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(MainMenuStyle.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
             (options, option) -> new TranslationTextComponent("config.mellowui." + CLIENT_CONFIGS.logoStyle.get().toString() + "_style", new TranslationTextComponent("config.mellowui.logo_style")));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslationTextComponent("config.mellowui.scrolling_text.desc"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));

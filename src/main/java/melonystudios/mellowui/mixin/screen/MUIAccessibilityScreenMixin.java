@@ -28,7 +28,7 @@ public abstract class MUIAccessibilityScreenMixin extends SettingsScreen {
 
     @Unique
     private static final AbstractOption[] UPDATED_OPTIONS = new AbstractOption[] {NARRATOR, SHOW_SUBTITLES, AUTO_JUMP, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
-            SCREEN_EFFECTS_SCALE, FOV_EFFECTS_SCALE, VanillaConfigEntries.MONOCHROME_LOADING_SCREEN, VanillaConfigEntries.PANORAMA_SCROLL_SPEED, VanillaConfigEntries.HIDE_SPLASH_TEXTS};
+            SCREEN_EFFECTS_SCALE, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MONOCHROME_LOADING_SCREEN, VanillaConfigEntries.PANORAMA_SCROLL_SPEED, VanillaConfigEntries.HIDE_SPLASH_TEXTS};
     @Unique
     private OptionsRowList list;
 

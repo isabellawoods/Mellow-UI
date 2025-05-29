@@ -46,7 +46,7 @@ public class TextFieldOption extends AbstractOption {
     public Widget createButton(GameSettings options, int x, int y, int width) {
         if (this.tooltipComponent != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, 200));
 
-        this.textField = new TooltippedTextFieldWidget(Minecraft.getInstance().font, x + 1, y - 1, width - 2, 18, this.getCaption(), this);
+        this.textField = new TooltippedTextFieldWidget(Minecraft.getInstance().font, x + 1, y, width - 2, 18, this.getCaption(), this);
         this.textField.setMaxLength(this.maxValue);
         this.textField.setFocus(false);
         this.textField.setCanLoseFocus(true);

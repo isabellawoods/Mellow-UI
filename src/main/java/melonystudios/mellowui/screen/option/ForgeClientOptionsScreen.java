@@ -33,7 +33,7 @@ public class ForgeClientOptionsScreen extends SettingsScreen {
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

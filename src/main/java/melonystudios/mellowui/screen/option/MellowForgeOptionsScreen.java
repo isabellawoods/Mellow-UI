@@ -18,7 +18,7 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowForgeOptionsScreen extends SettingsScreen {
-    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MOD_LIST_SORTING, UPDATED_MOD_LIST_MENU);
+    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MOD_LIST_SORTING, MOD_LIST_STYLE);
     private OptionsRowList list;
 
     public MellowForgeOptionsScreen(Screen screen, GameSettings options) {
@@ -32,7 +32,7 @@ public class MellowForgeOptionsScreen extends SettingsScreen {
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

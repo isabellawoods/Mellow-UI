@@ -4,26 +4,35 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.screen.list.OptionsList;
+import melonystudios.mellowui.screen.updated.MUIControlsScreen;
 import melonystudios.mellowui.screen.updated.MUIModListScreen;
 import melonystudios.mellowui.screen.updated.MUIPackScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.client.gui.screen.PackScreen;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.IBidiTooltip;
+import net.minecraft.client.gui.screen.*;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourcePackList;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
+import org.apache.logging.log4j.LogManager;
 
+import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static net.minecraft.util.ColorHelper.PackedColor.*;
@@ -32,18 +41,35 @@ public class MellowUtils {
     public static RenderSkybox PANORAMA = new RenderSkybox(MainMenuScreen.CUBE_MAP);
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
     public static final int TOOLTIP_MAX_WIDTH = 200;
-    public static final int DEFAULT_TITLE_HEIGHT = 20;
+    public static final int DEFAULT_TITLE_HEIGHT = 12;
     public static final int PAUSE_MENU_Y_OFFSET = 0;
 
     public static Screen modList(Screen lastScreen) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateModListMenu.get()) return new MUIModListScreen(lastScreen);
-        else return new ModListScreen(lastScreen);
+        switch (MellowConfigs.CLIENT_CONFIGS.modListStyle.get()) {
+            case OPTION_2: return new MUIModListScreen(lastScreen);
+            case OPTION_3: {
+                if (!ModList.get().isLoaded("catalogue")) return new MUIModListScreen(lastScreen);
+                try {
+                    Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
+                    return (Screen) screen.newInstance();
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+                    LogManager.getLogger().error(new TranslationTextComponent("error.mellowui.compatibility.catalogue_mod_list"));
+                    return new MUIModListScreen(lastScreen);
+                }
+            }
+            case OPTION_1: default: return new ModListScreen(lastScreen);
+        }
     }
 
     public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<ResourcePackList> packInfo) {
         ITextComponent title = new TranslationTextComponent("resourcePack.title");
         if (MellowConfigs.CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packList -> {}, minecraft.getResourcePackDirectory(), title);
         else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+    }
+
+    public static Screen controls(Screen lastScreen, Minecraft minecraft) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateControlsMenu.get()) return new MUIControlsScreen(lastScreen, minecraft.options);
+        else return new ControlsScreen(lastScreen, minecraft.options);
     }
 
     public static void scissor(Runnable toCut, int startX, int endX, int y0, int y1, int height) {
@@ -98,6 +124,25 @@ public class MellowUtils {
         int x = button.isFocused() ? button.x : mouseX;
         int y = button.isFocused() ? button.y : mouseY;
         screen.renderTooltip(stack, minecraft.font.split(tooltipText, TOOLTIP_MAX_WIDTH), x, y);
+    }
+
+    public static void openLink(Screen lastScreen, String url, boolean showWarning) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.setScreen(new ConfirmOpenLinkScreen(confirmed -> {
+            if (confirmed) Util.getPlatform().openUri(url);
+            minecraft.setScreen(lastScreen);
+        }, url, !showWarning));
+    }
+
+    @Nullable
+    public static List<IReorderingProcessor> tooltipAt(OptionsList list, int mouseX, int mouseY) {
+        Optional<Widget> widget = list.getMouseOver(mouseX, mouseY);
+        if (widget.isPresent() && widget.get() instanceof IBidiTooltip) {
+            Optional<List<IReorderingProcessor>> tooltip = ((IBidiTooltip) widget.get()).getTooltip();
+            return tooltip.orElse(null);
+        } else {
+            return null;
+        }
     }
 
     public static int getSelectableTextColor(boolean selected, boolean active) {

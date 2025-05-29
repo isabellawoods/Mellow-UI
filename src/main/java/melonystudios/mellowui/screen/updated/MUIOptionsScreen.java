@@ -95,7 +95,7 @@ public class MUIOptionsScreen extends SettingsScreen {
 
         // Controls
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("options.controls"),
-                button -> this.minecraft.setScreen(new ControlsScreen(this, this.minecraft.options))));
+                button -> this.minecraft.setScreen(MellowUtils.controls(this, this.minecraft))));
         buttonHeight += 25;
 
         // Language
@@ -129,10 +129,10 @@ public class MUIOptionsScreen extends SettingsScreen {
 
         // Credits & Attribution
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.credits_and_attribution"),
-                button -> this.minecraft.setScreen(new MainMenuScreen())));
+                button -> this.minecraft.setScreen(new AttributionsScreen(this))));
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

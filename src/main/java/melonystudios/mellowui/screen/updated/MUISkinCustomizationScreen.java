@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.UUID;
 
 public class MUISkinCustomizationScreen extends SettingsScreen {
     public static final Logger LOGGER = LogManager.getLogger();
@@ -35,6 +35,7 @@ public class MUISkinCustomizationScreen extends SettingsScreen {
 
     @Override
     protected void init() {
+        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         List<AbstractOption> settings = Lists.newArrayList();
         // Compatibility
         if (ModList.get().isLoaded("abnormals_core")) { // add slabfish hat settings button
@@ -42,11 +43,36 @@ public class MUISkinCustomizationScreen extends SettingsScreen {
                 Class<?> screen = Class.forName("com.minecraftabnormals.abnormals_core.client.screen.SlabfishHatScreen");
                 OpenMenuOption slabfishHatSettings = new OpenMenuOption("abnormals_core.screen.slabfish_settings", false,
                         new TranslationTextComponent("abnormals_core.screen.slabfish_settings.tooltip",
-                                new StringTextComponent("patreon.com/teamabnormals").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xFF424D)))),
+                                new StringTextComponent("patreon.com/teamabnormals").withStyle(style -> style.withColor(Color.fromRgb(0xEF323D)).withBold(true))),
                         (Screen) screen.getConstructor(Screen.class).newInstance(this));
-                settings.add(slabfishHatSettings);
-                LOGGER.info("[Mellow UI] Added 'Slabfish Hat Settings' button from original skin customization screen");
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
+                this.list.addBig(slabfishHatSettings);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+                LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.blueprint_slabfish_hat").getString());
+            }
+        }
+
+        if (ModList.get().isLoaded("femalegender") && this.minecraft.level != null) { // add breast settings button
+            try {
+                Class<?> screen = Class.forName("melonystudios.femalegender.gui.screen.WardrobeScreen");
+                OpenMenuOption wardrobe = new OpenMenuOption("button.mellowui.femalegender_breast_settings",
+                        (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId()));
+                if (ModList.get().isLoaded("wildfire_gender")) settings.add(wardrobe);
+                else this.list.addBig(wardrobe);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+                LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
+            }
+        }
+
+        if (ModList.get().isLoaded("wildfire_gender") && this.minecraft.level != null) { // add breast settings button
+            try {
+                Class<?> screen = Class.forName("com.wildfire.gui.screen.WardrobeBrowserScreen");
+                OpenMenuOption wardrobe = new OpenMenuOption("button.mellowui.wildfire_gender_breast_settings",
+                        (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId()));
+                if (ModList.get().isLoaded("femalegender")) settings.add(wardrobe);
+                else this.list.addBig(wardrobe);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+                LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
+            }
         }
 
         for (PlayerModelPart part : PlayerModelPart.values()) {
@@ -54,12 +80,11 @@ public class MUISkinCustomizationScreen extends SettingsScreen {
         }
         settings.add(AbstractOption.MAIN_HAND);
 
-        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         this.list.addSmall(settings.toArray(new AbstractOption[0]));
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

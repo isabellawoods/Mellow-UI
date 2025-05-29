@@ -23,10 +23,12 @@ public class MUIMusicTickerMixin {
     @Inject(method = "startPlaying", at = @At("TAIL"))
     public void startPlaying(BackgroundMusicSelector music, CallbackInfo info) {
         if (this.minecraft.getOverlay() != null) return;
+        if (this.canShowToast()) MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), this.minecraft.getToasts());
+    }
 
-        if (this.currentMusic != null && this.currentMusic.getSound() != SoundHandler.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn()) {
-            MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), this.minecraft.getToasts());
-        }
+    @Unique
+    private boolean canShowToast() {
+        return this.currentMusic != null && this.currentMusic.getSound() != SoundHandler.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn();
     }
 
     @Unique

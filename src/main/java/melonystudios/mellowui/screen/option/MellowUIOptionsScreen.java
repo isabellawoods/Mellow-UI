@@ -20,6 +20,7 @@ import static melonystudios.mellowui.config.MellowConfigEntries.*;
 public class MellowUIOptionsScreen extends SettingsScreen {
     public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
+    public static final List<AbstractOption> PAUSE_MENU = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON);
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
     private OptionsRowList list;
 
@@ -41,13 +42,14 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
         this.list.addBig(MAIN_MENU_SEPARATOR);
         this.list.addSmall(MAIN_MENU.toArray(new AbstractOption[0]));
+        this.list.addBig(PAUSE_MENU_SEPARATOR);
+        this.list.addSmall(PAUSE_MENU.toArray(new AbstractOption[0]));
         this.list.addBig(MENU_UPDATES_SEPARATOR);
         this.list.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
-        this.list.addBig(REALMS_SEPARATOR);
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

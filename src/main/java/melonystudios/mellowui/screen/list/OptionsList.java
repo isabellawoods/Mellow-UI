@@ -24,6 +24,10 @@ public class OptionsList extends AbstractOptionList<OptionsList.Row> {
         this.centerListVertically = false;
     }
 
+    public OptionsList(Minecraft minecraft, int width, int height) {
+        this(minecraft, width, height, 32, height - 32, 25);
+    }
+
     public int addBig(AbstractOption option) {
         return this.addEntry(Row.big(this.minecraft.options, this.width, option));
     }
@@ -40,12 +44,20 @@ public class OptionsList extends AbstractOptionList<OptionsList.Row> {
 
     @Override
     public int getRowWidth() {
-        return 400;
+        return 310;
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return super.getScrollbarPosition() + 32;
+        return this.getRealRowRight() + 10;
+    }
+
+    private int getRealRowRight() {
+        return this.getRealRowLeft() + this.getRowWidth();
+    }
+
+    private int getRealRowLeft() {
+        return this.x0 + this.width / 2 - this.getRowWidth() / 2;
     }
 
     @Nullable

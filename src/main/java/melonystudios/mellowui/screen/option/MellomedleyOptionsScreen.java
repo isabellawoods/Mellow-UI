@@ -2,25 +2,29 @@ package melonystudios.mellowui.screen.option;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.screen.widget.TooltippedTextFieldWidget;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static melonystudios.mellowui.config.MellowConfigEntries.MELLO_SPLASH_TEXT_COLOR;
-import static melonystudios.mellowui.config.MellowConfigEntries.MOD_LIST_SORTING;
 
 public class MellomedleyOptionsScreen extends SettingsScreen {
     public static final List<AbstractOption> SETTINGS = Lists.newArrayList(MELLO_SPLASH_TEXT_COLOR);
     private OptionsRowList list;
+    @Nullable
+    private TooltippedTextFieldWidget splashTextColor;
 
     public MellomedleyOptionsScreen(Screen screen, GameSettings options) {
         super(screen, options, new TranslationTextComponent("menu.mellowui.mellomedley_options.title"));
@@ -29,7 +33,7 @@ public class MellomedleyOptionsScreen extends SettingsScreen {
     @Override
     public void tick() {
         super.tick();
-        MELLO_SPLASH_TEXT_COLOR.tick();
+        if (this.splashTextColor != null) this.splashTextColor.tick();
     }
 
     @Override
@@ -38,8 +42,11 @@ public class MellomedleyOptionsScreen extends SettingsScreen {
         this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
         this.children.add(this.list);
 
+        Widget widget = this.list.findOption(MELLO_SPLASH_TEXT_COLOR);
+        if (widget != null) this.splashTextColor = (TooltippedTextFieldWidget) widget;
+
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 

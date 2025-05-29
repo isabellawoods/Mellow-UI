@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
@@ -20,6 +19,7 @@ public class OpenMenuOption extends AbstractOption {
     private final ITextComponent tooltipText;
     private final Screen optionsScreen;
     private final boolean onlyInWorld;
+    public boolean boldText = true;
 
     public OpenMenuOption(String translation, Screen optionsScreen) {
         this(translation, false, null, optionsScreen);
@@ -33,11 +33,16 @@ public class OpenMenuOption extends AbstractOption {
         this.optionsScreen = optionsScreen;
     }
 
+    public OpenMenuOption boldText(boolean bold) {
+        this.boldText = bold;
+        return this;
+    }
+
     @Override
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
         if (this.tooltipText != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, MellowUtils.TOOLTIP_MAX_WIDTH));
-        TooltippedButton menuButton = new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(TextFormatting.BOLD), this.tooltipText,
+        TooltippedButton menuButton = new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(style -> style.withBold(this.boldText)), this.tooltipText,
                 button -> Minecraft.getInstance().setScreen(this.optionsScreen));
         menuButton.active = !this.onlyInWorld;
         return menuButton;

@@ -7,15 +7,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public enum MainMenuStyle implements IStringSerializable {
-    VANILLA(0, "vanilla"),
-    MELLOW_UI(1, "mellowui"),
-    MELLOMEDLEY(2, "mellomedley");
+public enum TwoStyles implements IStringSerializable {
+    OPTION_1(0, "option_1"),
+    OPTION_2(1, "option_2");
 
     private final int id;
     private final String name;
 
-    MainMenuStyle(int id, String name) {
+    TwoStyles(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -35,11 +34,10 @@ public enum MainMenuStyle implements IStringSerializable {
         return this.name;
     }
 
-    public static MainMenuStyle byId(int identifier) {
+    public static TwoStyles byId(int identifier) {
         switch (identifier) {
-            case 1: return MELLOW_UI;
-            case 2: return MELLOMEDLEY;
-            case 0: default: return VANILLA;
+            case 1: return OPTION_2;
+            case 0: default: return OPTION_1;
         }
     }
 }

@@ -62,7 +62,7 @@ public class CustomizedWorldOptionsScreen extends Screen {
         this.tabs.add(this.addButton(new TabButton(this.width / 2 + buttonWidth, 0, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.expert_settings"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 27, 200, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         this.tabs.get(0).setSelected(true);

@@ -13,7 +13,6 @@ import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.config.type.ModListSorting;
 import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.ConfirmOpenLinkScreen;
 import net.minecraft.client.gui.screen.OptionsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -152,7 +151,7 @@ public class MUIModListScreen extends Screen {
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(10, this.height - 27, 124, 20, DialogTexts.GUI_DONE,
+        this.addButton(new Button(10, this.height - 25, 124, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         this.updateCache();
@@ -286,11 +285,11 @@ public class MUIModListScreen extends Screen {
 
         ModInfo info = this.selectedMod.getModInformation();
         if (info.getModId().equals("minecraft")) {
-            this.openLink("https://minecraft.net", false);
+            MellowUtils.openLink(this, "https://minecraft.net", false);
         } else if (info.getModId().equals("forge")) {
-            this.openLink("https://files.minecraftforge.net", true);
+            MellowUtils.openLink(this, "https://files.minecraftforge.net", true);
         } else {
-            info.getConfigElement("displayURL").ifPresent(displayURL -> this.openLink((String) displayURL, true));
+            info.getConfigElement("displayURL").ifPresent(displayURL -> MellowUtils.openLink(this, (String) displayURL, true));
         }
     }
 
@@ -299,11 +298,11 @@ public class MUIModListScreen extends Screen {
 
         ModInfo info = this.selectedMod.getModInformation();
         if (info.getModId().equals("minecraft")) {
-            this.openLink("https://aka.ms/snapshotbugs?ref=game", false);
+            MellowUtils.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false);
         } else if (info.getModId().equals("forge")) {
-            this.openLink("https://github.com/MinecraftForge/MinecraftForge/issues", true);
+            MellowUtils.openLink(this, "https://github.com/MinecraftForge/MinecraftForge/issues", true);
         } else {
-            if (info.getOwningFile().getIssueURL() != null) this.openLink(info.getOwningFile().getIssueURL().toString(), true);
+            if (info.getOwningFile().getIssueURL() != null) MellowUtils.openLink(this, info.getOwningFile().getIssueURL().toString(), true);
         }
     }
 
@@ -312,18 +311,18 @@ public class MUIModListScreen extends Screen {
 
         ModInfo info = this.selectedMod.getModInformation();
         if (info.getModId().equals("minecraft")) {
-            this.openLink("https://feedback.minecraft.net/hc/en-us/sections/360002267532-Snapshot-Information-and-Changelogs", false);
+            MellowUtils.openLink(this, "https://feedback.minecraft.net/hc/en-us/sections/360002267532-Snapshot-Information-and-Changelogs", false);
         } else if (info.getModId().equals("forge")) {
-            this.openLink("https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.39/forge-1.16.5-36.2.39-changelog.txt", true);
+            MellowUtils.openLink(this, "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.39/forge-1.16.5-36.2.39-changelog.txt", true);
         } else {
-            info.getConfigElement("changelogsURL").ifPresent(changelogsURL -> this.openLink((String) changelogsURL, true));
+            info.getConfigElement("changelogsURL").ifPresent(changelogsURL -> MellowUtils.openLink(this, (String) changelogsURL, true));
         }
     }
 
     public void getModUpdateSite() {
         if (this.selectedMod == null) return;
         VersionChecker.CheckResult checkResult = VersionChecker.getResult(this.selectedMod.getModInformation());
-        if (checkResult.url != null) this.openLink(checkResult.url, true);
+        if (checkResult.url != null) MellowUtils.openLink(this, checkResult.url, true);
     }
 
     private void updateCache() {
@@ -380,13 +379,6 @@ public class MUIModListScreen extends Screen {
         this.websiteButton.y = yOffset + 20;
         this.issueTrackerButton.y = yOffset + 20;
         this.updateModButton.y = yOffset + 20;
-    }
-
-    private void openLink(String url, boolean showWarning) {
-        if (this.minecraft != null) this.minecraft.setScreen(new ConfirmOpenLinkScreen(confirmed -> {
-            if (confirmed) Util.getPlatform().openUri(url);
-            this.minecraft.setScreen(this);
-        }, url, !showWarning));
     }
 
     private boolean defaultModIDs() {

@@ -1,7 +1,11 @@
 package melonystudios.mellowui.config;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.client.settings.SliderPercentageOption;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
@@ -20,4 +24,15 @@ public class VanillaConfigEntries {
             options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslationTextComponent("config.minecraft.realms_notifications.desc"),
             options -> options.realmsNotifications, (options, newValue) -> options.realmsNotifications = newValue);
+
+    // Updated options
+    public static final SliderPercentageOption FOV_EFFECTS = new SliderPercentageOption("options.fovEffectScale", 0, 1, 0,
+            options -> Math.pow(options.fovEffectScale, 2),
+            (options, newValue) -> options.fovEffectScale = MathHelper.sqrt(newValue),
+            (options, slider) -> {
+        slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("options.fovEffectScale.tooltip"), 200));
+        double percentage = slider.toPct(slider.get(options));
+        ITextComponent translation = new TranslationTextComponent("options.fovEffectScale");
+        return percentage == 0 ? DialogTexts.optionStatus(translation, false) : new TranslationTextComponent("options.percent_value", translation, (int) (percentage * 100));
+    });
 }

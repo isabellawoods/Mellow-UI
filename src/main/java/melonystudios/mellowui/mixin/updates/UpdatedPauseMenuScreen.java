@@ -2,18 +2,26 @@ package melonystudios.mellowui.mixin.updates;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.type.TwoStyles;
+import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
+import melonystudios.mellowui.screen.widget.ImageSetButton;
+import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.advancements.AdvancementsScreen;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.realms.RealmsBridgeScreen;
+import net.minecraft.util.SharedConstants;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.gui.NotificationModUpdateScreen;
+import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,6 +32,8 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
     @Shadow
     @Final
     private boolean showPauseMenu;
+    @Unique
+    private NotificationModUpdateScreen modUpdateNotification;
 
     public UpdatedPauseMenuScreen(ITextComponent title) {
         super(title);
@@ -54,9 +64,30 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
                     this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
             })).active = this.minecraft.level != null;
 
-            // Mods
-            this.addButton(new Button(this.width / 2 - 102, this.height / 2 - 10 + yOffset, 204, 20, new TranslationTextComponent("fml.menu.mods"), button ->
-                    this.minecraft.setScreen(MellowUtils.modList(this))));
+            Button modsButton;
+            if (MellowConfigs.CLIENT_CONFIGS.pauseMenuModButton.get() == TwoStyles.OPTION_1) {
+                // Mods
+                modsButton = this.addButton(new Button(this.width / 2 - 102, this.height / 2 - 10 + yOffset, 204, 20, new TranslationTextComponent("fml.menu.mods"), button ->
+                        this.minecraft.setScreen(MellowUtils.modList(this))));
+            } else {
+                String feedbackURL = SharedConstants.getCurrentVersion().isStable() ? "https://aka.ms/javafeedback?ref=game" : "https://aka.ms/snapshotfeedback?ref=game";
+
+                // Give Feedback
+                this.addButton(new Button(this.width / 2 - 102, this.height / 2 - 10 + yOffset, 98, 20, new TranslationTextComponent("menu.sendFeedback"), button ->
+                        MellowUtils.openLink(this, feedbackURL, false)));
+
+                // Report Bugs
+                this.addButton(new Button(this.width / 2 + 4, this.height / 2 - 10 + yOffset, 98, 20, new TranslationTextComponent("menu.reportBugs"), button ->
+                        MellowUtils.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false)));
+
+                // Mods
+                modsButton = this.addButton(new ImageSetButton(this.width / 2 + 106, this.height / 2 - 10 + yOffset, 20, 20,
+                        GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
+                        MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                        new TranslationTextComponent("fml.menu.mods")));
+            }
+
+            this.modUpdateNotification = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, MellowConfigs.CLIENT_CONFIGS.pauseMenuModButton.get() == TwoStyles.OPTION_2);
 
             // Options
             this.addButton(new Button(this.width / 2 - 102, this.height / 2 + 14 + yOffset, 98, 20, new TranslationTextComponent("menu.options"), button ->
@@ -106,6 +137,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             }
 
             super.render(stack, mouseX, mouseY, partialTicks);
+            this.modUpdateNotification.render(stack, mouseX, mouseY, partialTicks);
         }
     }
 }
