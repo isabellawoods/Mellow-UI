@@ -27,12 +27,16 @@ public class MellowConfigEntries {
     public static final IFormattableTextComponent REPLACE_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_1.desc"));
     public static final IFormattableTextComponent PAUSE_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_2.desc"));
     public static final IFormattableTextComponent MOD_LIST_STYLE_TOOLTIP = new TranslationTextComponent("config.mellowui.mod_list_style.desc");
+    public static final IFormattableTextComponent MELLOMEDLEY_MAIN_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellomedley.main_menu_mod_button.desc", new TranslationTextComponent("config.mellomedley.main_menu_mod_button.option_1.desc"));
+    public static final IFormattableTextComponent BELOW_OPTIONS_TOOLTIP = new TranslationTextComponent("config.mellomedley.main_menu_mod_button.desc", new TranslationTextComponent("config.mellomedley.main_menu_mod_button.option_2.desc"));
 
     // Separators
     public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.main_menu"));
     public static final SeparatorOption PAUSE_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.pause_menu"));
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
     public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.realms").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xE43DC3))));
+    public static final SeparatorOption ACCESSIBILITY_SEPARATOR = new SeparatorOption(new TranslationTextComponent("menu.minecraft.accessibility_settings.title"));
+    public static final SeparatorOption MUSIC_AND_SOUNDS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("options.sounds.title"));
 
     // Mellow UI options
     public static final SliderPercentageOption PANORAMA_CAMERA_PITCH = new SliderPercentageOption("config.mellowui.panorama_camera_pitch", -90, 90, 1,
@@ -42,6 +46,8 @@ public class MellowConfigEntries {
                 slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.mellowui.panorama_camera_pitch.desc"), TOOLTIP_MAX_WIDTH));
                 return new TranslationTextComponent("config.mellowui.panorama_camera_pitch", new TranslationTextComponent("config.mellowui.panorama_camera_pitch.pitch", Math.round(slider.get(options))));
             });
+    public static final BooleanOption PANORAMA_BOBBING = new BooleanOption("config.mellowui.panorama_bobbing", new TranslationTextComponent("config.mellowui.panorama_bobbing.desc"),
+            options -> CLIENT_CONFIGS.panoramaBobbing.get(), (options, newValue) -> CLIENT_CONFIGS.panoramaBobbing.set(newValue));
     public static final TextFieldOption MONOCHROME_LOADING_SCREEN_COLOR = new TextFieldOption("config.mellowui.monochrome_loading_screen_color",
             new TranslationTextComponent("config.mellowui.monochrome_loading_screen_color.desc"),
             CLIENT_CONFIGS.monochromeLoadingScreenColor.get().toString(),
@@ -62,8 +68,8 @@ public class MellowConfigEntries {
                     setter.accept(Integer.toString(MathHelper.clamp(newValue, 0, 16777215)));
                 } catch (NumberFormatException ignored) {}
             });
-    public static final TextFieldOption MELLO_SPLASH_TEXT_COLOR = new TextFieldOption("config.mellowui.mello_splash_text_color",
-            new TranslationTextComponent("config.mellowui.mello_splash_text_color.desc"),
+    public static final TextFieldOption MELLO_SPLASH_TEXT_COLOR = new TextFieldOption("config.mellomedley.splash_text_color",
+            new TranslationTextComponent("config.mellomedley.splash_text_color.desc"),
             CLIENT_CONFIGS.mellomedleySplashTextColor.get().toString(),
             newValue -> CLIENT_CONFIGS.mellomedleySplashTextColor.set(Integer.valueOf(newValue)),
             (text, setter) -> {
@@ -98,6 +104,18 @@ public class MellowConfigEntries {
                         option.setTooltip(Minecraft.getInstance().font.split(PAUSE_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 }
                 return new TranslationTextComponent("config.mellowui.pause_menu_mod_button", new TranslationTextComponent("config.mellowui.pause_menu_mod_button." + CLIENT_CONFIGS.pauseMenuModButton.get().toString()));
+            });
+    public static final IteratableOption MELLOMEDLEY_MAIN_MENU_MOD_BUTTON = new IteratableOption("config.mellomedley.main_menu_mod_button",
+            (options, identifier) -> CLIENT_CONFIGS.mellomedleyMainMenuModButton.set(TwoStyles.byId(CLIENT_CONFIGS.mellomedleyMainMenuModButton.get().getId() + identifier)),
+            (options, option) -> {
+                switch (CLIENT_CONFIGS.mellomedleyMainMenuModButton.get()) {
+                    case OPTION_1:
+                        option.setTooltip(Minecraft.getInstance().font.split(BELOW_OPTIONS_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        break;
+                    case OPTION_2:
+                        option.setTooltip(Minecraft.getInstance().font.split(MELLOMEDLEY_MAIN_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                }
+                return new TranslationTextComponent("config.mellomedley.main_menu_mod_button", new TranslationTextComponent("config.mellomedley.main_menu_mod_button." + CLIENT_CONFIGS.mellomedleyMainMenuModButton.get().toString()));
             });
     public static final BooleanOption LEGACY_BUTTON_COLORS = new BooleanOption("config.mellowui.legacy_button_colors", new TranslationTextComponent("config.mellowui.legacy_button_colors.desc"),
             options -> CLIENT_CONFIGS.legacyButtonColors.get(), (options, newValue) -> CLIENT_CONFIGS.legacyButtonColors.set(newValue));

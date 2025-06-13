@@ -17,24 +17,19 @@ public class LogoRenderer {
     public static final ResourceLocation EDITION_SUBTITLE = MellowUI.gui("title/edition");
     public static final ResourceLocation OLD_MINECRAFT_LOGO = new ResourceLocation("textures/gui/title/minecraft.png");
     public static final ResourceLocation OLD_EDITION_SUBTITLE = new ResourceLocation("textures/gui/title/edition.png");
-    private final boolean showEasterEgg = new Random().nextFloat() < 1.0E-4;
-    private final boolean keepLogoThroughFade;
 
-    public LogoRenderer(boolean keepLogoThroughFade) {
-        this.keepLogoThroughFade = keepLogoThroughFade;
+    public static void renderUpdatedLogo(MatrixStack stack, int screenWidth, float transparency, boolean keepLogoThroughFade) {
+        renderUpdatedLogo(stack, screenWidth, transparency, 30, keepLogoThroughFade);
     }
 
-    public void renderUpdatedLogo(MatrixStack stack, int screenWidth, float transparency) {
-        this.renderUpdatedLogo(stack, screenWidth, transparency, 30);
-    }
-
-    public void renderUpdatedLogo(MatrixStack stack, int screenWidth, float transparency, int height) {
+    public static void renderUpdatedLogo(MatrixStack stack, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
         Minecraft minecraft = Minecraft.getInstance();
-        RenderSystem.color4f(1, 1, 1, this.keepLogoThroughFade ? 1 : transparency);
+        RenderSystem.color4f(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
 
         // Logo
         int logoX = screenWidth / 2 - 128;
-        minecraft.getTextureManager().bind(this.showEasterEgg ? MINCERAFT_LOGO : MINECRAFT_LOGO);
+        boolean showEasterEgg = new Random().nextFloat() < 1.0E-4;
+        minecraft.getTextureManager().bind(showEasterEgg ? MINCERAFT_LOGO : MINECRAFT_LOGO);
         AbstractGui.blit(stack, logoX, height, 0, 0, 256, 44, 256, 64);
 
         // Edition
@@ -45,18 +40,19 @@ public class LogoRenderer {
         RenderSystem.color4f(1, 1, 1, 1);
     }
 
-    public void renderOldLogo(MatrixStack stack, Screen screen, int screenWidth, float transparency) {
-        this.renderOldLogo(stack, screen, screenWidth, transparency, 30);
+    public static void renderOldLogo(MatrixStack stack, Screen screen, int screenWidth, float transparency, boolean keepLogoThroughFade) {
+        renderOldLogo(stack, screen, screenWidth, transparency, 30, keepLogoThroughFade);
     }
 
-    public void renderOldLogo(MatrixStack stack, Screen screen, int screenWidth, float transparency, int height) {
+    public static void renderOldLogo(MatrixStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
         Minecraft minecraft = Minecraft.getInstance();
 
         // Logo
         int logoX = screenWidth / 2 - 137;
+        boolean showEasterEgg = new Random().nextFloat() < 1.0E-4;
         minecraft.getTextureManager().bind(OLD_MINECRAFT_LOGO);
-        RenderSystem.color4f(1, 1, 1, this.keepLogoThroughFade ? 1 : transparency);
-        if (this.showEasterEgg) {
+        RenderSystem.color4f(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
+        if (showEasterEgg) {
             screen.blitOutlineBlack(logoX, height, (i1, i2) -> {
                 screen.blit(stack, i1, i2, 0, 0, 99, 44);
                 screen.blit(stack, i1 + 99, i2, 129, 0, 27, 44);
@@ -78,9 +74,9 @@ public class LogoRenderer {
         RenderSystem.color4f(1, 1, 1, 1);
     }
 
-    public static void renderMellomedleyLogo(MatrixStack stack, int x, int y, int width, int height, float transparency) {
+    public static void renderMellomedleyLogo(MatrixStack stack, int x, int y, int width, int height, float transparency, boolean keepLogoThroughFade) {
         RenderSystem.enableBlend();
-        RenderSystem.color4f(1, 1, 1, transparency);
+        RenderSystem.color4f(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
         Minecraft.getInstance().getTextureManager().bind(GUITextures.MELLOMEDLEY_LOGO);
         AbstractGui.blit(stack, x, y, 0, 0, width, height, width, height);
         RenderSystem.color4f(1, 1, 1, 1);

@@ -7,6 +7,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.list.OptionsList;
 import melonystudios.mellowui.screen.updated.MUIControlsScreen;
 import melonystudios.mellowui.screen.updated.MUIModListScreen;
+import melonystudios.mellowui.screen.updated.MUIOptionsScreen;
 import melonystudios.mellowui.screen.updated.MUIPackScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -26,7 +27,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.text.DateFormat;
@@ -42,7 +42,9 @@ public class MellowUtils {
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
     public static final int TOOLTIP_MAX_WIDTH = 200;
     public static final int DEFAULT_TITLE_HEIGHT = 12;
+    public static final int TABBED_TITLE_HEIGHT = 3;
     public static final int PAUSE_MENU_Y_OFFSET = 0;
+    public static float PANORAMA_PITCH = 10;
 
     public static Screen modList(Screen lastScreen) {
         switch (MellowConfigs.CLIENT_CONFIGS.modListStyle.get()) {
@@ -53,7 +55,6 @@ public class MellowUtils {
                     Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
                     return (Screen) screen.newInstance();
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
-                    LogManager.getLogger().error(new TranslationTextComponent("error.mellowui.compatibility.catalogue_mod_list"));
                     return new MUIModListScreen(lastScreen);
                 }
             }
@@ -70,6 +71,11 @@ public class MellowUtils {
     public static Screen controls(Screen lastScreen, Minecraft minecraft) {
         if (MellowConfigs.CLIENT_CONFIGS.updateControlsMenu.get()) return new MUIControlsScreen(lastScreen, minecraft.options);
         else return new ControlsScreen(lastScreen, minecraft.options);
+    }
+
+    public static Screen options(Screen lastScreen, Minecraft minecraft) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateOptionsMenu.get()) return new MUIOptionsScreen(lastScreen, minecraft.options);
+        else return new OptionsScreen(lastScreen, minecraft.options);
     }
 
     public static void scissor(Runnable toCut, int startX, int endX, int y0, int y1, int height) {

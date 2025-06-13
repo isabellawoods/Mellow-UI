@@ -9,6 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
+import static melonystudios.mellowui.util.MellowUtils.TOOLTIP_MAX_WIDTH;
 
 public class VanillaConfigEntries {
     // Backported options
@@ -20,6 +21,13 @@ public class VanillaConfigEntries {
             (options, slider) -> new TranslationTextComponent("options.percent_value", new TranslationTextComponent("config.minecraft.panorama_scroll_speed"), (int) (slider.get(options) * 100)));
     public static final BooleanOption HIDE_SPLASH_TEXTS = new BooleanOption("config.minecraft.hide_splash_texts", new TranslationTextComponent("config.minecraft.hide_splash_texts.desc"),
             options -> CLIENT_CONFIGS.hideSplashTexts.get(), (options, newValue) -> CLIENT_CONFIGS.hideSplashTexts.set(newValue));
+    public static final SliderPercentageOption MENU_BACKGROUND_BLURRINESS = new SliderPercentageOption("config.minecraft.menu_background_blurriness", 0, 10, 1,
+            options -> CLIENT_CONFIGS.menuBackgroundBlurriness.get().doubleValue(),
+            (options, newValue) -> CLIENT_CONFIGS.menuBackgroundBlurriness.set((int) Math.round(newValue)),
+            (options, slider) -> {
+                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.menu_background_blurriness.desc"), TOOLTIP_MAX_WIDTH));
+                return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("config.minecraft.menu_background_blurriness"), (int) Math.round(slider.get(options)));
+            });
     public static final BooleanOption SHOW_MUSIC_TOAST = new BooleanOption("config.minecraft.show_music_toast", new TranslationTextComponent("config.minecraft.show_music_toast.desc"),
             options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslationTextComponent("config.minecraft.realms_notifications.desc"),
@@ -30,7 +38,7 @@ public class VanillaConfigEntries {
             options -> Math.pow(options.fovEffectScale, 2),
             (options, newValue) -> options.fovEffectScale = MathHelper.sqrt(newValue),
             (options, slider) -> {
-        slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("options.fovEffectScale.tooltip"), 200));
+        slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("options.fovEffectScale.tooltip"), TOOLTIP_MAX_WIDTH));
         double percentage = slider.toPct(slider.get(options));
         ITextComponent translation = new TranslationTextComponent("options.fovEffectScale");
         return percentage == 0 ? DialogTexts.optionStatus(translation, false) : new TranslationTextComponent("options.percent_value", translation, (int) (percentage * 100));

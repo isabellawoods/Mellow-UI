@@ -13,6 +13,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.realms.RealmsBridgeScreen;
 import net.minecraft.util.SharedConstants;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -56,12 +57,16 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             this.addButton(new Button(this.width / 2 - 102, this.height / 2 - 34 + yOffset, 98, 20, new TranslationTextComponent("gui.advancements"), button -> {
                 if (this.minecraft.player != null && this.minecraft.player.connection != null)
                     this.minecraft.setScreen(new AdvancementsScreen(this.minecraft.player.connection.getAdvancements()));
+            }, (button, stack, mouseX, mouseY) -> {
+                if (this.minecraft.level == null) MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("error.mellowui.cannot_load_advancements").withStyle(TextFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;
 
             // Statistics
             this.addButton(new Button(this.width / 2 + 4, this.height / 2 - 34 + yOffset, 98, 20, new TranslationTextComponent("gui.stats"), button -> {
                 if (this.minecraft.player != null)
                     this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
+            }, (button, stack, mouseX, mouseY) -> {
+                if (this.minecraft.level == null) MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("error.mellowui.cannot_load_statistics").withStyle(TextFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;
 
             Button modsButton;
@@ -122,6 +127,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             }));
 
             if (!this.minecraft.isLocalServer()) saveAndQuit.setMessage(new TranslationTextComponent("menu.disconnect"));
+            if (this.minecraft.level == null) saveAndQuit.active = false;
         }
     }
 

@@ -1,6 +1,7 @@
 package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
@@ -31,7 +32,9 @@ public class MUIPanoramaRendererMixin {
         float scrollSpeed = (float) ((double) partialTicks * MellowConfigs.CLIENT_CONFIGS.panoramaScrollSpeed.get());
         this.spin = wrap(this.spin + scrollSpeed * 0.1F, 360);
         this.bob = wrap(this.bob + scrollSpeed * 0.001F, (float) (Math.PI * 2)); // "bob" is only used prior to 1.20 to make the panorama, well, bob a little (from -4º to 4º). ~isa 23-3-25
-        this.cubeMap.render(this.minecraft, MellowConfigs.CLIENT_CONFIGS.panoramaCameraPitch.get(), -this.spin, alpha);
+        float pitch = MellowConfigs.CLIENT_CONFIGS.panoramaBobbing.get() ? MellowConfigs.CLIENT_CONFIGS.panoramaCameraPitch.get() : this.bob;
+        MellowUtils.PANORAMA_PITCH = pitch;
+        this.cubeMap.render(this.minecraft, pitch, -this.spin, alpha);
     }
 
     @Unique

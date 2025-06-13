@@ -4,9 +4,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.renderer.LogoRenderer;
+import melonystudios.mellowui.renderer.MainMenuMethods;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.screen.WidgetTextureSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
+import melonystudios.mellowui.screen.updated.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.updated.AttributionsScreen;
 import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
 import melonystudios.mellowui.screen.widget.IconButton;
@@ -40,7 +42,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(value = MainMenuScreen.class, priority = 900)
-public abstract class UpdatedMainMenuScreen extends Screen {
+public abstract class UpdatedMainMenuScreen extends Screen implements MainMenuMethods {
     @Mutable @Shadow @Final private RenderSkybox panorama;
     @Shadow(remap = false)
     private NotificationModUpdateScreen modUpdateNotification;
@@ -55,23 +57,39 @@ public abstract class UpdatedMainMenuScreen extends Screen {
     @Shadow protected abstract void createNormalMenuOptions(int y, int rowHeight);
     @Shadow protected abstract boolean realmsNotificationsEnabled();
     @Shadow protected abstract void realmsButtonClicked();
-    @Unique
-    private static LogoRenderer LOGO_RENDERER = new LogoRenderer(false);
+    @Unique public boolean keepLogoThroughFade;
 
     public UpdatedMainMenuScreen(ITextComponent title) {
         super(title);
     }
 
+    @Override
+    public boolean keepsLogoThroughFade() {
+        return this.keepLogoThroughFade;
+    }
+
+    @Override
+    public void keepLogoThroughFade(boolean keep) {
+        this.keepLogoThroughFade = keep;
+    }
+
     @Inject(method = "<init>(Z)V", at = @At("TAIL"))
     public void constructor(boolean fading, CallbackInfo callback) {
-        MellowUtils.PANORAMA = this.panorama;
+        if (!this.panorama.equals(MellowUtils.PANORAMA)) MellowUtils.PANORAMA = this.panorama;
     }
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void init(CallbackInfo callback) {
+        // Go to Mellomedley's main menu if set.
         if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3) {
-            this.minecraft.setScreen(new MellomedleyMainMenuScreen(this.fading));
+            this.minecraft.setScreen(new MellomedleyMainMenuScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
             return;
+        }
+
+        // Open accessibility onboarding if it hasn't been shown (Mellomedley's main menu opens this by itself).
+        if (MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()) {
+            this.keepLogoThroughFade(true);
+            this.minecraft.setScreen(new AccessibilityOnboardingScreen(() -> this.minecraft.setScreen(this)));
         }
 
         if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
@@ -107,7 +125,8 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
             // Language
             this.addButton(new ImageButton(this.width / 2 - 124, buttonsPos + 72 + 12, 20, 20, 0, 106, 20,
-                    Button.WIDGETS_LOCATION, 256, 256, button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())),
+                    Button.WIDGETS_LOCATION, 256, 256, button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
+                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
 
             // Options
@@ -118,9 +137,10 @@ public abstract class UpdatedMainMenuScreen extends Screen {
             this.addButton(new Button(this.width / 2 + 2, buttonsPos + 72 + 12, 98, 20,
                     new TranslationTextComponent("menu.quit"), button -> this.minecraft.stop()));
 
-            // Accessibility
+            // Accessibility Settings
             this.addButton(new ImageButton(this.width / 2 + 104, buttonsPos + 72 + 12, 20, 20, 0, 0, 20,
-                    GUITextures.ACCESSIBILITY_BUTTON, 32, 64, button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)),
+                    GUITextures.ACCESSIBILITY_BUTTON, 32, 64, button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), (button, stack, mouseX, mouseY) ->
+                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.accessibility")));
 
             // Realms availability
@@ -185,13 +205,13 @@ public abstract class UpdatedMainMenuScreen extends Screen {
 
             switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
                 case OPTION_1: // Pre 1.19
-                    LOGO_RENDERER.renderOldLogo(stack, this, this.width, buttonAlpha);
+                    LogoRenderer.renderOldLogo(stack, this, this.width, buttonAlpha, this.keepLogoThroughFade);
                     break;
                 case OPTION_2: // 1.20 and above
-                    LOGO_RENDERER.renderUpdatedLogo(stack, this.width, buttonAlpha);
+                    LogoRenderer.renderUpdatedLogo(stack, this.width, buttonAlpha, this.keepLogoThroughFade);
                     break;
                 case OPTION_3: // Mellomedley's logo
-                    LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, buttonAlpha);
+                    LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, buttonAlpha, this.keepLogoThroughFade);
                     break;
             }
 

@@ -12,6 +12,8 @@ public class GUITextures {
     public static final WidgetTextureSet CONFIGURE_SET = new WidgetTextureSet(gui("widget/icon/configure"), gui("widget/icon/configure_highlighted"), gui("widget/icon/configure_disabled"));
     public static final WidgetTextureSet OPEN_FOLDER_SET = new WidgetTextureSet(gui("widget/icon/open_folder"), gui("widget/icon/open_folder_highlighted"));
     public static final WidgetTextureSet CHANGELOGS_SET = new WidgetTextureSet(gui("widget/icon/changelogs"), gui("widget/icon/changelogs_highlighted"));
+    public static final WidgetTextureSet ACCESSIBILITY_SET = new WidgetTextureSet(gui("widget/icon/accessibility"), gui("widget/icon/accessibility_highlighted"));
+    public static final WidgetTextureSet LANGUAGE_SET = new WidgetTextureSet(gui("widget/icon/language"), gui("widget/icon/language_highlighted"));
 
     // Slots
     public static final ResourceLocation SLOT_HIGHLIGHT_BACK = gui("miscellaneous/slot_highlight_back");

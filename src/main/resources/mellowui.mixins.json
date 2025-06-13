@@ -10,6 +10,7 @@
     "client.MUIMusicTickerMixin",
     "client.MUIPanoramaRendererMixin",
     "client.MUISubtitleOverlayMixin",
+    "forge.MUIConfigGUIHandlerMixin",
     "forge.MUIForgeInGameGUIMixin",
     "screen.MUIAccessibilityScreenMixin",
     "screen.MUIContainerScreenMixin",

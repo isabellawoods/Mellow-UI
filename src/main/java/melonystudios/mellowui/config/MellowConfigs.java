@@ -14,11 +14,14 @@ public class MellowConfigs {
     public final ForgeConfigSpec.DoubleValue panoramaScrollSpeed;
     public final ForgeConfigSpec.BooleanValue hideSplashTexts;
     public final ForgeConfigSpec.BooleanValue showMusicToast;
+    public final ForgeConfigSpec.IntValue menuBackgroundBlurriness;
+    public final ForgeConfigSpec.BooleanValue onboardAccessibility;
 
     // Mellow UI Configs
     public final ForgeConfigSpec.IntValue monochromeLoadingScreenColor;
     public final ForgeConfigSpec.IntValue splashTextColor;
     public final ForgeConfigSpec.IntValue panoramaCameraPitch;
+    public final ForgeConfigSpec.BooleanValue panoramaBobbing;
     public final ForgeConfigSpec.BooleanValue legacyButtonColors;
     public final ForgeConfigSpec.BooleanValue scrollingText;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuModButton;
@@ -27,6 +30,7 @@ public class MellowConfigs {
 
     // Mellomedley Configs
     public final ForgeConfigSpec.IntValue mellomedleySplashTextColor;
+    public final ForgeConfigSpec.EnumValue<TwoStyles> mellomedleyMainMenuModButton;
 
     // Screen Toggles
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuStyle;
@@ -54,6 +58,8 @@ public class MellowConfigs {
         this.panoramaScrollSpeed = builder.comment("Changes the scrolling speed of the panorama in the menus.").defineInRange("panoramaScrollSpeed", 1F, 0, 1);
         this.hideSplashTexts = builder.comment("Toggles the ability to show or hide splashes on the main menu.").define("hideSplashTexts", false);
         this.showMusicToast = builder.comment("Shows a toast with the name of the currently playing song.").define("showMusicToast", false);
+        this.menuBackgroundBlurriness = builder.comment("How blurry the panorama background should be.").defineInRange("menuBackgroundBlurriness", 5, 0, 10);
+        this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").define("onboardAccessibility", true);
         builder.pop();
 
         builder.push("forgeOptions");
@@ -64,6 +70,7 @@ public class MellowConfigs {
         this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").defineInRange("monochromeLoadingScreenColor", 0, 0, 0xFFFFFF);
         this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").defineInRange("splashTextColor", 0xFFFF00, 0, 0xFFFFFF);
         this.panoramaCameraPitch = builder.comment("The pitch used by the camera in the panorama. Defaults to 10.").defineInRange("panoramaCameraPitch", 10, -90, 90);
+        this.panoramaBobbing = builder.comment("Whether the panorama should bob up and down instead of being at a consistent pitch.").define("panoramaBobbing", false);
         this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
         this.scrollingText = builder.comment("Whether the text in buttons should scroll if it's too long instead of rendering on top of other widgets.").define("scrollingText", true);
         this.mainMenuModButton = builder.comment("Where the 'Mods' button should be located in the main menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Realms.").defineEnum("mainMenuModButton", ThreeStyles.OPTION_1);
@@ -89,6 +96,7 @@ public class MellowConfigs {
 
         builder.push("mellomedley");
         this.mellomedleySplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").defineInRange("splashTextColor", 0xBDCF73, 0, 0xFFFFFF);
+        this.mellomedleyMainMenuModButton = builder.comment("Where the 'Mods' button should be located in Mellomedley's main menu. Rearranges buttons to fit.", "Option 1 = Below 'Options' | Option 2 = With Accessibility and Language").defineEnum("mainMenuModButton", TwoStyles.OPTION_1);
         builder.pop();
     }
 }

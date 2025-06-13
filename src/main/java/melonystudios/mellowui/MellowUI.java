@@ -1,8 +1,7 @@
 package melonystudios.mellowui;
 
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.option.MellowOptionsScreen;
-import net.minecraft.client.Minecraft;
+import melonystudios.mellowui.screen.option.MellowUIOptionsScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,7 +27,7 @@ public class MellowUI {
 
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MellowConfigs.CLIENT_SPEC, "melonystudios/mellowui-client.toml");
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, lastScreen) -> new MellowOptionsScreen(lastScreen, Minecraft.getInstance().options));
+        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options));
     }
 
     public static ResourceLocation mellowUI(String name) {
