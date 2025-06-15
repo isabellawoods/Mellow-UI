@@ -110,19 +110,19 @@ public class MUIModListScreen extends Screen {
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }));
         // Configure button
-        this.addButton(this.configButton = new ImageSetButton(113, 14, 20, 20, GUITextures.CONFIGURE_SET,
+        this.addButton(this.configButton = new ImageSetButton(114, 14, 20, 20, GUITextures.CONFIGURE_SET,
                 button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.configure"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
         this.configButton.active = false;
 
         // Search field
-        this.searchField = new TextFieldWidget(this.minecraft.font, 11, 38, 98, 20, new TranslationTextComponent("fml.menu.mods.search"));
+        this.searchField = new TextFieldWidget(this.minecraft.font, 11, 39, 98, 18, new TranslationTextComponent("fml.menu.mods.search"));
         this.searchField.setFocus(false);
         this.searchField.setCanLoseFocus(true);
         this.addWidget(this.searchField);
 
         // Open mods folder button
-        this.addButton(new ImageSetButton(113, 38, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addButton(new ImageSetButton(114, 38, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
@@ -130,14 +130,16 @@ public class MUIModListScreen extends Screen {
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
         int width = maxGUIScale ? 100 : 150;
         int buttonOffset = width + 4;
+        ITextComponent updateAvailable = new TranslationTextComponent("button.mellowui.update_available").withStyle(style -> style.withColor(Color.fromRgb(MellowUtils.highContrastEnabled() ?
+                0x57FFE1 : 0x41F384)).withUnderlined(true));
+
         this.addButton(this.websiteButton = new Button(140, 120, width, 20,
                 new TranslationTextComponent("button.mellowui.website"), button -> this.getModWebsite()));
         this.websiteButton.active = false;
         this.addButton(this.issueTrackerButton = new Button(140 + buttonOffset, 120, width, 20,
                 new TranslationTextComponent("button.mellowui.report_issues"), button -> this.getModIssueTracker()));
         this.issueTrackerButton.active = false;
-        this.addButton(this.updateModButton = new Button(140 + buttonOffset * 2, 120, width, 20,
-                new TranslationTextComponent("button.mellowui.update_available").withStyle(Style.EMPTY.withColor(Color.fromRgb(0x41F384)).withUnderlined(true)), button -> this.getModUpdateSite()));
+        this.addButton(this.updateModButton = new Button(140 + buttonOffset * 2, 120, width, 20, updateAvailable, button -> this.getModUpdateSite()));
         this.updateModButton.active = false;
         this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton, maxGUIScale);
         this.addButton(this.changelogsButton = new ImageSetButton(this.width - 24, this.height - 24, 20, 20, GUITextures.CHANGELOGS_SET,
@@ -145,10 +147,17 @@ public class MUIModListScreen extends Screen {
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
 
         // Mods list
-        this.list = new MUIModList(this, 124, this.height, 64, this.height - 27, this.font.lineHeight * 2 + 8);
+        this.list = new MUIModList(this, 118, this.height, 56, this.height - 25, this.font.lineHeight * 2 + 8);
         this.list.setLeftPos(10);
         this.list.setRenderTopAndBottom(false);
+        this.list.setRenderBackground(false);
         this.children.add(this.list);
+
+        if (this.selectedMod != null) {
+            this.list.setSelected(this.selectedMod);
+            this.list.setFocused(this.selectedMod);
+            this.list.centerScrollOn(this.selectedMod);
+        }
 
         // Done button
         this.addButton(new Button(10, this.height - 25, 124, 20, DialogTexts.GUI_DONE,
@@ -172,11 +181,6 @@ public class MUIModListScreen extends Screen {
     public void renderModInformation(MatrixStack stack) {
         if (this.minecraft == null) return;
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
-        // Background
-        RenderSystem.enableBlend();
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_MENU_LIST_BACKGROUND : GUITextures.MENU_LIST_BACKGROUND);
-        blit(stack, 136, 0, 0, 0, this.width, this.height, 32, 32); // / 2 + 79
-        RenderSystem.disableBlend();
 
         if (this.selectedMod == null) {
             IFormattableTextComponent noModSelected = new TranslationTextComponent("menu.mellowui.mods.no_mod_selected");
@@ -206,8 +210,8 @@ public class MUIModListScreen extends Screen {
             stack.popPose();
 
             // Authors | Mod ID | Version
-            IFormattableTextComponent authors = new StringTextComponent(info.getConfigElement("authors").isPresent() ? (String) info.getConfigElement("authors").get() : "null")
-                    .withStyle(TextFormatting.WHITE);
+            IFormattableTextComponent authors = info.getConfigElement("authors").isPresent() ? new StringTextComponent(info.getConfigElement("authors").get().toString()).withStyle(TextFormatting.WHITE) :
+                    new TranslationTextComponent("menu.mellowui.mods.authors.not_available");
             IFormattableTextComponent modID = new StringTextComponent(info.getModId()).withStyle(TextFormatting.WHITE);
             IFormattableTextComponent version = new StringTextComponent(MavenVersionStringHelper.artifactVersionToString(info.getVersion())).withStyle(TextFormatting.WHITE);
 
@@ -245,7 +249,7 @@ public class MUIModListScreen extends Screen {
     }
 
     public void setSelected(MUIModList.Mod modEntry) {
-        this.selectedMod = modEntry == this.selectedMod ? null : modEntry;
+        this.selectedMod = modEntry;
         this.updateCache();
     }
 

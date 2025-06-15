@@ -6,7 +6,7 @@
   "subtitles.space": " ",
 
   "accessibility_onboarding.screen_title": "Accessibility Onboarding",
-  "accessibility_onboarding.enable_narrator": "Press tab, then enter to enable the narrator",
+  "accessibility_onboarding.enable_narrator": "Press enter to enable the narrator",
   "accessibility_onboarding.title": "Welcome to Minecraft!\n\nWould you like to enable the Narrator or visit the Accessibility Settings?",
 
   "loading_stage.forge.none": "None",
@@ -18,6 +18,9 @@
   "error.mellowui.compatibility.femalegender_breast_settings": "[Mellow UI] Failed to add 'Breast Settings' button to the updated skin customization menu",
   "error.mellowui.cannot_load_advancements": "Cannot load advancements, as you're not logged into a world or server.",
   "error.mellowui.cannot_load_statistics": "Cannot load statistics, as you're not logged into a world or server.",
+
+  "resource_pack.mellowui.high_contrast": "High Contrast",
+  "resource_pack.mellowui.high_contrast.desc": "Enhances the UI contrast of Minecraft",
 
   "menu.minecraft.credits": "Copyright Mojang AB. Do not distribute!",
   "menu.minecraft.branding": "Minecraft %s/Forge (%s Mods)",
@@ -44,6 +47,7 @@
   "menu.mellowui.mods.no_mod_selected": "No mod selected...",
   "menu.mellowui.mods.mod_id_and_version": "Mod ID: %s | Version: %s",
   "menu.mellowui.mods.authors": "by %s",
+  "menu.mellowui.mods.authors.not_available": "Not Available",
   "menu.mellowui.mods.credits": "Credits: %s",
   "menu.mellowui.mods.license": "License: %s",
   "menu.mellowui.mods.state": "State: %s",
@@ -164,6 +168,10 @@
   "config.mellowui.splash_text_position.desc": "Where the splash texts should be located in the main menu.",
   "config.mellowui.scrolling_text": "Scrolling Text",
   "config.mellowui.scrolling_text.desc": "Makes the text in buttons scroll if it's too long instead of rendering on top of other widgets.",
+  "config.mellowui.background_shaders": "Background Shaders",
+  "config.mellowui.background_shaders.desc": "Whether shaders, like super secret settings and the blur, should render on the panorama.\n§aThis may fix rendering issues in menus added by other mods.",
+  "config.mellowui.blurry_containers": "Blurry Containers",
+  "config.mellowui.blurry_containers.desc": "If the background blur and shaders should be applied on containers like chests, furnaces and your inventory.",
   "config.mellowui.disable_branding": "Disable Branding",
   "config.mellowui.disable_branding.desc": "Disables Forge's branding lines. Branding lines are the Forge and MCP versions on the bottom-left corner.",
 
@@ -187,6 +195,14 @@
   "config.minecraft.hide_splash_texts.desc": "Hides the yellow splash text in the main menu.",
   "config.minecraft.show_music_toast": "Show Music Toast",
   "config.minecraft.show_music_toast.desc": "Displays a toast whenever a song starts playing. The same toast is constantly displayed in the in-game pause menu while a song is playing.",
+  "config.minecraft.high_contrast": "High Contrast",
+  "config.minecraft.high_contrast.desc": "Enhances the contrast of UI elements.",
+  "config.minecraft.high_contrast.not_available": "High Contrast resource pack is not available.",
+  "config.minecraft.directional_audio": "Directional Audio",
+  "config.minecraft.directional_audio.off_desc": "Classic Stereo sound.",
+  "config.minecraft.directional_audio.on_desc": "Uses HRTF-based directional audio to improve the simulation of 3D sound. Requires HRTF compatible audio hardware, and is best experienced with headphones.",
+  "config.minecraft.sound_device": "Device: %s",
+  "config.minecraft.sound_device.default": "System Default",
 
   "config.forge.server_settings.only_in_world": "Server settings should only be configured while in a world!",
 

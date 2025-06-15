@@ -6,7 +6,7 @@
   "subtitles.space": " ",
 
   "accessibility_onboarding.screen_title": "Integração de Acessibilidade",
-  "accessibility_onboarding.enable_narrator": "Pressione Tab, depois Enter para ativar a narração",
+  "accessibility_onboarding.enable_narrator": "Pressione Enter para ativar a narração",
   "accessibility_onboarding.title": "Bem-vindo(a) ao Minecraft!\n\nDeseja ativar a narração ou acessar os ajustes de acessibilidade?",
 
   "loading_stage.forge.none": "Nenhum",
@@ -18,6 +18,9 @@
   "error.mellowui.compatibility.femalegender_breast_settings": "[Mellow UI] Não conseguiu adicionar o botão de 'Ajustes dos peitos' no menu de personalização de skin",
   "error.mellowui.cannot_load_advancements": "Não pôde carregar conquistas, pois você não está em um mundo ou servidor.",
   "error.mellowui.cannot_load_statistics": "Não pôde carregar estatísticas, pois você não está em um mundo ou servidor.",
+
+  "resource_pack.mellowui.high_contrast": "Alto contraste",
+  "resource_pack.mellowui.high_contrast.desc": "Melhora o contraste da interface",
 
   "menu.minecraft.credits": "Direitos autorais da Mojang AB. Não distribua!",
   "menu.minecraft.branding": "Minecraft %s/Forge (%s mods)",
@@ -44,6 +47,7 @@
   "menu.mellowui.mods.no_mod_selected": "Nenhum mod selecionado...",
   "menu.mellowui.mods.mod_id_and_version": "ID do mod: %s | Versão: %s",
   "menu.mellowui.mods.authors": "por %s",
+  "menu.mellowui.mods.authors.not_available": "Não disponível",
   "menu.mellowui.mods.credits": "Créditos: %s",
   "menu.mellowui.mods.license": "Licença: %s",
   "menu.mellowui.mods.state": "Estado: %s",
@@ -164,6 +168,10 @@
   "config.mellowui.splash_text_position.desc": "Onde o texto inicial deve estar no menu principal.",
   "config.mellowui.scrolling_text": "Texto rolante",
   "config.mellowui.scrolling_text.desc": "Quando o texto em um botão é muito longo, o texto será cortado e deslizará para mostrar tudo.",
+  "config.mellowui.background_shaders": "Shaders de fundo",
+  "config.mellowui.background_shaders.desc": "Se shaders, como os ajustes super secretos e o desfoque padrão, devem renderizar no panorama.\n§aIsso pode consertar problemas de renderização em menus de outros mods.",
+  "config.mellowui.blurry_containers": "Desfoque em inventários",
+  "config.mellowui.blurry_containers.desc": "Se o desfoque e shaders devem ser aplicados em inventários como baús, fornalhas e seu inventário.",
   "config.mellowui.disable_branding": "Desabilitar marcações",
   "config.mellowui.disable_branding.desc": "Desabilita as linhas de marcações. Essas linhas são as versões do Forge e MCP que aparecem no canto inferior-esquerdo.",
 
@@ -185,8 +193,16 @@
   "config.minecraft.menu_background_blurriness.desc": "Altera o desfoque de fundo dos menus.",
   "config.minecraft.hide_splash_texts": "Ocultar textos iniciais",
   "config.minecraft.hide_splash_texts.desc": "Oculta os textos iniciais amarelos no menu principal.",
-  "config.minecraft.show_music_toast": "Mostrar toast musical",
-  "config.minecraft.show_music_toast.desc": "Mostra uma toast quando uma música começa a tocar. A mesma toast é constantemente mostrada no menu de pausa quando uma música está tocando.",
+  "config.minecraft.show_music_toast": "Mostrar faixa musical",
+  "config.minecraft.show_music_toast.desc": "Exibe um balão assim que uma música começa a tocar. O balão é exibido constantemente no menu de pausa do jogo enquanto a música é tocada.",
+  "config.minecraft.high_contrast": "Alto contraste",
+  "config.minecraft.high_contrast.desc": "Melhora o contraste da interface.",
+  "config.minecraft.high_contrast.not_available": "O alto contraste não está disponível.",
+  "config.minecraft.directional_audio": "Áudio posicional",
+  "config.minecraft.directional_audio.off_desc": "Som estéreo clássico.",
+  "config.minecraft.directional_audio.on_desc": "Áudio posicional baseado em HRTF para aprimorar a simulação de som 3D. Requer dispositivo de áudio compatível com HRTF. Para uma melhor experiência, use fones de ouvido.",
+  "config.minecraft.sound_device": "Áudio: %s",
+  "config.minecraft.sound_device.default": "Padrão (sistema)",
 
   "config.forge.server_settings.only_in_world": "Opções do mundo só devem ser alteradas enquanto em um mundo!",
 

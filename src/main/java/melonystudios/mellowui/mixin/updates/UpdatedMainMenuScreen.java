@@ -3,8 +3,8 @@ package melonystudios.mellowui.mixin.updates;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
+import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
-import melonystudios.mellowui.renderer.MainMenuMethods;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.screen.WidgetTextureSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
@@ -42,7 +42,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(value = MainMenuScreen.class, priority = 900)
-public abstract class UpdatedMainMenuScreen extends Screen implements MainMenuMethods {
+public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceMethods.MainMenuMethods {
     @Mutable @Shadow @Final private RenderSkybox panorama;
     @Shadow(remap = false)
     private NotificationModUpdateScreen modUpdateNotification;
@@ -75,7 +75,9 @@ public abstract class UpdatedMainMenuScreen extends Screen implements MainMenuMe
 
     @Inject(method = "<init>(Z)V", at = @At("TAIL"))
     public void constructor(boolean fading, CallbackInfo callback) {
-        if (!this.panorama.equals(MellowUtils.PANORAMA)) MellowUtils.PANORAMA = this.panorama;
+        if (!((InterfaceMethods.PanoramaRendererMethods) MellowUtils.PANORAMA).samePanorama(this.panorama)) {
+            MellowUtils.PANORAMA = this.panorama;
+        }
     }
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
@@ -199,19 +201,20 @@ public abstract class UpdatedMainMenuScreen extends Screen implements MainMenuMe
             if (this.fadeInStart == 0L && this.fading) this.fadeInStart = Util.getMillis();
 
             float overlayTransparency = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
-            MellowUtils.renderPanorama(stack, this.width, this.height, this.fading ? overlayTransparency : 1); // should work the same
+            MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1); // should work the same
+            MellowUtils.renderBackgroundWithShaders(partialTicks);
             float buttonAlpha = this.fading ? MathHelper.clamp(overlayTransparency - 1, 0, 1) : 1;
             int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
 
             switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
                 case OPTION_1: // Pre 1.19
-                    LogoRenderer.renderOldLogo(stack, this, this.width, buttonAlpha, this.keepLogoThroughFade);
+                    LogoRenderer.renderOldLogo(stack, this, this.width, buttonAlpha, this.keepsLogoThroughFade());
                     break;
                 case OPTION_2: // 1.20 and above
-                    LogoRenderer.renderUpdatedLogo(stack, this.width, buttonAlpha, this.keepLogoThroughFade);
+                    LogoRenderer.renderUpdatedLogo(stack, this.width, buttonAlpha, this.keepsLogoThroughFade());
                     break;
                 case OPTION_3: // Mellomedley's logo
-                    LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, buttonAlpha, this.keepLogoThroughFade);
+                    LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, buttonAlpha, this.keepsLogoThroughFade());
                     break;
             }
 

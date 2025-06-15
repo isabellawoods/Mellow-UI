@@ -143,7 +143,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             }
 
             super.render(stack, mouseX, mouseY, partialTicks);
-            this.modUpdateNotification.render(stack, mouseX, mouseY, partialTicks);
+            if (this.modUpdateNotification != null && this.showPauseMenu) this.modUpdateNotification.render(stack, mouseX, mouseY, partialTicks);
         }
     }
 }

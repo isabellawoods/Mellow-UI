@@ -2,6 +2,7 @@ package melonystudios.mellowui.renderer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.Util;
@@ -10,15 +11,15 @@ import net.minecraft.util.math.vector.Vector3f;
 
 public class SplashRenderer {
     public static void defaultSplash(MatrixStack stack, FontRenderer font, String splash, int screenWidth, int textAlpha) {
-        render(stack, font, splash, screenWidth / 2 + 90, 70, MellowConfigs.CLIENT_CONFIGS.splashTextColor.get(), textAlpha);
+        render(stack, font, splash, screenWidth / 2 + 90, 70, MellowUtils.getSplashTextColor(MellowConfigs.CLIENT_CONFIGS.splashTextColor.get()), textAlpha);
     }
 
     public static void updatedSplash(MatrixStack stack, FontRenderer font, String splash, int screenWidth, int textAlpha) {
-        render(stack, font, splash, screenWidth / 2 + 123, 69, MellowConfigs.CLIENT_CONFIGS.splashTextColor.get(), textAlpha);
+        render(stack, font, splash, screenWidth / 2 + 123, 69, MellowUtils.getSplashTextColor(MellowConfigs.CLIENT_CONFIGS.splashTextColor.get()), textAlpha);
     }
 
     public static void mellomedleySplash(MatrixStack stack, FontRenderer font, String splash, int textAlpha) {
-        render(stack, font, splash, 173, 80, MellowConfigs.CLIENT_CONFIGS.mellomedleySplashTextColor.get(), textAlpha);
+        render(stack, font, splash, 173, 80, MellowUtils.getSplashTextColor(MellowConfigs.CLIENT_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
     }
 
     public static void render(MatrixStack stack, FontRenderer font, String splash, int x, int y, int color, int textAlpha) {

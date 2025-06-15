@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
+import melonystudios.mellowui.util.ShaderManager;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.DialogTexts;
@@ -17,12 +19,12 @@ import net.minecraft.network.play.client.CLockDifficultyPacket;
 import net.minecraft.network.play.client.CSetDifficultyPacket;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Difficulty;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
 import java.util.Random;
@@ -34,11 +36,6 @@ public class MUIOptionsScreen extends SettingsScreen {
 
     public MUIOptionsScreen(Screen lastScreen, GameSettings options) {
         super(lastScreen, options, new TranslationTextComponent("options.title"));
-    }
-
-    @Override
-    public void onClose() {
-        this.minecraft.setScreen(this.lastScreen instanceof IngameMenuScreen ? null : this.lastScreen);
     }
 
     @Override
@@ -109,7 +106,7 @@ public class MUIOptionsScreen extends SettingsScreen {
 
         // Resource Packs
         this.addButton(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("options.resourcepack"),
-                button -> this.minecraft.setScreen(MellowUtils.resourcePackList(this, this.minecraft, this::updateResourcePacksList))));
+                button -> this.minecraft.setScreen(MellowUtils.resourcePackList(this, this.minecraft, MUIOptionsScreen::updateResourcePacksList))));
 
         // Accessibility Settings
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("options.accessibility.title"),
@@ -117,15 +114,22 @@ public class MUIOptionsScreen extends SettingsScreen {
         buttonHeight += 25;
 
         // Super Secret Settings
-        Button superSecretSettings;
-        this.addButton(superSecretSettings = new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.super_secret_settings"), button -> {
-            ResourceLocation[] allSounds = ForgeRegistries.SOUND_EVENTS.getKeys().toArray(new ResourceLocation[0]);
-            Random random = new Random();
-            ResourceLocation soundLocation = allSounds[random.nextInt(allSounds.length)];
-            SoundEvent event = ForgeRegistries.SOUND_EVENTS.getValue(soundLocation);
-            if (event != null) SimpleSound.forUI(event, 1, random.nextFloat() + 0.2F);
+        Random random = new Random();
+        this.addButton(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.super_secret_settings"), button -> {
+            if (hasControlDown()) {
+                ShaderManager.resetShaders(this.minecraft);
+            } else {
+                SoundEvent[] allSounds = ForgeRegistries.SOUND_EVENTS.getValues().toArray(new SoundEvent[0]);
+                SoundEvent sound = allSounds[random.nextInt(allSounds.length)];
+                float pitch = randomBetween(random, 0.01F, 2);
+                this.minecraft.getSoundManager().play(SimpleSound.forUI(sound, pitch, 1));
+                ShaderManager.cycleShader(this.minecraft);
+
+                if (this.minecraft.getLaunchedVersion().contains("melony-studios-dev")) {
+                    LogManager.getLogger().debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
+                }
+            }
         }));
-        superSecretSettings.active = false;
 
         // Credits & Attribution
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.credits_and_attribution"),
@@ -136,6 +140,10 @@ public class MUIOptionsScreen extends SettingsScreen {
                 button -> this.minecraft.setScreen(this.lastScreen)));
     }
 
+    public static float randomBetween(Random rand, float minimum, float maximum) {
+        return rand.nextFloat() * (maximum - minimum) + minimum;
+    }
+
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
@@ -143,25 +151,26 @@ public class MUIOptionsScreen extends SettingsScreen {
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
-    private void updateResourcePacksList(ResourcePackList packList) {
-        List<String> resourcePacks = ImmutableList.copyOf(this.options.resourcePacks);
-        this.options.resourcePacks.clear();
-        this.options.incompatibleResourcePacks.clear();
+    public static void updateResourcePacksList(ResourcePackList packList) {
+        Minecraft minecraft = Minecraft.getInstance();
+        List<String> resourcePacks = ImmutableList.copyOf(minecraft.options.resourcePacks);
+        minecraft.options.resourcePacks.clear();
+        minecraft.options.incompatibleResourcePacks.clear();
 
         for (ResourcePackInfo packInfo : packList.getSelectedPacks()) {
             if (!packInfo.isFixedPosition()) {
-                this.options.resourcePacks.add(packInfo.getId());
-                if (!packInfo.getCompatibility().isCompatible()) this.options.incompatibleResourcePacks.add(packInfo.getId());
+                minecraft.options.resourcePacks.add(packInfo.getId());
+                if (!packInfo.getCompatibility().isCompatible()) minecraft.options.incompatibleResourcePacks.add(packInfo.getId());
             }
         }
 
-        this.options.save();
-        List<String> updatedResourcePacks = ImmutableList.copyOf(this.options.resourcePacks);
-        if (!updatedResourcePacks.equals(resourcePacks)) this.minecraft.reloadResourcePacks();
+        minecraft.options.save();
+        List<String> updatedResourcePacks = ImmutableList.copyOf(minecraft.options.resourcePacks);
+        if (!updatedResourcePacks.equals(resourcePacks)) minecraft.reloadResourcePacks();
     }
 
     private ITextComponent getDifficultyText(Difficulty difficulty) {
-        return new TranslationTextComponent("options.difficulty").append(": ").append(difficulty.getDisplayName());
+        return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("options.difficulty"), difficulty.getDisplayName());
     }
 
     private void lockCallback(boolean confirmed) {

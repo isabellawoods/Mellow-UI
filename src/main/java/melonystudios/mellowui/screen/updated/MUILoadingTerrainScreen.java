@@ -64,32 +64,40 @@ public class MUILoadingTerrainScreen extends Screen {
     @Override
     public void renderBackground(MatrixStack stack, int vOffset) {
         if (this.minecraft == null) return;
+        float partialTicks = this.minecraft.getDeltaFrameTime();
         switch (this.reason) {
             case NETHER_PORTAL:
                 this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getNetherPortalSprite());
+                MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case END_PORTAL:
                 // this.fillRenderType(stack, RenderType.endPortal(2), 0, 0, this.width, this.height, 0);
                 this.minecraft.getTextureManager().bind(EndPortalTileEntityRenderer.END_PORTAL_LOCATION);
                 blit(stack, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+                MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case ALJAN_PORTAL_STAND: // From Back Math
                 RenderSystem.color4f(0.25F, 0.25F, 0.25F, 1);
                 this.minecraft.getTextureManager().bind(new ResourceLocation("backmath", "textures/block/aljanstone.png"));
                 blit(stack, 0, 0, 0, 0, this.width, this.height, 32, 32);
                 RenderSystem.color4f(1, 1, 1, 1);
+                MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case EVERBRIGHT_PORTAL: // From Blue Skies
                 this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getEverbrightPortalSprite());
+                MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case EVERDAWN_PORTAL: // From Blue Skies
                 this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getEverdawnPortalSprite());
+                MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case OTHER:
-                MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), 1);
+            default:
+                MellowUtils.PANORAMA.render(partialTicks, 1);
+                MellowUtils.renderBlurredBackground(partialTicks);
                 this.renderDirtBackground(vOffset);
         }
     }

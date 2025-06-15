@@ -26,7 +26,7 @@ import static melonystudios.mellowui.config.VanillaConfigEntries.*;
 
 public class MellowUIOptionsScreen extends SettingsScreen {
     // Mellow UI
-    public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
+    public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, BACKGROUND_SHADERS, BLURRY_CONTAINERS);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
     public static final List<AbstractOption> PAUSE_MENU = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON);
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
@@ -36,9 +36,9 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     public static final List<AbstractOption> MELLOMEDLEY = Lists.newArrayList(MELLO_SPLASH_TEXT_COLOR, MELLOMEDLEY_MAIN_MENU_MOD_BUTTON);
     private OptionsRowList mellomedleyList;
 
-    // Forge
-    public static final List<AbstractOption> ACCESSIBILITY = Lists.newArrayList(MONOCHROME_LOADING_SCREEN, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS, MENU_BACKGROUND_BLURRINESS);
-    public static final List<AbstractOption> MUSIC_AND_SOUNDS = Lists.newArrayList(SHOW_MUSIC_TOAST);
+    // Vanilla
+    public static final List<AbstractOption> ACCESSIBILITY = Lists.newArrayList(MONOCHROME_LOADING_SCREEN, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS, HIGH_CONTRAST, MENU_BACKGROUND_BLURRINESS);
+    public static final List<AbstractOption> MUSIC_AND_SOUNDS = Lists.newArrayList(DIRECTIONAL_AUDIO, SHOW_MUSIC_TOAST);
     private OptionsRowList vanillaList;
 
     // Forge
@@ -91,6 +91,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.vanillaList.addBig(ACCESSIBILITY_SEPARATOR);
         this.vanillaList.addSmall(ACCESSIBILITY.toArray(new AbstractOption[0]));
         this.vanillaList.addBig(MUSIC_AND_SOUNDS_SEPARATOR);
+        this.vanillaList.addBig(SOUND_DEVICE);
         this.vanillaList.addSmall(MUSIC_AND_SOUNDS.toArray(new AbstractOption[0]));
         this.vanillaList.setRenderTopAndBottom(false);
         this.vanillaList.setRenderBackground(false);
@@ -143,8 +144,17 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
-        this.renderBars(stack, this.currentList);
-        if (this.currentList != null) this.currentList.render(stack, mouseX, mouseY, partialTicks);
+
+        if (this.currentList != null) {
+            if (!MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
+                MellowUtils.scissor(() -> this.currentList.render(stack, mouseX, mouseY, partialTicks),
+                        this.currentList.getLeft(), this.currentList.getRight(), this.currentList.getTop(), this.currentList.getBottom(), this.currentList.getHeight());
+            } else {
+                this.currentList.render(stack, mouseX, mouseY, partialTicks);
+            }
+            this.renderBars(stack, this.currentList);
+        }
+
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.TABBED_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
         List<IReorderingProcessor> processors = tooltipAt(this.currentList, mouseX, mouseY);

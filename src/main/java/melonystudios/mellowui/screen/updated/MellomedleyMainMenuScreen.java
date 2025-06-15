@@ -4,8 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
+import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
-import melonystudios.mellowui.renderer.MainMenuMethods;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.screen.WidgetTextureSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
@@ -39,7 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
-public class MellomedleyMainMenuScreen extends Screen implements MainMenuMethods {
+public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethods.MainMenuMethods {
     private Button resetDemoButton;
     private Button modsButton;
     private final boolean fading;
@@ -107,7 +107,7 @@ public class MellomedleyMainMenuScreen extends Screen implements MainMenuMethods
 
         // Mods
         int modsOffset = 0;
-        if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_1 && !this.minecraft.isDemo()) {
+        if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_2 && !this.minecraft.isDemo()) {
             modsOffset += 24;
             this.addButton(this.modsButton = new Button(10, 182, 140, 20, new TranslationTextComponent("fml.menu.mods"),
                     button -> this.minecraft.setScreen(MellowUtils.modList(this))));
@@ -118,7 +118,7 @@ public class MellomedleyMainMenuScreen extends Screen implements MainMenuMethods
         this.addButton(new Button(10, 182 + modsOffset, 140, 20, new TranslationTextComponent("menu.quit"),
                 button -> this.minecraft.stop()));
 
-        if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_1 || this.minecraft.isDemo()) {
+        if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_2 || this.minecraft.isDemo()) {
             // Accessibility
             this.addButton(new ImageSetButton(58, 206 + modsOffset, 20, 20, GUITextures.ACCESSIBILITY_SET,
                     button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), (button, stack, mouseX, mouseY) ->
@@ -235,7 +235,8 @@ public class MellomedleyMainMenuScreen extends Screen implements MainMenuMethods
         float buttonAlpha = this.fading ? MathHelper.clamp(fade - 1, 0, 1) : 1;
         int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
         // Background
-        MellowUtils.renderPanorama(stack, this.width, this.height, this.fading ? overlayTransparency : 1);
+        MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1);
+        MellowUtils.renderBackgroundWithShaders(partialTicks);
 
         // Background Gradient
         RenderSystem.enableBlend();

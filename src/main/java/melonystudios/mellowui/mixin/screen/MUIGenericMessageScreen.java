@@ -1,10 +1,13 @@
 package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.screen.DirtMessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,7 +44,13 @@ public abstract class MUIGenericMessageScreen extends Screen {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
-        this.renderBackground(stack);
+        if (((TranslationTextComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
+            MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
+            MellowUtils.renderBlurredBackground(partialTicks);
+            this.renderDirtBackground(0);
+        } else {
+            this.renderBackground(stack);
+        }
         this.textBackground.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, this.height / 2, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);

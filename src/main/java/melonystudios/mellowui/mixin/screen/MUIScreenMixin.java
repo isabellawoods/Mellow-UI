@@ -9,9 +9,7 @@ import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,6 +37,12 @@ public abstract class MUIScreenMixin extends FocusableGui {
         if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
             callback.cancel();
             if (this.minecraft.level != null) {
+                if (MellowConfigs.CLIENT_CONFIGS.blurryContainers.get()) {
+                    MellowUtils.renderBlurredBackground(this.minecraft.getDeltaFrameTime());
+                } else if (!(this.minecraft.screen instanceof ContainerScreen)) {
+                    MellowUtils.renderBlurredBackground(this.minecraft.getDeltaFrameTime());
+                }
+
                 // #C0101010 to #D0101010 (Alpha: 192 to 208)
                 RenderSystem.enableBlend();
                 this.minecraft.getTextureManager().bind(GUITextures.INWORLD_GRADIENT);
@@ -46,7 +50,8 @@ public abstract class MUIScreenMixin extends FocusableGui {
                 RenderSystem.disableBlend();
                 MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, stack));
             } else {
-                MellowUtils.renderPanorama(stack, this.width, this.height, 1);
+                MellowUtils.renderPanorama(stack, this.minecraft.getDeltaFrameTime(), this.width, this.height, 1);
+                MellowUtils.renderBlurredBackground(this.minecraft.getDeltaFrameTime());
                 this.renderDirtBackground(vOffset);
             }
         }

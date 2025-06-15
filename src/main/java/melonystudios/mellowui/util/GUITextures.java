@@ -26,6 +26,8 @@ public class GUITextures {
     public static final ResourceLocation TAB_HIGHLIGHTED = gui("widget/tab_highlighted");
     public static final ResourceLocation TAB_SELECTED = gui("widget/tab_selected");
     public static final ResourceLocation TAB_SELECTED_HIGHLIGHTED = gui("widget/tab_selected_highlighted");
+    public static final ResourceLocation MOD_ENTRY = gui("widget/mod_entry");
+    public static final ResourceLocation MOD_ENTRY_HIGHLIGHTED = gui("widget/mod_entry_highlighted");
 
     // Backgrounds
     public static final ResourceLocation MENU_BACKGROUND = gui("background/menu");
@@ -34,6 +36,7 @@ public class GUITextures {
     public static final ResourceLocation INWORLD_MENU_LIST_BACKGROUND = gui("background/inworld_menu_list");
     public static final ResourceLocation TAB_HEADER_BACKGROUND = gui("background/tab_header");
     public static final ResourceLocation OUT_OF_MEMORY_BACKGROUND = gui("background/out_of_memory");
+    public static final ResourceLocation ACCESSIBILITY_ONBOARDING_BACKGROUND = gui("background/accessibility_onboarding");
     public static final ResourceLocation INWORLD_GRADIENT = gui("background/inworld_gradient");
 
     // Headers & Footers
@@ -64,6 +67,10 @@ public class GUITextures {
     // Mellomedley
     public static final ResourceLocation MAIN_MENU_GRADIENT = new ResourceLocation("mellomedley", "textures/gui/main_menu_gradient.png");
     public static final ResourceLocation MELLOMEDLEY_LOGO = new ResourceLocation("mellomedley", "textures/gui/mellomedley.png");
+
+    // Shaders (not really textures, but I'll put these here anyway)
+    // by default points to a copy of the vanilla "blur" shader (because I don't know how to port the updated blur shader, however this works fine)
+    public static ResourceLocation PANORAMA_SHADERS = MellowUI.mellowUI("shaders/post/blur.json");
 
     public static ResourceLocation gui(String name) {
         return MellowUI.mellowUI("textures/gui/" + name + ".png");

@@ -17,9 +17,9 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(ConfigGuiHandler.class)
+@Mixin(value = ConfigGuiHandler.class, remap = false)
 public class MUIConfigGUIHandlerMixin {
-    @Inject(method = "getGuiFactoryFor", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getGuiFactoryFor", at = @At("HEAD"), cancellable = true, remap = false)
     private static void getGuiFactoryFor(ModInfo selectedMod, CallbackInfoReturnable<Optional<BiFunction<Minecraft, Screen, Screen>>> callback) {
         if (selectedMod.getModId().equals("minecraft")) {
             callback.setReturnValue(Optional.of((minecraft, lastScreen) -> MellowUtils.options(lastScreen, minecraft)));

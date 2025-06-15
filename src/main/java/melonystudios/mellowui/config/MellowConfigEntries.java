@@ -110,10 +110,10 @@ public class MellowConfigEntries {
             (options, option) -> {
                 switch (CLIENT_CONFIGS.mellomedleyMainMenuModButton.get()) {
                     case OPTION_1:
-                        option.setTooltip(Minecraft.getInstance().font.split(BELOW_OPTIONS_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        option.setTooltip(Minecraft.getInstance().font.split(MELLOMEDLEY_MAIN_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
                         break;
                     case OPTION_2:
-                        option.setTooltip(Minecraft.getInstance().font.split(MELLOMEDLEY_MAIN_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        option.setTooltip(Minecraft.getInstance().font.split(BELOW_OPTIONS_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 }
                 return new TranslationTextComponent("config.mellomedley.main_menu_mod_button", new TranslationTextComponent("config.mellomedley.main_menu_mod_button." + CLIENT_CONFIGS.mellomedleyMainMenuModButton.get().toString()));
             });
@@ -162,6 +162,10 @@ public class MellowConfigEntries {
             (options, option) -> new TranslationTextComponent("config.mellowui." + CLIENT_CONFIGS.logoStyle.get().toString() + "_style", new TranslationTextComponent("config.mellowui.logo_style")));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslationTextComponent("config.mellowui.scrolling_text.desc"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));
+    public static final BooleanOption BACKGROUND_SHADERS = new BooleanOption("config.mellowui.background_shaders", new TranslationTextComponent("config.mellowui.background_shaders.desc"),
+            options -> CLIENT_CONFIGS.backgroundShaders.get(), (options, newValue) -> CLIENT_CONFIGS.backgroundShaders.set(newValue));
+    public static final BooleanOption BLURRY_CONTAINERS = new BooleanOption("config.mellowui.blurry_containers", new TranslationTextComponent("config.mellowui.blurry_containers.desc"),
+            options -> CLIENT_CONFIGS.blurryContainers.get(), (options, newValue) -> CLIENT_CONFIGS.blurryContainers.set(newValue));
 
     // Forge options
     public static final IteratableOption MOD_LIST_SORTING = new IteratableOption("config.mellowui.mod_list_sorting",

@@ -6,11 +6,13 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.widget.list.AbstractList;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 @Mixin(AbstractList.class)
-public abstract class MUIAbstractListMixin extends FocusableGui {
+public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEntry<E>> extends FocusableGui {
     @Shadow @Final protected Minecraft minecraft;
     @Shadow private boolean renderBackground;
     @Shadow private boolean renderTopAndBottom;
@@ -45,6 +47,11 @@ public abstract class MUIAbstractListMixin extends FocusableGui {
     @Shadow protected abstract void renderHeader(MatrixStack stack, int x, int y, Tessellator tessellator);
     @Shadow protected abstract void renderList(MatrixStack stack, int x, int y, int mouseX, int mouseY, float partialTicks);
     @Shadow protected abstract void renderDecorations(MatrixStack stack, int mouseX, int mouseY);
+
+    @Inject(method = "setSelected", at = @At("HEAD"))
+    public void setSelected(E entry, CallbackInfo callback) {
+        if (entry != null) this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 2, 0.05F));
+    }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {

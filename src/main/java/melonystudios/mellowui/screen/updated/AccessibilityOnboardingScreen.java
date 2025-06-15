@@ -6,6 +6,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.chat.NarratorChatListener;
@@ -37,15 +38,15 @@ public class AccessibilityOnboardingScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.close(this.onClose);
+        this.close(true, this.onClose);
     }
 
     private void closeAndSetScreen(Screen lastScreen) {
-        this.close(() -> this.minecraft.setScreen(lastScreen));
+        this.close(false, () -> this.minecraft.setScreen(lastScreen));
     }
 
-    private void close(Runnable onClose) {
-        MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.set(false);
+    private void close(boolean markAsFinished, Runnable onClose) {
+        if (markAsFinished) MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.set(false);
         this.minecraft.options.save();
         Narrator.getNarrator().clear();
         onClose.run();
@@ -59,27 +60,27 @@ public class AccessibilityOnboardingScreen extends Screen {
 
     @Override
     protected void init() {
-        this.textWidget = new TextFieldWidget(this.minecraft.font, this.width / 2 - 186, this.height - 153, 372, 35, new TranslationTextComponent("accessibility_onboarding.title"));
+        this.textWidget = new TextFieldWidget(this.minecraft.font, this.width / 2 - 186, 100, 372, 35, new TranslationTextComponent("accessibility_onboarding.title"));
         this.textWidget.setEditable(false);
         this.textWidget.setCanLoseFocus(true);
         this.addWidget(this.textWidget);
 
         // Narrator
-        Button narrator = (Button) AbstractOption.NARRATOR.createButton(this.minecraft.options, this.width / 2 - 75, this.height - 110, 150);
+        Button narrator = (Button) AbstractOption.NARRATOR.createButton(this.minecraft.options, this.width / 2 - 75, 147, 150);
         this.addButton(narrator);
 
         // Accessibility Settings
-        this.addButton(new ImageSetButton(this.width / 2 - 75, this.height - 82, 150, 20, GUITextures.ACCESSIBILITY_SET,
-                button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), new TranslationTextComponent("options.accessibility.title"))
+        this.addButton(new ImageSetButton(this.width / 2 - 75, 175, 150, 20, GUITextures.ACCESSIBILITY_SET,
+                button -> this.closeAndSetScreen(new AccessibilityScreen(this, this.minecraft.options)), new TranslationTextComponent("options.accessibility.title"))
                 .renderText(true).alignment(ImageSetButton.Alignment.LEFT));
 
         // Language
-        this.addButton(new ImageSetButton(this.width / 2 - 75, this.height - 54, 150, 20, GUITextures.LANGUAGE_SET,
-                button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())),
+        this.addButton(new ImageSetButton(this.width / 2 - 75, 203, 150, 20, GUITextures.LANGUAGE_SET,
+                button -> this.closeAndSetScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())),
                 new TranslationTextComponent("options.language")).renderText(true).alignment(ImageSetButton.Alignment.LEFT));
 
         // Continue
-        this.addButton(new Button(this.width / 2 - 75, this.height - 26, 150, 20, new TranslationTextComponent("button.mellowui.continue"),
+        this.addButton(new Button(this.width / 2 - 75, this.height - 25, 150, 20, new TranslationTextComponent("button.mellowui.continue"),
                 button  -> this.onClose()));
 
         this.setFocused(narrator);
@@ -88,8 +89,10 @@ public class AccessibilityOnboardingScreen extends Screen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.handleInitialNarrationDelay();
-        this.renderBackground(stack);
-        fill(stack, 0, 0, this.width, this.height, -1877995504);
+        MellowUtils.renderPanorama(stack, 0, this.width, this.height, 1);
+        MellowUtils.renderBlurredBackground(partialTicks);
+        this.renderDirtBackground(0);
+        MellowUtils.renderTiledBackground(stack, GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, this.width, this.height, 0);
 
         switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
             case OPTION_1: // Pre 1.19
@@ -110,8 +113,8 @@ public class AccessibilityOnboardingScreen extends Screen {
         int line = 0;
         for (IReorderingProcessor processor : processors) {
             int textWidth = this.font.width(processor);
-            this.font.drawShadow(stack, processor, this.width / 2 - (textWidth / 2), this.height - 151 + line, 0xFFFFFF);
-            line += 11;
+            this.font.drawShadow(stack, processor, this.width / 2 - (textWidth / 2), 102 + line, 0xFFFFFF);
+            line += this.font.lineHeight + 2;
         }
 
         super.render(stack, mouseX, mouseY, partialTicks);

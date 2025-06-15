@@ -22,6 +22,7 @@ public class MusicToast implements IToast {
     private ResourceLocation musicLocation;
     private long timeSinceLastChanged;
     private boolean hasChanged;
+    private int animationTicks = 5010;
 
     public MusicToast(ResourceLocation musicLocation) {
         this.musicLocation = musicLocation;
@@ -34,6 +35,7 @@ public class MusicToast implements IToast {
             this.timeSinceLastChanged = timeSinceLastChanged;
             this.hasChanged = false;
         }
+        this.animationTicks -= 1;
         int width = this.width();
         int height = this.height();
 
@@ -43,12 +45,12 @@ public class MusicToast implements IToast {
         RenderSystem.color4f(1, 1, 1, 1);
 
         // Background
-        AbstractGui.blit(stack, 0, 0, 0, 0, width / 2, height, 160, 32);
-        AbstractGui.blit(stack, width / 2, 0, width - width / 2, 0, width / 2, height, 160, 32);
+        AbstractGui.blit(stack, 0, 0, 0, 0, width / 2, 32, width, 32);
+        AbstractGui.blit(stack, width / 2, 0, width - width / 2F, 0, width / 2, 32, width, 32);
 
         // Music Notes
-        float noteColorSin = MathHelper.sin((float) (Util.getMillis() % 1000L) / 1000 * ((float) Math.PI)); // this is what you get for colors for now ~isa 16-5-25
-        RenderSystem.color4f(noteColorSin * 0.8F, noteColorSin * 0.5F, noteColorSin * 0.4F, 1);
+        float[] noteColor = hsvToRgb((this.animationTicks - minecraft.getDeltaFrameTime()) / 50F, 0.7F, 0.6F);
+        RenderSystem.color4f(noteColor[0], noteColor[1], noteColor[2], 1);
         int yOffset = (int) Util.getMillis() / 100 * 16;
         minecraft.getTextureManager().bind(GUITextures.MUSIC_NOTES); // swap for "bind animated texture" in GUITextures
         AbstractGui.blit(stack, 8, 8, 0, yOffset, 16, 16, 16, 128);
@@ -82,6 +84,52 @@ public class MusicToast implements IToast {
                 .replace("sounds.", "")
                 .replace("music.", "")
                 .replace(".ogg", ""));
+    }
+
+    public static float[] hsvToRgb(float hue, float saturation, float value) {
+        int i = (int) (hue * 6) % 6;
+        float f = hue * 6 - (float) i;
+        float f1 = value * (1 - saturation);
+        float f2 = value * (1 - f * saturation);
+        float f3 = value * (1 - (1 - f) * saturation);
+        float red1;
+        float green1;
+        float blue1;
+        switch (i) {
+            case 0:
+                red1 = value;
+                green1 = f3;
+                blue1 = f1;
+                break;
+            case 1:
+                red1 = f2;
+                green1 = value;
+                blue1 = f1;
+                break;
+            case 2:
+                red1 = f1;
+                green1 = value;
+                blue1 = f3;
+                break;
+            case 3:
+                red1 = f1;
+                green1 = f2;
+                blue1 = value;
+                break;
+            case 4:
+                red1 = f3;
+                green1 = f1;
+                blue1 = value;
+                break;
+            case 5:
+                red1 = value;
+                green1 = f1;
+                blue1 = f2;
+                break;
+            default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
+        }
+
+        return new float[] {MathHelper.clamp(red1, 0, 1), MathHelper.clamp(green1, 0, 1), MathHelper.clamp(blue1, 0, 1)};
     }
 
     @Override

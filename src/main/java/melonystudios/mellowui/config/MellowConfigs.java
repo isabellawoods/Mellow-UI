@@ -14,7 +14,10 @@ public class MellowConfigs {
     public final ForgeConfigSpec.DoubleValue panoramaScrollSpeed;
     public final ForgeConfigSpec.BooleanValue hideSplashTexts;
     public final ForgeConfigSpec.BooleanValue showMusicToast;
+    public final ForgeConfigSpec.BooleanValue highContrastPack;
     public final ForgeConfigSpec.IntValue menuBackgroundBlurriness;
+    public final ForgeConfigSpec.EnumValue<TwoStyles> directionalAudio;
+    public final ForgeConfigSpec.ConfigValue<String> soundDevice;
     public final ForgeConfigSpec.BooleanValue onboardAccessibility;
 
     // Mellow UI Configs
@@ -27,6 +30,8 @@ public class MellowConfigs {
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuModButton;
     public final ForgeConfigSpec.EnumValue<TwoStyles> pauseMenuModButton;
     public final ForgeConfigSpec.BooleanValue disableBranding;
+    public final ForgeConfigSpec.BooleanValue backgroundShaders;
+    public final ForgeConfigSpec.BooleanValue blurryContainers;
 
     // Mellomedley Configs
     public final ForgeConfigSpec.IntValue mellomedleySplashTextColor;
@@ -58,7 +63,10 @@ public class MellowConfigs {
         this.panoramaScrollSpeed = builder.comment("Changes the scrolling speed of the panorama in the menus.").defineInRange("panoramaScrollSpeed", 1F, 0, 1);
         this.hideSplashTexts = builder.comment("Toggles the ability to show or hide splashes on the main menu.").define("hideSplashTexts", false);
         this.showMusicToast = builder.comment("Shows a toast with the name of the currently playing song.").define("showMusicToast", false);
-        this.menuBackgroundBlurriness = builder.comment("How blurry the panorama background should be.").defineInRange("menuBackgroundBlurriness", 5, 0, 10);
+        this.highContrastPack = builder.comment("Whether the 'High Contrast' resource pack is enabled.").define("highContrastPack", false);
+        this.menuBackgroundBlurriness = builder.comment("How blurry the panorama background should be.", "Setting this to 20 will result in the same blurring effect as in the pre-1.13 panorama.").defineInRange("menuBackgroundBlurriness", 5, 0, 20);
+        this.directionalAudio = builder.comment("Enables the use of HRTF-based directional audio to improve simulation of 3D sound.", "Option 1 = Classic stereo | Option 2 = HRTF-based audio").defineEnum("directionalAudio", TwoStyles.OPTION_1);
+        this.soundDevice = builder.comment("Which device Minecraft should output audio from.").define("soundDevice", "");
         this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").define("onboardAccessibility", true);
         builder.pop();
 
@@ -75,7 +83,9 @@ public class MellowConfigs {
         this.scrollingText = builder.comment("Whether the text in buttons should scroll if it's too long instead of rendering on top of other widgets.").define("scrollingText", true);
         this.mainMenuModButton = builder.comment("Where the 'Mods' button should be located in the main menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Realms.").defineEnum("mainMenuModButton", ThreeStyles.OPTION_1);
         this.pauseMenuModButton = builder.comment("Where the 'Mods' button should be located in the pause menu.", "Option 1 = Replace | Option 2 = Icon.").defineEnum("pauseMenuModButton", TwoStyles.OPTION_1);
+        this.blurryContainers = builder.comment("Whether to apply blur (or an extra layer of shaders) on the background while a container (chest, inventory, furnace) is open.").define("blurryContainers", false);
         this.disableBranding = builder.comment("Whether to disable branding lines (the Forge and MCP versions) in the main menu.").define("disableBranding", true);
+        this.backgroundShaders = builder.comment("Whether shaders, like super secret settings and the blur, should render on the panorama.", "This may fix rendering issues with menus added by other mods.").define("backgroundShaders", true);
 
         this.mainMenuStyle = builder.comment("Which style to use for the main menu.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").defineEnum("styles.mainMenu", ThreeStyles.OPTION_1);
         this.updatePauseMenu = builder.comment("Whether Mellow UI should update the pause menu.").define("updates.pauseMenu", true);

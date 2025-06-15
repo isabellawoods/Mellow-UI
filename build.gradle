@@ -93,6 +93,8 @@ minecraft {
             }
 
             args '--version', 'melony-studios-dev/mellow-ui'
+            args '--width', '1366'
+            args '--height', '768'
 
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             property "mixin.debug.export", "true"

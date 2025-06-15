@@ -1,29 +1,20 @@
 package melonystudios.mellowui.mixin.updates;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.MemoryErrorScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -53,7 +44,7 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
         if (MellowConfigs.CLIENT_CONFIGS.updateOutOfMemoryMenu.get()) {
             callback.cancel();
             // Background
-            this.renderOutOfMemoryBackground(stack);
+            MellowUtils.renderTiledBackground(stack, GUITextures.OUT_OF_MEMORY_BACKGROUND, this.width, this.height, 0);
 
             stack.pushPose();
             stack.scale(2, 2, 2);
@@ -70,23 +61,5 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
 
             super.render(stack, mouseX, mouseY, partialTicks);
         }
-    }
-
-    @Unique
-    private void renderOutOfMemoryBackground(MatrixStack stack) {
-        if (Minecraft.getInstance().level == null) MellowUtils.PANORAMA.render(this.minecraft.getDeltaFrameTime(), 1);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuilder();
-        this.minecraft.getTextureManager().bind(GUITextures.OUT_OF_MEMORY_BACKGROUND);
-        RenderSystem.enableBlend();
-        GL11.glColor4f(1, 1, 1, 1);
-        buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        buffer.vertex(0, this.height, 0).uv(0, (float) this.height / 32 + (float) 0).color(255, 255, 255, 255).endVertex();
-        buffer.vertex(this.width, this.height, 0).uv((float) this.width / 32, (float) this.height / 32 + (float) 0).color(255, 255, 255, 255).endVertex();
-        buffer.vertex(this.width, 0, 0).uv((float) this.width / 32, (float) 0).color(255, 255, 255, 255).endVertex();
-        buffer.vertex(0, 0, 0).uv(0, (float) 0).color(255, 255, 255, 255).endVertex();
-        tessellator.end();
-        RenderSystem.disableBlend();
-        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this, stack));
     }
 }

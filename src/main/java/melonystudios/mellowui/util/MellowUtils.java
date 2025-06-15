@@ -3,12 +3,14 @@ package melonystudios.mellowui.util;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.list.OptionsList;
 import melonystudios.mellowui.screen.updated.MUIControlsScreen;
 import melonystudios.mellowui.screen.updated.MUIModListScreen;
 import melonystudios.mellowui.screen.updated.MUIOptionsScreen;
 import melonystudios.mellowui.screen.updated.MUIPackScreen;
+import melonystudios.mellowui.util.pack.HighContrastPack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IBidiTooltip;
@@ -19,12 +21,18 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.ShaderGroup;
+import net.minecraft.resources.IPackNameDecorator;
+import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 
@@ -45,6 +53,8 @@ public class MellowUtils {
     public static final int TABBED_TITLE_HEIGHT = 3;
     public static final int PAUSE_MENU_Y_OFFSET = 0;
     public static float PANORAMA_PITCH = 10;
+    @Nullable
+    public static ShaderGroup PANORAMA_SHADER;
 
     public static Screen modList(Screen lastScreen) {
         switch (MellowConfigs.CLIENT_CONFIGS.modListStyle.get()) {
@@ -64,7 +74,7 @@ public class MellowUtils {
 
     public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<ResourcePackList> packInfo) {
         ITextComponent title = new TranslationTextComponent("resourcePack.title");
-        if (MellowConfigs.CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packList -> {}, minecraft.getResourcePackDirectory(), title);
+        if (MellowConfigs.CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
         else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
     }
 
@@ -94,26 +104,26 @@ public class MellowUtils {
         RenderSystem.disableScissor();
     }
 
-    public static boolean renderPanorama(MatrixStack stack, int width, int height, float transparency) {
+    public static void renderPanorama(MatrixStack stack, float partialTicks, int width, int height, float transparency) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level == null) {
-            MellowUtils.PANORAMA.render(minecraft.getDeltaFrameTime(), 1);
-            minecraft.getTextureManager().bind(GUITextures.PANORAMA_OVERLAY);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            RenderSystem.color4f(1, 1, 1, MathHelper.ceil(MathHelper.clamp(transparency, 0, 1)));
-            AbstractGui.blit(stack, 0, 0, width, height, 0, 0, 16, 128, 16, 128);
-            return true;
-        }
-        return false;
+        MellowUtils.PANORAMA.render(partialTicks, 1);
+        minecraft.getTextureManager().bind(GUITextures.PANORAMA_OVERLAY);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.color4f(1, 1, 1, MathHelper.ceil(MathHelper.clamp(transparency, 0, 1)));
+        AbstractGui.blit(stack, 0, 0, width, height, 0, 0, 16, 128, 16, 128);
     }
 
     public static void renderBackground(MatrixStack stack, int width, int height, float vOffset) {
+        renderTiledBackground(stack, Minecraft.getInstance().level != null ? GUITextures.INWORLD_MENU_BACKGROUND : GUITextures.MENU_BACKGROUND, width, height, vOffset);
+    }
+
+    public static void renderTiledBackground(MatrixStack stack, ResourceLocation textureLocation, int width, int height, float vOffset) {
         Minecraft minecraft = Minecraft.getInstance();
         if (GUICompatUtils.hasCustomBackground(minecraft, stack, width, height, vOffset)) return;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
-        minecraft.getTextureManager().bind(minecraft.level != null ? GUITextures.INWORLD_MENU_BACKGROUND : GUITextures.MENU_BACKGROUND);
+        minecraft.getTextureManager().bind(textureLocation);
         RenderSystem.enableBlend();
         RenderSystem.color4f(1, 1, 1, 1);
         buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -123,6 +133,20 @@ public class MellowUtils {
         buffer.vertex(0, 0, 0).uv(0, vOffset).color(255, 255, 255, 255).endVertex();
         tessellator.end();
         RenderSystem.disableBlend();
+        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(minecraft.screen, stack));
+    }
+
+    public static void renderBackgroundWithShaders(float partialTicks) {
+        if (ShaderManager.customShaderLoaded()) renderBlurredBackground(partialTicks);
+    }
+
+    public static void renderBlurredBackground(float partialTicks) {
+        if (MellowConfigs.CLIENT_CONFIGS.backgroundShaders.get()) {
+            RenderSystem.disableDepthTest();
+            ShaderManager.processPanoramaShader(partialTicks);
+            Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+            RenderSystem.enableDepthTest();
+        }
     }
 
     public static void renderTooltip(MatrixStack stack, Screen screen, Button button, ITextComponent tooltipText, int mouseX, int mouseY) {
@@ -149,6 +173,24 @@ public class MellowUtils {
         } else {
             return null;
         }
+    }
+
+    // Copied from teamtwilight/twilightforest.
+    public static void addHighContrastPack() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft == null) return;
+
+        minecraft.getResourcePackRepository().addPackFinder((packInfo, infoFactory) -> packInfo.accept(ResourcePackInfo.create(
+                MellowUI.mellowUI("high_contrast").toString(), false, () -> new HighContrastPack(ModList.get()
+                        .getModFileById(MellowUI.MOD_ID).getFile()), infoFactory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILT_IN)));
+    }
+
+    public static int getSplashTextColor(int defaultSplashColor) {
+        return highContrastEnabled() ? 0x57FFE1 : defaultSplashColor;
+    }
+
+    public static boolean highContrastEnabled() {
+        return Minecraft.getInstance().getResourcePackRepository().getSelectedIds().contains("mellowui:high_contrast");
     }
 
     public static int getSelectableTextColor(boolean selected, boolean active) {
