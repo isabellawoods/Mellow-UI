@@ -2,7 +2,7 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import melonystudios.mellowui.screen.updated.MUIModListScreen;
+import melonystudios.mellowui.screen.update.MUIModListScreen;
 import melonystudios.mellowui.screen.widget.ScrollingText;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.gui.FontRenderer;

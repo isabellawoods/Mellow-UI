@@ -4,7 +4,7 @@ import com.mojang.authlib.AuthenticationService;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import melonystudios.mellowui.screen.updated.MUILoadingTerrainScreen;
+import melonystudios.mellowui.screen.update.MUILoadingTerrainScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;

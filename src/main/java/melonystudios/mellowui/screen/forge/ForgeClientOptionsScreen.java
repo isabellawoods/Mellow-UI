@@ -1,15 +1,11 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen.forge;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.ControlsScreen;
-import net.minecraft.client.gui.screen.MouseSettingsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -19,20 +15,20 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
-public class MUIControlsScreen extends SettingsScreen {
-    public final OpenMenuOption mouseSettings = new OpenMenuOption("options.mouse_settings", new MouseSettingsScreen(this, Minecraft.getInstance().options)).boldText(false);
-    public final OpenMenuOption keyBinds = new OpenMenuOption("button.mellowui.key_binds", new ControlsScreen(this, Minecraft.getInstance().options)).boldText(false);
-    private static final List<AbstractOption> SETTINGS = Lists.newArrayList(AbstractOption.TOGGLE_CROUCH, AbstractOption.TOGGLE_SPRINT, AbstractOption.AUTO_JUMP);
+import static melonystudios.mellowui.config.ForgeConfigEntries.*;
+
+public class ForgeClientOptionsScreen extends SettingsScreen {
+    public static final List<AbstractOption> SETTINGS = Lists.newArrayList(DISABLE_STAIR_SLAB_CULLING, ZOOM_MISSING_MODEL_TEXT_IN_GUIS, FORGE_LIGHT_PIPELINE, EXPERIMENTAL_LIGHT_PIPELINE,
+            THREADED_CHUNK_RENDERING, SHOW_LOAD_WARNINGS, FORGE_CLOUDS, SELECTIVE_RESOURCE_LOADING, USE_COMBINED_DEPTH_STENCIL_ATTACHMENT);
     private OptionsRowList list;
 
-    public MUIControlsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("menu.mellowui.controls.title"));
+    public ForgeClientOptionsScreen(Screen screen, GameSettings options) {
+        super(screen, options, new TranslationTextComponent("menu.forge.client_options.title"));
     }
 
     @Override
     protected void init() {
         this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addSmall(this.mouseSettings, this.keyBinds);
         this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
         this.children.add(this.list);
 

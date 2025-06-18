@@ -14,6 +14,7 @@ import net.minecraftforge.fml.loading.FMLConfig;
 
 import javax.annotation.Nullable;
 
+// todo: replace with a ModButton class that renders the version check icons on top of the button ~isa 18-6-25
 @OnlyIn(Dist.CLIENT)
 public class MUIModUpdateScreen extends NotificationModUpdateScreen {
     private VersionChecker.Status checkerStatus = null;

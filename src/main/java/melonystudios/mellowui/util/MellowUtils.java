@@ -6,10 +6,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.list.OptionsList;
-import melonystudios.mellowui.screen.updated.MUIControlsScreen;
-import melonystudios.mellowui.screen.updated.MUIModListScreen;
-import melonystudios.mellowui.screen.updated.MUIOptionsScreen;
-import melonystudios.mellowui.screen.updated.MUIPackScreen;
+import melonystudios.mellowui.screen.backport.MUIControlsScreen;
+import melonystudios.mellowui.screen.update.MUIModListScreen;
+import melonystudios.mellowui.screen.update.MUIOptionsScreen;
+import melonystudios.mellowui.screen.update.MUIPackScreen;
 import melonystudios.mellowui.util.pack.HighContrastPack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -120,10 +120,9 @@ public class MellowUtils {
 
     public static void renderTiledBackground(MatrixStack stack, ResourceLocation textureLocation, int width, int height, float vOffset) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (GUICompatUtils.hasCustomBackground(minecraft, stack, width, height, vOffset)) return;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
-        minecraft.getTextureManager().bind(textureLocation);
+        minecraft.getTextureManager().bind(GUICompatUtils.hasCustomBackground() ? AbstractGui.BACKGROUND_LOCATION : textureLocation);
         RenderSystem.enableBlend();
         RenderSystem.color4f(1, 1, 1, 1);
         buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);

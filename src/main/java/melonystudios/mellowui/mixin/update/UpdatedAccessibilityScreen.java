@@ -1,4 +1,4 @@
-package melonystudios.mellowui.mixin.updates;
+package melonystudios.mellowui.mixin.update;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -33,7 +33,7 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
     @Shadow protected abstract void createFooter();
 
     @Unique
-    private static List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, VanillaConfigEntries.HIGH_CONTRAST, AUTO_JUMP, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
+    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, VanillaConfigEntries.HIGH_CONTRAST, AUTO_JUMP, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
             SCREEN_EFFECTS_SCALE, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MONOCHROME_LOADING_SCREEN, VanillaConfigEntries.PANORAMA_SCROLL_SPEED, VanillaConfigEntries.HIDE_SPLASH_TEXTS);
     @Unique
     private OptionsRowList list;

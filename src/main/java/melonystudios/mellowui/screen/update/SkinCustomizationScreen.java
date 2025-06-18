@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -25,11 +25,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 
-public class MUISkinCustomizationScreen extends SettingsScreen {
+public class SkinCustomizationScreen extends SettingsScreen {
     public static final Logger LOGGER = LogManager.getLogger();
     private OptionsRowList list;
 
-    public MUISkinCustomizationScreen(Screen lastScreen, GameSettings options) {
+    public SkinCustomizationScreen(Screen lastScreen, GameSettings options) {
         super(lastScreen, options, new TranslationTextComponent("options.skinCustomisation.title"));
     }
 

@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -96,7 +96,7 @@ public class MUILoadingTerrainScreen extends Screen {
                 break;
             case OTHER:
             default:
-                MellowUtils.PANORAMA.render(partialTicks, 1);
+                MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
                 MellowUtils.renderBlurredBackground(partialTicks);
                 this.renderDirtBackground(vOffset);
         }

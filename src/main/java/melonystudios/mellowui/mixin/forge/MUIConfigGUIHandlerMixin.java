@@ -1,6 +1,6 @@
 package melonystudios.mellowui.mixin.forge;
 
-import melonystudios.mellowui.screen.option.ForgeOptionsScreen;
+import melonystudios.mellowui.screen.forge.ForgeOptionsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

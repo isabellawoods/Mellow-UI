@@ -61,7 +61,7 @@ public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
             this.minecraft.getTextureManager().bind(this.pack.getIconTexture());
-            GL11.glColor4f(1, 1, 1, 1);
+            RenderSystem.color4f(1, 1, 1, 1);
             AbstractGui.blit(stack, left, top, 0, 0, 32, 32, 32, 32);
 
             IReorderingProcessor processor = this.nameDisplayCache;
@@ -73,7 +73,7 @@ public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
                 AbstractGui.blit(stack, left, top, 0, 0, 32, 32, 32, 32);
                 RenderSystem.disableBlend();
                 this.minecraft.getTextureManager().bind(GUITextures.PACK_SELECTION_ICONS);
-                GL11.glColor4f(1, 1, 1, 1);
+                RenderSystem.color4f(1, 1, 1, 1);
                 int i = mouseX - left;
                 int i1 = mouseY - top;
                 if (!this.pack.getCompatibility().isCompatible()) {

@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -7,10 +7,12 @@ import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
-import melonystudios.mellowui.screen.WidgetTextureSet;
+import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
+import melonystudios.mellowui.screen.backport.AttributionsScreen;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
+import melonystudios.mellowui.screen.widget.WidgetTextureSet;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.audio.SimpleSound;
@@ -39,9 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
-public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethods.MainMenuMethods {
-    private Button resetDemoButton;
-    private Button modsButton;
+public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.MainMenuMethods {
     private final boolean fading;
     private long fadeInStart;
     private int copyrightWidth;
@@ -51,15 +51,15 @@ public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethod
     private NotificationModUpdateScreen modUpdateScreen;
     private boolean keepLogoThroughFade;
 
-    public MellomedleyMainMenuScreen() {
+    public MellomedleyTitleScreen() {
         this(false, false);
     }
 
-    public MellomedleyMainMenuScreen(boolean fading) {
+    public MellomedleyTitleScreen(boolean fading) {
         this(fading, false);
     }
 
-    public MellomedleyMainMenuScreen(boolean fading, boolean keepLogoThroughFade) {
+    public MellomedleyTitleScreen(boolean fading, boolean keepLogoThroughFade) {
         super(new TranslationTextComponent("menu.mellomedley.title"));
         this.fading = fading;
         this.keepLogoThroughFade = keepLogoThroughFade;
@@ -107,11 +107,12 @@ public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethod
 
         // Mods
         int modsOffset = 0;
+        Button modsButton;
         if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_2 && !this.minecraft.isDemo()) {
             modsOffset += 24;
-            this.addButton(this.modsButton = new Button(10, 182, 140, 20, new TranslationTextComponent("fml.menu.mods"),
+            this.addButton(modsButton = new Button(10, 182, 140, 20, new TranslationTextComponent("fml.menu.mods"),
                     button -> this.minecraft.setScreen(MellowUtils.modList(this))));
-            this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.modsButton, false);
+            this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, false);
         }
 
         // Quit Game
@@ -138,11 +139,11 @@ public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethod
                     new TranslationTextComponent("narrator.button.accessibility")));
 
             // Mods
-            this.addButton(this.modsButton = new ImageSetButton(70, 206 + modsOffset, 20, 20,
+            this.addButton(modsButton = new ImageSetButton(70, 206 + modsOffset, 20, 20,
                     GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
                     MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
                     new TranslationTextComponent("fml.menu.mods")));
-            this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.modsButton, true);
+            this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, true);
 
             // Language
             this.addButton(new ImageSetButton(104, 206 + modsOffset, 20, 20, GUITextures.LANGUAGE_SET,
@@ -153,7 +154,7 @@ public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethod
 
         // Switch Style
         this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> WidgetTextureSet.switchMainMenuStyle(), (button, stack, mouseX, mouseY) ->
+                button -> WidgetTextureSet.switchTitleScreenStyle(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 
@@ -188,7 +189,7 @@ public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethod
         }));
 
         // Reset Demo World
-        this.resetDemoButton = this.addButton(new Button(10, 134, 140, 20, new TranslationTextComponent("menu.resetdemo"), button -> {
+        Button resetDemoButton = this.addButton(new Button(10, 134, 140, 20, new TranslationTextComponent("menu.resetdemo"), button -> {
             SaveFormat worldSource = this.minecraft.getLevelSource();
 
             try (SaveFormat.LevelSave demoWorldSource = worldSource.createAccess("Demo_World")) {
@@ -201,7 +202,7 @@ public class MellomedleyMainMenuScreen extends Screen implements InterfaceMethod
                 LogManager.getLogger().warn("Failed to access demo world", exception);
             }
         }));
-        this.resetDemoButton.active = demoWorldPresent;
+        resetDemoButton.active = demoWorldPresent;
     }
 
     private boolean demoWorldPresent() {

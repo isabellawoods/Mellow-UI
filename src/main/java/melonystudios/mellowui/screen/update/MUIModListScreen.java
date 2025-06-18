@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -8,7 +8,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.screen.list.MUIModList;
-import melonystudios.mellowui.screen.option.ForgeOptionsScreen;
+import melonystudios.mellowui.screen.forge.ForgeOptionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.config.type.ModListSorting;
@@ -126,13 +126,13 @@ public class MUIModListScreen extends Screen {
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
-        // Mod link buttons
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
         int width = maxGUIScale ? 100 : 150;
         int buttonOffset = width + 4;
         ITextComponent updateAvailable = new TranslationTextComponent("button.mellowui.update_available").withStyle(style -> style.withColor(Color.fromRgb(MellowUtils.highContrastEnabled() ?
                 0x57FFE1 : 0x41F384)).withUnderlined(true));
 
+        // Mod link buttons
         this.addButton(this.websiteButton = new Button(140, 120, width, 20,
                 new TranslationTextComponent("button.mellowui.website"), button -> this.getModWebsite()));
         this.websiteButton.active = false;

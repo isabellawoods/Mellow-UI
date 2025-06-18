@@ -2,7 +2,6 @@ package melonystudios.mellowui.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import melonystudios.mellowui.screen.WidgetTextureSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;

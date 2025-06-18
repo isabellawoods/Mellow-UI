@@ -1,4 +1,4 @@
-package melonystudios.mellowui.mixin.updates;
+package melonystudios.mellowui.mixin.update;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;

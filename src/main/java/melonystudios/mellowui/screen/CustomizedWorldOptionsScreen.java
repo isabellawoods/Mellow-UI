@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;

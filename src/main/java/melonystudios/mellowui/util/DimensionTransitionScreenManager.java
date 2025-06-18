@@ -1,7 +1,7 @@
 package melonystudios.mellowui.util;
 
 import com.mojang.datafixers.util.Pair;
-import melonystudios.mellowui.screen.updated.MUILoadingTerrainScreen;
+import melonystudios.mellowui.screen.update.MUILoadingTerrainScreen;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 

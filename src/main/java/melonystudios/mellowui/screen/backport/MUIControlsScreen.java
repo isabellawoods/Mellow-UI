@@ -1,42 +1,40 @@
-package melonystudios.mellowui.screen.option;
+package melonystudios.mellowui.screen.backport;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
+import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.client.gui.screen.ControlsScreen;
+import net.minecraft.client.gui.screen.MouseSettingsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 
-public class ForgeOptionsScreen extends SettingsScreen {
-    public final ITextComponent onlyChangeInWorld = new TranslationTextComponent("config.forge.server_settings.only_in_world").withStyle(TextFormatting.RED);
-    public final OpenMenuOption clientSettings = new OpenMenuOption("menu.forge.client_options", new ForgeClientOptionsScreen(this, Minecraft.getInstance().options));
+public class MUIControlsScreen extends SettingsScreen {
+    public final OpenMenuOption mouseSettings = new OpenMenuOption("options.mouse_settings", new MouseSettingsScreen(this, Minecraft.getInstance().options)).boldText(false);
+    public final OpenMenuOption keyBinds = new OpenMenuOption("button.mellowui.key_binds", new ControlsScreen(this, Minecraft.getInstance().options)).boldText(false);
+    private static final List<AbstractOption> SETTINGS = Lists.newArrayList(AbstractOption.TOGGLE_CROUCH, AbstractOption.TOGGLE_SPRINT, AbstractOption.AUTO_JUMP);
     private OptionsRowList list;
 
-    public ForgeOptionsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("menu.forge.options.title"));
+    public MUIControlsScreen(Screen lastScreen, GameSettings options) {
+        super(lastScreen, options, new TranslationTextComponent("menu.mellowui.controls.title"));
     }
 
     @Override
     protected void init() {
         this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addBig(this.clientSettings);
-        OpenMenuOption serverSettings = new OpenMenuOption("menu.forge.server_options", this.minecraft.level == null, this.onlyChangeInWorld, new ForgeServerOptionsScreen(this, Minecraft.getInstance().options));
-        this.list.addBig(serverSettings);
+        this.list.addSmall(this.mouseSettings, this.keyBinds);
+        this.list.addSmall(SETTINGS.toArray(new AbstractOption[0]));
         this.children.add(this.list);
-
-        Widget settingsWidget = this.list.findOption(serverSettings);
-        if (settingsWidget != null) settingsWidget.active = false;
 
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,

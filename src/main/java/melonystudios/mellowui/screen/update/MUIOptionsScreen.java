@@ -1,9 +1,11 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
+import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.backport.OnlineOptionsScreen;
 import melonystudios.mellowui.util.ShaderManager;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;

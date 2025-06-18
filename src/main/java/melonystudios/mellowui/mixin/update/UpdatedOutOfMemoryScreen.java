@@ -1,9 +1,9 @@
-package melonystudios.mellowui.mixin.updates;
+package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
-import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
+import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.screen.MainMenuScreen;
@@ -33,7 +33,7 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
             callback.cancel();
 
             this.addButton(new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslationTextComponent("gui.toTitle"),
-                    button -> this.minecraft.setScreen(MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3 ? new MellomedleyMainMenuScreen() : new MainMenuScreen())));
+                    button -> this.minecraft.setScreen(MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3 ? new MellomedleyTitleScreen() : new MainMenuScreen())));
             this.addButton(new Button(this.width / 2 + 5, this.height - 25, 150, 20, new TranslationTextComponent("menu.quit"),
                     button -> this.minecraft.stop()));
         }

@@ -1,4 +1,4 @@
-package melonystudios.mellowui.mixin.updates;
+package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
@@ -6,11 +6,11 @@ import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
-import melonystudios.mellowui.screen.WidgetTextureSet;
+import melonystudios.mellowui.screen.widget.WidgetTextureSet;
 import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
-import melonystudios.mellowui.screen.updated.AccessibilityOnboardingScreen;
-import melonystudios.mellowui.screen.updated.AttributionsScreen;
-import melonystudios.mellowui.screen.updated.MellomedleyMainMenuScreen;
+import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
+import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
@@ -84,7 +84,7 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
     public void init(CallbackInfo callback) {
         // Go to Mellomedley's main menu if set.
         if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3) {
-            this.minecraft.setScreen(new MellomedleyMainMenuScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
+            this.minecraft.setScreen(new MellomedleyTitleScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
             return;
         }
 
@@ -158,7 +158,7 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
 
         // Switch Style
         this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> WidgetTextureSet.switchMainMenuStyle(), (button, stack, mouseX, mouseY) ->
+                button -> WidgetTextureSet.switchTitleScreenStyle(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 

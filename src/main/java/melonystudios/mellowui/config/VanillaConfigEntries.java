@@ -5,7 +5,7 @@ import melonystudios.mellowui.config.option.SoundDeviceOption;
 import melonystudios.mellowui.config.option.TooltippedIterableOption;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
-import melonystudios.mellowui.screen.updated.MUIOptionsScreen;
+import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.settings.BooleanOption;

@@ -1,7 +1,7 @@
 package melonystudios.mellowui.mixin.screen;
 
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.updated.MUISkinCustomizationScreen;
+import melonystudios.mellowui.screen.update.SkinCustomizationScreen;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.screen.CustomizeSkinScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -21,7 +21,7 @@ public class MUISkinCustomizationScreenMixin extends SettingsScreen {
     @Inject(method = "init", at = @At("TAIL"))
     protected void init(CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateSkinCustomizationMenu.get() && this.minecraft != null) {
-            this.minecraft.setScreen(new MUISkinCustomizationScreen(this.lastScreen, this.minecraft.options));
+            this.minecraft.setScreen(new SkinCustomizationScreen(this.lastScreen, this.minecraft.options));
         }
     }
 }

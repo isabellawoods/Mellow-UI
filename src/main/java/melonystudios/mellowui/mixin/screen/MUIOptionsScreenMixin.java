@@ -1,13 +1,9 @@
 package melonystudios.mellowui.mixin.screen;
 
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.updated.MUIOptionsScreen;
-import melonystudios.mellowui.screen.updated.MUISkinCustomizationScreen;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.gui.screen.CustomizeSkinScreen;
+import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import net.minecraft.client.gui.screen.OptionsScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

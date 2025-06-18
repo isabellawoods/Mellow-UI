@@ -3,7 +3,6 @@ package melonystudios.mellowui.mixin.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.util.GUICompatUtils;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
@@ -36,11 +35,12 @@ public abstract class MUIScreenMixin extends FocusableGui {
     public void renderBackground(MatrixStack stack, int vOffset, CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
             callback.cancel();
+            float partialTicks = this.minecraft.getDeltaFrameTime();
             if (this.minecraft.level != null) {
                 if (MellowConfigs.CLIENT_CONFIGS.blurryContainers.get()) {
-                    MellowUtils.renderBlurredBackground(this.minecraft.getDeltaFrameTime());
+                    MellowUtils.renderBlurredBackground(partialTicks);
                 } else if (!(this.minecraft.screen instanceof ContainerScreen)) {
-                    MellowUtils.renderBlurredBackground(this.minecraft.getDeltaFrameTime());
+                    MellowUtils.renderBlurredBackground(partialTicks);
                 }
 
                 // #C0101010 to #D0101010 (Alpha: 192 to 208)
@@ -50,8 +50,8 @@ public abstract class MUIScreenMixin extends FocusableGui {
                 RenderSystem.disableBlend();
                 MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, stack));
             } else {
-                MellowUtils.renderPanorama(stack, this.minecraft.getDeltaFrameTime(), this.width, this.height, 1);
-                MellowUtils.renderBlurredBackground(this.minecraft.getDeltaFrameTime());
+                MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
+                MellowUtils.renderBlurredBackground(partialTicks);
                 this.renderDirtBackground(vOffset);
             }
         }
@@ -62,9 +62,7 @@ public abstract class MUIScreenMixin extends FocusableGui {
         MatrixStack stack = new MatrixStack();
         if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
             callback.cancel();
-            if (!GUICompatUtils.hasCustomBackground(this.minecraft, stack, this.width, this.height, vOffset)) {
-                MellowUtils.renderBackground(stack, this.width, this.height, vOffset);
-            }
+            MellowUtils.renderBackground(stack, this.width, this.height, vOffset);
             MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, stack));
         }
     }

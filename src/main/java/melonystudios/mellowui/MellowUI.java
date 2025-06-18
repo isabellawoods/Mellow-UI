@@ -1,7 +1,7 @@
 package melonystudios.mellowui;
 
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.option.MellowUIOptionsScreen;
+import melonystudios.mellowui.screen.MellowUIOptionsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

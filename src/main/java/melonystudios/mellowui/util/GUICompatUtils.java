@@ -1,7 +1,5 @@
 package melonystudios.mellowui.util;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 
 /// ### <em>making ui mods compatible since 2025!</em>
@@ -28,7 +26,7 @@ public class GUICompatUtils {
     /// @author ~isa 17-5-25
     public GUICompatUtils() {}
 
-    public static boolean hasCustomBackground(Minecraft minecraft, MatrixStack stack, int width, int height, float vOffset) {
+    public static boolean hasCustomBackground() {
         return !AbstractGui.BACKGROUND_LOCATION.toString().equals(GUITextures.OPTIONS_BACKGROUND.toString());
     }
 }

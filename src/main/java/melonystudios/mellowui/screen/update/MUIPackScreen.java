@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.updated;
+package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
