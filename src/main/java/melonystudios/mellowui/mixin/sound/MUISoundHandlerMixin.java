@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SoundHandler.class)
-public class MUISoundHandlerMixin implements InterfaceMethods.SoundHandlerMethods {
+public class MUISoundHandlerMixin implements InterfaceMethods.SoundEngineMethods {
     @Shadow
     @Final
     private SoundEngine soundEngine;

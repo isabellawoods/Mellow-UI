@@ -17,6 +17,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
+import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
 import static melonystudios.mellowui.util.MellowUtils.TOOLTIP_MAX_WIDTH;
 
 public class MellowConfigEntries {
@@ -50,8 +51,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.panoramaBobbing.get(), (options, newValue) -> CLIENT_CONFIGS.panoramaBobbing.set(newValue));
     public static final TextFieldOption MONOCHROME_LOADING_SCREEN_COLOR = new TextFieldOption("config.mellowui.monochrome_loading_screen_color",
             new TranslationTextComponent("config.mellowui.monochrome_loading_screen_color.desc"),
-            CLIENT_CONFIGS.monochromeLoadingScreenColor.get().toString(),
-            newValue -> CLIENT_CONFIGS.monochromeLoadingScreenColor.set(Integer.valueOf(newValue)),
+            WIDGET_CONFIGS.monochromeLoadingScreenColor.get().toString(),
+            newValue -> WIDGET_CONFIGS.monochromeLoadingScreenColor.set(Integer.valueOf(newValue)),
             (text, setter) -> {
                 try {
                     int newValue = Integer.parseInt(text);
@@ -60,8 +61,8 @@ public class MellowConfigEntries {
             });
     public static final TextFieldOption SPLASH_TEXT_COLOR = new TextFieldOption("config.mellowui.splash_text_color",
             new TranslationTextComponent("config.mellowui.splash_text_color.desc"),
-            CLIENT_CONFIGS.splashTextColor.get().toString(),
-            newValue -> CLIENT_CONFIGS.splashTextColor.set(Integer.valueOf(newValue)),
+            WIDGET_CONFIGS.splashTextColor.get().toString(),
+            newValue -> WIDGET_CONFIGS.splashTextColor.set(Integer.valueOf(newValue)),
             (text, setter) -> {
                 try {
                     int newValue = Integer.parseInt(text);
@@ -70,8 +71,8 @@ public class MellowConfigEntries {
             });
     public static final TextFieldOption MELLO_SPLASH_TEXT_COLOR = new TextFieldOption("config.mellomedley.splash_text_color",
             new TranslationTextComponent("config.mellomedley.splash_text_color.desc"),
-            CLIENT_CONFIGS.mellomedleySplashTextColor.get().toString(),
-            newValue -> CLIENT_CONFIGS.mellomedleySplashTextColor.set(Integer.valueOf(newValue)),
+            WIDGET_CONFIGS.mellomedleySplashTextColor.get().toString(),
+            newValue -> WIDGET_CONFIGS.mellomedleySplashTextColor.set(Integer.valueOf(newValue)),
             (text, setter) -> {
                 try {
                     int newValue = Integer.parseInt(text);
@@ -166,6 +167,10 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.backgroundShaders.get(), (options, newValue) -> CLIENT_CONFIGS.backgroundShaders.set(newValue));
     public static final BooleanOption BLURRY_CONTAINERS = new BooleanOption("config.mellowui.blurry_containers", new TranslationTextComponent("config.mellowui.blurry_containers.desc"),
             options -> CLIENT_CONFIGS.blurryContainers.get(), (options, newValue) -> CLIENT_CONFIGS.blurryContainers.set(newValue));
+    public static final BooleanOption DEFAULT_BACKGROUND = new BooleanOption("config.mellowui.default_background", new TranslationTextComponent("config.mellowui.default_background.desc"),
+            options -> CLIENT_CONFIGS.defaultBackground.get(), (options, newValue) -> CLIENT_CONFIGS.defaultBackground.set(newValue));
+    public static final BooleanOption LOG_GL_ERRORS = new BooleanOption("config.mellowui.log_gl_errors", new TranslationTextComponent("config.mellowui.log_gl_errors.desc"),
+            options -> CLIENT_CONFIGS.logGLErrors.get(), (options, newValue) -> CLIENT_CONFIGS.logGLErrors.set(newValue));
 
     // Forge options
     public static final IteratableOption MOD_LIST_SORTING = new IteratableOption("config.mellowui.mod_list_sorting",

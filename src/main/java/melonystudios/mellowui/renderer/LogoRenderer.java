@@ -17,6 +17,11 @@ public class LogoRenderer {
     public static final ResourceLocation EDITION_SUBTITLE = MellowUI.gui("title/edition");
     public static final ResourceLocation OLD_MINECRAFT_LOGO = new ResourceLocation("textures/gui/title/minecraft.png");
     public static final ResourceLocation OLD_EDITION_SUBTITLE = new ResourceLocation("textures/gui/title/edition.png");
+    public static boolean SHOW_EASTER_EGG = new Random().nextFloat() < 1.0E-4;
+
+    public static void rerollEasterEgg() {
+        SHOW_EASTER_EGG = new Random().nextFloat() < 1.0E-4;
+    }
 
     public static void renderUpdatedLogo(MatrixStack stack, int screenWidth, float transparency, boolean keepLogoThroughFade) {
         renderUpdatedLogo(stack, screenWidth, transparency, 30, keepLogoThroughFade);
@@ -28,8 +33,7 @@ public class LogoRenderer {
 
         // Logo
         int logoX = screenWidth / 2 - 128;
-        boolean showEasterEgg = new Random().nextFloat() < 1.0E-4;
-        minecraft.getTextureManager().bind(showEasterEgg ? MINCERAFT_LOGO : MINECRAFT_LOGO);
+        minecraft.getTextureManager().bind(SHOW_EASTER_EGG ? MINCERAFT_LOGO : MINECRAFT_LOGO);
         AbstractGui.blit(stack, logoX, height, 0, 0, 256, 44, 256, 64);
 
         // Edition
@@ -49,10 +53,9 @@ public class LogoRenderer {
 
         // Logo
         int logoX = screenWidth / 2 - 137;
-        boolean showEasterEgg = new Random().nextFloat() < 1.0E-4;
         minecraft.getTextureManager().bind(OLD_MINECRAFT_LOGO);
         RenderSystem.color4f(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
-        if (showEasterEgg) {
+        if (SHOW_EASTER_EGG) {
             screen.blitOutlineBlack(logoX, height, (i1, i2) -> {
                 screen.blit(stack, i1, i2, 0, 0, 99, 44);
                 screen.blit(stack, i1 + 99, i2, 129, 0, 27, 44);

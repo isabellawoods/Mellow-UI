@@ -1,6 +1,7 @@
 package melonystudios.mellowui;
 
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.MellowUIOptionsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.util.ResourceLocation;
@@ -29,6 +30,7 @@ public class MellowUI {
         eventBus.addListener(this::clientSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WidgetConfigs.WIDGET_SPEC, "melonystudios/mellowui-widgets.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MellowConfigs.CLIENT_SPEC, "melonystudios/mellowui-client.toml");
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options));
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable) MellowUtils::addHighContrastPack);

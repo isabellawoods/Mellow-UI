@@ -68,9 +68,10 @@ public class GUITextures {
     public static final ResourceLocation MAIN_MENU_GRADIENT = new ResourceLocation("mellomedley", "textures/gui/main_menu_gradient.png");
     public static final ResourceLocation MELLOMEDLEY_LOGO = new ResourceLocation("mellomedley", "textures/gui/mellomedley.png");
 
-    // Shaders (not really textures, but I'll put these here anyway)
+    // Other locations (not really textures, but I'll put these here anyway)
     // by default points to a copy of the vanilla "blur" shader (because I don't know how to port the updated blur shader, however this works fine)
-    public static ResourceLocation PANORAMA_SHADERS = MellowUI.mellowUI("shaders/post/blur.json");
+    public static final ResourceLocation MUI_HIGH_CONTRAST = MellowUI.mellowUI("high_contrast");
+    public static final ResourceLocation LIBRARY_HIGH_CONTRAST = new ResourceLocation("melonylib", "high_contrast"); // adding this for compatibility with my older mods
 
     public static ResourceLocation gui(String name) {
         return MellowUI.mellowUI("textures/gui/" + name + ".png");

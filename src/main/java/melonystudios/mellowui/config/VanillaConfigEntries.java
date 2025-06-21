@@ -6,6 +6,7 @@ import melonystudios.mellowui.config.option.TooltippedIterableOption;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
+import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.settings.BooleanOption;
@@ -46,10 +47,10 @@ public class VanillaConfigEntries {
         ResourcePackList packRepository = Minecraft.getInstance().getResourcePackRepository();
         boolean highContrastEnabled = packRepository.getSelectedIds().contains("mellowui:high_contrast");
         if (!highContrastEnabled && newValue) {
-            if (((InterfaceMethods.PackRepositoryMethods) packRepository).addPack("mellowui:high_contrast")) {
+            if (((InterfaceMethods.PackRepositoryMethods) packRepository).addPack(GUITextures.MUI_HIGH_CONTRAST.toString())) {
                 MUIOptionsScreen.updateResourcePacksList(packRepository);
             }
-        } else if (highContrastEnabled && !newValue && ((InterfaceMethods.PackRepositoryMethods) packRepository).removePack("mellowui:high_contrast")) {
+        } else if (highContrastEnabled && !newValue && ((InterfaceMethods.PackRepositoryMethods) packRepository).removePack(GUITextures.MUI_HIGH_CONTRAST.toString())) {
             MUIOptionsScreen.updateResourcePacksList(packRepository);
         }
         CLIENT_CONFIGS.highContrastPack.set(newValue);
@@ -66,7 +67,7 @@ public class VanillaConfigEntries {
                 }
                 return DialogTexts.optionStatus(new TranslationTextComponent("config.minecraft.directional_audio"), CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
             });
-    public static final SoundDeviceOption SOUND_DEVICE = new SoundDeviceOption();
+    public static final SoundDeviceOption SOUND_DEVICE = new SoundDeviceOption("config.minecraft.sound_device");
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslationTextComponent("config.minecraft.realms_notifications.desc"),
             options -> options.realmsNotifications, (options, newValue) -> options.realmsNotifications = newValue);
 

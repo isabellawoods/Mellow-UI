@@ -5,10 +5,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
-import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
 import melonystudios.mellowui.screen.list.MUIModList;
 import melonystudios.mellowui.screen.forge.ForgeOptionsScreen;
+import melonystudios.mellowui.screen.widget.ModButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.config.type.ModListSorting;
@@ -26,7 +27,6 @@ import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.*;
-import net.minecraftforge.client.gui.NotificationModUpdateScreen;
 import net.minecraftforge.common.util.Size2i;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
@@ -52,7 +52,6 @@ import static org.apache.commons.lang3.StringUtils.abbreviateMiddle;
 public class MUIModListScreen extends Screen {
     private final Screen lastScreen;
     private TextFieldWidget searchField;
-    private NotificationModUpdateScreen modUpdateScreen;
     private MUIModList.Mod selectedMod = null;
     private List<ModInfo> mods;
     private final List<ModInfo> unsortedMods;
@@ -130,7 +129,7 @@ public class MUIModListScreen extends Screen {
         int width = maxGUIScale ? 100 : 150;
         int buttonOffset = width + 4;
         ITextComponent updateAvailable = new TranslationTextComponent("button.mellowui.update_available").withStyle(style -> style.withColor(Color.fromRgb(MellowUtils.highContrastEnabled() ?
-                0x57FFE1 : 0x41F384)).withUnderlined(true));
+                WidgetConfigs.WIDGET_CONFIGS.highContrastUpdateAvailableColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultUpdateAvailableColor.get())).withUnderlined(true));
 
         // Mod link buttons
         this.addButton(this.websiteButton = new Button(140, 120, width, 20,
@@ -139,9 +138,8 @@ public class MUIModListScreen extends Screen {
         this.addButton(this.issueTrackerButton = new Button(140 + buttonOffset, 120, width, 20,
                 new TranslationTextComponent("button.mellowui.report_issues"), button -> this.getModIssueTracker()));
         this.issueTrackerButton.active = false;
-        this.addButton(this.updateModButton = new Button(140 + buttonOffset * 2, 120, width, 20, updateAvailable, button -> this.getModUpdateSite()));
+        this.addButton(this.updateModButton = new ModButton(140 + buttonOffset * 2, 120, width, 20, updateAvailable, button -> this.getModUpdateSite()).renderOnCorner(maxGUIScale));
         this.updateModButton.active = false;
-        this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, this.updateModButton, maxGUIScale);
         this.addButton(this.changelogsButton = new ImageSetButton(this.width - 24, this.height - 24, 20, 20, GUITextures.CHANGELOGS_SET,
                 button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
@@ -175,7 +173,6 @@ public class MUIModListScreen extends Screen {
         this.searchField.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, 6, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
-        if (this.selectedMod != null && this.updateModButton.visible) this.modUpdateScreen.render(stack, mouseX, mouseY, partialTicks);
     }
 
     public void renderModInformation(MatrixStack stack) {

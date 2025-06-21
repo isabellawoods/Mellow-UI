@@ -50,22 +50,6 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
         } else {
             // Enabling HRTF audio
             this.setHRTF(capabilities.ALC_SOFT_HRTF && MellowConfigs.CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
-
-            // Setting supportsDisconnections
-            /*ALCapabilities capabilities1 = AL.createCapabilities(capabilities);
-            if (!checkForALCError(this.device, "Create context")) {
-                if (capabilities1.AL_EXT_source_distance_model) {
-                    if (capabilities1.AL_EXT_LINEAR_DISTANCE) {
-                        this.supportsDisconnections = ALC10.alcIsExtensionPresent(this.device, "ALC_EXT_disconnect");
-                    } else {
-                        throw new IllegalStateException("AL_EXT_LINEAR_DISTANCE is not supported");
-                    }
-                } else {
-                    throw new IllegalStateException("AL_EXT_source_distance_model is not supported");
-                }
-            } else {
-                throw new IllegalStateException("Unable to create OpenAL context");
-            }*/
         }
     }
 

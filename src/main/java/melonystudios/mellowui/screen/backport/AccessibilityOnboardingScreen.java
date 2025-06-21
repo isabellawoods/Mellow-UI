@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class AccessibilityOnboardingScreen extends Screen {
-    private static final ITextComponent ONBOARDING_NARRATOR_MESSAGE = new TranslationTextComponent("accessibility_onboarding.enable_narrator");
+    private static final ITextComponent ONBOARDING_NARRATOR_MESSAGE = new TranslationTextComponent("menu.minecraft.accessibility_onboarding.narrator");
     private final Runnable onClose;
     private final boolean narratorAvailable;
     private boolean hasNarrated;
@@ -31,7 +31,7 @@ public class AccessibilityOnboardingScreen extends Screen {
     private TextFieldWidget textWidget;
 
     public AccessibilityOnboardingScreen(Runnable onClose) {
-        super(new TranslationTextComponent("accessibility_onboarding.screen_title"));
+        super(new TranslationTextComponent("menu.minecraft.accessibility_settings.title"));
         this.onClose = onClose;
         this.narratorAvailable = NarratorChatListener.INSTANCE.isActive();
     }
@@ -60,7 +60,7 @@ public class AccessibilityOnboardingScreen extends Screen {
 
     @Override
     protected void init() {
-        this.textWidget = new TextFieldWidget(this.minecraft.font, this.width / 2 - 186, 100, 372, 35, new TranslationTextComponent("accessibility_onboarding.title"));
+        this.textWidget = new TextFieldWidget(this.minecraft.font, this.width / 2 - 186, 100, 372, 35, new TranslationTextComponent("menu.minecraft.accessibility_onboarding.text_box"));
         this.textWidget.setEditable(false);
         this.textWidget.setCanLoseFocus(true);
         this.addWidget(this.textWidget);
@@ -72,18 +72,18 @@ public class AccessibilityOnboardingScreen extends Screen {
         // Accessibility Settings
         this.addButton(new ImageSetButton(this.width / 2 - 75, 175, 150, 20, GUITextures.ACCESSIBILITY_SET,
                 button -> this.closeAndSetScreen(new AccessibilityScreen(this, this.minecraft.options)), new TranslationTextComponent("options.accessibility.title"))
-                .renderText(true).alignment(ImageSetButton.Alignment.LEFT));
+                .renderText(true).alignment(ImageSetButton.Alignment.RIGHT));
 
         // Language
         this.addButton(new ImageSetButton(this.width / 2 - 75, 203, 150, 20, GUITextures.LANGUAGE_SET,
                 button -> this.closeAndSetScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())),
-                new TranslationTextComponent("options.language")).renderText(true).alignment(ImageSetButton.Alignment.LEFT));
+                new TranslationTextComponent("options.language")).renderText(true).alignment(ImageSetButton.Alignment.RIGHT));
 
         // Continue
         this.addButton(new Button(this.width / 2 - 75, this.height - 25, 150, 20, new TranslationTextComponent("button.mellowui.continue"),
                 button  -> this.onClose()));
 
-        this.setFocused(narrator);
+        this.setInitialFocus(narrator);
     }
 
     @Override
@@ -92,24 +92,13 @@ public class AccessibilityOnboardingScreen extends Screen {
         MellowUtils.renderPanorama(stack, 0, this.width, this.height, 1);
         MellowUtils.renderBlurredBackground(partialTicks);
         this.renderDirtBackground(0);
-        MellowUtils.renderTiledBackground(stack, GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, this.width, this.height, 0);
-
-        switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
-            case OPTION_1: // Pre 1.19
-                LogoRenderer.renderOldLogo(stack, this, this.width, 1, true);
-                break;
-            case OPTION_2: // 1.20 and above
-                LogoRenderer.renderUpdatedLogo(stack, this.width, 1, true);
-                break;
-            case OPTION_3: // Mellomedley's logo
-                LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
-                break;
-        }
+        MellowUtils.renderTiledBackground(stack, GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, 255, this.width, this.height, 0);
+        this.renderLogo(stack);
 
         if (this.textWidget != null) this.textWidget.render(stack, mouseX, mouseY, partialTicks);
 
         // todo: replace this with a multiline text widget when I add that ~isa 10-6-25
-        List<IReorderingProcessor> processors = this.font.split(new TranslationTextComponent("accessibility_onboarding.title"), 368);
+        List<IReorderingProcessor> processors = this.font.split(new TranslationTextComponent("menu.minecraft.accessibility_onboarding.text_box"), 368);
         int line = 0;
         for (IReorderingProcessor processor : processors) {
             int textWidth = this.font.width(processor);
@@ -118,6 +107,32 @@ public class AccessibilityOnboardingScreen extends Screen {
         }
 
         super.render(stack, mouseX, mouseY, partialTicks);
+    }
+
+    private void renderLogo(MatrixStack stack) {
+        switch (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get()) {
+            case OPTION_1: {
+                LogoRenderer.renderOldLogo(stack, this, this.width, 1, true);
+                break;
+            }
+            case OPTION_2: {
+                switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
+                    case OPTION_1: // Pre 1.19
+                        LogoRenderer.renderOldLogo(stack, this, this.width, 1, true);
+                        break;
+                    case OPTION_2: // 1.20 and above
+                        LogoRenderer.renderUpdatedLogo(stack, this.width, 1, true);
+                        break;
+                    case OPTION_3: // Mellomedley's logo
+                        LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
+                        break;
+                }
+            }
+            case OPTION_3: {
+                LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
+                break;
+            }
+        }
     }
 
     private void handleInitialNarrationDelay() {

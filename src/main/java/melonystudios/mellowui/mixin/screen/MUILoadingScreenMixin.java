@@ -2,6 +2,7 @@ package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigs;
 import net.minecraft.client.gui.ResourceLoadProgressGui;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +30,7 @@ public class MUILoadingScreenMixin {
         int brandBackground = 0xFFEF323D;
 
         if (MellowConfigs.CLIENT_CONFIGS.monochromeLoadingScreen.get()) {
-            int color = MellowConfigs.CLIENT_CONFIGS.monochromeLoadingScreenColor.get();
+            int color = WidgetConfigs.WIDGET_CONFIGS.monochromeLoadingScreenColor.get();
             BRAND_BACKGROUND = color(255, red(color), green(color), blue(color));
             BRAND_BACKGROUND_NO_ALPHA = color & 16777215;
         } else {

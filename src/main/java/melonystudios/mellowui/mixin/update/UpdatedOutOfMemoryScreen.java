@@ -44,7 +44,9 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
         if (MellowConfigs.CLIENT_CONFIGS.updateOutOfMemoryMenu.get()) {
             callback.cancel();
             // Background
-            MellowUtils.renderTiledBackground(stack, GUITextures.OUT_OF_MEMORY_BACKGROUND, this.width, this.height, 0);
+            MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
+            MellowUtils.renderBlurredBackground(partialTicks);
+            MellowUtils.renderTiledBackground(stack, GUITextures.OUT_OF_MEMORY_BACKGROUND, 255, this.width, this.height, 0);
 
             stack.pushPose();
             stack.scale(2, 2, 2);

@@ -6,13 +6,10 @@ import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
-import melonystudios.mellowui.screen.widget.WidgetTextureSet;
-import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
+import melonystudios.mellowui.screen.widget.*;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
-import melonystudios.mellowui.screen.widget.IconButton;
-import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.audio.SimpleSound;
@@ -30,7 +27,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.gui.NotificationModUpdateScreen;
 import net.minecraftforge.fml.BrandingControl;
 import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.*;
@@ -42,10 +38,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import javax.annotation.Nullable;
 
 @Mixin(value = MainMenuScreen.class, priority = 900)
-public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceMethods.MainMenuMethods {
+public abstract class UpdatedTitleScreen extends Screen implements InterfaceMethods.MainMenuMethods {
     @Mutable @Shadow @Final private RenderSkybox panorama;
-    @Shadow(remap = false)
-    private NotificationModUpdateScreen modUpdateNotification;
     @Shadow private boolean realmsNotificationsInitialized;
     @Shadow private Screen realmsNotificationsScreen;
     @Shadow @Nullable private String splash;
@@ -59,7 +53,7 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
     @Shadow protected abstract void realmsButtonClicked();
     @Unique public boolean keepLogoThroughFade;
 
-    public UpdatedMainMenuScreen(ITextComponent title) {
+    public UpdatedTitleScreen(ITextComponent title) {
         super(title);
     }
 
@@ -92,7 +86,9 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
         if (MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()) {
             this.keepLogoThroughFade(true);
             this.minecraft.setScreen(new AccessibilityOnboardingScreen(() -> this.minecraft.setScreen(this)));
+            return;
         }
+        LogoRenderer.rerollEasterEgg();
 
         if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
@@ -101,7 +97,6 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
             this.copyrightWidth = this.font.width(new TranslationTextComponent("menu.minecraft.credits"));
             this.copyrightX = this.width - this.copyrightWidth - 2;
             int buttonsPos = this.height / 4 + 48;
-            Button modsButton = null;
 
             if (this.minecraft.isDemo()) {
                 this.createDemoMenuOptions(buttonsPos, 24);
@@ -110,20 +105,18 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
                 // Mods
                 ThreeStyles buttonLocation = MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get();
                 if (buttonLocation == ThreeStyles.OPTION_1) {
-                    modsButton = this.addButton(new Button(this.width / 2 + 2, buttonsPos + 24 * 2, 98, 20,
+                    this.addButton(new ModButton(this.width / 2 + 2, buttonsPos + 24 * 2, 98, 20,
                             new TranslationTextComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
                 } else if (buttonLocation == ThreeStyles.OPTION_3) {
-                    modsButton = this.addButton(new Button(this.width / 2 - 100, buttonsPos + 24 * 2, 200, 20,
+                    this.addButton(new ModButton(this.width / 2 - 100, buttonsPos + 24 * 2, 200, 20,
                             new TranslationTextComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
                 } else if (buttonLocation == ThreeStyles.OPTION_2) {
-                    modsButton = this.addButton(new ImageSetButton(this.width / 2 + 104, buttonsPos + 24 * 2, 20, 20,
+                    this.addButton(new ImageSetModButton(this.width / 2 + 104, buttonsPos + 24 * 2, 20, 20,
                             GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
                             MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
-                            new TranslationTextComponent("fml.menu.mods")));
+                            new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
                 }
             }
-
-            this.modUpdateNotification = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get() == ThreeStyles.OPTION_2);
 
             // Language
             this.addButton(new ImageButton(this.width / 2 - 124, buttonsPos + 72 + 12, 20, 20, 0, 106, 20,
@@ -250,8 +243,6 @@ public abstract class UpdatedMainMenuScreen extends Screen implements InterfaceM
 
                 super.render(stack, mouseX, mouseY, partialTicks);
                 if (this.realmsNotificationsEnabled() && buttonAlpha >= 1) this.realmsNotificationsScreen.render(stack, mouseX, mouseY, partialTicks);
-                ((MUIModUpdateScreen) this.modUpdateNotification).alpha = buttonAlpha;
-                this.modUpdateNotification.render(stack, mouseX, mouseY, partialTicks);
             }
         }
     }

@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
+import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
 import melonystudios.mellowui.screen.backport.OnlineOptionsScreen;
-import melonystudios.mellowui.util.ShaderManager;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.*;
@@ -21,15 +20,11 @@ import net.minecraft.network.play.client.CLockDifficultyPacket;
 import net.minecraft.network.play.client.CSetDifficultyPacket;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Difficulty;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
-import java.util.Random;
 
 public class MUIOptionsScreen extends SettingsScreen {
     private Button difficultyButton;
@@ -116,22 +111,8 @@ public class MUIOptionsScreen extends SettingsScreen {
         buttonHeight += 25;
 
         // Super Secret Settings
-        Random random = new Random();
-        this.addButton(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.super_secret_settings"), button -> {
-            if (hasControlDown()) {
-                ShaderManager.resetShaders(this.minecraft);
-            } else {
-                SoundEvent[] allSounds = ForgeRegistries.SOUND_EVENTS.getValues().toArray(new SoundEvent[0]);
-                SoundEvent sound = allSounds[random.nextInt(allSounds.length)];
-                float pitch = randomBetween(random, 0.01F, 2);
-                this.minecraft.getSoundManager().play(SimpleSound.forUI(sound, pitch, 1));
-                ShaderManager.cycleShader(this.minecraft);
-
-                if (this.minecraft.getLaunchedVersion().contains("melony-studios-dev")) {
-                    LogManager.getLogger().debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
-                }
-            }
-        }));
+        this.addButton(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.super_secret_settings"),
+                button -> this.minecraft.setScreen(new SuperSecretSettingsScreen(this))));
 
         // Credits & Attribution
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.credits_and_attribution"),
@@ -140,10 +121,6 @@ public class MUIOptionsScreen extends SettingsScreen {
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
-    }
-
-    public static float randomBetween(Random rand, float minimum, float maximum) {
-        return rand.nextFloat() * (maximum - minimum) + minimum;
     }
 
     @Override

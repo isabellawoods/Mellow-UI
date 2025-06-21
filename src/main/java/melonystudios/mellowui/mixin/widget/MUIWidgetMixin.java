@@ -3,6 +3,7 @@ package melonystudios.mellowui.mixin.widget;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.widget.ScrollingText;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,6 @@ public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingTex
     @Shadow public boolean active;
     @Shadow protected float alpha;
     @Shadow public abstract boolean isHovered();
-    @Shadow public abstract boolean isFocused();
     @Shadow(remap = false) public abstract int getFGColor();
     @Shadow public abstract ITextComponent getMessage();
     @Shadow protected abstract int getYImage(boolean hovered);
@@ -56,7 +56,8 @@ public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingTex
             this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + yImage * 20, this.width / 2, this.height);
             this.renderBg(stack, minecraft, mouseX, mouseY);
             int color = this.getFGColor();
-            this.renderScrollingString(stack, font, 2, color | MathHelper.ceil(this.alpha * 255F) << 24);
+            int padding = MathHelper.clamp(WidgetConfigs.WIDGET_CONFIGS.buttonTextBorderPadding.get(), 0, this.width / 2 - 1);
+            this.renderScrollingString(stack, font, padding, color | MathHelper.ceil(this.alpha * 255F) << 24);
         }
     }
 
@@ -69,10 +70,8 @@ public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingTex
 
     @Inject(method = "getFGColor", at = @At("HEAD"), cancellable = true, remap = false)
     public void getFGColor(CallbackInfoReturnable<Integer> callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.legacyButtonColors.get() || Minecraft.getInstance().getResourcePackRepository().getSelectedIds().contains("programmer_art")) {
-            callback.cancel();
-            if (this.packedFGColor != UNSET_FG_COLOR) callback.setReturnValue(this.packedFGColor);
-            callback.setReturnValue(MellowUtils.getSelectableTextColor(this.isFocused() || this.isHovered(), this.active));
-        }
+        callback.cancel();
+        if (this.packedFGColor != UNSET_FG_COLOR) callback.setReturnValue(this.packedFGColor);
+        callback.setReturnValue(MellowUtils.getSelectableTextColor(this.isHovered(), this.active));
     }
 }

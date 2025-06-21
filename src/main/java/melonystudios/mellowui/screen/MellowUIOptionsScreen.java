@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.screen.widget.TabButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
@@ -26,7 +27,7 @@ import static melonystudios.mellowui.config.VanillaConfigEntries.*;
 
 public class MellowUIOptionsScreen extends SettingsScreen {
     // Mellow UI
-    public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, BACKGROUND_SHADERS, BLURRY_CONTAINERS);
+    public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, DEFAULT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS, LOG_GL_ERRORS);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
     public static final List<AbstractOption> PAUSE_MENU = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON);
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
@@ -108,6 +109,9 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         // Button toggles
         Widget panoramaCameraPitch = this.mellowUIList.findOption(PANORAMA_CAMERA_PITCH);
         if (panoramaCameraPitch != null) panoramaCameraPitch.active = !MellowConfigs.CLIENT_CONFIGS.panoramaBobbing.get();
+
+        Widget highContrast = this.vanillaList.findOption(VanillaConfigEntries.HIGH_CONTRAST);
+        if (highContrast != null && MellowUtils.highContrastUnavailable()) highContrast.active = false;
 
         // Tabs
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth * 2, 10, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.mellow_ui"), button -> {

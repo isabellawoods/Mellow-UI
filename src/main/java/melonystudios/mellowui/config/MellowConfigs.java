@@ -21,20 +21,19 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue onboardAccessibility;
 
     // Mellow UI Configs
-    public final ForgeConfigSpec.IntValue monochromeLoadingScreenColor;
-    public final ForgeConfigSpec.IntValue splashTextColor;
     public final ForgeConfigSpec.IntValue panoramaCameraPitch;
     public final ForgeConfigSpec.BooleanValue panoramaBobbing;
     public final ForgeConfigSpec.BooleanValue legacyButtonColors;
     public final ForgeConfigSpec.BooleanValue scrollingText;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuModButton;
     public final ForgeConfigSpec.EnumValue<TwoStyles> pauseMenuModButton;
-    public final ForgeConfigSpec.BooleanValue disableBranding;
     public final ForgeConfigSpec.BooleanValue backgroundShaders;
+    public final ForgeConfigSpec.BooleanValue logGLErrors;
     public final ForgeConfigSpec.BooleanValue blurryContainers;
+    public final ForgeConfigSpec.BooleanValue defaultBackground;
+    public final ForgeConfigSpec.BooleanValue disableBranding;
 
     // Mellomedley Configs
-    public final ForgeConfigSpec.IntValue mellomedleySplashTextColor;
     public final ForgeConfigSpec.EnumValue<TwoStyles> mellomedleyMainMenuModButton;
 
     // Screen Toggles
@@ -75,17 +74,17 @@ public class MellowConfigs {
         builder.pop();
 
         builder.push("mellowUI");
-        this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").defineInRange("monochromeLoadingScreenColor", 0, 0, 0xFFFFFF);
-        this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").defineInRange("splashTextColor", 0xFFFF00, 0, 0xFFFFFF);
         this.panoramaCameraPitch = builder.comment("The pitch used by the camera in the panorama. Defaults to 10.").defineInRange("panoramaCameraPitch", 10, -90, 90);
         this.panoramaBobbing = builder.comment("Whether the panorama should bob up and down instead of being at a consistent pitch.").define("panoramaBobbing", false);
         this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
         this.scrollingText = builder.comment("Whether the text in buttons should scroll if it's too long instead of rendering on top of other widgets.").define("scrollingText", true);
         this.mainMenuModButton = builder.comment("Where the 'Mods' button should be located in the main menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Realms.").defineEnum("mainMenuModButton", ThreeStyles.OPTION_1);
         this.pauseMenuModButton = builder.comment("Where the 'Mods' button should be located in the pause menu.", "Option 1 = Replace | Option 2 = Icon.").defineEnum("pauseMenuModButton", TwoStyles.OPTION_1);
-        this.blurryContainers = builder.comment("Whether to apply blur (or an extra layer of shaders) on the background while a container (chest, inventory, furnace) is open.").define("blurryContainers", false);
-        this.disableBranding = builder.comment("Whether to disable branding lines (the Forge and MCP versions) in the main menu.").define("disableBranding", true);
         this.backgroundShaders = builder.comment("Whether shaders, like super secret settings and the blur, should render on the panorama.", "This may fix rendering issues with menus added by other mods.").define("backgroundShaders", true);
+        this.logGLErrors = builder.comment("Whether to disable OpenGL error messages to not spam the logs.", "Useful if playing with Fabulous! graphics.").define("logGLErrors", false);
+        this.blurryContainers = builder.comment("Whether to apply blur (or an extra layer of shaders) on the background while a container (chest, inventory, furnace) is open.").define("blurryContainers", false);
+        this.defaultBackground = builder.comment("Whether mods that replace the 'options_background.png' texture should still work with Mellow UI.", "Setting this to false will make the transparent background be used regardless of that.").define("defaultBackground", false);
+        this.disableBranding = builder.comment("Whether to disable branding lines (the Forge and MCP versions) in the main menu.").define("disableBranding", true);
 
         this.mainMenuStyle = builder.comment("Which style to use for the main menu.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").defineEnum("styles.mainMenu", ThreeStyles.OPTION_1);
         this.updatePauseMenu = builder.comment("Whether Mellow UI should update the pause menu.").define("updates.pauseMenu", true);
@@ -105,7 +104,6 @@ public class MellowConfigs {
         builder.pop();
 
         builder.push("mellomedley");
-        this.mellomedleySplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").defineInRange("splashTextColor", 0xBDCF73, 0, 0xFFFFFF);
         this.mellomedleyMainMenuModButton = builder.comment("Where the 'Mods' button should be located in Mellomedley's main menu. Rearranges buttons to fit.", "Option 1 = Below 'Options' | Option 2 = With Accessibility and Language").defineEnum("mainMenuModButton", TwoStyles.OPTION_1);
         builder.pop();
     }

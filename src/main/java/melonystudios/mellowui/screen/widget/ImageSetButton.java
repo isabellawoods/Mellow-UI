@@ -58,11 +58,11 @@ public class ImageSetButton extends Button implements ScrollingText {
         minecraft.getTextureManager().bind(iconTexture);
         switch (this.alignment) {
             case RIGHT: {
-                blit(stack, this.x, this.y, 0, 0, 20, 20, 20, 20);
+                blit(stack, this.x + this.width - 20, this.y, 0, 0, 20, 20, 20, 20);
                 break;
             }
             case LEFT: {
-                blit(stack, this.x + this.width - 20, this.y, 0, 0, 20, 20, 20, 20);
+                blit(stack, this.x, this.y, 0, 0, 20, 20, 20, 20);
                 break;
             }
             case CENTER: default: {
@@ -71,7 +71,8 @@ public class ImageSetButton extends Button implements ScrollingText {
         }
 
         this.renderBg(stack, minecraft, mouseX, mouseY);
-        if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
+        if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
+        else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
     }
 
     public void renderScrollingString(MatrixStack stack, FontRenderer font, int width, int color) {

@@ -21,14 +21,14 @@ public class MUIMusicTickerMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "startPlaying", at = @At("TAIL"))
-    public void startPlaying(BackgroundMusicSelector music, CallbackInfo info) {
-        if (this.minecraft.getOverlay() != null) return;
+    public void addMusicToast(BackgroundMusicSelector music, CallbackInfo callback) {
+        if (this.minecraft.getOverlay() != null || this.currentMusic == null) return;
         if (this.canShowToast()) MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), this.minecraft.getToasts());
     }
 
     @Unique
     private boolean canShowToast() {
-        return this.currentMusic != null && this.currentMusic.getSound() != SoundHandler.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn();
+        return this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundHandler.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn();
     }
 
     @Unique

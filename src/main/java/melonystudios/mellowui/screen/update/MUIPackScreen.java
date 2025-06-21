@@ -6,9 +6,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.screen.list.MUIPackList;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MUIPackLoader;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.client.gui.screen.PackLoadingManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class MUIPackScreen extends Screen {
     private final Map<String, ResourceLocation> packIcons = Maps.newHashMap();
-    private final MUIPackLoader manager;
+    private final PackLoadingManager manager;
     private final Screen lastScreen;
     private final File packDirectory;
     private MUIPackList packList;
@@ -43,7 +43,7 @@ public class MUIPackScreen extends Screen {
         super(title);
         this.lastScreen = lastScreen;
         this.packDirectory = packDirectory;
-        this.manager = new MUIPackLoader(this::populateLists, this::getPackIcon, repository, outputList);
+        this.manager = new PackLoadingManager(this::populateLists, this::getPackIcon, repository, outputList);
     }
 
     @Override
@@ -77,14 +77,14 @@ public class MUIPackScreen extends Screen {
     }
 
     private void populateLists() {
-        this.updateList(this.packList, this.manager.getSelectedPacks());
-        this.updateList(this.packList, this.manager.getUnselectedPacks());
+        this.updateList(this.packList, this.manager.getSelected());
+        this.updateList(this.packList, this.manager.getUnselected());
         this.doneButton.active = !this.packList.children().isEmpty();
     }
 
-    private void updateList(MUIPackList packList, Stream<MUIPackLoader.IPack> packs) {
+    private void updateList(MUIPackList packList, Stream<PackLoadingManager.IPack> packs) {
         packList.children().clear();
-        packs.filter(MUIPackLoader.IPack::notHidden).forEach(pack -> packList.children().add(new MUIPackList.PackEntry(this, this.minecraft, pack, packList)));
+        packs.filter(PackLoadingManager.IPack::notHidden).forEach(pack -> packList.children().add(new MUIPackList.PackEntry(this, this.minecraft, pack, packList)));
     }
 
     private ResourceLocation getPackIcon(ResourcePackInfo packInfo) {

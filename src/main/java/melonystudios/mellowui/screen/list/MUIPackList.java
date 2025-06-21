@@ -3,11 +3,11 @@ package melonystudios.mellowui.screen.list;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MUIPackLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IBidiRenderer;
 import net.minecraft.client.gui.screen.ConfirmScreen;
+import net.minecraft.client.gui.screen.PackLoadingManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.resources.PackCompatibility;
@@ -18,7 +18,6 @@ import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 
 @OnlyIn(Dist.CLIENT)
 public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
@@ -40,14 +39,14 @@ public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
     public static class PackEntry extends ExtendedList.AbstractListEntry<PackEntry> {
         protected final Screen screen;
         protected final Minecraft minecraft;
-        private final MUIPackLoader.IPack pack;
+        private final PackLoadingManager.IPack pack;
         private MUIPackList parent;
         private final IReorderingProcessor nameDisplayCache;
         private final IBidiRenderer descriptionDisplayCache;
         private final IReorderingProcessor incompatibleNameDisplayCache;
         private final IBidiRenderer incompatibleDescriptionDisplayCache;
 
-        public PackEntry(Screen screen, Minecraft minecraft, MUIPackLoader.IPack pack, MUIPackList parent) {
+        public PackEntry(Screen screen, Minecraft minecraft, PackLoadingManager.IPack pack, MUIPackList parent) {
             this.screen = screen;
             this.minecraft = minecraft;
             this.pack = pack;

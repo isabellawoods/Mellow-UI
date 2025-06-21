@@ -2,9 +2,11 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.update.MUIModListScreen;
 import melonystudios.mellowui.screen.widget.ScrollingText;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.text.ITextComponent;
@@ -91,7 +93,8 @@ public class MUIModList extends ExtendedList<MUIModList.Mod> {
             }
             RenderSystem.disableBlend();
 
-            this.renderScrollingString(stack, font, modName, left, top, left + width - 4, top + height - 8, 0xFFFFFF);
+            int padding = WidgetConfigs.WIDGET_CONFIGS.modNameTextBorderPadding.get();
+            this.renderScrollingString(stack, font, modName, left + padding - 2, top, left + width - padding - 2, top + height - 8, MellowUtils.getSelectableTextColor(MUIModList.this.getSelected() == this, true));
             int leftOffset = MUIModList.this.getMaxScroll() > 0 ? 3 : 8;
             font.drawShadow(stack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(modVersion, MUIModList.this.listWidth))), left + leftOffset, top + 4 + font.lineHeight, 0xA0A0A0);
 

@@ -6,11 +6,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.OptionButton;
 import net.minecraft.client.settings.BooleanOption;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
@@ -25,15 +28,20 @@ public class HighContrastOption extends BooleanOption {
 
     @Override
     @Nonnull
-    public Widget createButton(GameSettings options, int x, int y, int width) {
+    public Optional<List<IReorderingProcessor>> getTooltip() {
         if (this.tooltipComponent != null) {
-            if (!Minecraft.getInstance().getResourcePackRepository().getAvailableIds().contains("mellowui:high_contrast")) {
-                this.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.high_contrast.not_available"), MellowUtils.TOOLTIP_MAX_WIDTH));
+            if (MellowUtils.highContrastUnavailable()) {
+                return Optional.of(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.high_contrast.not_available"), MellowUtils.TOOLTIP_MAX_WIDTH));
             } else {
-                this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, MellowUtils.TOOLTIP_MAX_WIDTH));
+                return Optional.of(Minecraft.getInstance().font.split(this.tooltipComponent, MellowUtils.TOOLTIP_MAX_WIDTH));
             }
         }
+        return super.getTooltip();
+    }
 
+    @Override
+    @Nonnull
+    public Widget createButton(GameSettings options, int x, int y, int width) {
         return new OptionButton(x, y, width, 20, this, this.getMessage(options), button -> {
             this.toggle(options);
             button.setMessage(this.getMessage(options));

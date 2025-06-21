@@ -7,6 +7,7 @@
   "mixins": [],
   "client": [
     "client.MUIGameRendererMixin",
+    "client.MUIGLDebugTextUtilsMixin",
     "client.MUIMinecraftMixin",
     "client.MUIMusicTickerMixin",
     "client.MUIPackRepositoryMixin",
@@ -36,10 +37,10 @@
     "sound.MUISoundSystemMixin",
     "update.UpdatedAccessibilityScreen",
     "update.UpdatedAdvancementsScreen",
-    "update.UpdatedMainMenuScreen",
     "update.UpdatedMusicAndSoundsScreen",
     "update.UpdatedOutOfMemoryScreen",
     "update.UpdatedPauseMenuScreen",
+    "update.UpdatedTitleScreen",
     "widget.MUIImageButtonMixin",
     "widget.MUITextFieldWidgetMixin",
     "widget.MUIWidgetMixin"

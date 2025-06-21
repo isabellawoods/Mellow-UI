@@ -23,7 +23,7 @@ public interface ScrollingText {
             double i3 = Math.max((double) i2 * 0.5, 3);
             double i4 = Math.sin(Math.PI / 2 * Math.cos(Math.PI * 2 * time / i3)) / 2 + 0.5;
             double xOffset = MathHelper.lerp(i4, 0, i2);
-            MellowUtils.buttonScissor(() -> AbstractGui.drawString(stack, font, text, minX - (int) xOffset, textY, color), minX, maxX);
+            MellowUtils.textScissor(() -> AbstractGui.drawString(stack, font, text, minX - (int) xOffset, textY, color), minX, maxX);
         } else {
             int textX = MathHelper.clamp(centerX, minX + textWidth / 2, maxX - textWidth / 2);
             AbstractGui.drawCenteredString(stack, font, text, textX, textY, color);

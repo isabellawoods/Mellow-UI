@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.RenderSkyboxCube;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.openal.ALUtil;
 
 import javax.annotation.Nullable;
@@ -48,7 +47,6 @@ public class InterfaceMethods {
 
         default List<String> getAvailableSoundDevices() {
             List<String> devices = ALUtil.getStringList(0L, 4115);
-            LogManager.getLogger().debug("sound devices: {}", devices);
             return devices == null ? Collections.emptyList() : devices;
         }
     }
@@ -65,10 +63,6 @@ public class InterfaceMethods {
         default String getCurrentDeviceName() {
             return "";
         }
-    }
-
-    public interface SoundHandlerMethods {
-        default void reloadSoundEngine() {}
     }
 
     public interface CubeMapMethods {

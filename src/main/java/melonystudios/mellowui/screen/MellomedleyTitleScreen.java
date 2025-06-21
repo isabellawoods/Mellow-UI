@@ -9,10 +9,7 @@ import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
-import melonystudios.mellowui.screen.forge.MUIModUpdateScreen;
-import melonystudios.mellowui.screen.widget.IconButton;
-import melonystudios.mellowui.screen.widget.ImageSetButton;
-import melonystudios.mellowui.screen.widget.WidgetTextureSet;
+import melonystudios.mellowui.screen.widget.*;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.audio.SimpleSound;
@@ -33,7 +30,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.WorldSummary;
-import net.minecraftforge.client.gui.NotificationModUpdateScreen;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
@@ -48,7 +44,6 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
     private int copyrightX;
     @Nullable
     private String splash;
-    private NotificationModUpdateScreen modUpdateScreen;
     private boolean keepLogoThroughFade;
 
     public MellomedleyTitleScreen() {
@@ -89,9 +84,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
     public void init() {
         // Open accessibility onboarding if it hasn't been shown.
         if (MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()) {
-            this.keepLogoThroughFade(true);
             this.minecraft.setScreen(new AccessibilityOnboardingScreen(() -> this.minecraft.setScreen(this)));
+            return;
         }
+        LogoRenderer.rerollEasterEgg();
 
         // Demo-dependent options
         if (this.minecraft.isDemo()) this.demoMenu();
@@ -107,12 +103,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
 
         // Mods
         int modsOffset = 0;
-        Button modsButton;
         if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_2 && !this.minecraft.isDemo()) {
             modsOffset += 24;
-            this.addButton(modsButton = new Button(10, 182, 140, 20, new TranslationTextComponent("fml.menu.mods"),
+            this.addButton(new ModButton(10, 182, 140, 20, new TranslationTextComponent("fml.menu.mods"),
                     button -> this.minecraft.setScreen(MellowUtils.modList(this))));
-            this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, false);
         }
 
         // Quit Game
@@ -139,11 +133,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
                     new TranslationTextComponent("narrator.button.accessibility")));
 
             // Mods
-            this.addButton(modsButton = new ImageSetButton(70, 206 + modsOffset, 20, 20,
+            this.addButton(new ImageSetModButton(70, 206 + modsOffset, 20, 20,
                     GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
                     MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
-                    new TranslationTextComponent("fml.menu.mods")));
-            this.modUpdateScreen = MUIModUpdateScreen.create(this.minecraft.screen, modsButton, true);
+                    new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
 
             // Language
             this.addButton(new ImageSetButton(104, 206 + modsOffset, 20, 20, GUITextures.LANGUAGE_SET,
@@ -268,10 +261,6 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
 
             for (Widget widget : this.buttons) widget.setAlpha(buttonAlpha);
             super.render(stack, mouseX, mouseY, partialTicks);
-            if (!this.minecraft.isDemo() && this.modUpdateScreen != null) {
-                ((MUIModUpdateScreen) this.modUpdateScreen).alpha = buttonAlpha;
-                this.modUpdateScreen.render(stack, mouseX, mouseY, partialTicks);
-            }
         }
     }
 

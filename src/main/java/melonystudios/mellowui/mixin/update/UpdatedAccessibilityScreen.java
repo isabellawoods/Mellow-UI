@@ -56,7 +56,7 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
             if (narratorButton != null) narratorButton.active = NarratorChatListener.INSTANCE.isActive();
 
             Widget highContrastButton = this.list.findOption(VanillaConfigEntries.HIGH_CONTRAST);
-            if (highContrastButton != null && !this.minecraft.getResourcePackRepository().getAvailableIds().contains("mellowui:high_contrast")) {
+            if (highContrastButton != null && MellowUtils.highContrastUnavailable()) {
                 highContrastButton.active = false;
             }
         } else {

@@ -1,6 +1,6 @@
 package melonystudios.mellowui.mixin.client;
 
-import melonystudios.mellowui.util.ShaderManager;
+import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.IResourceManager;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static melonystudios.mellowui.util.MellowUtils.PANORAMA_SHADER;
+import static melonystudios.mellowui.util.shader.ShaderManager.PANORAMA_SHADER;
 
 @Mixin(GameRenderer.class)
 public class MUIGameRendererMixin {
@@ -31,6 +31,6 @@ public class MUIGameRendererMixin {
 
     @Inject(method = "onResourceManagerReload", at = @At("HEAD"))
     public void reloadPanoramaShader(IResourceManager resourceManager, CallbackInfo callback) {
-        ShaderManager.reloadPanoramaShader(resourceManager, this.minecraft);
+        ShaderManager.reloadPanoramaShaders(resourceManager, this.minecraft);
     }
 }
