@@ -21,7 +21,7 @@ import java.util.function.BooleanSupplier;
 @OnlyIn(Dist.CLIENT)
 public class MUILoadingTerrainScreen extends Screen {
     public static final ITextComponent DOWNLOADING_TERRAIN_TEXT = new TranslationTextComponent("multiplayer.downloadingTerrain");
-    public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 5000L;
+    public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 30000L;
     private final long createdAt;
     private final BooleanSupplier worldReceived;
     private final MUILoadingTerrainScreen.Reason reason;
