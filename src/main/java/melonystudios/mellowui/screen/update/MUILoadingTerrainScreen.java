@@ -67,11 +67,11 @@ public class MUILoadingTerrainScreen extends Screen {
                 MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case END_PORTAL:
-                MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1); // in case the aljanstone texture is transparent ~isa 20-6-25
                 ShaderManager.fillEndPortal(stack, 0, 0, this.width, this.height, -90);
                 MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;
             case ALJAN_PORTAL_STAND: // From Back Math
+                MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1); // in case the aljanstone texture is transparent ~isa 20-6-25
                 MellowUtils.renderTiledBackground(stack, new ResourceLocation("backmath", "textures/block/aljanstone.png"), 64, this.width, this.height, vOffset);
                 MellowUtils.renderBackgroundWithShaders(partialTicks);
                 break;

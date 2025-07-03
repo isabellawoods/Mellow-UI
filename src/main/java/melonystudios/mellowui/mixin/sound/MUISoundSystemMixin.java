@@ -1,10 +1,10 @@
 package melonystudios.mellowui.mixin.sound;
 
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.audio.SoundSystem;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.openal.*;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -60,7 +60,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 IntBuffer buffer = (IntBuffer) stack.callocInt(10).put(6546).put(directionalAudio ? 1 : 0).put(6550).put(0).put(0).flip();
                 if (!SOFTHRTF.alcResetDeviceSOFT(this.device, buffer)) {
-                    LogManager.getLogger().warn("Failed to reset device: {}", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device)));
+                    MellowUI.LOGGER.warn("Failed to reset device: {}", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device)));
                 }
             }
         }
@@ -130,7 +130,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
     private static boolean checkForALCError(long deviceHandle, String operationState) {
         int errorID = ALC10.alcGetError(deviceHandle);
         if (errorID != 0) {
-            LogManager.getLogger().error("{}{}: {}", operationState, deviceHandle, getErrorMessage(errorID));
+            MellowUI.LOGGER.error("{}{}: {}", operationState, deviceHandle, getErrorMessage(errorID));
             return true;
         } else {
             return false;

@@ -31,6 +31,7 @@ public abstract class MUIScreenMixin extends FocusableGui {
     @Shadow
     public abstract void renderDirtBackground(int vOffset);
 
+    // eventually I'll do something about this to make it compatible with other mods (especially jei) ~isa 2-7-25
     @Inject(method = "renderBackground(Lcom/mojang/blaze3d/matrix/MatrixStack;I)V", at = @At("HEAD"), cancellable = true)
     public void renderBackground(MatrixStack stack, int vOffset, CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
@@ -43,10 +44,14 @@ public abstract class MUIScreenMixin extends FocusableGui {
                     MellowUtils.renderBlurredBackground(partialTicks);
                 }
 
-                // #C0101010 to #D0101010 (Alpha: 192 to 208)
                 RenderSystem.enableBlend();
-                this.minecraft.getTextureManager().bind(GUITextures.INWORLD_GRADIENT);
-                blit(stack, 0, 0, 0, 0, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight(), this.minecraft.getWindow().getScreenWidth(), this.minecraft.getWindow().getScreenHeight());
+                // #C0101010 to #D0101010 (Alpha: 192 to 208)
+                if (MellowConfigs.CLIENT_CONFIGS.gradientBackground.get() || this.minecraft.screen instanceof ContainerScreen) {
+                    this.minecraft.getTextureManager().bind(GUITextures.INWORLD_GRADIENT);
+                    blit(stack, 0, 0, this.width, this.height, 0, 0, 16, 128, 16, 128);
+                } else {
+                    MellowUtils.renderBackground(stack, this.width, this.height, vOffset);
+                }
                 RenderSystem.disableBlend();
                 MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, stack));
             } else {

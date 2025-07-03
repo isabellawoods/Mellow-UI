@@ -2,9 +2,11 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.gui.toasts.IToast;
 import net.minecraft.client.gui.toasts.ToastGui;
 import net.minecraft.util.ResourceLocation;
@@ -20,12 +22,14 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class MusicToast implements IToast {
     private ResourceLocation musicLocation;
+    private boolean fromPauseMenu;
+    private long animationTicks = 1;
     private long timeSinceLastChanged;
     private boolean hasChanged;
-    private int animationTicks = 5010;
 
-    public MusicToast(ResourceLocation musicLocation) {
+    public MusicToast(ResourceLocation musicLocation, boolean fromPauseMenu) {
         this.musicLocation = musicLocation;
+        this.fromPauseMenu = fromPauseMenu;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class MusicToast implements IToast {
             this.timeSinceLastChanged = timeSinceLastChanged;
             this.hasChanged = false;
         }
-        this.animationTicks -= 1;
+        this.animationTicks += 1;
         int width = this.width();
         int height = this.height();
 
@@ -49,7 +53,8 @@ public class MusicToast implements IToast {
         AbstractGui.blit(stack, width / 2, 0, width - width / 2F, 0, width / 2, 32, width, 32);
 
         // Music Notes
-        float[] noteColor = hsvToRgb((this.animationTicks - minecraft.getDeltaFrameTime()) / 50F, 0.7F, 0.6F);
+        float hue = this.animationTicks < 0 ? -this.animationTicks : this.animationTicks;
+        float[] noteColor = hsvToRgb(hue / 50F, 0.7F, 0.6F);
         RenderSystem.color4f(noteColor[0], noteColor[1], noteColor[2], 1);
         int yOffset = (int) Util.getMillis() / 100 * 16;
         minecraft.getTextureManager().bind(GUITextures.MUSIC_NOTES); // swap for "bind animated texture" in GUITextures
@@ -59,21 +64,25 @@ public class MusicToast implements IToast {
         // Text
         AbstractGui.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xD3D3D3);
 
+        if (this.fromPauseMenu && ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null) {
+            return minecraft.screen instanceof IngameMenuScreen ? Visibility.SHOW : Visibility.HIDE;
+        }
         return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? IToast.Visibility.SHOW : IToast.Visibility.HIDE;
     }
 
-    public static void add(ResourceLocation musicLocation, ToastGui toast) {
-        toast.addToast(new MusicToast(musicLocation));
+    public static void add(ResourceLocation musicLocation, boolean fromPauseMenu, ToastGui toast) {
+        toast.addToast(new MusicToast(musicLocation, fromPauseMenu));
     }
 
-    public static void addOrUpdate(ResourceLocation musicLocation, ToastGui toast) {
+    public static void addOrUpdate(ResourceLocation musicLocation, boolean fromPauseMenu, ToastGui toast) {
         MusicToast musicToast = toast.getToast(MusicToast.class, NO_TOKEN);
-        if (musicToast == null) add(musicLocation, toast);
-        else musicToast.reset(musicLocation);
+        if (musicToast == null) add(musicLocation, fromPauseMenu, toast);
+        else musicToast.reset(musicLocation, fromPauseMenu);
     }
 
-    public void reset(ResourceLocation musicLocation) {
+    public void reset(ResourceLocation musicLocation, boolean fromPauseMenu) {
         this.musicLocation = musicLocation;
+        this.fromPauseMenu = this.fromPauseMenu && fromPauseMenu;
         this.hasChanged = true;
     }
 
@@ -126,7 +135,7 @@ public class MusicToast implements IToast {
                 green1 = f1;
                 blue1 = f2;
                 break;
-            default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
+            default: throw new IllegalArgumentException(new TranslationTextComponent("error.mellowui.hsv_conversion", hue, saturation, value, i).getString());
         }
 
         return new float[] {MathHelper.clamp(red1, 0, 1), MathHelper.clamp(green1, 0, 1), MathHelper.clamp(blue1, 0, 1)};

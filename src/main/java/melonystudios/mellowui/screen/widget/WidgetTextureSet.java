@@ -1,11 +1,10 @@
 package melonystudios.mellowui.screen.widget;
 
-import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetTextureSet {
@@ -45,11 +44,10 @@ public class WidgetTextureSet {
         return this.disabledTexture;
     }
 
-    public static void switchTitleScreenStyle() {
-        Minecraft minecraft = Minecraft.getInstance();
-        IteratableOption option = MellowConfigEntries.MAIN_MENU_STYLE;
-        option.toggle(minecraft.options, 1);
-        switch (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get()) {
+    public static void switchTitleScreenStyle(Minecraft minecraft) {
+        ThreeStyles menuStyle = MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get();
+        MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.set(ThreeStyles.byId(menuStyle.getId() + 1));
+        switch (menuStyle) {
             case OPTION_3: minecraft.setScreen(new MellomedleyTitleScreen());
             case OPTION_1: case OPTION_2: default: minecraft.setScreen(new MainMenuScreen());
         }

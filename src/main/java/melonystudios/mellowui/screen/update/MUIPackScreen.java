@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.update;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.list.MUIPackList;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
@@ -22,7 +23,6 @@ import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -100,7 +100,7 @@ public class MUIPackScreen extends Screen {
             return packLocation;
         } catch (FileNotFoundException ignored) {
         } catch (Exception exception) {
-            LogManager.getLogger().warn("Failed to load icon from pack {}", packInfo.getId(), exception);
+            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.pack_icon", packInfo.getId()).getString(), exception);
         }
 
         return GUITextures.DEFAULT_PACK_ICON;

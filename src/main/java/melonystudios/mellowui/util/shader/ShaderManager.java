@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.Minecraft;
@@ -15,7 +16,7 @@ import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
-import org.apache.logging.log4j.LogManager;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -57,9 +58,9 @@ public class ShaderManager {
             PANORAMA_SHADER = new ShaderGroup(minecraft.getTextureManager(), resourceManager, minecraft.getMainRenderTarget(), shaderLocation);
             PANORAMA_SHADER.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
         } catch (IOException exception) {
-            LogManager.getLogger().warn("Failed to load shader: {}", shaderLocation, exception);
+            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.load_shader", shaderLocation).getString(), exception);
         } catch (JsonSyntaxException exception) {
-            LogManager.getLogger().warn("Failed to parse shader: {}", shaderLocation, exception);
+            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.parse_shader", shaderLocation).getString(), exception);
         }
     }
 

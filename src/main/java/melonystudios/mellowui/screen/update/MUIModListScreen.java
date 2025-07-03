@@ -3,18 +3,17 @@ package melonystudios.mellowui.screen.update;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.screen.list.MUIModList;
-import melonystudios.mellowui.screen.forge.ForgeOptionsScreen;
 import melonystudios.mellowui.screen.widget.ModButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.config.type.ModListSorting;
 import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.OptionsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -38,7 +37,6 @@ import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -268,16 +266,10 @@ public class MUIModListScreen extends Screen {
         if (this.selectedMod == null) return;
 
         ModInfo info = this.selectedMod.getModInformation();
-        if (info.getModId().equals("minecraft")) {
-            this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options));
-        } else if (info.getModId().equals("forge")) {
-            this.minecraft.setScreen(new ForgeOptionsScreen(this, this.minecraft.options));
-        } else {
-            try {
-                ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
-            } catch (final Exception exception) {
-                LogManager.getLogger().error(new TranslationTextComponent("error.mellowui.broken_config_screen", info.getModId()).getString(), exception);
-            }
+        try {
+            ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
+        } catch (final Exception exception) {
+            MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.broken_config_screen", info.getModId()).getString(), exception);
         }
     }
 

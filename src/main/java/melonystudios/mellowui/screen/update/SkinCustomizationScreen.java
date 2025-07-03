@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.option.ModelPartBooleanOption;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class SkinCustomizationScreen extends SettingsScreen {
-    public static final Logger LOGGER = LogManager.getLogger();
     private OptionsRowList list;
 
     public SkinCustomizationScreen(Screen lastScreen, GameSettings options) {
@@ -47,7 +47,7 @@ public class SkinCustomizationScreen extends SettingsScreen {
                         (Screen) screen.getConstructor(Screen.class).newInstance(this));
                 this.list.addBig(slabfishHatSettings);
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-                LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.blueprint_slabfish_hat").getString());
+                MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.blueprint_slabfish_hat").getString());
             }
         }
 
@@ -59,7 +59,7 @@ public class SkinCustomizationScreen extends SettingsScreen {
                 if (ModList.get().isLoaded("wildfire_gender")) settings.add(wardrobe);
                 else this.list.addBig(wardrobe);
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-                LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
+                MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
             }
         }
 
@@ -71,7 +71,7 @@ public class SkinCustomizationScreen extends SettingsScreen {
                 if (ModList.get().isLoaded("femalegender")) settings.add(wardrobe);
                 else this.list.addBig(wardrobe);
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-                LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
+                MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
             }
         }
 

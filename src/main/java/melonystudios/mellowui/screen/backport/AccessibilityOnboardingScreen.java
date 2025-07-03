@@ -115,6 +115,10 @@ public class AccessibilityOnboardingScreen extends Screen {
                 LogoRenderer.renderOldLogo(stack, this, this.width, 1, true);
                 break;
             }
+            case OPTION_3: {
+                LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
+                break;
+            }
             case OPTION_2: {
                 switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
                     case OPTION_1: // Pre 1.19
@@ -127,10 +131,6 @@ public class AccessibilityOnboardingScreen extends Screen {
                         LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
                         break;
                 }
-            }
-            case OPTION_3: {
-                LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
-                break;
             }
         }
     }

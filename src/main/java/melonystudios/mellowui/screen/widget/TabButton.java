@@ -24,8 +24,9 @@ public class TabButton extends Button implements ScrollingText {
         return this.selected;
     }
 
-    public void setSelected(boolean selected) {
+    public TabButton setSelected(boolean selected) {
         this.selected = selected;
+        return this;
     }
 
     @Override
@@ -65,9 +66,10 @@ public class TabButton extends Button implements ScrollingText {
         blit(stack, this.x + this.width / 2, this.y, 130 - this.width / 2, 0, this.width / 2, this.height, 130, 24);
         this.renderBg(stack, minecraft, mouseX, mouseY);
         this.renderString(stack, font, color);
-        if (this.selected()) this.renderFocusUnderline(stack, font, color);
 
-        if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
+        if (this.selected()) this.renderFocusUnderline(stack, font, color);
+        if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
+        else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
     }
 
     public void renderString(MatrixStack stack, FontRenderer font, int color) {
@@ -75,7 +77,7 @@ public class TabButton extends Button implements ScrollingText {
         int minY = this.y + (this.selected() ? 0 : 3);
         int maxX = this.x + this.getWidth() - 2;
         int maxY = this.y + this.getHeight();
-        renderScrollingString(stack, font, this.getMessage(), minX, minY, maxX, maxY, color);
+        this.renderScrollingString(stack, font, this.getMessage(), minX, minY, maxX, maxY, color);
     }
 
     private void renderFocusUnderline(MatrixStack stack, FontRenderer font, int color) {

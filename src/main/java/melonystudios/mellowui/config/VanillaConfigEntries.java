@@ -1,15 +1,19 @@
 package melonystudios.mellowui.config;
 
 import melonystudios.mellowui.config.option.HighContrastOption;
+import melonystudios.mellowui.config.option.MusicToastOption;
 import melonystudios.mellowui.config.option.SoundDeviceOption;
 import melonystudios.mellowui.config.option.TooltippedIterableOption;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.client.settings.AmbientOcclusionStatus;
 import net.minecraft.client.settings.BooleanOption;
+import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.math.MathHelper;
@@ -40,7 +44,7 @@ public class VanillaConfigEntries {
                 slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.menu_background_blurriness.desc"), TOOLTIP_MAX_WIDTH));
                 return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("config.minecraft.menu_background_blurriness"), (int) Math.round(slider.get(options)));
             });
-    public static final BooleanOption SHOW_MUSIC_TOAST = new BooleanOption("config.minecraft.show_music_toast", new TranslationTextComponent("config.minecraft.show_music_toast.desc"),
+    public static final BooleanOption SHOW_MUSIC_TOAST = new MusicToastOption("config.minecraft.show_music_toast", new TranslationTextComponent("config.minecraft.show_music_toast.desc"),
             options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));
     public static final HighContrastOption HIGH_CONTRAST = new HighContrastOption("config.minecraft.high_contrast", new TranslationTextComponent("config.minecraft.high_contrast.desc"),
             options -> CLIENT_CONFIGS.highContrastPack.get(), (options, newValue) -> {
@@ -55,15 +59,15 @@ public class VanillaConfigEntries {
         }
         CLIENT_CONFIGS.highContrastPack.set(newValue);
     });
-    public static final TooltippedIterableOption DIRECTIONAL_AUDIO = new TooltippedIterableOption("config.minecraft.directional_audio", new TranslationTextComponent("config.minecraft.directional_audio.desc"),
+    public static final TooltippedIterableOption DIRECTIONAL_AUDIO = new TooltippedIterableOption("config.minecraft.directional_audio", new TranslationTextComponent("config.minecraft.directional_audio.off_desc"),
             (options, identifier) -> CLIENT_CONFIGS.directionalAudio.set(TwoStyles.byId(CLIENT_CONFIGS.directionalAudio.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.directionalAudio.get()) {
                     case OPTION_1:
-                        option.setTooltip(Minecraft.getInstance().font.split(CLASSIC_STEREO_TOOLTIP, 200));
+                        option.setTooltip(Minecraft.getInstance().font.split(CLASSIC_STEREO_TOOLTIP, TOOLTIP_MAX_WIDTH));
                         break;
                     case OPTION_2:
-                        option.setTooltip(Minecraft.getInstance().font.split(HRTF_BASED_AUDIO_TOOLTIP, 200));
+                        option.setTooltip(Minecraft.getInstance().font.split(HRTF_BASED_AUDIO_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 }
                 return DialogTexts.optionStatus(new TranslationTextComponent("config.minecraft.directional_audio"), CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
             });
@@ -81,4 +85,10 @@ public class VanillaConfigEntries {
         ITextComponent translation = new TranslationTextComponent("options.fovEffectScale");
         return percentage == 0 ? DialogTexts.optionStatus(translation, false) : new TranslationTextComponent("options.percent_value", translation, (int) (percentage * 100));
     });
+    public static final IteratableOption SMOOTH_LIGHTING = new IteratableOption("options.ao",
+            (options, newValue) -> {
+                options.ambientOcclusion = options.ambientOcclusion.getId() == 0 ? AmbientOcclusionStatus.MAX : AmbientOcclusionStatus.OFF;
+                Minecraft.getInstance().levelRenderer.allChanged();
+            },
+            (options, button) -> DialogTexts.optionStatus(new TranslationTextComponent("options.ao"), options.ambientOcclusion.getId() != 0));
 }

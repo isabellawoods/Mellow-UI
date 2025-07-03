@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.list.OptionsList;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.screen.update.MUIModListScreen;
@@ -37,6 +38,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -73,10 +75,22 @@ public class MellowUtils {
         }
     }
 
-    public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<ResourcePackList> packInfo) {
-        ITextComponent title = new TranslationTextComponent("resourcePack.title");
-        if (MellowConfigs.CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
-        else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+    public static Screen options(Screen lastScreen, Minecraft minecraft) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateOptionsMenu.get()) return new MUIOptionsScreen(lastScreen, minecraft.options);
+        else return new OptionsScreen(lastScreen, minecraft.options);
+    }
+
+    public static Screen videoSettings(Screen lastScreen, Minecraft minecraft) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_3) {
+            try {
+                Class<?> screen = Class.forName("me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI");
+                return (Screen) screen.getConstructor(Screen.class).newInstance(lastScreen);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+                return new VideoSettingsScreen(lastScreen, minecraft.options);
+            }
+        } else {
+            return new VideoSettingsScreen(lastScreen, minecraft.options);
+        }
     }
 
     public static Screen controls(Screen lastScreen, Minecraft minecraft) {
@@ -84,9 +98,10 @@ public class MellowUtils {
         else return new ControlsScreen(lastScreen, minecraft.options);
     }
 
-    public static Screen options(Screen lastScreen, Minecraft minecraft) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateOptionsMenu.get()) return new MUIOptionsScreen(lastScreen, minecraft.options);
-        else return new OptionsScreen(lastScreen, minecraft.options);
+    public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<ResourcePackList> packInfo) {
+        ITextComponent title = new TranslationTextComponent("resourcePack.title");
+        if (MellowConfigs.CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+        else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
     }
 
     public static void scissor(Runnable toCut, int startX, int endX, int y0, int y1, int height) {

@@ -24,13 +24,13 @@ public class AttributionsScreen extends Screen {
     @Override
     protected void init() {
         // Credits
-        this.addButton(new Button(this.width / 2 - 105, 50, 210, 20, new TranslationTextComponent("button.mellowui.credits"),
+        this.addButton(new Button(this.width / 2 - 105, 58, 210, 20, new TranslationTextComponent("button.mellowui.credits"),
                 button -> this.minecraft.setScreen(new WinGameScreen(false, () -> this.minecraft.setScreen(this)))));
         // Attribution
-        this.addButton(new Button(this.width / 2 - 105, 78, 210, 20, new TranslationTextComponent("button.mellowui.attribution"),
+        this.addButton(new Button(this.width / 2 - 105, 86, 210, 20, new TranslationTextComponent("button.mellowui.attribution"),
                 button -> MellowUtils.openLink(this, "https://aka.ms/MinecraftJavaAttribution", false)));
         // Licenses
-        this.addButton(new Button(this.width / 2 - 105, 106, 210, 20, new TranslationTextComponent("button.mellowui.licenses"),
+        this.addButton(new Button(this.width / 2 - 105, 114, 210, 20, new TranslationTextComponent("button.mellowui.licenses"),
                 button -> MellowUtils.openLink(this, "https://aka.ms/MinecraftJavaLicenses", false)));
 
         // Done button

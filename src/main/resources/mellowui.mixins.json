@@ -23,6 +23,7 @@
     "screen.MUIEditGameRulesScreenMixin",
     "screen.MUIGenericMessageScreen",
     "screen.MUILoadingScreenMixin",
+    "screen.MUIMultiplayerWarningScreenMixin",
     "screen.MUIOptionsScreenMixin",
     "screen.MUIPackScreenMixin",
     "screen.MUIScreenMixin",
@@ -41,6 +42,7 @@
     "update.UpdatedOutOfMemoryScreen",
     "update.UpdatedPauseMenuScreen",
     "update.UpdatedTitleScreen",
+    "update.UpdatedVideoSettingsScreen",
     "widget.MUIImageButtonMixin",
     "widget.MUITextFieldWidgetMixin",
     "widget.MUIWidgetMixin"

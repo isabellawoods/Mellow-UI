@@ -29,8 +29,8 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     // Mellow UI
     public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, DEFAULT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS, LOG_GL_ERRORS);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
-    public static final List<AbstractOption> PAUSE_MENU = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON);
-    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
+    public static final List<AbstractOption> INGAME_MENUS = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON, GRADIENT_BACKGROUND);
+    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_VIDEO_SETTINGS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
     private OptionsRowList mellowUIList;
 
     // Mellomedley
@@ -76,8 +76,8 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.mellowUIList.addSmall(MELLOW_UI.toArray(new AbstractOption[0]));
         this.mellowUIList.addBig(MAIN_MENU_SEPARATOR);
         this.mellowUIList.addSmall(MAIN_MENU.toArray(new AbstractOption[0]));
-        this.mellowUIList.addBig(PAUSE_MENU_SEPARATOR);
-        this.mellowUIList.addSmall(PAUSE_MENU.toArray(new AbstractOption[0]));
+        this.mellowUIList.addBig(INGAME_MENUS_SEPARATOR);
+        this.mellowUIList.addSmall(INGAME_MENUS.toArray(new AbstractOption[0]));
         this.mellowUIList.addBig(MENU_UPDATES_SEPARATOR);
         this.mellowUIList.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
         this.mellowUIList.setRenderTopAndBottom(false);

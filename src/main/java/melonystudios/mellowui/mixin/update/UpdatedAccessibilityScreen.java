@@ -27,7 +27,7 @@ import java.util.List;
 
 import static net.minecraft.client.AbstractOption.*;
 
-@Mixin(AccessibilityScreen.class)
+@Mixin(value = AccessibilityScreen.class, priority = 900)
 public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
     @Mutable @Shadow @Final private static AbstractOption[] OPTIONS;
     @Shadow protected abstract void createFooter();

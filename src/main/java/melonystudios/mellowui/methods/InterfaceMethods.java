@@ -1,5 +1,6 @@
 package melonystudios.mellowui.methods;
 
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
@@ -17,7 +18,7 @@ public class InterfaceMethods {
     public enum DeviceCheckState {
         ONGOING,
         CHANGE_DETECTED,
-        NO_CHANGE;
+        NO_CHANGE
     }
 
     public interface MainMenuMethods {
@@ -79,6 +80,13 @@ public class InterfaceMethods {
 
         default RenderSkyboxCube cubeMap() {
             return MainMenuScreen.CUBE_MAP;
+        }
+    }
+
+    public interface MusicManagerMethods {
+        @Nullable
+        default ISound mui$getNowPlaying() {
+            return null;
         }
     }
 }

@@ -1,6 +1,8 @@
 {
   "pack": {
-    "description": "Mod data for Mellow UI.",
+    "description": {
+      "translate": "datapack.mellowui.desc"
+    },
     "pack_format": 6
   }
 }

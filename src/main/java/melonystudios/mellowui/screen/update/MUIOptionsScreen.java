@@ -85,7 +85,7 @@ public class MUIOptionsScreen extends SettingsScreen {
 
         // Video Settings
         this.addButton(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("options.video"),
-                button -> this.minecraft.setScreen(new VideoSettingsScreen(this, this.minecraft.options))));
+                button -> this.minecraft.setScreen(MellowUtils.videoSettings(this, this.minecraft))));
 
         // Controls
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("options.controls"),

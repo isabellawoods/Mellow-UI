@@ -1,11 +1,11 @@
 package melonystudios.mellowui.mixin.sound;
 
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.audio.SoundSystem;
 import net.minecraft.util.Util;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,9 +26,6 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
     private long lastDeviceCheckTime;
     @Shadow
     @Final
-    private static Logger LOGGER;
-    @Shadow
-    @Final
     private SoundSystem library;
     @Shadow
     public abstract void reload();
@@ -46,7 +43,7 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
     @Unique
     private boolean shouldChangeDevice() {
         if (((InterfaceMethods.SoundSystemMethods) this.library).isCurrentDeviceDisconnected()) {
-            LOGGER.info("Audio device was lost!");
+            MellowUI.LOGGER.info("Audio device was lost!");
             return true;
         } else {
             long millis = Util.getMillis();
@@ -58,11 +55,11 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
                     Util.ioPool().execute(() -> {
                         if ("".equals(soundDevice)) {
                             if (((InterfaceMethods.SoundSystemMethods) this.library).hasDefaultDeviceChanged()) {
-                                LOGGER.info("System default audio device has changed!");
+                                MellowUI.LOGGER.info("System default audio device has changed!");
                                 this.devicePoolState.compareAndSet(ONGOING, CHANGE_DETECTED);
                             }
                         } else if (!((InterfaceMethods.SoundSystemMethods) this.library).getCurrentDeviceName().equals(soundDevice) && this.getAvailableSoundDevices().contains(soundDevice)) {
-                            LOGGER.info("Preferred audio device has become available!");
+                            MellowUI.LOGGER.info("Preferred audio device has become available!");
                             this.devicePoolState.compareAndSet(ONGOING, CHANGE_DETECTED);
                         }
 

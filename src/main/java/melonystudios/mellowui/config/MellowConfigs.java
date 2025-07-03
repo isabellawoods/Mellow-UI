@@ -26,15 +26,17 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue legacyButtonColors;
     public final ForgeConfigSpec.BooleanValue scrollingText;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuModButton;
-    public final ForgeConfigSpec.EnumValue<TwoStyles> pauseMenuModButton;
+    public final ForgeConfigSpec.EnumValue<ThreeStyles> pauseMenuModButton;
     public final ForgeConfigSpec.BooleanValue backgroundShaders;
     public final ForgeConfigSpec.BooleanValue logGLErrors;
     public final ForgeConfigSpec.BooleanValue blurryContainers;
     public final ForgeConfigSpec.BooleanValue defaultBackground;
+    public final ForgeConfigSpec.BooleanValue gradientBackground;
     public final ForgeConfigSpec.BooleanValue disableBranding;
 
     // Mellomedley Configs
     public final ForgeConfigSpec.EnumValue<TwoStyles> mellomedleyMainMenuModButton;
+    public final ForgeConfigSpec.ConfigValue<String> mellomedleyVersion;
 
     // Screen Toggles
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuStyle;
@@ -43,6 +45,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue updateOptionsMenu;
     public final ForgeConfigSpec.BooleanValue updateSkinCustomizationMenu;
     public final ForgeConfigSpec.BooleanValue updateMusicAndSoundsMenu;
+    public final ForgeConfigSpec.EnumValue<ThreeStyles> updateVideoSettingsMenu;
     public final ForgeConfigSpec.BooleanValue updateControlsMenu;
     public final ForgeConfigSpec.BooleanValue updatePackMenu;
     public final ForgeConfigSpec.BooleanValue updateAccessibilityMenu;
@@ -79,11 +82,12 @@ public class MellowConfigs {
         this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
         this.scrollingText = builder.comment("Whether the text in buttons should scroll if it's too long instead of rendering on top of other widgets.").define("scrollingText", true);
         this.mainMenuModButton = builder.comment("Where the 'Mods' button should be located in the main menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Realms.").defineEnum("mainMenuModButton", ThreeStyles.OPTION_1);
-        this.pauseMenuModButton = builder.comment("Where the 'Mods' button should be located in the pause menu.", "Option 1 = Replace | Option 2 = Icon.").defineEnum("pauseMenuModButton", TwoStyles.OPTION_1);
+        this.pauseMenuModButton = builder.comment("Where the 'Mods' button should be located in the pause menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Feedback.").defineEnum("pauseMenuModButton", ThreeStyles.OPTION_3);
         this.backgroundShaders = builder.comment("Whether shaders, like super secret settings and the blur, should render on the panorama.", "This may fix rendering issues with menus added by other mods.").define("backgroundShaders", true);
         this.logGLErrors = builder.comment("Whether to disable OpenGL error messages to not spam the logs.", "Useful if playing with Fabulous! graphics.").define("logGLErrors", false);
         this.blurryContainers = builder.comment("Whether to apply blur (or an extra layer of shaders) on the background while a container (chest, inventory, furnace) is open.").define("blurryContainers", false);
         this.defaultBackground = builder.comment("Whether mods that replace the 'options_background.png' texture should still work with Mellow UI.", "Setting this to false will make the transparent background be used regardless of that.").define("defaultBackground", false);
+        this.gradientBackground = builder.comment("Whether in-game screens should use a gradient background instead of a regular transparent background.").define("gradientBackground", false);
         this.disableBranding = builder.comment("Whether to disable branding lines (the Forge and MCP versions) in the main menu.").define("disableBranding", true);
 
         this.mainMenuStyle = builder.comment("Which style to use for the main menu.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").defineEnum("styles.mainMenu", ThreeStyles.OPTION_1);
@@ -91,12 +95,13 @@ public class MellowConfigs {
         this.updateOptionsMenu = builder.comment("Whether Mellow UI should update the options menu.").define("updates.optionsMenu", true);
         this.updateSkinCustomizationMenu = builder.comment("Whether Mellow UI should update the skin customization menu.").define("updates.skinCustomizationMenu", true);
         this.updateMusicAndSoundsMenu = builder.comment("Whether Mellow UI should update the music & sounds menu.").define("updates.musicAndSoundsMenu", true);
+        this.updateVideoSettingsMenu = builder.comment("Whether Mellow UI should update the video settings menu", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Rubidium (Sodium)").defineEnum("updates.videoSettingsMenu", ThreeStyles.OPTION_3);
         this.updateControlsMenu = builder.comment("Whether Mellow UI should update the controls menu, making the old screen the 'key binds' menu.").define("updates.controlsMenu", true);
         this.updateAccessibilityMenu = builder.comment("Whether Mellow UI should update the accessibility settings menu.").define("updates.accessibilityMenu", true);
         this.updateOutOfMemoryMenu = builder.comment("Whether Mellow UI should update the out of memory menu.").define("updates.outOfMemoryMenu", true);
         this.updateScreenBackground = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").define("updates.screenBackground", true);
         this.updateListBackground = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").define("updates.listBackground", true);
-        this.replaceRealmsNotifications = builder.comment("Whether Mellow UI should replace the 'Realms Notifications' button on the options menu with the 'Online Settings' menu.").define("updates.realmsNotifications", true);
+        this.replaceRealmsNotifications = builder.comment("Whether Mellow UI should replace the 'Realms Notifications' button on the options' menu with the 'Online Settings' menu.").define("updates.realmsNotifications", true);
         this.splashTextPosition = builder.comment("Where the splash texts should be located in the main menu.").define("splashTextPosition", true);
         this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the current logo (1.16), new logo (1.20+), and the Mellomedley logo.", "Option 1 = -1.19 | Option 2 = +1.20 | Option 3 = Mellomedley").defineEnum("styles.logo", ThreeStyles.OPTION_2);
         this.modListStyle = builder.comment("Which style to use for the mod list.", "Option 1 = Forge | Option 2 = Mellow UI | Option 3 = Catalogue (if available).").defineEnum("styles.modList", ThreeStyles.OPTION_3);
@@ -105,6 +110,7 @@ public class MellowConfigs {
 
         builder.push("mellomedley");
         this.mellomedleyMainMenuModButton = builder.comment("Where the 'Mods' button should be located in Mellomedley's main menu. Rearranges buttons to fit.", "Option 1 = Below 'Options' | Option 2 = With Accessibility and Language").defineEnum("mainMenuModButton", TwoStyles.OPTION_1);
+        this.mellomedleyVersion = builder.comment("The current version of the Mellomedley modpack.").define("mellomedleyVersion", "0.4");
         builder.pop();
     }
 }

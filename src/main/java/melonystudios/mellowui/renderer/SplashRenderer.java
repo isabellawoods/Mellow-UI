@@ -19,7 +19,7 @@ public class SplashRenderer {
     }
 
     public static void mellomedleySplash(MatrixStack stack, FontRenderer font, String splash, int textAlpha) {
-        render(stack, font, splash, 173, 80, MellowUtils.getSplashTextColor(WidgetConfigs.WIDGET_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
+        render(stack, font, splash, 185, 80, MellowUtils.getSplashTextColor(WidgetConfigs.WIDGET_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
     }
 
     public static void render(MatrixStack stack, FontRenderer font, String splash, int x, int y, int color, int textAlpha) {

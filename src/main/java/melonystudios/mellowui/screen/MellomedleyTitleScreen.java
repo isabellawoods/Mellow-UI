@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
@@ -32,7 +33,6 @@ import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -48,10 +48,6 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
 
     public MellomedleyTitleScreen() {
         this(false, false);
-    }
-
-    public MellomedleyTitleScreen(boolean fading) {
-        this(fading, false);
     }
 
     public MellomedleyTitleScreen(boolean fading, boolean keepLogoThroughFade) {
@@ -94,7 +90,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
         else this.defaultMenu();
 
         this.copyrightWidth = this.font.width(new TranslationTextComponent("menu.minecraft.credits"));
-        this.copyrightX = this.width - this.copyrightWidth - 3;
+        this.copyrightX = this.width - this.copyrightWidth - 2;
         if (this.splash == null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) this.splash = this.minecraft.getSplashManager().getSplash();
 
         // Options
@@ -147,7 +143,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
 
         // Switch Style
         this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> WidgetTextureSet.switchTitleScreenStyle(), (button, stack, mouseX, mouseY) ->
+                button -> WidgetTextureSet.switchTitleScreenStyle(this.minecraft), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 
@@ -192,7 +188,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
                 }
             } catch (IOException exception) {
                 SystemToast.onWorldAccessFailure(this.minecraft, "Demo_World");
-                LogManager.getLogger().warn("Failed to access demo world", exception);
+                MellowUI.LOGGER.warn("Failed to access demo world", exception);
             }
         }));
         resetDemoButton.active = demoWorldPresent;
@@ -203,7 +199,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
             return demoWorldSource.getSummary() != null;
         } catch (IOException exception) {
             SystemToast.onWorldAccessFailure(this.minecraft, "Demo_World");
-            LogManager.getLogger().warn("Failed to read demo world data", exception);
+            MellowUI.LOGGER.warn("Failed to read demo world data", exception);
             return false;
         }
     }
@@ -214,7 +210,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
                 demoWorldSource.deleteLevel();
             } catch (IOException exception) {
                 SystemToast.onWorldDeleteFailure(this.minecraft, "Demo_World");
-                LogManager.getLogger().warn("Failed to delete demo world", exception);
+                MellowUI.LOGGER.warn("Failed to delete demo world", exception);
             }
         }
 
@@ -249,10 +245,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
 
             // Text
             boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height;
-            ITextComponent mellomedleyVersion = new TranslationTextComponent("menu.mellomedley.version.modpack");
+            ITextComponent mellomedleyVersion = new TranslationTextComponent("menu.mellomedley.version.modpack", MellowConfigs.CLIENT_CONFIGS.mellomedleyVersion.get());
             ITextComponent vanillaVersion = new TranslationTextComponent(this.minecraft.isDemo() ? "menu.mellomedley.version.vanilla_demo" : "menu.mellomedley.version.vanilla", SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion());
-            drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 3, this.height - 30, 0xFFFFFF | textAlpha);
-            drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 3, this.height - 20, 0xFFFFFF | textAlpha);
+            drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 2, this.height - 30, 0xFFFFFF | textAlpha);
+            drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 2, this.height - 20, 0xFFFFFF | textAlpha);
             drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, MellowUtils.getSelectableTextColor(copyrightTextHovered, true) | textAlpha);
             if (copyrightTextHovered) {
                 fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, MellowUtils.getSelectableTextColor(true, true) | textAlpha);

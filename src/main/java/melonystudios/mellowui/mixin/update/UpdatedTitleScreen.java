@@ -97,6 +97,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             this.copyrightWidth = this.font.width(new TranslationTextComponent("menu.minecraft.credits"));
             this.copyrightX = this.width - this.copyrightWidth - 2;
             int buttonsPos = this.height / 4 + 48;
+            int demoOffset = this.minecraft.isDemo() ? 24 : 0;
 
             if (this.minecraft.isDemo()) {
                 this.createDemoMenuOptions(buttonsPos, 24);
@@ -119,21 +120,21 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             }
 
             // Language
-            this.addButton(new ImageButton(this.width / 2 - 124, buttonsPos + 72 + 12, 20, 20, 0, 106, 20,
+            this.addButton(new ImageButton(this.width / 2 - 124, buttonsPos + 84 - demoOffset, 20, 20, 0, 106, 20,
                     Button.WIDGETS_LOCATION, 256, 256, button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
                     MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
 
             // Options
-            this.addButton(new Button(this.width / 2 - 100, buttonsPos + 72 + 12, 98, 20,
+            this.addButton(new Button(this.width / 2 - 100, buttonsPos + 84 - demoOffset, 98, 20,
                     new TranslationTextComponent("menu.options"), button -> this.minecraft.setScreen(new OptionsScreen(this, this.minecraft.options))));
 
             // Quit Game
-            this.addButton(new Button(this.width / 2 + 2, buttonsPos + 72 + 12, 98, 20,
+            this.addButton(new Button(this.width / 2 + 2, buttonsPos + 84 - demoOffset, 98, 20,
                     new TranslationTextComponent("menu.quit"), button -> this.minecraft.stop()));
 
             // Accessibility Settings
-            this.addButton(new ImageButton(this.width / 2 + 104, buttonsPos + 72 + 12, 20, 20, 0, 0, 20,
+            this.addButton(new ImageButton(this.width / 2 + 104, buttonsPos + 84 - demoOffset, 20, 20, 0, 0, 20,
                     GUITextures.ACCESSIBILITY_BUTTON, 32, 64, button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), (button, stack, mouseX, mouseY) ->
                     MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.accessibility")));
@@ -151,7 +152,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
         // Switch Style
         this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> WidgetTextureSet.switchTitleScreenStyle(), (button, stack, mouseX, mouseY) ->
+                button -> WidgetTextureSet.switchTitleScreenStyle(this.minecraft), (button, stack, mouseX, mouseY) ->
                 MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 

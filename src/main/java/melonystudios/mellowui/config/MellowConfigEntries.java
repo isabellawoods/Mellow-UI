@@ -25,15 +25,17 @@ public class MellowConfigEntries {
     public static final IFormattableTextComponent ADJACENT_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.option_1.desc"));
     public static final IFormattableTextComponent MAIN_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.option_2.desc"));
     public static final IFormattableTextComponent REPLACE_REALMS_TOOLTIP = new TranslationTextComponent("config.mellowui.main_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.main_menu_mod_button.option_3.desc"));
-    public static final IFormattableTextComponent REPLACE_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_1.desc"));
+    public static final IFormattableTextComponent PAUSE_MENU_ADJACENT_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_1.desc"));
     public static final IFormattableTextComponent PAUSE_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_2.desc"));
+    public static final IFormattableTextComponent REPLACE_TOOLTIP = new TranslationTextComponent("config.mellowui.pause_menu_mod_button.desc", new TranslationTextComponent("config.mellowui.pause_menu_mod_button.option_3.desc"));
     public static final IFormattableTextComponent MOD_LIST_STYLE_TOOLTIP = new TranslationTextComponent("config.mellowui.mod_list_style.desc");
     public static final IFormattableTextComponent MELLOMEDLEY_MAIN_MENU_ICON_TOOLTIP = new TranslationTextComponent("config.mellomedley.main_menu_mod_button.desc", new TranslationTextComponent("config.mellomedley.main_menu_mod_button.option_1.desc"));
     public static final IFormattableTextComponent BELOW_OPTIONS_TOOLTIP = new TranslationTextComponent("config.mellomedley.main_menu_mod_button.desc", new TranslationTextComponent("config.mellomedley.main_menu_mod_button.option_2.desc"));
+    public static final IFormattableTextComponent UPDATED_VIDEO_SETTINGS_TOOLTIP = new TranslationTextComponent("config.mellowui.updated_video_settings_menu.desc");
 
     // Separators
     public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.main_menu"));
-    public static final SeparatorOption PAUSE_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.pause_menu"));
+    public static final SeparatorOption INGAME_MENUS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.ingame_menus"));
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
     public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.realms").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xE43DC3))));
     public static final SeparatorOption ACCESSIBILITY_SEPARATOR = new SeparatorOption(new TranslationTextComponent("menu.minecraft.accessibility_settings.title"));
@@ -95,14 +97,17 @@ public class MellowConfigEntries {
                 return new TranslationTextComponent("config.mellowui.main_menu_mod_button", new TranslationTextComponent("config.mellowui.main_menu_mod_button." + CLIENT_CONFIGS.mainMenuModButton.get().toString()));
             });
     public static final IteratableOption PAUSE_MENU_MOD_BUTTON = new IteratableOption("config.mellowui.pause_menu_mod_button",
-            (options, identifier) -> CLIENT_CONFIGS.pauseMenuModButton.set(TwoStyles.byId(CLIENT_CONFIGS.pauseMenuModButton.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.pauseMenuModButton.set(ThreeStyles.byId(CLIENT_CONFIGS.pauseMenuModButton.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.pauseMenuModButton.get()) {
                     case OPTION_1:
-                        option.setTooltip(Minecraft.getInstance().font.split(REPLACE_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        option.setTooltip(Minecraft.getInstance().font.split(PAUSE_MENU_ADJACENT_TOOLTIP, TOOLTIP_MAX_WIDTH));
                         break;
                     case OPTION_2:
                         option.setTooltip(Minecraft.getInstance().font.split(PAUSE_MENU_ICON_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        break;
+                    case OPTION_3:
+                        option.setTooltip(Minecraft.getInstance().font.split(REPLACE_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 }
                 return new TranslationTextComponent("config.mellowui.pause_menu_mod_button", new TranslationTextComponent("config.mellowui.pause_menu_mod_button." + CLIENT_CONFIGS.pauseMenuModButton.get().toString()));
             });
@@ -131,6 +136,15 @@ public class MellowConfigEntries {
             (options, option) -> {
                 option.setTooltip(Minecraft.getInstance().font.split(MOD_LIST_STYLE_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 return new TranslationTextComponent("config.mellowui.mod_list_style", new TranslationTextComponent("config.mellowui.mod_list_style." + CLIENT_CONFIGS.modListStyle.get().toString()));
+            });
+    public static final IteratableOption UPDATED_VIDEO_SETTINGS_MENU = new IteratableOption("config.mellowui.updated_video_settings_menu",
+            (options, identifier) -> {
+                CLIENT_CONFIGS.updateVideoSettingsMenu.set(ThreeStyles.byId(CLIENT_CONFIGS.updateVideoSettingsMenu.get().getId() + identifier));
+                if (!ModList.get().isLoaded("rubidium") && CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_3) CLIENT_CONFIGS.updateVideoSettingsMenu.set(ThreeStyles.OPTION_1);
+            },
+            (options, option) -> {
+                option.setTooltip(Minecraft.getInstance().font.split(UPDATED_VIDEO_SETTINGS_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                return new TranslationTextComponent("config.mellowui.updated_video_settings_menu", new TranslationTextComponent("config.mellowui.updated_video_settings_menu." + CLIENT_CONFIGS.updateVideoSettingsMenu.get().toString()));
             });
     public static final BooleanOption DISABLE_BRANDING = new BooleanOption("config.mellowui.disable_branding", new TranslationTextComponent("config.mellowui.disable_branding.desc"),
             options -> CLIENT_CONFIGS.disableBranding.get(), (options, newValue) -> CLIENT_CONFIGS.disableBranding.set(newValue));
@@ -169,6 +183,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.blurryContainers.get(), (options, newValue) -> CLIENT_CONFIGS.blurryContainers.set(newValue));
     public static final BooleanOption DEFAULT_BACKGROUND = new BooleanOption("config.mellowui.default_background", new TranslationTextComponent("config.mellowui.default_background.desc"),
             options -> CLIENT_CONFIGS.defaultBackground.get(), (options, newValue) -> CLIENT_CONFIGS.defaultBackground.set(newValue));
+    public static final BooleanOption GRADIENT_BACKGROUND = new BooleanOption("config.mellowui.gradient_background", new TranslationTextComponent("config.mellowui.gradient_background.desc"),
+            options -> CLIENT_CONFIGS.gradientBackground.get(), (options, newValue) -> CLIENT_CONFIGS.gradientBackground.set(newValue));
     public static final BooleanOption LOG_GL_ERRORS = new BooleanOption("config.mellowui.log_gl_errors", new TranslationTextComponent("config.mellowui.log_gl_errors.desc"),
             options -> CLIENT_CONFIGS.logGLErrors.get(), (options, newValue) -> CLIENT_CONFIGS.logGLErrors.set(newValue));
 

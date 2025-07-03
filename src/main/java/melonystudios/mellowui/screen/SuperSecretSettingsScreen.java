@@ -1,6 +1,7 @@
 package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.list.PostEffectsList;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
@@ -13,7 +14,6 @@ import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.*;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -83,7 +83,7 @@ public class SuperSecretSettingsScreen extends Screen {
         minecraft.getSoundManager().play(SimpleSound.forUI(sound, pitch, 1));
 
         if (minecraft.getLaunchedVersion().contains("melony-studios-dev")) {
-            LogManager.getLogger().debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
+            MellowUI.LOGGER.debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
         }
     }
 }
