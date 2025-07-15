@@ -6,8 +6,8 @@ import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 import static net.minecraftforge.common.ForgeConfig.*;
-import static net.minecraftforge.common.ForgeConfig.SERVER;
 
 public class ForgeConfigEntries {
     // Client config
@@ -49,21 +49,21 @@ public class ForgeConfigEntries {
             (options) -> SERVER.zombieBabyChance.get(),
             (options, newValue) -> SERVER.zombieBabyChance.set(newValue),
             (options, slider) -> {
-                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.forge.baby_zombie_chance.desc"), 200));
+                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.forge.baby_zombie_chance.desc"), TOOLTIP_MAX_WIDTH));
                 return percentValueLabel("config.forge.baby_zombie_chance", slider.toPct(slider.get(options)));
             });
     public static final SliderPercentageOption BASE_ZOMBIE_SUMMON_CHANCE = new SliderPercentageOption("config.forge.base_zombie_summon_chance", 0, 1, 0,
             (options) -> SERVER.zombieBaseSummonChance.get(),
             (options, newValue) -> SERVER.zombieBaseSummonChance.set(newValue),
             (options, slider) -> {
-                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.forge.base_zombie_summon_chance.desc"), 200));
+                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.forge.base_zombie_summon_chance.desc"), TOOLTIP_MAX_WIDTH));
                 return percentValueLabel("config.forge.base_zombie_summon_chance", slider.toPct(slider.get(options)));
             });
     public static final SliderPercentageOption DIMENSION_UNLOAD_QUEUE_DELAY = new SliderPercentageOption("config.forge.dimension_unload_queue_delay", 0, 100, 1,
             (options) -> Double.valueOf(SERVER.dimensionUnloadQueueDelay.get()),
             (options, newValue) -> SERVER.dimensionUnloadQueueDelay.set((int) Math.round(newValue)),
             (options, slider) -> {
-                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.forge.dimension_unload_queue_delay.desc"), 200));
+                slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.forge.dimension_unload_queue_delay.desc"), TOOLTIP_MAX_WIDTH));
                 return new TranslationTextComponent("config.forge.dimension_unload_queue_delay", new TranslationTextComponent("config.forge.dimension_unload_queue_delay.ticks", Math.round(slider.get(options))));
             });
 

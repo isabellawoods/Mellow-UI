@@ -2,7 +2,7 @@ package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.gui.screen.DirtMessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -18,6 +18,8 @@ import javax.annotation.Nullable;
 
 @Mixin(DirtMessageScreen.class)
 public abstract class MUIGenericMessageScreen extends Screen {
+    @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
     @Unique
     @Nullable
     private TextFieldWidget textBackground;
@@ -44,9 +46,9 @@ public abstract class MUIGenericMessageScreen extends Screen {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
-        if (((TranslationTextComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
-            MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
-            MellowUtils.renderBlurredBackground(partialTicks);
+        if (this.title instanceof TranslationTextComponent && ((TranslationTextComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
+            this.components.renderPanorama(partialTicks, this.width, this.height, 1);
+            this.components.renderBlurredBackground(partialTicks);
             this.renderDirtBackground(0);
         } else {
             this.renderBackground(stack);

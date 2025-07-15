@@ -27,6 +27,7 @@ import java.util.List;
 
 @Mixin(value = OptionsSoundsScreen.class, priority = 990)
 public class UpdatedMusicAndSoundsScreen extends SettingsScreen {
+    @Unique
     private OptionsRowList list;
 
     public UpdatedMusicAndSoundsScreen(Screen lastScreen, GameSettings options, ITextComponent title) {

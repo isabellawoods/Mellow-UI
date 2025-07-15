@@ -28,6 +28,8 @@ public class GUITextures {
     public static final ResourceLocation TAB_SELECTED_HIGHLIGHTED = gui("widget/tab_selected_highlighted");
     public static final ResourceLocation MOD_ENTRY = gui("widget/mod_entry");
     public static final ResourceLocation MOD_ENTRY_HIGHLIGHTED = gui("widget/mod_entry_highlighted");
+    public static final ResourceLocation HARDCORE_OFF = gui("widget/icon/hardcore_off");
+    public static final ResourceLocation HARDCORE_ON = gui("widget/icon/hardcore_on");
 
     // Backgrounds
     public static final ResourceLocation MENU_BACKGROUND = gui("background/menu");
@@ -37,6 +39,8 @@ public class GUITextures {
     public static final ResourceLocation TAB_HEADER_BACKGROUND = gui("background/tab_header");
     public static final ResourceLocation OUT_OF_MEMORY_BACKGROUND = gui("background/out_of_memory");
     public static final ResourceLocation ACCESSIBILITY_ONBOARDING_BACKGROUND = gui("background/accessibility_onboarding");
+    public static final ResourceLocation ALJANSTONE_BACKGROUND = new ResourceLocation("backmath", "textures/block/aljanstone.png");
+    // #C0101010 to #D0101010 (Alpha 192 to 208)
     public static final ResourceLocation INWORLD_GRADIENT = gui("background/inworld_gradient");
 
     // Headers & Footers

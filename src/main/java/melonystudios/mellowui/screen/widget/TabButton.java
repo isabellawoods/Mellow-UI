@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -63,7 +64,7 @@ public class TabButton extends Button implements ScrollingText {
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
         blit(stack, this.x, this.y, 0, 0, this.width / 2, this.height, 130, 24);
-        blit(stack, this.x + this.width / 2, this.y, 130 - this.width / 2, 0, this.width / 2, this.height, 130, 24);
+        blit(stack, this.x + this.width / 2, this.y, 130 - this.width / 2F, 0, this.width / 2, this.height, 130, 24);
         this.renderBg(stack, minecraft, mouseX, mouseY);
         this.renderString(stack, font, color);
 
@@ -73,9 +74,10 @@ public class TabButton extends Button implements ScrollingText {
     }
 
     public void renderString(MatrixStack stack, FontRenderer font, int color) {
-        int minX = this.x + 2;
+        int padding = WidgetConfigs.WIDGET_CONFIGS.tabTextBorderPadding.get();
+        int minX = this.x + padding;
         int minY = this.y + (this.selected() ? 0 : 3);
-        int maxX = this.x + this.getWidth() - 2;
+        int maxX = this.x + this.getWidth() - padding;
         int maxY = this.y + this.getHeight();
         this.renderScrollingString(stack, font, this.getMessage(), minX, minY, maxX, maxY, color);
     }

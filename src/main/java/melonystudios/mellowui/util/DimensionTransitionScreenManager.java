@@ -46,10 +46,12 @@ public class DimensionTransitionScreenManager {
         TO_DIMENSION_TRANSITIONS.put(CompatUtils.THE_ALJAN, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.ALJAN_PORTAL_STAND));
         TO_DIMENSION_TRANSITIONS.put(CompatUtils.EVERBRIGHT, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.EVERBRIGHT_PORTAL));
         TO_DIMENSION_TRANSITIONS.put(CompatUtils.EVERDAWN, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.EVERDAWN_PORTAL));
+        TO_DIMENSION_TRANSITIONS.put(CompatUtils.TWILIGHT_FOREST, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.NETHER_PORTAL));
         FROM_DIMENSION_TRANSITIONS.put(World.NETHER, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.NETHER_PORTAL));
         FROM_DIMENSION_TRANSITIONS.put(World.END, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.END_PORTAL));
         FROM_DIMENSION_TRANSITIONS.put(CompatUtils.THE_ALJAN, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.ALJAN_PORTAL_STAND));
         FROM_DIMENSION_TRANSITIONS.put(CompatUtils.EVERBRIGHT, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.EVERBRIGHT_PORTAL));
         FROM_DIMENSION_TRANSITIONS.put(CompatUtils.EVERDAWN, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.EVERDAWN_PORTAL));
+        FROM_DIMENSION_TRANSITIONS.put(CompatUtils.TWILIGHT_FOREST, (worldReceived, reason) -> new MUILoadingTerrainScreen(worldReceived, MUILoadingTerrainScreen.Reason.NETHER_PORTAL));
     }
 }

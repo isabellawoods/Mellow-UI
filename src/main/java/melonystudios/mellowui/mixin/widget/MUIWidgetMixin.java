@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.ScrollingText;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @OnlyIn(Dist.CLIENT)
 @Mixin(value = Widget.class, priority = 900)
 public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingText {
+    @Unique private final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow(remap = false) @Final public static int UNSET_FG_COLOR;
     @Shadow(remap = false) protected int packedFGColor;
     @Shadow public int x;
@@ -34,11 +36,39 @@ public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingTex
     @Shadow protected int height;
     @Shadow public boolean active;
     @Shadow protected float alpha;
+    @Shadow public boolean visible;
+    @Shadow private boolean focused;
+    @Shadow protected boolean isHovered;
+    @Shadow private boolean wasHovered;
+    @Shadow protected long nextNarration;
+    @Shadow protected abstract void narrate();
     @Shadow public abstract boolean isHovered();
     @Shadow(remap = false) public abstract int getFGColor();
     @Shadow public abstract ITextComponent getMessage();
     @Shadow protected abstract int getYImage(boolean hovered);
+    @Shadow public abstract void renderButton(MatrixStack stack, int mouseX, int mouseY, float partialTicks);
     @Shadow protected abstract void renderBg(MatrixStack stack, Minecraft minecraft, int mouseX, int mouseY);
+    @Shadow public abstract void queueNarration(int delay);
+
+    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+        callback.cancel();
+        if (this.visible) {
+            this.isHovered = this.components.containsPointInScissor(mouseX, mouseY) && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            if (this.wasHovered != this.isHovered()) {
+                if (this.isHovered()) {
+                    if (this.focused) this.queueNarration(200);
+                    else this.queueNarration(750);
+                } else {
+                    this.nextNarration = Long.MAX_VALUE;
+                }
+            }
+
+            if (this.visible) this.renderButton(stack, mouseX, mouseY, partialTicks);
+            this.narrate();
+            this.wasHovered = this.isHovered();
+        }
+    }
 
     @Inject(method = "renderButton", at = @At("HEAD"), cancellable = true)
     public void renderButton(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
@@ -69,7 +99,7 @@ public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingTex
     }
 
     @Inject(method = "getFGColor", at = @At("HEAD"), cancellable = true, remap = false)
-    public void getFGColor(CallbackInfoReturnable<Integer> callback) {
+    public void getButtonTextColor(CallbackInfoReturnable<Integer> callback) {
         callback.cancel();
         if (this.packedFGColor != UNSET_FG_COLOR) callback.setReturnValue(this.packedFGColor);
         callback.setReturnValue(MellowUtils.getSelectableTextColor(this.isHovered(), this.active));

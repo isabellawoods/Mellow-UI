@@ -1,6 +1,6 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
@@ -23,7 +23,7 @@ public class TooltippedIterableOption extends IteratableOption {
     @Override
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
-        this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, MellowUtils.TOOLTIP_MAX_WIDTH));
+        this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, RenderComponents.TOOLTIP_MAX_WIDTH));
         return new OptionButton(x, y, width, 20, this, this.getMessage(options), button -> {
             this.toggle(options, 1);
             button.setMessage(this.getMessage(options));

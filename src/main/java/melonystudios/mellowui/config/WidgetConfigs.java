@@ -10,6 +10,7 @@ public class WidgetConfigs {
 
     // Generic widget parameters
     public final ForgeConfigSpec.IntValue buttonTextBorderPadding;
+    public final ForgeConfigSpec.IntValue tabTextBorderPadding;
     public final ForgeConfigSpec.IntValue modNameTextBorderPadding;
 
     // Colors for text in various locations
@@ -32,6 +33,7 @@ public class WidgetConfigs {
     public WidgetConfigs(ForgeConfigSpec.Builder builder) {
         builder.push("widget");
         this.buttonTextBorderPadding = builder.comment("Border padding for a button with scrolling text. Defaults to 2px.", "Effectively capped at the 'buttonWidth / 2 - 1'.").defineInRange("buttonTextBorderPadding", 2, 0, Integer.MAX_VALUE);
+        this.tabTextBorderPadding = builder.comment("Border padding for a tab with scrolling text. Defaults to 2px.", "Effectively capped at the 'buttonWidth / 2 - 1'.").defineInRange("tabTextBorderPadding", 2, 0, Integer.MAX_VALUE);
         this.modNameTextBorderPadding = builder.comment("Border padding for a mod list entry's name. Defaults to 2px.", "Effectively capped at the 'buttonWidth / 2 - 1'.").defineInRange("modNameTextBorderPadding", 2, 0, Integer.MAX_VALUE);
 
         builder.pop().push("color");

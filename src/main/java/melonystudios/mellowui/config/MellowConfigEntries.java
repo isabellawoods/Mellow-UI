@@ -18,7 +18,7 @@ import net.minecraftforge.fml.ModList;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
-import static melonystudios.mellowui.util.MellowUtils.TOOLTIP_MAX_WIDTH;
+import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 
 public class MellowConfigEntries {
     // Tooltips
@@ -37,6 +37,7 @@ public class MellowConfigEntries {
     public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.main_menu"));
     public static final SeparatorOption INGAME_MENUS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.ingame_menus"));
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
+    public static final SeparatorOption OPTION_MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.option_menu_updates"));
     public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.realms").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xE43DC3))));
     public static final SeparatorOption ACCESSIBILITY_SEPARATOR = new SeparatorOption(new TranslationTextComponent("menu.minecraft.accessibility_settings.title"));
     public static final SeparatorOption MUSIC_AND_SOUNDS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("options.sounds.title"));
@@ -150,6 +151,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.disableBranding.get(), (options, newValue) -> CLIENT_CONFIGS.disableBranding.set(newValue));
     public static final StyleBooleanOption UPDATED_PAUSE_MENU = new StyleBooleanOption("config.mellowui.updated_pause_menu", new TranslationTextComponent("config.mellowui.updated_pause_menu.desc"),
             options -> CLIENT_CONFIGS.updatePauseMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updatePauseMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_CREATE_NEW_WORLD_MENU = new StyleBooleanOption("config.mellowui.updated_create_new_world_menu", new TranslationTextComponent("config.mellowui.updated_create_new_world_menu.desc"),
+            options -> CLIENT_CONFIGS.updateCreateNewWorldMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateCreateNewWorldMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_OPTIONS_MENU = new StyleBooleanOption("config.mellowui.updated_options_menu", new TranslationTextComponent("config.mellowui.updated_options_menu.desc"),
             options -> CLIENT_CONFIGS.updateOptionsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateOptionsMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_SKIN_CUSTOMIZATION_MENU = new StyleBooleanOption("config.mellowui.updated_skin_customization_menu", new TranslationTextComponent("config.mellowui.updated_skin_customization_menu.desc"),
@@ -158,6 +161,10 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.updateMusicAndSoundsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateMusicAndSoundsMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_CONTROLS_MENU = new StyleBooleanOption("config.mellowui.updated_controls_menu", new TranslationTextComponent("config.mellowui.updated_controls_menu.desc"),
             options -> CLIENT_CONFIGS.updateControlsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateControlsMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_MOUSE_SETTINGS_MENU = new StyleBooleanOption("config.mellowui.updated_mouse_settings_menu", new TranslationTextComponent("config.mellowui.updated_mouse_settings_menu.desc"),
+            options -> CLIENT_CONFIGS.updateMouseSettingsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateMouseSettingsMenu.set(newValue));
+    public static final StyleBooleanOption UPDATED_CHAT_SETTINGS_MENU = new StyleBooleanOption("config.mellowui.updated_chat_settings_menu", new TranslationTextComponent("config.mellowui.updated_chat_settings_menu.desc"),
+            options -> CLIENT_CONFIGS.updateChatSettingsMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updateChatSettingsMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_PACK_MENU = new StyleBooleanOption("config.mellowui.updated_pack_menu", new TranslationTextComponent("config.mellowui.updated_pack_menu.desc"),
             options -> CLIENT_CONFIGS.updatePackMenu.get(), (options, newValue) -> CLIENT_CONFIGS.updatePackMenu.set(newValue));
     public static final StyleBooleanOption UPDATED_ACCESSIBILITY_MENU = new StyleBooleanOption("config.mellowui.updated_accessibility_menu", new TranslationTextComponent("config.mellowui.updated_accessibility_menu.desc"),

@@ -4,10 +4,10 @@ import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.PackLoadingManager;
 import net.minecraft.client.gui.screen.Screen;
@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class MUIPackScreen extends Screen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Map<String, ResourceLocation> packIcons = Maps.newHashMap();
     private final PackLoadingManager manager;
     private final Screen lastScreen;
@@ -59,7 +60,7 @@ public class MUIPackScreen extends Screen {
         // Open Folder button
         this.addButton(new ImageSetButton(this.width / 2 + 104, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(this.packDirectory), (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_pack_folder"), mouseX, mouseY),
+                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_pack_folder"), mouseX, mouseY),
                 new TranslationTextComponent("button.mellowui.open_pack_folder")));
 
         // Done button

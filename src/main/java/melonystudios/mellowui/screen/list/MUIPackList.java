@@ -40,7 +40,7 @@ public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
         protected final Screen screen;
         protected final Minecraft minecraft;
         private final PackLoadingManager.IPack pack;
-        private MUIPackList parent;
+        private final MUIPackList parent;
         private final IReorderingProcessor nameDisplayCache;
         private final IBidiRenderer descriptionDisplayCache;
         private final IReorderingProcessor incompatibleNameDisplayCache;

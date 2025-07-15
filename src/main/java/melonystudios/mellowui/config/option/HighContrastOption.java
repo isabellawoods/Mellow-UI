@@ -1,5 +1,6 @@
 package melonystudios.mellowui.config.option;
 
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -31,9 +32,9 @@ public class HighContrastOption extends BooleanOption {
     public Optional<List<IReorderingProcessor>> getTooltip() {
         if (this.tooltipComponent != null) {
             if (MellowUtils.highContrastUnavailable()) {
-                return Optional.of(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.high_contrast.not_available"), MellowUtils.TOOLTIP_MAX_WIDTH));
+                return Optional.of(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.high_contrast.not_available"), RenderComponents.TOOLTIP_MAX_WIDTH));
             } else {
-                return Optional.of(Minecraft.getInstance().font.split(this.tooltipComponent, MellowUtils.TOOLTIP_MAX_WIDTH));
+                return Optional.of(Minecraft.getInstance().font.split(this.tooltipComponent, RenderComponents.TOOLTIP_MAX_WIDTH));
             }
         }
         return super.getTooltip();

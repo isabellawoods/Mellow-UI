@@ -8,7 +8,6 @@ import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.settings.AmbientOcclusionStatus;
@@ -21,7 +20,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
-import static melonystudios.mellowui.util.MellowUtils.TOOLTIP_MAX_WIDTH;
+import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 
 public class VanillaConfigEntries {
     // Tooltips
@@ -91,4 +90,21 @@ public class VanillaConfigEntries {
                 Minecraft.getInstance().levelRenderer.allChanged();
             },
             (options, button) -> DialogTexts.optionStatus(new TranslationTextComponent("options.ao"), options.ambientOcclusion.getId() != 0));
+    public static final SliderPercentageOption BRIGHTNESS = new SliderPercentageOption("options.gamma", 0, 1, 0,
+            options -> options.gamma,
+            (options, newValue) -> options.gamma = newValue,
+            (options, slider) -> {
+        double percentage = slider.toPct(slider.get(options));
+        int rounded = (int) (percentage * 100);
+
+        if (rounded == 0) {
+            return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("options.gamma"), new TranslationTextComponent("options.gamma.min"));
+        } else if (rounded == 50) {
+            return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("options.gamma"), new TranslationTextComponent("config.minecraft.brightness.default"));
+        } else if (rounded == 100) {
+            return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("options.gamma"), new TranslationTextComponent("options.gamma.max"));
+        } else {
+            return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("options.gamma"), (int) (percentage * 100));
+        }
+    });
 }

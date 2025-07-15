@@ -36,7 +36,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
     @Final
     private static AbstractOption[] OPTIONS;
     @Unique
-    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(GRAPHICS, RENDER_DISTANCE, VanillaConfigEntries.SMOOTH_LIGHTING, FRAMERATE_LIMIT, ENABLE_VSYNC, VIEW_BOBBING, GUI_SCALE, ATTACK_INDICATOR, GAMMA, RENDER_CLOUDS, USE_FULLSCREEN, PARTICLES, MIPMAP_LEVELS, ENTITY_SHADOWS, SCREEN_EFFECTS_SCALE, ENTITY_DISTANCE_SCALING, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS);
+    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(GRAPHICS, RENDER_DISTANCE, VanillaConfigEntries.SMOOTH_LIGHTING, FRAMERATE_LIMIT, ENABLE_VSYNC, VIEW_BOBBING, GUI_SCALE, ATTACK_INDICATOR, VanillaConfigEntries.BRIGHTNESS, RENDER_CLOUDS, USE_FULLSCREEN, PARTICLES, MIPMAP_LEVELS, ENTITY_SHADOWS, SCREEN_EFFECTS_SCALE, ENTITY_DISTANCE_SCALING, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS);
     @Unique
     private OptionsRowList updatedList;
 
@@ -56,7 +56,9 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
         // for some reason, it injects its options directly into the end of the list during init() via a @ModifyArg annotation
         // instead of just adding it into the OPTIONS field like I expected
         for (AbstractOption option : OPTIONS) {
-            if (!UPDATED_OPTIONS.contains(option) && option != AMBIENT_OCCLUSION && option != FOV_EFFECTS_SCALE) UPDATED_OPTIONS.add(option);
+            if (!UPDATED_OPTIONS.contains(option) && option != AMBIENT_OCCLUSION && option != FOV_EFFECTS_SCALE && option != GAMMA) {
+                UPDATED_OPTIONS.add(option);
+            }
         }
         this.updatedList.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
         this.children.add(this.updatedList);

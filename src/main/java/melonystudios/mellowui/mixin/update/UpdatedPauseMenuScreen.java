@@ -5,6 +5,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.MusicToast;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.FeedbackScreen;
 import melonystudios.mellowui.screen.widget.ImageSetModButton;
 import melonystudios.mellowui.screen.widget.ModButton;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.ModList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,6 +36,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @OnlyIn(Dist.CLIENT)
 @Mixin(value = IngameMenuScreen.class, priority = 900)
 public abstract class UpdatedPauseMenuScreen extends Screen {
+    @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow
     @Final
     private boolean showPauseMenu;
@@ -64,7 +68,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
                 if (this.minecraft.player != null && this.minecraft.player.connection != null)
                     this.minecraft.setScreen(new AdvancementsScreen(this.minecraft.player.connection.getAdvancements()));
             }, (button, stack, mouseX, mouseY) -> {
-                if (this.minecraft.level == null) MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("error.mellowui.cannot_load_advancements").withStyle(TextFormatting.RED), mouseX, mouseY);
+                if (this.minecraft.level == null) this.components.renderTooltip(this, button, new TranslationTextComponent("error.mellowui.cannot_load_advancements").withStyle(TextFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;
 
             // Statistics
@@ -72,7 +76,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
                 if (this.minecraft.player != null)
                     this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
             }, (button, stack, mouseX, mouseY) -> {
-                if (this.minecraft.level == null) MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("error.mellowui.cannot_load_statistics").withStyle(TextFormatting.RED), mouseX, mouseY);
+                if (this.minecraft.level == null) this.components.renderTooltip(this, button, new TranslationTextComponent("error.mellowui.cannot_load_statistics").withStyle(TextFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;
 
             ThreeStyles buttonStyle = MellowConfigs.CLIENT_CONFIGS.pauseMenuModButton.get();
@@ -103,7 +107,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
                 if (this.minecraft.isDemo()) return;
                 this.addButton(new ImageSetModButton(this.width / 2 + 106, this.height / 2 - 10 + yOffset, 20, 20,
                         GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
-                        MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                        this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
                         new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
             }
 

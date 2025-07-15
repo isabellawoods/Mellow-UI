@@ -4,9 +4,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.text2speech.Narrator;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.renderer.LogoRenderer;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.chat.NarratorChatListener;
@@ -23,6 +23,7 @@ import java.util.List;
 
 public class AccessibilityOnboardingScreen extends Screen {
     private static final ITextComponent ONBOARDING_NARRATOR_MESSAGE = new TranslationTextComponent("menu.minecraft.accessibility_onboarding.narrator");
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Runnable onClose;
     private final boolean narratorAvailable;
     private boolean hasNarrated;
@@ -89,10 +90,10 @@ public class AccessibilityOnboardingScreen extends Screen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.handleInitialNarrationDelay();
-        MellowUtils.renderPanorama(stack, 0, this.width, this.height, 1);
-        MellowUtils.renderBlurredBackground(partialTicks);
+        this.components.renderPanorama(0, this.width, this.height, 1);
+        this.components.renderBlurredBackground(partialTicks);
         this.renderDirtBackground(0);
-        MellowUtils.renderTiledBackground(stack, GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, 255, this.width, this.height, 0);
+        this.components.renderTiledBackground(GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, 255, 0, 0, this.width, this.height, 0);
         this.renderLogo(stack);
 
         if (this.textWidget != null) this.textWidget.render(stack, mouseX, mouseY, partialTicks);

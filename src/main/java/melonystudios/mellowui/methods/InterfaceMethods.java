@@ -1,6 +1,9 @@
 package melonystudios.mellowui.methods;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
@@ -12,6 +15,8 @@ import org.lwjgl.openal.ALUtil;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class InterfaceMethods {
     @OnlyIn(Dist.CLIENT)
@@ -87,6 +92,16 @@ public class InterfaceMethods {
         @Nullable
         default ISound mui$getNowPlaying() {
             return null;
+        }
+    }
+
+    public interface WorldPresetsMethods {
+        default List<BiomeGeneratorTypeScreens> getPresets() {
+            return Lists.newArrayList();
+        }
+
+        default Map<Optional<BiomeGeneratorTypeScreens>, BiomeGeneratorTypeScreens.IFactory> getEditors() {
+            return Maps.newHashMap();
         }
     }
 }

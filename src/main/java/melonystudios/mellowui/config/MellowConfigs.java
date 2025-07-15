@@ -1,10 +1,17 @@
 package melonystudios.mellowui.config;
 
+import com.google.common.collect.Lists;
 import melonystudios.mellowui.config.type.*;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
+
 public class MellowConfigs {
+    public static final List<String> CLASSIFIED_AS_CONTAINERS = Lists.newArrayList(
+            "melonystudios.femalegender.gui.screen.BreastCustomizationScreen", "melonystudios.femalegender.gui.screen.CharacterSettingsScreen", "melonystudios.femalegender.gui.screen.PlayerListScreen", "melonystudios.femalegender.gui.screen.WardrobeScreen",
+            "com.wildfire.gui.screen.WildfireSettingsScreen", "com.wildfire.gui.screen.WildfireBrowserScreen", "com.wildfire.gui.screen.WildfireCapeScreen", "com.wildfire.gui.screen.WildfireKeyScreen", "com.wildfire.gui.screen.SteinPlayerListScreen",
+            "mezz.jei.gui.recipes.RecipesGui");
     private static final Pair<MellowConfigs, ForgeConfigSpec> CLIENT_CONFIG_PAIR = new ForgeConfigSpec.Builder().configure(MellowConfigs::new);
     public static final MellowConfigs CLIENT_CONFIGS = CLIENT_CONFIG_PAIR.getLeft();
     public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_CONFIG_PAIR.getRight();
@@ -21,6 +28,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue onboardAccessibility;
 
     // Mellow UI Configs
+    public final ForgeConfigSpec.ConfigValue<List<String>> classifiedAsContainers;
     public final ForgeConfigSpec.IntValue panoramaCameraPitch;
     public final ForgeConfigSpec.BooleanValue panoramaBobbing;
     public final ForgeConfigSpec.BooleanValue legacyButtonColors;
@@ -42,11 +50,14 @@ public class MellowConfigs {
     public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuStyle;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> modListStyle;
     public final ForgeConfigSpec.BooleanValue updatePauseMenu;
+    public final ForgeConfigSpec.BooleanValue updateCreateNewWorldMenu;
     public final ForgeConfigSpec.BooleanValue updateOptionsMenu;
     public final ForgeConfigSpec.BooleanValue updateSkinCustomizationMenu;
     public final ForgeConfigSpec.BooleanValue updateMusicAndSoundsMenu;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> updateVideoSettingsMenu;
     public final ForgeConfigSpec.BooleanValue updateControlsMenu;
+    public final ForgeConfigSpec.BooleanValue updateMouseSettingsMenu;
+    public final ForgeConfigSpec.BooleanValue updateChatSettingsMenu;
     public final ForgeConfigSpec.BooleanValue updatePackMenu;
     public final ForgeConfigSpec.BooleanValue updateAccessibilityMenu;
     public final ForgeConfigSpec.BooleanValue updateOutOfMemoryMenu;
@@ -77,6 +88,7 @@ public class MellowConfigs {
         builder.pop();
 
         builder.push("mellowUI");
+        this.classifiedAsContainers = builder.comment("List of class paths for screens that don't blur the background and instead render a transparent gradient.").define("classifiedAsContainers", CLASSIFIED_AS_CONTAINERS);
         this.panoramaCameraPitch = builder.comment("The pitch used by the camera in the panorama. Defaults to 10.").defineInRange("panoramaCameraPitch", 10, -90, 90);
         this.panoramaBobbing = builder.comment("Whether the panorama should bob up and down instead of being at a consistent pitch.").define("panoramaBobbing", false);
         this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
@@ -92,11 +104,14 @@ public class MellowConfigs {
 
         this.mainMenuStyle = builder.comment("Which style to use for the main menu.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").defineEnum("styles.mainMenu", ThreeStyles.OPTION_1);
         this.updatePauseMenu = builder.comment("Whether Mellow UI should update the pause menu.").define("updates.pauseMenu", true);
-        this.updateOptionsMenu = builder.comment("Whether Mellow UI should update the options menu.").define("updates.optionsMenu", true);
+        this.updateCreateNewWorldMenu = builder.comment("Whether Mellow UI should update the create new world menu.").define("updates.createNewWorldMenu", false);
+        this.updateOptionsMenu = builder.comment("Whether Mellow UI should update the options' menu.").define("updates.optionsMenu", true);
         this.updateSkinCustomizationMenu = builder.comment("Whether Mellow UI should update the skin customization menu.").define("updates.skinCustomizationMenu", true);
         this.updateMusicAndSoundsMenu = builder.comment("Whether Mellow UI should update the music & sounds menu.").define("updates.musicAndSoundsMenu", true);
-        this.updateVideoSettingsMenu = builder.comment("Whether Mellow UI should update the video settings menu", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Rubidium (Sodium)").defineEnum("updates.videoSettingsMenu", ThreeStyles.OPTION_3);
+        this.updateVideoSettingsMenu = builder.comment("Whether Mellow UI should update the video settings menu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Rubidium (Sodium)").defineEnum("updates.videoSettingsMenu", ThreeStyles.OPTION_3);
         this.updateControlsMenu = builder.comment("Whether Mellow UI should update the controls menu, making the old screen the 'key binds' menu.").define("updates.controlsMenu", true);
+        this.updateMouseSettingsMenu = builder.comment("Whether Mellow UI should update the mouse settings menu.").define("updates.mouseSettingsMenu", true);
+        this.updateChatSettingsMenu = builder.comment("Whether Mellow UI should update the chat settings menu.").define("updates.chatSettingsMenu", true);
         this.updateAccessibilityMenu = builder.comment("Whether Mellow UI should update the accessibility settings menu.").define("updates.accessibilityMenu", true);
         this.updateOutOfMemoryMenu = builder.comment("Whether Mellow UI should update the out of memory menu.").define("updates.outOfMemoryMenu", true);
         this.updateScreenBackground = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").define("updates.screenBackground", true);

@@ -7,6 +7,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.screen.list.MUIModList;
 import melonystudios.mellowui.screen.widget.ModButton;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.abbreviateMiddle;
 
 public class MUIModListScreen extends Screen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
     private TextFieldWidget searchField;
     private MUIModList.Mod selectedMod = null;
@@ -109,7 +111,7 @@ public class MUIModListScreen extends Screen {
         // Configure button
         this.addButton(this.configButton = new ImageSetButton(114, 14, 20, 20, GUITextures.CONFIGURE_SET,
                 button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.configure"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
+                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.configure"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
         this.configButton.active = false;
 
         // Search field
@@ -121,7 +123,7 @@ public class MUIModListScreen extends Screen {
         // Open mods folder button
         this.addButton(new ImageSetButton(114, 38, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
+                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
         int width = maxGUIScale ? 100 : 150;
@@ -140,10 +142,10 @@ public class MUIModListScreen extends Screen {
         this.updateModButton.active = false;
         this.addButton(this.changelogsButton = new ImageSetButton(this.width - 24, this.height - 24, 20, 20, GUITextures.CHANGELOGS_SET,
                 button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
+                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
 
         // Mods list
-        this.list = new MUIModList(this, 118, this.height, 56, this.height - 25, this.font.lineHeight * 2 + 8);
+        this.list = new MUIModList(this, 124, this.height, 56, this.height - 25, this.font.lineHeight * 2 + 8);
         this.list.setLeftPos(10);
         this.list.setRenderTopAndBottom(false);
         this.list.setRenderBackground(false);

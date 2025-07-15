@@ -2,9 +2,8 @@ package melonystudios.mellowui.screen;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.widget.TabButton;
-import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
@@ -27,9 +26,10 @@ import java.util.List;
 /// - Presets
 /// - Done
 public class CustomizedWorldOptionsScreen extends Screen {
-    private OptionsRowList list;
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final List<TabButton> tabs = Lists.newArrayList();
     private final Screen lastScreen;
+    private OptionsRowList list;
 
     public CustomizedWorldOptionsScreen(Screen lastScreen) {
         super(new TranslationTextComponent("menu.mellowui.customized_world_options.title"));
@@ -49,11 +49,11 @@ public class CustomizedWorldOptionsScreen extends Screen {
 
     @Override
     protected void init() {
-        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 24, this.height - 32, 25);
+        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 22, this.height - 32, 25);
         this.list.setRenderTopAndBottom(false);
         this.list.setRenderBackground(false);
         this.children.add(this.list);
-        int buttonWidth = this.buttonWidth();
+        int buttonWidth = this.components.fourTabWidth(this.width);
 
         // Tabs
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth * 2, 0, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.basics"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
@@ -71,22 +71,15 @@ public class CustomizedWorldOptionsScreen extends Screen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
-        this.renderBars(stack, this.list);
+        this.components.renderTabHeaderBackground(0, 0, this.width, 24);
+        this.components.renderListSeparators(this.list, this.width, 4, this.components.fourTabWidth(this.width));
         this.list.render(stack, mouseX, mouseY, partialTicks);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
-    private void renderBars(MatrixStack stack, OptionsRowList list) {
-        RenderSystem.enableBlend();
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
-        blit(stack, list.getLeft(), list.getTop() - 2, 0, 0, this.width / 2 - this.buttonWidth() * 2, 2, 32, 2);
-        blit(stack, this.width / 2 + this.buttonWidth() * 2, list.getTop() - 2, 0, 0, this.width, 2, 32, 2);
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
-        blit(stack, list.getLeft(), list.getBottom(), 0, 0, list.getLeft() + this.width, 2, 32, 2);
-        RenderSystem.disableBlend();
-    }
-
-    private int buttonWidth() {
-        return this.width / 2 - 130 * 2 <= 0 ? 90 : 130;
+    @Override
+    public void renderDirtBackground(int vOffset) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 24, this.width,  this.height, vOffset);
+        else super.renderDirtBackground(vOffset);
     }
 }

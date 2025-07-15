@@ -3,9 +3,9 @@ package melonystudios.mellowui.mixin.update;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.MemoryErrorScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -15,6 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,6 +24,9 @@ import java.util.List;
 
 @Mixin(MemoryErrorScreen.class)
 public abstract class UpdatedOutOfMemoryScreen extends Screen {
+    @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
+
     public UpdatedOutOfMemoryScreen(ITextComponent title) {
         super(title);
     }
@@ -44,9 +48,9 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
         if (MellowConfigs.CLIENT_CONFIGS.updateOutOfMemoryMenu.get()) {
             callback.cancel();
             // Background
-            MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
-            MellowUtils.renderBlurredBackground(partialTicks);
-            MellowUtils.renderTiledBackground(stack, GUITextures.OUT_OF_MEMORY_BACKGROUND, 255, this.width, this.height, 0);
+            this.components.renderPanorama(partialTicks, this.width, this.height, 1);
+            this.components.renderBlurredBackground(partialTicks);
+            this.components.renderTiledBackground(GUITextures.OUT_OF_MEMORY_BACKGROUND, 255, 0, 0, this.width, this.height, 0);
 
             stack.pushPose();
             stack.scale(2, 2, 2);

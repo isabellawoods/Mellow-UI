@@ -3,6 +3,7 @@ package melonystudios.mellowui;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.MellowUIOptionsScreen;
+import melonystudios.mellowui.sound.MUISounds;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,6 +31,8 @@ public class MellowUI {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+
+        MUISounds.SOUNDS.register(eventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WidgetConfigs.WIDGET_SPEC, "melonystudios/mellowui-widgets.toml");

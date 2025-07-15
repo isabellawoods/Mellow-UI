@@ -1,11 +1,13 @@
 package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.*;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
@@ -39,6 +41,7 @@ import javax.annotation.Nullable;
 
 @Mixin(value = MainMenuScreen.class, priority = 900)
 public abstract class UpdatedTitleScreen extends Screen implements InterfaceMethods.MainMenuMethods {
+    @Unique private final RenderComponents components = RenderComponents.INSTANCE;
     @Mutable @Shadow @Final private RenderSkybox panorama;
     @Shadow private boolean realmsNotificationsInitialized;
     @Shadow private Screen realmsNotificationsScreen;
@@ -69,9 +72,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
     @Inject(method = "<init>(Z)V", at = @At("TAIL"))
     public void constructor(boolean fading, CallbackInfo callback) {
-        if (!((InterfaceMethods.PanoramaRendererMethods) MellowUtils.PANORAMA).samePanorama(this.panorama)) {
-            MellowUtils.PANORAMA = this.panorama;
-        }
+        this.components.replacePanorama(this.panorama);
     }
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
@@ -114,7 +115,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 } else if (buttonLocation == ThreeStyles.OPTION_2) {
                     this.addButton(new ImageSetModButton(this.width / 2 + 104, buttonsPos + 24 * 2, 20, 20,
                             GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
-                            MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                            this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
                             new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
                 }
             }
@@ -122,7 +123,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             // Language
             this.addButton(new ImageButton(this.width / 2 - 124, buttonsPos + 84 - demoOffset, 20, 20, 0, 106, 20,
                     Button.WIDGETS_LOCATION, 256, 256, button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
 
             // Options
@@ -136,7 +137,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             // Accessibility Settings
             this.addButton(new ImageButton(this.width / 2 + 104, buttonsPos + 84 - demoOffset, 20, 20, 0, 0, 20,
                     GUITextures.ACCESSIBILITY_BUTTON, 32, 64, button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.accessibility")));
 
             // Realms availability
@@ -151,9 +152,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         }
 
         // Switch Style
-        this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> WidgetTextureSet.switchTitleScreenStyle(this.minecraft), (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
+        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this, this.width - 20, 8));
     }
 
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
@@ -195,11 +194,12 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             if (this.fadeInStart == 0L && this.fading) this.fadeInStart = Util.getMillis();
 
             float overlayTransparency = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
-            MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1); // should work the same
-            MellowUtils.renderBackgroundWithShaders(partialTicks);
+            this.components.renderPanorama(partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1);
+            this.components.renderBackgroundShaders(partialTicks);
             float buttonAlpha = this.fading ? MathHelper.clamp(overlayTransparency - 1, 0, 1) : 1;
             int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
 
+            RenderSystem.enableBlend();
             switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
                 case OPTION_1: // Pre 1.19
                     LogoRenderer.renderOldLogo(stack, this, this.width, buttonAlpha, this.keepsLogoThroughFade());

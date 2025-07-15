@@ -10,9 +10,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
 public class ImageSetButton extends Button implements ScrollingText {
-    private final WidgetTextureSet textureSet;
-    private boolean renderText = false;
-    private Alignment alignment = Alignment.CENTER;
+    protected final WidgetTextureSet textureSet;
+    protected boolean renderText = false;
+    protected Alignment alignment = Alignment.CENTER;
 
     public ImageSetButton(int x, int y, int width, int height, WidgetTextureSet textureSet, IPressable whenPressed, ITextComponent buttonText) {
         super(x, y, width, height, buttonText, whenPressed);

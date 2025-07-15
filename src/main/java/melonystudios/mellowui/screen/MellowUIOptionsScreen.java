@@ -2,11 +2,9 @@ package melonystudios.mellowui.screen;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.screen.widget.TabButton;
-import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
@@ -26,11 +24,14 @@ import static melonystudios.mellowui.config.MellowConfigEntries.*;
 import static melonystudios.mellowui.config.VanillaConfigEntries.*;
 
 public class MellowUIOptionsScreen extends SettingsScreen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
+
     // Mellow UI
     public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, DEFAULT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS, LOG_GL_ERRORS);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
     public static final List<AbstractOption> INGAME_MENUS = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON, GRADIENT_BACKGROUND);
-    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_PAUSE_MENU, UPDATED_OPTIONS_MENU, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_VIDEO_SETTINGS_MENU, UPDATED_CONTROLS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU, UPDATED_OUT_OF_MEMORY_MENU, REPLACE_REALMS_NOTIFICATIONS);
+    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_CREATE_NEW_WORLD_MENU, UPDATED_PAUSE_MENU, UPDATED_OUT_OF_MEMORY_MENU);
+    public static final List<AbstractOption> OPTION_UPDATES = Lists.newArrayList(UPDATED_OPTIONS_MENU, REPLACE_REALMS_NOTIFICATIONS, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_VIDEO_SETTINGS_MENU, UPDATED_CONTROLS_MENU, UPDATED_MOUSE_SETTINGS_MENU, UPDATED_CHAT_SETTINGS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU);
     private OptionsRowList mellowUIList;
 
     // Mellomedley
@@ -80,6 +81,8 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.mellowUIList.addSmall(INGAME_MENUS.toArray(new AbstractOption[0]));
         this.mellowUIList.addBig(MENU_UPDATES_SEPARATOR);
         this.mellowUIList.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
+        this.mellowUIList.addBig(OPTION_MENU_UPDATES_SEPARATOR);
+        this.mellowUIList.addSmall(OPTION_UPDATES.toArray(new AbstractOption[0]));
         this.mellowUIList.setRenderTopAndBottom(false);
         this.mellowUIList.setRenderBackground(false);
 
@@ -102,7 +105,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.forgeList.setRenderTopAndBottom(false);
         this.forgeList.setRenderBackground(false);
 
-        int buttonWidth = this.buttonWidth();
+        int tabWidth = this.components.fourTabWidth(this.width);
         this.currentList = this.mellowUIList;
         this.children.add(this.currentList);
 
@@ -110,23 +113,26 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         Widget panoramaCameraPitch = this.mellowUIList.findOption(PANORAMA_CAMERA_PITCH);
         if (panoramaCameraPitch != null) panoramaCameraPitch.active = !MellowConfigs.CLIENT_CONFIGS.panoramaBobbing.get();
 
+        Widget updatedCreateNewWorldMenu = this.mellowUIList.findOption(UPDATED_CREATE_NEW_WORLD_MENU);
+        if (updatedCreateNewWorldMenu != null) updatedCreateNewWorldMenu.active = false;
+
         Widget highContrast = this.vanillaList.findOption(VanillaConfigEntries.HIGH_CONTRAST);
         if (highContrast != null && MellowUtils.highContrastUnavailable()) highContrast.active = false;
 
         // Tabs
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth * 2, 10, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.mellow_ui"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth * 2, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.mellow_ui"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mellowUIList);
         })));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth, 10, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.mellomedley"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.mellomedley"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mellomedleyList);
         })));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2, 10, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.vanilla"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.vanilla"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.vanillaList);
         })));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 + buttonWidth, 10, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.forge"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 + tabWidth, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.forge"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.forgeList);
         })));
@@ -151,12 +157,14 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
         if (this.currentList != null) {
             if (!MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
-                MellowUtils.scissor(() -> this.currentList.render(stack, mouseX, mouseY, partialTicks),
-                        this.currentList.getLeft(), this.currentList.getRight(), this.currentList.getTop(), this.currentList.getBottom(), this.currentList.getHeight());
+                this.components.enableScissor(this.currentList.getLeft(), this.currentList.getTop() + 2, this.currentList.getRight(), this.currentList.getBottom());
+                this.currentList.render(stack, mouseX, mouseY, partialTicks);
+                this.components.disableScissor();
             } else {
+                this.components.renderTabHeaderBackground(0, 0, this.width, 34);
                 this.currentList.render(stack, mouseX, mouseY, partialTicks);
             }
-            this.renderBars(stack, this.currentList);
+            this.components.renderListSeparators(this.currentList, this.width, 4, this.components.fourTabWidth(this.width));
         }
 
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.TABBED_TITLE_HEIGHT, 0xFFFFFF);
@@ -165,17 +173,9 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
     }
 
-    private void renderBars(MatrixStack stack, OptionsRowList list) {
-        RenderSystem.enableBlend();
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
-        blit(stack, list.getLeft(), list.getTop() , 0, 0, this.width / 2 - this.buttonWidth() * 2, 2, 32, 2);
-        blit(stack, this.width / 2 + this.buttonWidth() * 2, list.getTop(), 0, 0, this.width, 2, 32, 2);
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
-        blit(stack, list.getLeft(), list.getBottom(), 0, 0, list.getLeft() + this.width, 2, 32, 2);
-        RenderSystem.disableBlend();
-    }
-
-    private int buttonWidth() {
-        return this.width / 2 - 130 * 2 <= 0 ? 90 : 130;
+    @Override
+    public void renderDirtBackground(int vOffset) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 34, this.width,  this.height, vOffset);
+        else super.renderDirtBackground(vOffset);
     }
 }

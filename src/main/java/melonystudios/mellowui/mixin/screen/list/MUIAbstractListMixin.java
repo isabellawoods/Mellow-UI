@@ -3,8 +3,8 @@ package melonystudios.mellowui.mixin.screen.list;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.sound.MUISounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.FocusableGui;
@@ -12,11 +12,9 @@ import net.minecraft.client.gui.widget.list.AbstractList;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,75 +48,39 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
 
     @Inject(method = "setSelected", at = @At("HEAD"))
     public void setSelected(E entry, CallbackInfo callback) {
-        if (entry != null) this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 2, 0.05F));
+        if (entry != null) this.minecraft.getSoundManager().play(SimpleSound.forUI(MUISounds.LIST_ENTRY_SELECTED.get(), 1, 1));
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
             callback.cancel();
-            this.renderBackground(stack);
-            int scrollbarPosition = this.getScrollbarPosition();
-            int i = scrollbarPosition + 6;
+            RenderComponents components = RenderComponents.INSTANCE;
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder buffer = tessellator.getBuilder();
-            if (this.renderBackground) {
-                this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_MENU_LIST_BACKGROUND : GUITextures.MENU_LIST_BACKGROUND);
-                RenderSystem.enableBlend();
-                buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                buffer.vertex(this.x0, this.y0, -100).uv(0, (float) this.y0 / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), this.y0, -100).uv((float) this.width / 32, (float) this.y0 / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), 0, -100).uv((float) this.width / 32, 0).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, 0, -100).uv(0, 0).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, this.height, -100).uv(0, (float) this.height / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), this.height, -100).uv((float) this.width / 32, (float) this.height / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), this.y1, -100).uv((float) this.width / 32, (float) this.y1 / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, this.y1, -100).uv(0, (float) this.y1 / 32).color(255, 255, 255, 255).endVertex();
-                tessellator.end();
-                GL11.glColor4f(1, 1, 1, 1);
-                buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                buffer.vertex(this.x0, this.y1, 0).uv((float) this.x0 / 32, (float) (this.y1 + (int) this.getScrollAmount()) / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x1, this.y1, 0).uv((float) this.x1 / 32, (float) (this.y1 + (int) this.getScrollAmount()) / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x1, this.y0, 0).uv((float) this.x1 / 32, (float) (this.y0 + (int) this.getScrollAmount()) / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, this.y0, 0).uv((float) this.x0 / 32, (float) (this.y0 + (int) this.getScrollAmount()) / 32).color(255, 255, 255, 255).endVertex();
-                tessellator.end();
-                RenderSystem.disableBlend();
-            }
-
             int leftRow = this.getRowLeft();
             int y = this.y0 + 4 - (int) this.getScrollAmount();
-            MellowUtils.scissor(() -> {
-                if (this.renderHeader) this.renderHeader(stack, leftRow, y, tessellator);
-                this.renderList(stack, leftRow, y, mouseX, mouseY, partialTicks);
-            }, this.x0, this.x1, this.y0, this.y1, this.height);
 
-            if (this.renderTopAndBottom) {
-                this.minecraft.getTextureManager().bind(GUITextures.TAB_HEADER_BACKGROUND);
-                RenderSystem.enableDepthTest();
-                RenderSystem.depthFunc(519);
-                RenderSystem.enableBlend();
-                buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                buffer.vertex(this.x0, this.y0, -100).uv(0, (float) this.y0 / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), this.y0, -100).uv((float) this.width / 32, (float) this.y0 / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), 0, -100).uv((float) this.width / 32, 0).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, 0, -100).uv(0, 0).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, this.height, -100).uv(0, (float) this.height / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), this.height, -100).uv((float) this.width / 32, (float) this.height / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex((this.x0 + this.width), this.y1, -100).uv((float) this.width / 32, (float) this.y1 / 32).color(255, 255, 255, 255).endVertex();
-                buffer.vertex(this.x0, this.y1, -100).uv(0, (float) this.y1 / 32).color(255, 255, 255, 255).endVertex();
-                tessellator.end();
-                this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
-                blit(stack, this.x0, this.y0, 0, 0, this.x0 + this.width, 2, 32, 2);
-                this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
-                blit(stack, this.x0, this.y1, 0, 0, this.x0 + this.width, 2, 32, 2);
-                RenderSystem.depthFunc(515);
-                RenderSystem.disableBlend();
-                RenderSystem.disableDepthTest();
-            }
+            // List's unique background (I guess)
+            this.renderBackground(stack);
 
+            // List contents (background, header and entries)
+            components.enableScissor(this.x0, this.y0 + 2, this.x1, this.y1);
+            if (this.renderBackground) components.renderListBackground(this.x0, this.y0 + 2, this.width, this.height, this.x1, this.y1, this.getScrollAmount());
+            if (this.renderHeader) this.renderHeader(stack, leftRow, y, tessellator);
+            this.renderList(stack, leftRow, y, mouseX, mouseY, partialTicks);
+            components.disableScissor();
+
+            // List separators (header and footer)
+            if (this.renderTopAndBottom) components.renderListSeparators(this.width, this.x0, this.y1, this.y0, 0, 0);
+
+            // Scroller
             int maxScroll = this.getMaxScroll();
             if (maxScroll > 0) {
+                RenderSystem.enableBlend();
                 RenderSystem.disableTexture();
+                int scrollX0 = this.getScrollbarPosition();
+                int scrollX1 = scrollX0 + 6;
                 int scrollY0 = this.y0 + 2;
                 int i1 = (int) ((float) ((this.y1 - scrollY0) * (this.y1 - scrollY0)) / (float) this.getMaxPosition());
                 i1 = MathHelper.clamp(i1, 32, this.y1 - scrollY0 - 8);
@@ -126,19 +88,20 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
                 if (i2 < scrollY0) i2 = scrollY0;
 
                 buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                buffer.vertex(scrollbarPosition, this.y1, 0).uv(0, 1).color(0, 0, 0, 255).endVertex();
-                buffer.vertex(i, this.y1, 0).uv(1, 1).color(0, 0, 0, 255).endVertex();
-                buffer.vertex(i, scrollY0, 0).uv(1, 0).color(0, 0, 0, 255).endVertex();
-                buffer.vertex(scrollbarPosition, scrollY0, 0).uv(0, 0).color(0, 0, 0, 255).endVertex();
-                buffer.vertex(scrollbarPosition, (i2 + i1), 0).uv(0, 1).color(128, 128, 128, 255).endVertex();
-                buffer.vertex(i, (i2 + i1), 0).uv(1, 1).color(128, 128, 128, 255).endVertex();
-                buffer.vertex(i, i2, 0).uv(1, 0).color(128, 128, 128, 255).endVertex();
-                buffer.vertex(scrollbarPosition, i2, 0).uv(0, 0).color(128, 128, 128, 255).endVertex();
-                buffer.vertex(scrollbarPosition, (i2 + i1 - 1), 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
-                buffer.vertex((i - 1), (i2 + i1 - 1), 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
-                buffer.vertex((i - 1), i2, 0).uv(1, 0).color(192, 192, 192, 255).endVertex();
-                buffer.vertex(scrollbarPosition, i2, 0).uv(0, 0).color(192, 192, 192, 255).endVertex();
+                buffer.vertex(scrollX0, this.y1, 0).uv(0, 1).color(0, 0, 0, 255).endVertex();
+                buffer.vertex(scrollX1, this.y1, 0).uv(1, 1).color(0, 0, 0, 255).endVertex();
+                buffer.vertex(scrollX1, scrollY0, 0).uv(1, 0).color(0, 0, 0, 255).endVertex();
+                buffer.vertex(scrollX0, scrollY0, 0).uv(0, 0).color(0, 0, 0, 255).endVertex();
+                buffer.vertex(scrollX0, (i2 + i1), 0).uv(0, 1).color(128, 128, 128, 255).endVertex();
+                buffer.vertex(scrollX1, (i2 + i1), 0).uv(1, 1).color(128, 128, 128, 255).endVertex();
+                buffer.vertex(scrollX1, i2, 0).uv(1, 0).color(128, 128, 128, 255).endVertex();
+                buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(128, 128, 128, 255).endVertex();
+                buffer.vertex(scrollX0, (i2 + i1 - 1), 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
+                buffer.vertex((scrollX1 - 1), (i2 + i1 - 1), 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
+                buffer.vertex((scrollX1 - 1), i2, 0).uv(1, 0).color(192, 192, 192, 255).endVertex();
+                buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(192, 192, 192, 255).endVertex();
                 tessellator.end();
+                RenderSystem.disableBlend();
             }
 
             this.renderDecorations(stack, mouseX, mouseY);

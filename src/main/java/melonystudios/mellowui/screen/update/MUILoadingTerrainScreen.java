@@ -1,15 +1,15 @@
 package melonystudios.mellowui.screen.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.CompatUtils;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,6 +22,7 @@ import java.util.function.BooleanSupplier;
 public class MUILoadingTerrainScreen extends Screen {
     public static final ITextComponent DOWNLOADING_TERRAIN_TEXT = new TranslationTextComponent("multiplayer.downloadingTerrain");
     public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 30000L;
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final long createdAt;
     private final BooleanSupplier worldReceived;
     private final MUILoadingTerrainScreen.Reason reason;
@@ -64,31 +65,31 @@ public class MUILoadingTerrainScreen extends Screen {
             case NETHER_PORTAL:
                 this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getNetherPortalSprite());
-                MellowUtils.renderBackgroundWithShaders(partialTicks);
+                this.components.renderBackgroundShaders(partialTicks);
                 break;
             case END_PORTAL:
                 ShaderManager.fillEndPortal(stack, 0, 0, this.width, this.height, -90);
-                MellowUtils.renderBackgroundWithShaders(partialTicks);
+                this.components.renderBackgroundShaders(partialTicks);
                 break;
             case ALJAN_PORTAL_STAND: // From Back Math
-                MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1); // in case the aljanstone texture is transparent ~isa 20-6-25
-                MellowUtils.renderTiledBackground(stack, new ResourceLocation("backmath", "textures/block/aljanstone.png"), 64, this.width, this.height, vOffset);
-                MellowUtils.renderBackgroundWithShaders(partialTicks);
+                this.components.renderPanorama(partialTicks, this.width, this.height, 1); // in case the aljanstone texture is transparent ~isa 20-6-25
+                this.components.renderTiledBackground(GUITextures.ALJANSTONE_BACKGROUND, 64, 0, 0, this.width, this.height, vOffset);
+                this.components.renderBackgroundShaders(partialTicks);
                 break;
             case EVERBRIGHT_PORTAL: // From Blue Skies
                 this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getEverbrightPortalSprite());
-                MellowUtils.renderBackgroundWithShaders(partialTicks);
+                this.components.renderBackgroundShaders(partialTicks);
                 break;
             case EVERDAWN_PORTAL: // From Blue Skies
                 this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getEverdawnPortalSprite());
-                MellowUtils.renderBackgroundWithShaders(partialTicks);
+                this.components.renderBackgroundShaders(partialTicks);
                 break;
             case OTHER:
             default:
-                MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, 1);
-                MellowUtils.renderBlurredBackground(partialTicks);
+                this.components.renderPanorama(partialTicks, this.width, this.height, 1);
+                this.components.renderBlurredBackground(partialTicks);
                 this.renderDirtBackground(vOffset);
         }
     }

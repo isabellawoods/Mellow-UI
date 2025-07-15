@@ -18,4 +18,5 @@ public class CompatUtils {
     public static final RegistryKey<World> THE_ALJAN = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation("backmath", "the_aljan"));
     public static final RegistryKey<World> EVERBRIGHT = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation("blue_skies", "everbright"));
     public static final RegistryKey<World> EVERDAWN = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation("blue_skies", "everdawn"));
+    public static final RegistryKey<World> TWILIGHT_FOREST = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation("twilightforest", "twilightforest"));
 }

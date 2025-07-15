@@ -1,6 +1,7 @@
 package melonystudios.mellowui.screen.template;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class MellowScreen extends Screen implements PositionHelper {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
 
     public MellowScreen(Screen lastScreen, ITextComponent title) {
@@ -60,6 +62,6 @@ public class MellowScreen extends Screen implements PositionHelper {
     public void switchStyle(Button.IPressable whenPressed, int x, int y) {
         this.addButton(new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
                 whenPressed, (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
+                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 }

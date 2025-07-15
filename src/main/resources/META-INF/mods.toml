@@ -20,7 +20,7 @@ issueTrackerURL="https://github.com/isabellawoods/Mellow-UI/issues" #optional
     # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
     # ${file.jarVersion} will substitute the value of the Implementation-Version as read from the mod's JAR file metadata
     # see the associated build.gradle script for how to populate this completely automatically during a build
-    version="1.4.2" #mandatory
+    version="1.4.3" #mandatory
     # A display name for the mod
     displayName="Mellow UI" #mandatory
     # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
@@ -34,7 +34,7 @@ issueTrackerURL="https://github.com/isabellawoods/Mellow-UI/issues" #optional
     # A text field displayed in the mod UI
     authors="isabellawoods" #optional
     # The description text for the mod (multi line!) (#mandatory)
-    description="Mellow UI updates most menus in the game to make them look like the menus in 1.20.5, while adding more functionality to existing menus."
+    description="Backports the modernized look of the menus in 1.20.5, while adding more functionality to existing menus."
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.mellowui]] #optional

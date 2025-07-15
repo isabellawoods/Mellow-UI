@@ -66,7 +66,7 @@ public class SuperSecretSettingsScreen extends Screen {
             component.append("\n").append(new TranslationTextComponent(((TranslationTextComponent) shader.get().name()).getKey() + ".desc").withStyle(TextFormatting.GRAY));
             component.append("\n").append(new StringTextComponent(shader.get().effect().assetID().toString()).withStyle(TextFormatting.DARK_GRAY));
             component.append(new TranslationTextComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(TextFormatting.DARK_GRAY));
-            return Minecraft.getInstance().font.split(component, MellowUtils.TOOLTIP_MAX_WIDTH);
+            return Minecraft.getInstance().font.split(component, RenderComponents.TOOLTIP_MAX_WIDTH);
         }
         return null;
     }

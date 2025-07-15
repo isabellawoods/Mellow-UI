@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.MainMenuMethods {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final boolean fading;
     private long fadeInStart;
     private int copyrightWidth;
@@ -113,38 +114,36 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
             // Accessibility
             this.addButton(new ImageSetButton(58, 206 + modsOffset, 20, 20, GUITextures.ACCESSIBILITY_SET,
                     button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.accessibility")));
 
             // Language
             this.addButton(new ImageSetButton(82, 206 + modsOffset, 20, 20, GUITextures.LANGUAGE_SET,
                     button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
         } else {
             // Accessibility
             this.addButton(new ImageSetButton(36, 206 + modsOffset, 20, 20, GUITextures.ACCESSIBILITY_SET,
                     button -> this.minecraft.setScreen(new AccessibilityScreen(this, this.minecraft.options)), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("options.accessibility.title"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.accessibility")));
 
             // Mods
             this.addButton(new ImageSetModButton(70, 206 + modsOffset, 20, 20,
                     GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
                     new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
 
             // Language
             this.addButton(new ImageSetButton(104, 206 + modsOffset, 20, 20, GUITextures.LANGUAGE_SET,
                     button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
-                    MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
         }
 
         // Switch Style
-        this.addButton(new IconButton(this.width - 20, 8, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                button -> WidgetTextureSet.switchTitleScreenStyle(this.minecraft), (button, stack, mouseX, mouseY) ->
-                MellowUtils.renderTooltip(stack, this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
+        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this, this.width - 20, 8));
     }
 
     private void defaultMenu() {
@@ -225,13 +224,13 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
         float buttonAlpha = this.fading ? MathHelper.clamp(fade - 1, 0, 1) : 1;
         int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
         // Background
-        MellowUtils.renderPanorama(stack, partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1);
-        MellowUtils.renderBackgroundWithShaders(partialTicks);
+        this.components.renderPanorama(partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1);
+        this.components.renderBackgroundShaders(partialTicks);
 
         // Background Gradient
         RenderSystem.enableBlend();
         RenderSystem.color4f(1, 1, 1, buttonAlpha);
-        this.minecraft.textureManager.bind(GUITextures.MAIN_MENU_GRADIENT);
+        this.minecraft.getTextureManager().bind(GUITextures.MAIN_MENU_GRADIENT);
         blit(stack, 0, 0, 0, 0, 220, this.height, 220, this.height);
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
