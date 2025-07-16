@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static net.minecraft.util.ColorHelper.PackedColor.*;
 
 @Mixin(ResourceLoadProgressGui.class)
-public class MUILoadingScreenMixin {
+public class MUILoadingOverlayMixin {
     @Shadow
     @Final
     @Mutable

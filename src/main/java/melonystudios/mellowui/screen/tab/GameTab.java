@@ -5,7 +5,7 @@ import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.CreateNewWorldScreen;
 import melonystudios.mellowui.screen.backport.WorldCreationUIState;
 import melonystudios.mellowui.screen.widget.HardcoreSetButton;
-import melonystudios.mellowui.screen.widget.TooltippedTextFieldWidget;
+import melonystudios.mellowui.screen.widget.TooltippedTextField;
 import melonystudios.mellowui.sound.MUISounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -20,7 +20,7 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.Difficulty;
 
 public class GameTab extends TabContents {
-    private TooltippedTextFieldWidget nameEdit;
+    private TooltippedTextField nameEdit;
 
     public GameTab() {
         super("game");
@@ -37,7 +37,7 @@ public class GameTab extends TabContents {
         Minecraft minecraft = Minecraft.getInstance();
 
         // World name
-        this.nameEdit = new TooltippedTextFieldWidget(minecraft.font, screen.width / 2 - 104, widgetY, 208, 20, new TranslationTextComponent("selectWorld.enterName"), StringTextComponent.EMPTY);
+        this.nameEdit = new TooltippedTextField(minecraft.font, screen.width / 2 - 104, widgetY, 208, 20, new TranslationTextComponent("selectWorld.enterName"), StringTextComponent.EMPTY);
         this.nameEdit.setValue(screen.uiState().getName());
         this.nameEdit.setResponder(screen.uiState()::setName);
         this.nameEdit.setTooltip(new TranslationTextComponent("menu.mellowui.create_new_world.target_folder", new StringTextComponent(screen.uiState().getTargetFolder()).withStyle(TextFormatting.ITALIC)));

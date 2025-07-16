@@ -68,7 +68,7 @@ public class MUIOptionsScreen extends SettingsScreen {
                 this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.online"), button ->
                         this.minecraft.setScreen(new OnlineOptionsScreen(this, this.minecraft.options))));
             } else {
-                // Realms Notifications
+                // Realms News & Invites
                 this.addButton(VanillaConfigEntries.REALMS_NEWS_AND_INVITES.createButton(this.minecraft.options, this.width / 2 + 5, 32, 150));
             }
         }

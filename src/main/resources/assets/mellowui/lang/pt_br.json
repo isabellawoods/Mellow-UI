@@ -117,8 +117,8 @@
   "menu.forge.options.title": "[Forge] Opções",
   "menu.forge.client_options": "Opções do cliente...",
   "menu.forge.client_options.title": "[Forge] Opções > Opções do cliente",
-  "menu.forge.server_options": "Opções do mundo...",
-  "menu.forge.server_options.title": "[Forge] Opções > Opções do mundo",
+  "menu.forge.server_options": "Opções do servidor...",
+  "menu.forge.server_options.title": "[Forge] Opções > Opções do servidor",
 
   "config.mellowui.option_1_style": "%s: Vanilla",
   "config.mellowui.option_2_style": "%s: MUI",

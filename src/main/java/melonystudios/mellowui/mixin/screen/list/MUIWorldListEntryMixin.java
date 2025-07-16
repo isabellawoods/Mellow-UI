@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.Date;
 
 @Mixin(WorldSelectionList.Entry.class)
-public abstract class MUIWorldSelectionListEntryMixin extends ExtendedList.AbstractListEntry<WorldSelectionList.Entry> {
+public abstract class MUIWorldListEntryMixin extends ExtendedList.AbstractListEntry<WorldSelectionList.Entry> {
     @Shadow @Final private WorldSummary summary;
     @Shadow @Final private Minecraft minecraft;
     @Shadow @Final private WorldSelectionScreen screen;

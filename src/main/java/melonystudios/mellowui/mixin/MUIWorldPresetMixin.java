@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Mixin(BiomeGeneratorTypeScreens.class)
-public class MUIWorldPresetsMixin implements InterfaceMethods.WorldPresetsMethods {
+public class MUIWorldPresetMixin implements InterfaceMethods.WorldPresetsMethods {
     @Shadow
     @Final
     protected static List<BiomeGeneratorTypeScreens> PRESETS;

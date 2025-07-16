@@ -35,14 +35,14 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
     @Shadow @Nullable protected Slot hoveredSlot;
     @Shadow @Final protected T menu;
     @Shadow protected abstract void renderSlot(MatrixStack stack, Slot slot);
-    @Shadow protected abstract boolean isHovering(Slot slot, double p_195362_2_, double p_195362_4_);
+    @Shadow protected abstract boolean isHovering(Slot slot, double mouseX, double mouseY);
     @Shadow protected abstract void renderLabels(MatrixStack stack, int mouseX, int mouseY);
     @Shadow private ItemStack draggingItem;
     @Shadow private boolean isSplittingStack;
     @Shadow protected boolean isQuickCrafting;
     @Shadow @Final protected Set<Slot> quickCraftSlots;
     @Shadow private int quickCraftingRemainder;
-    @Shadow protected abstract void renderFloatingItem(ItemStack p_146982_1_, int p_146982_2_, int p_146982_3_, String p_146982_4_);
+    @Shadow protected abstract void renderFloatingItem(ItemStack stack, int x, int y, String altText);
     @Shadow private ItemStack snapbackItem;
     @Shadow private long snapbackTime;
     @Shadow @Nullable private Slot snapbackEnd;
@@ -53,6 +53,7 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
         super(title);
     }
 
+    @SuppressWarnings("unchecked")
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
@@ -106,7 +107,7 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
         }
 
         this.renderLabels(stack, mouseX, mouseY);
-        // MinecraftForge.EVENT_BUS.post(new GuiContainerEvent.DrawForeground(this, stack, mouseX, mouseY));
+        MinecraftForge.EVENT_BUS.post(new GuiContainerEvent.DrawForeground((ContainerScreen<?>) this.minecraft.screen, stack, mouseX, mouseY));
         PlayerInventory inventory = this.minecraft.player.inventory;
         ItemStack draggingStack = this.draggingItem.isEmpty() ? inventory.getCarried() : this.draggingItem;
         if (!draggingStack.isEmpty()) {

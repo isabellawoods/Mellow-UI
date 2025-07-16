@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @OnlyIn(Dist.CLIENT)
 @Mixin(TextFieldWidget.class)
-public abstract class MUITextFieldWidgetMixin extends Widget {
+public abstract class MUITextFieldMixin extends Widget {
     @Shadow
     public abstract boolean isVisible();
 
-    public MUITextFieldWidgetMixin(int x, int y, int width, int height, ITextComponent message) {
+    public MUITextFieldMixin(int x, int y, int width, int height, ITextComponent message) {
         super(x, y, width, height, message);
     }
 

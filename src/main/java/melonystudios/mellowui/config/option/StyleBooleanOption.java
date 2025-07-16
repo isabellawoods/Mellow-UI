@@ -16,8 +16,8 @@ public class StyleBooleanOption extends BooleanOption {
         super(translation, getter, setter);
     }
 
-    public StyleBooleanOption(String translation, @Nullable ITextComponent tooltipText, Predicate<GameSettings> getter, BiConsumer<GameSettings, Boolean> setter) {
-        super(translation, tooltipText, getter, setter);
+    public StyleBooleanOption(String translation, @Nullable ITextComponent tooltipComponent, Predicate<GameSettings> getter, BiConsumer<GameSettings, Boolean> setter) {
+        super(translation, tooltipComponent, getter, setter);
     }
 
     @Nonnull

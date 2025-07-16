@@ -335,7 +335,7 @@ public class MUIModListScreen extends Screen {
         }
 
         ModInfo selectedMod = this.selectedMod.getModInformation();
-        this.configButton.active = ConfigGuiHandler.getGuiFactoryFor(selectedMod).isPresent() || this.defaultModIDs();
+        this.configButton.active = ConfigGuiHandler.getGuiFactoryFor(selectedMod).isPresent();
         this.websiteButton.active = this.selectedMod.getModInformation().getConfigElement("displayURL").isPresent() || this.defaultModIDs();
         this.issueTrackerButton.active = selectedMod.getOwningFile().getIssueURL() != null || this.defaultModIDs();
         this.changelogsButton.active = this.changelogsButton.visible = this.selectedMod.getModInformation().getConfigElement("changelogsURL").isPresent() || this.defaultModIDs();

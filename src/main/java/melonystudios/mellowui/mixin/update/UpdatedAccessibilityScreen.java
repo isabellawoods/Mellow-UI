@@ -3,7 +3,6 @@ package melonystudios.mellowui.mixin.update;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
@@ -25,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+import static melonystudios.mellowui.config.VanillaConfigEntries.*;
 import static net.minecraft.client.AbstractOption.*;
 
 @Mixin(value = AccessibilityScreen.class, priority = 900)
@@ -33,8 +33,8 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
     @Shadow protected abstract void createFooter();
 
     @Unique
-    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, VanillaConfigEntries.HIGH_CONTRAST, AUTO_JUMP, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
-            SCREEN_EFFECTS_SCALE, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MONOCHROME_LOADING_SCREEN, VanillaConfigEntries.PANORAMA_SCROLL_SPEED, VanillaConfigEntries.HIDE_SPLASH_TEXTS);
+    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, HIGH_CONTRAST, AUTO_JUMP, MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
+            SCREEN_EFFECTS_SCALE, FOV_EFFECTS, MONOCHROME_LOADING_SCREEN, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS);
     @Unique
     private OptionsRowList list;
 
@@ -52,10 +52,10 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
             this.list.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
             this.children.add(this.list);
             this.createFooter();
-            Widget narratorButton = this.list.findOption(AbstractOption.NARRATOR);
+            Widget narratorButton = this.list.findOption(NARRATOR);
             if (narratorButton != null) narratorButton.active = NarratorChatListener.INSTANCE.isActive();
 
-            Widget highContrastButton = this.list.findOption(VanillaConfigEntries.HIGH_CONTRAST);
+            Widget highContrastButton = this.list.findOption(HIGH_CONTRAST);
             if (highContrastButton != null && MellowUtils.highContrastUnavailable()) {
                 highContrastButton.active = false;
             }

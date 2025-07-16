@@ -15,18 +15,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class TooltippedTextFieldWidget extends TextFieldWidget implements IBidiTooltip {
+public class TooltippedTextField extends TextFieldWidget implements IBidiTooltip {
     @Nullable
     private AbstractOption option = null;
     @Nullable
     private ITextComponent tooltipText = null;
 
-    public TooltippedTextFieldWidget(FontRenderer font, int x, int y, int width, int height, ITextComponent text, @Nullable AbstractOption option) {
+    public TooltippedTextField(FontRenderer font, int x, int y, int width, int height, ITextComponent text, @Nullable AbstractOption option) {
         super(font, x, y, width, height, text);
         this.option = option;
     }
 
-    public TooltippedTextFieldWidget(FontRenderer font, int x, int y, int width, int height, ITextComponent text, ITextComponent tooltipText) {
+    public TooltippedTextField(FontRenderer font, int x, int y, int width, int height, ITextComponent text, ITextComponent tooltipText) {
         super(font, x, y, width, height, text);
         this.tooltipText = tooltipText;
     }

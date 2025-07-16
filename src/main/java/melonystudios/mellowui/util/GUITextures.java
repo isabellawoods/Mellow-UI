@@ -66,7 +66,6 @@ public class GUITextures {
     public static final ResourceLocation DEFAULT_PACK_ICON = new ResourceLocation("textures/misc/unknown_pack.png");
     public static final ResourceLocation VERSION_CHECKER_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     public static final ResourceLocation PANORAMA_OVERLAY = new ResourceLocation("textures/gui/title/background/panorama_overlay.png");
-    public static final ResourceLocation OPTIONS_BACKGROUND = new ResourceLocation("textures/gui/options_background.png");
 
     // Mellomedley
     public static final ResourceLocation MAIN_MENU_GRADIENT = new ResourceLocation("mellomedley", "textures/gui/main_menu_gradient.png");

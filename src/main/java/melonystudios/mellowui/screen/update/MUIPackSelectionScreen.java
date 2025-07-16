@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class MUIPackScreen extends Screen {
+public class MUIPackSelectionScreen extends Screen {
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final Map<String, ResourceLocation> packIcons = Maps.newHashMap();
     private final PackLoadingManager manager;
@@ -40,7 +40,7 @@ public class MUIPackScreen extends Screen {
     private MUIPackList packList;
     private Button doneButton;
 
-    public MUIPackScreen(Screen lastScreen, ResourcePackList repository, Consumer<ResourcePackList> outputList, File packDirectory, ITextComponent title) {
+    public MUIPackSelectionScreen(Screen lastScreen, ResourcePackList repository, Consumer<ResourcePackList> outputList, File packDirectory, ITextComponent title) {
         super(title);
         this.lastScreen = lastScreen;
         this.packDirectory = packDirectory;
@@ -92,16 +92,16 @@ public class MUIPackScreen extends Screen {
         return this.packIcons.computeIfAbsent(packInfo.getId(), string -> this.loadPackIcon(this.minecraft.getTextureManager(), packInfo));
     }
 
-    private ResourceLocation loadPackIcon(TextureManager manager, ResourcePackInfo packInfo) {
-        try (IResourcePack pack = packInfo.open(); InputStream inputStream = pack.getRootResource("pack.png")) {
-            String packID = packInfo.getId();
+    private ResourceLocation loadPackIcon(TextureManager manager, ResourcePackInfo pack) {
+        try (IResourcePack resources = pack.open(); InputStream inputStream = resources.getRootResource("pack.png")) {
+            String packID = pack.getId();
             ResourceLocation packLocation = new ResourceLocation("minecraft", "pack/" + Util.sanitizeName(packID, ResourceLocation::validPathChar) + "/" + Hashing.sha1().hashUnencodedChars(packID) + "/icon");
             NativeImage nativeImage = NativeImage.read(inputStream);
             manager.register(packLocation, new DynamicTexture(nativeImage));
             return packLocation;
         } catch (FileNotFoundException ignored) {
         } catch (Exception exception) {
-            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.pack_icon", packInfo.getId()).getString(), exception);
+            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.pack_icon", pack.getId()).getString(), exception);
         }
 
         return GUITextures.DEFAULT_PACK_ICON;

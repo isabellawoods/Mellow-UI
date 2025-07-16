@@ -1,6 +1,7 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.screen.widget.TooltippedTextFieldWidget;
+import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.screen.widget.TooltippedTextField;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -44,9 +45,9 @@ public class TextFieldOption extends AbstractOption {
     @Override
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
-        if (this.tooltipComponent != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, 200));
+        if (this.tooltipComponent != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, RenderComponents.TOOLTIP_MAX_WIDTH));
 
-        this.textField = new TooltippedTextFieldWidget(Minecraft.getInstance().font, x + 1, y, width - 2, 18, this.getCaption(), this);
+        this.textField = new TooltippedTextField(Minecraft.getInstance().font, x + 1, y, width - 2, 18, this.getCaption(), this);
         this.textField.setMaxLength(this.maxValue);
         this.textField.setFocus(false);
         this.textField.setCanLoseFocus(true);

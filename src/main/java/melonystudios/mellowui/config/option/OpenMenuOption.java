@@ -16,20 +16,18 @@ import javax.annotation.Nullable;
 public class OpenMenuOption extends AbstractOption {
     private final String translation;
     @Nullable
-    private final ITextComponent tooltipText;
+    private final ITextComponent tooltipComponent;
     private final Screen optionsScreen;
-    private final boolean onlyInWorld;
     public boolean boldText = true;
 
     public OpenMenuOption(String translation, Screen optionsScreen) {
-        this(translation, false, null, optionsScreen);
+        this(translation, null, optionsScreen);
     }
 
-    public OpenMenuOption(String translation, boolean onlyInWorld, @Nullable ITextComponent tooltipText, Screen optionsScreen) {
+    public OpenMenuOption(String translation, @Nullable ITextComponent tooltipComponent, Screen optionsScreen) {
         super(translation);
         this.translation = translation;
-        this.onlyInWorld = onlyInWorld;
-        this.tooltipText = tooltipText;
+        this.tooltipComponent = tooltipComponent;
         this.optionsScreen = optionsScreen;
     }
 
@@ -41,10 +39,8 @@ public class OpenMenuOption extends AbstractOption {
     @Override
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
-        if (this.tooltipText != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, RenderComponents.TOOLTIP_MAX_WIDTH));
-        TooltippedButton menuButton = new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(style -> style.withBold(this.boldText)), this.tooltipText,
+        if (this.tooltipComponent != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, RenderComponents.TOOLTIP_MAX_WIDTH));
+        return new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(style -> style.withBold(this.boldText)), this.tooltipComponent,
                 button -> Minecraft.getInstance().setScreen(this.optionsScreen));
-        menuButton.active = !this.onlyInWorld;
-        return menuButton;
     }
 }

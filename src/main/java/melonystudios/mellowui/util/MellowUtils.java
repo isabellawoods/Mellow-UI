@@ -4,33 +4,26 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
-import melonystudios.mellowui.screen.list.OptionsList;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.screen.update.MUIModListScreen;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
-import melonystudios.mellowui.screen.update.MUIPackScreen;
+import melonystudios.mellowui.screen.update.MUIPackSelectionScreen;
 import melonystudios.mellowui.util.pack.HighContrastPack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IBidiTooltip;
 import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -86,7 +79,7 @@ public class MellowUtils {
 
     public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<ResourcePackList> packInfo) {
         ITextComponent title = new TranslationTextComponent("resourcePack.title");
-        if (CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+        if (CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackSelectionScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
         else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
     }
 
@@ -105,17 +98,6 @@ public class MellowUtils {
             if (confirmed) Util.getPlatform().openUri(url);
             minecraft.setScreen(lastScreen);
         }, url, !showWarning));
-    }
-
-    @Nullable
-    public static List<IReorderingProcessor> tooltipAt(OptionsList list, int mouseX, int mouseY) {
-        Optional<Widget> widget = list.getMouseOver(mouseX, mouseY);
-        if (widget.isPresent() && widget.get() instanceof IBidiTooltip) {
-            Optional<List<IReorderingProcessor>> tooltip = ((IBidiTooltip) widget.get()).getTooltip();
-            return tooltip.orElse(null);
-        } else {
-            return null;
-        }
     }
 
     // Copied from teamtwilight/twilightforest.

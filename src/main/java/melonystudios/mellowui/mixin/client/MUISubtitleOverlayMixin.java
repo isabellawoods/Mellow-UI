@@ -55,7 +55,7 @@ public abstract class MUISubtitleOverlayMixin extends AbstractGui implements ISo
         }
 
         if (this.isListening && !this.subtitles.isEmpty()) {
-            RenderSystem.pushMatrix();
+            stack.pushPose();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             Vector3d vec3D = new Vector3d(this.minecraft.player.getX(), this.minecraft.player.getEyeY(), this.minecraft.player.getZ());
@@ -89,9 +89,9 @@ public abstract class MUISubtitleOverlayMixin extends AbstractGui implements ISo
                 int subtitleWidth = this.minecraft.font.width(subtitleText);
                 int l1 = MathHelper.floor(MathHelper.clampedLerp(255, 75, (float) (Util.getMillis() - subtitle.getTime()) / 3000));
                 int i2 = l1 << 16 | l1 << 8 | l1;
-                RenderSystem.pushMatrix();
-                RenderSystem.translatef((float) this.minecraft.getWindow().getGuiScaledWidth() - (float) l * 1 - 2, (float) (this.minecraft.getWindow().getGuiScaledHeight() - 30) - (float)(i * (i1 + 1)) * 1, 0);
-                RenderSystem.scalef(1, 1, 1);
+                stack.pushPose();
+                stack.translate((float) this.minecraft.getWindow().getGuiScaledWidth() - (float) l * 1 - 2, (float) (this.minecraft.getWindow().getGuiScaledHeight() - 30) - (float)(i * (i1 + 1)) * 1, 0);
+                stack.scale(1, 1, 1);
                 fill(stack, -l - 1, -j1 - 1, l + 1, j1 + 1, this.minecraft.options.getBackgroundColor(0.8F));
                 RenderSystem.enableBlend();
                 if (!flag) {
@@ -103,12 +103,12 @@ public abstract class MUISubtitleOverlayMixin extends AbstractGui implements ISo
                 }
 
                 this.minecraft.font.drawShadow(stack, subtitleText, (float) (-subtitleWidth / 2), (float) (-j1), i2 + 0xFF000000);
-                RenderSystem.popMatrix();
+                stack.popPose();
                 ++i;
             }
 
             RenderSystem.disableBlend();
-            RenderSystem.popMatrix();
+            stack.popPose();
         }
     }
 }

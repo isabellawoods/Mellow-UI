@@ -39,7 +39,7 @@ public class SkinCustomizationScreen extends SettingsScreen {
         if (ModList.get().isLoaded("abnormals_core")) { // add slabfish hat settings button
             try {
                 Class<?> screen = Class.forName("com.minecraftabnormals.abnormals_core.client.screen.SlabfishHatScreen");
-                OpenMenuOption slabfishHatSettings = new OpenMenuOption("abnormals_core.screen.slabfish_settings", false,
+                OpenMenuOption slabfishHatSettings = new OpenMenuOption("abnormals_core.screen.slabfish_settings",
                         new TranslationTextComponent("abnormals_core.screen.slabfish_settings.tooltip",
                                 new StringTextComponent("patreon.com/teamabnormals").withStyle(style -> style.withColor(Color.fromRgb(0xEF323D)).withBold(true))),
                         (Screen) screen.getConstructor(Screen.class).newInstance(this));

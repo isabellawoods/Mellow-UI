@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nullable;
 
 @Mixin(MusicTicker.class)
-public class MUIMusicTickerMixin implements InterfaceMethods.MusicManagerMethods {
+public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethods {
     @Shadow @Nullable private ISound currentMusic;
     @Shadow @Final private Minecraft minecraft;
 

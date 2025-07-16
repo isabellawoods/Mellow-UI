@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PackScreen.class)
-public abstract class MUIPackScreenMixin extends Screen {
+public abstract class MUIPackSelectionScreenMixin extends Screen {
     @Shadow
     @Final
     private static ITextComponent DRAG_AND_DROP;
@@ -22,7 +22,7 @@ public abstract class MUIPackScreenMixin extends Screen {
     @Shadow
     private ResourcePackList selectedPackList;
 
-    public MUIPackScreenMixin(ITextComponent title) {
+    public MUIPackSelectionScreenMixin(ITextComponent title) {
         super(title);
     }
 

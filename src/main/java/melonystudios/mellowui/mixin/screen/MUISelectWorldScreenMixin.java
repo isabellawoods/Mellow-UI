@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldSelectionScreen.class)
-public class MUIWorldSelectionScreenMixin extends Screen {
-    public MUIWorldSelectionScreenMixin(ITextComponent title) {
+public class MUISelectWorldScreenMixin extends Screen {
+    public MUISelectWorldScreenMixin(ITextComponent title) {
         super(title);
     }
 

@@ -13,17 +13,17 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class TooltippedIterableOption extends IteratableOption {
-    private final ITextComponent tooltipText;
+    private final ITextComponent tooltipComponent;
 
-    public TooltippedIterableOption(String translation, ITextComponent tooltipText, BiConsumer<GameSettings, Integer> setter, BiFunction<GameSettings, IteratableOption, ITextComponent> optionTooltip) {
+    public TooltippedIterableOption(String translation, ITextComponent tooltipComponent, BiConsumer<GameSettings, Integer> setter, BiFunction<GameSettings, IteratableOption, ITextComponent> optionTooltip) {
         super(translation, setter, optionTooltip);
-        this.tooltipText = tooltipText;
+        this.tooltipComponent = tooltipComponent;
     }
 
     @Override
     @Nonnull
     public Widget createButton(GameSettings options, int x, int y, int width) {
-        this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, RenderComponents.TOOLTIP_MAX_WIDTH));
+        this.setTooltip(Minecraft.getInstance().font.split(this.tooltipComponent, RenderComponents.TOOLTIP_MAX_WIDTH));
         return new OptionButton(x, y, width, 20, this, this.getMessage(options), button -> {
             this.toggle(options, 1);
             button.setMessage(this.getMessage(options));
