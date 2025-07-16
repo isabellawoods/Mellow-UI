@@ -1,23 +1,23 @@
 package melonystudios.mellowui.screen.template;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.IBidiTooltip;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,15 +26,15 @@ public class MellowScreen extends Screen implements PositionHelper {
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
 
-    public MellowScreen(Screen lastScreen, ITextComponent title) {
+    public MellowScreen(Screen lastScreen, Component title) {
         super(title);
         this.lastScreen = lastScreen;
     }
 
     public void footer() {
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.footerButtonHeight(this.height), 200, 20,
-                DialogTexts.GUI_DONE, button -> this.onClose()));
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.footerButtonHeight(this.height), 200, 20, CommonComponents.GUI_DONE,
+                button -> this.onClose()));
     }
 
     @Override
@@ -42,26 +42,24 @@ public class MellowScreen extends Screen implements PositionHelper {
         this.minecraft.setScreen(this.lastScreen);
     }
 
-    @Nullable
-    public static List<IReorderingProcessor> tooltipAt(OptionsRowList list, int mouseX, int mouseY) {
-        Optional<Widget> widget = list.getMouseOver(mouseX, mouseY);
-        if (widget.isPresent() && widget.get() instanceof IBidiTooltip) {
-            Optional<List<IReorderingProcessor>> tooltips = ((IBidiTooltip) widget.get()).getTooltip();
-            return tooltips.orElse(null);
+    public static List<FormattedCharSequence> tooltipAt(OptionsList list, int mouseX, int mouseY) {
+        Optional<AbstractWidget> widget = list.getMouseOver(mouseX, mouseY);
+        if (widget.isPresent() && widget.get() instanceof TooltipAccessor) {
+            return ((TooltipAccessor) widget.get()).getTooltip();
         } else {
-            return null;
+            return Lists.newArrayList();
         }
     }
 
-    public void renderTitle(MatrixStack stack) {
+    public void renderTitle(PoseStack stack) {
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
     }
 
     // predefined buttons
 
-    public void switchStyle(Button.IPressable whenPressed, int x, int y) {
-        this.addButton(new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                whenPressed, (button, stack, mouseX, mouseY) ->
-                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY)));
+    public void switchStyle(Button.OnPress onPress, int x, int y) {
+        this.addRenderableWidget(new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslatableComponent("button.mellowui.switch_style"),
+                onPress, (button, stack, mouseX, mouseY) ->
+                this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.switch_style"), mouseX, mouseY)));
     }
 }

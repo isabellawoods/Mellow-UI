@@ -14,26 +14,26 @@ public enum ScreenDirection {
     private final IntComparator coordinateValueComparator = (first, second) -> first == second ? 0 : (this.isBefore(first, second) ? -1 : 1);
 
     public ScreenAxis getAxis() {
-        switch (this) {
-            case UP: case DOWN: return ScreenAxis.VERTICAL;
-            case LEFT: case RIGHT: default: return ScreenAxis.HORIZONTAL;
-        }
+        return switch (this) {
+            case UP, DOWN -> ScreenAxis.VERTICAL;
+            default -> ScreenAxis.HORIZONTAL;
+        };
     }
 
     public ScreenDirection getOpposite() {
-        switch (this) {
-            case UP: return DOWN;
-            case DOWN: return UP;
-            case LEFT: return RIGHT;
-            case RIGHT: default: return LEFT;
-        }
+        return switch (this) {
+            case UP -> DOWN;
+            case DOWN -> UP;
+            case LEFT -> RIGHT;
+            default -> LEFT;
+        };
     }
 
     public boolean isPositive() {
-        switch (this) {
-            case UP: case LEFT: return false;
-            case DOWN: case RIGHT: default: return true;
-        }
+        return switch (this) {
+            case UP, LEFT -> false;
+            default -> true;
+        };
     }
 
     public boolean isAfter(int first, int second) {

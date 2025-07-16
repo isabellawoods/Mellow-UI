@@ -1,20 +1,21 @@
 package melonystudios.mellowui.mixin.update;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.AbstractOption;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.ChatOptionsScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.WithNarratorSettingsScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.Option;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.ChatOptionsScreen;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.FormattedCharSequence;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,26 +24,26 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.List;
 
 @Mixin(value = ChatOptionsScreen.class, priority = 900)
-public class UpdatedChatSettingsScreen extends WithNarratorSettingsScreen {
+public class UpdatedChatSettingsScreen extends OptionsSubScreen {
     @Shadow
     @Final
-    private static AbstractOption[] CHAT_OPTIONS;
+    private static Option[] CHAT_OPTIONS;
     @Unique
-    private OptionsRowList list;
+    private OptionsList list;
 
-    public UpdatedChatSettingsScreen(Screen lastScreen, GameSettings options, ITextComponent title, AbstractOption[] optionsList) {
-        super(lastScreen, options, title, optionsList);
+    public UpdatedChatSettingsScreen(Screen lastScreen, Options options, Component title) {
+        super(lastScreen, options, title);
     }
 
     @Override
     protected void init() {
         if (MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) {
-            this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+            this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             this.list.addSmall(CHAT_OPTIONS);
-            this.children.add(this.list);
+            this.addWidget(this.list);
 
             // Done button
-            this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
+            this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
                     button -> this.minecraft.setScreen(this.lastScreen)));
         } else {
             super.init();
@@ -50,14 +51,16 @@ public class UpdatedChatSettingsScreen extends WithNarratorSettingsScreen {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         if (MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) {
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, new TranslationTextComponent("menu.minecraft.chat_settings.title"), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
-            for (Widget button : this.buttons) button.render(stack, mouseX, mouseY, partialTicks);
-            List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
-            if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
+            drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.chat_settings.title"), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+            for (GuiEventListener listener : this.children()) {
+                if (listener instanceof AbstractWidget) ((AbstractWidget) listener).render(stack, mouseX, mouseY, partialTicks);
+            }
+            List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
+            if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);
         } else {
             super.render(stack, mouseX, mouseY, partialTicks);
         }

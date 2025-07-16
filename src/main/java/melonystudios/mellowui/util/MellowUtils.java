@@ -1,42 +1,34 @@
 package melonystudios.mellowui.util;
 
-import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
-import melonystudios.mellowui.screen.list.OptionsList;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
+import melonystudios.mellowui.screen.update.MUIOnlineOptionsScreen;
 import melonystudios.mellowui.screen.update.MUIModListScreen;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
-import melonystudios.mellowui.screen.update.MUIPackScreen;
-import melonystudios.mellowui.util.pack.HighContrastPack;
+import melonystudios.mellowui.screen.update.MUIPackSelectionScreen;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IBidiTooltip;
-import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.resources.IPackNameDecorator;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.ResourcePackList;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.gui.screens.controls.ControlsScreen;
+import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraftforge.client.gui.ModListScreen;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
-import static net.minecraft.util.ColorHelper.PackedColor.*;
+import static net.minecraft.util.FastColor.ARGB32.*;
 
 public class MellowUtils {
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
@@ -52,13 +44,18 @@ public class MellowUtils {
                 if (!ModList.get().isLoaded("catalogue")) return new MUIModListScreen(lastScreen);
                 try {
                     Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
-                    return (Screen) screen.newInstance();
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+                    return (Screen) screen.getConstructor().newInstance();
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException| InvocationTargetException ignored) {
                     return new MUIModListScreen(lastScreen);
                 }
             }
             case OPTION_1: default: return new ModListScreen(lastScreen);
         }
+    }
+
+    public static Screen onlineOptions(Screen lastScreen, Minecraft minecraft) {
+        if (CLIENT_CONFIGS.updateOnlineOptionsMenu.get()) return new MUIOnlineOptionsScreen(lastScreen, minecraft.options);
+        else return new OnlineOptionsScreen(lastScreen, minecraft.options);
     }
 
     public static Screen options(Screen lastScreen, Minecraft minecraft) {
@@ -84,10 +81,10 @@ public class MellowUtils {
         else return new ControlsScreen(lastScreen, minecraft.options);
     }
 
-    public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<ResourcePackList> packInfo) {
-        ITextComponent title = new TranslationTextComponent("resourcePack.title");
-        if (CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
-        else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+    public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<PackRepository> packInfo) {
+        Component title = new TranslatableComponent("resourcePack.title");
+        if (CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackSelectionScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+        else return new PackSelectionScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
     }
 
     public static void switchTitleScreenStyle(Minecraft minecraft) {
@@ -95,34 +92,16 @@ public class MellowUtils {
         MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.set(ThreeStyles.byId(menuStyle.getId() + 1));
         switch (menuStyle) {
             case OPTION_3: minecraft.setScreen(new MellomedleyTitleScreen());
-            case OPTION_1: case OPTION_2: default: minecraft.setScreen(new MainMenuScreen());
+            case OPTION_1: case OPTION_2: default: minecraft.setScreen(new TitleScreen());
         }
     }
 
     public static void openLink(Screen lastScreen, String url, boolean showWarning) {
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.setScreen(new ConfirmOpenLinkScreen(confirmed -> {
+        minecraft.setScreen(new ConfirmLinkScreen(confirmed -> {
             if (confirmed) Util.getPlatform().openUri(url);
             minecraft.setScreen(lastScreen);
         }, url, !showWarning));
-    }
-
-    @Nullable
-    public static List<IReorderingProcessor> tooltipAt(OptionsList list, int mouseX, int mouseY) {
-        Optional<Widget> widget = list.getMouseOver(mouseX, mouseY);
-        if (widget.isPresent() && widget.get() instanceof IBidiTooltip) {
-            Optional<List<IReorderingProcessor>> tooltip = ((IBidiTooltip) widget.get()).getTooltip();
-            return tooltip.orElse(null);
-        } else {
-            return null;
-        }
-    }
-
-    // Copied from teamtwilight/twilightforest.
-    public static void addHighContrastPack() {
-        Minecraft.getInstance().getResourcePackRepository().addPackFinder((packInfo, infoFactory) -> packInfo.accept(ResourcePackInfo.create(
-                GUITextures.MUI_HIGH_CONTRAST.toString(), false, () -> new HighContrastPack(ModList.get()
-                        .getModFileById(MellowUI.MOD_ID).getFile()), infoFactory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILT_IN)));
     }
 
     public static boolean highContrastEnabled() {

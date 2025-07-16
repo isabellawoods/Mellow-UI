@@ -1,16 +1,16 @@
 package melonystudios.mellowui.mixin.screen.list;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.OptionsList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(OptionsRowList.class)
-public abstract class MUIOptionsListMixin extends AbstractOptionList<OptionsRowList.Row> {
+@Mixin(OptionsList.class)
+public abstract class MUIOptionsListMixin<E extends ContainerObjectSelectionList.Entry<E>> extends ContainerObjectSelectionList<E> {
     public MUIOptionsListMixin(Minecraft minecraft, int width, int height, int headerPosition, int footerPosition, int itemHeight) {
         super(minecraft, width, height, headerPosition, footerPosition, itemHeight);
     }

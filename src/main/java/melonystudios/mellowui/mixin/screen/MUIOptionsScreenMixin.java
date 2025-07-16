@@ -2,9 +2,9 @@ package melonystudios.mellowui.mixin.screen;
 
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
-import net.minecraft.client.gui.screen.OptionsScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.OptionsScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,7 +18,7 @@ public class MUIOptionsScreenMixin extends Screen {
     @Final
     private Screen lastScreen;
 
-    public MUIOptionsScreenMixin(ITextComponent title) {
+    public MUIOptionsScreenMixin(Component title) {
         super(title);
     }
 

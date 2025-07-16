@@ -1,10 +1,9 @@
 package melonystudios.mellowui.config.option;
 
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.Options;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,20 +11,21 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 public class StyleBooleanOption extends BooleanOption {
-    public StyleBooleanOption(String translation, Predicate<GameSettings> getter, BiConsumer<GameSettings, Boolean> setter) {
+    public StyleBooleanOption(String translation, Predicate<Options> getter, BiConsumer<Options, Boolean> setter) {
         super(translation, getter, setter);
     }
 
-    public StyleBooleanOption(String translation, @Nullable ITextComponent tooltipText, Predicate<GameSettings> getter, BiConsumer<GameSettings, Boolean> setter) {
-        super(translation, tooltipText, getter, setter);
+    public StyleBooleanOption(String translation, @Nullable Component tooltipComponent, Predicate<Options> getter, BiConsumer<Options, Boolean> setter) {
+        super(translation, tooltipComponent, getter, setter);
     }
 
+    @Override
     @Nonnull
-    public ITextComponent getMessage(GameSettings options) {
+    public Component getMessage(Options options) {
         return styleStatus(this.getCaption(), this.get(options));
     }
 
-    public static IFormattableTextComponent styleStatus(ITextComponent widgetText, boolean on) {
-        return new TranslationTextComponent(on ? "config.mellowui.option_2_style" : "config.mellowui.option_1_style", widgetText);
+    public static MutableComponent styleStatus(Component widgetText, boolean on) {
+        return new TranslatableComponent(on ? "config.mellowui.option_2_style" : "config.mellowui.option_1_style", widgetText);
     }
 }

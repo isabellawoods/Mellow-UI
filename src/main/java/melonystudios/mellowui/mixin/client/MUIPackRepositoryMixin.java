@@ -2,8 +2,8 @@ package melonystudios.mellowui.mixin.client;
 
 import com.google.common.collect.Lists;
 import melonystudios.mellowui.methods.InterfaceMethods;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.ResourcePackList;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,17 +13,18 @@ import java.util.List;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(ResourcePackList.class)
+@Mixin(PackRepository.class)
 public class MUIPackRepositoryMixin implements InterfaceMethods.PackRepositoryMethods {
     @Shadow
-    private Map<String, ResourcePackInfo> available;
+    private Map<String, Pack> available;
     @Shadow
-    private List<ResourcePackInfo> selected;
+    private List<Pack> selected;
 
+    @Override
     public boolean addPack(String id) {
-        ResourcePackInfo pack = this.available.get(id);
+        Pack pack = this.available.get(id);
         if (pack != null && !this.selected.contains(pack)) {
-            List<ResourcePackInfo> list = Lists.newArrayList(this.selected);
+            List<Pack> list = Lists.newArrayList(this.selected);
             list.add(pack);
             this.selected = list;
             return true;
@@ -32,10 +33,11 @@ public class MUIPackRepositoryMixin implements InterfaceMethods.PackRepositoryMe
         }
     }
 
+    @Override
     public boolean removePack(String id) {
-        ResourcePackInfo pack = this.available.get(id);
+        Pack pack = this.available.get(id);
         if (pack != null && this.selected.contains(pack)) {
-            List<ResourcePackInfo> list = Lists.newArrayList(this.selected);
+            List<Pack> list = Lists.newArrayList(this.selected);
             list.remove(pack);
             this.selected = list;
             return true;

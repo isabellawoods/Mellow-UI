@@ -1,13 +1,13 @@
 package melonystudios.mellowui.config.type;
 
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public enum ThreeStyles implements IStringSerializable {
+public enum ThreeStyles implements StringRepresentable {
     OPTION_1(0, "option_1"),
     OPTION_2(1, "option_2"),
     OPTION_3(2, "option_3");
@@ -36,10 +36,10 @@ public enum ThreeStyles implements IStringSerializable {
     }
 
     public static ThreeStyles byId(int identifier) {
-        switch (identifier) {
-            case 1: return OPTION_2;
-            case 2: return OPTION_3;
-            case 0: default: return OPTION_1;
-        }
+        return switch (identifier) {
+            case 1 -> OPTION_2;
+            case 2 -> OPTION_3;
+            default -> OPTION_1;
+        };
     }
 }

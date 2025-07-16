@@ -1,27 +1,29 @@
 package melonystudios.mellowui.screen.update;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.CompatUtils;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.shader.ShaderManager;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.chat.NarratorChatListener;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.function.BooleanSupplier;
 
 @OnlyIn(Dist.CLIENT)
 public class MUILoadingTerrainScreen extends Screen {
-    public static final ITextComponent DOWNLOADING_TERRAIN_TEXT = new TranslationTextComponent("multiplayer.downloadingTerrain");
-    public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 30000L;
+    public static final Component DOWNLOADING_TERRAIN_TEXT = new TranslatableComponent("multiplayer.downloadingTerrain");
+    public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 500L;
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final long createdAt;
     private final BooleanSupplier worldReceived;
@@ -51,19 +53,20 @@ public class MUILoadingTerrainScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack, 0);
         super.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, DOWNLOADING_TERRAIN_TEXT, this.width / 2, this.height / 2 - 50, 0xFFFFFF);
     }
 
     @Override
-    public void renderBackground(MatrixStack stack, int vOffset) {
+    public void renderBackground(PoseStack stack, int vOffset) {
         if (this.minecraft == null) return;
         float partialTicks = this.minecraft.getDeltaFrameTime();
         switch (this.reason) {
             case NETHER_PORTAL:
-                this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getNetherPortalSprite());
                 this.components.renderBackgroundShaders(partialTicks);
                 break;
@@ -77,12 +80,14 @@ public class MUILoadingTerrainScreen extends Screen {
                 this.components.renderBackgroundShaders(partialTicks);
                 break;
             case EVERBRIGHT_PORTAL: // From Blue Skies
-                this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getEverbrightPortalSprite());
                 this.components.renderBackgroundShaders(partialTicks);
                 break;
             case EVERDAWN_PORTAL: // From Blue Skies
-                this.minecraft.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
                 blit(stack, 0, 0, -90, this.width, this.height, this.getEverdawnPortalSprite());
                 this.components.renderBackgroundShaders(partialTicks);
                 break;
@@ -126,7 +131,7 @@ public class MUILoadingTerrainScreen extends Screen {
 
     @Override
     public void onClose() {
-        NarratorChatListener.INSTANCE.sayNow(new TranslationTextComponent("narrator.ready_to_play").getString());
+        NarratorChatListener.INSTANCE.sayNow(new TranslatableComponent("narrator.ready_to_play").getString());
         super.onClose();
     }
 

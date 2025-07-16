@@ -1,20 +1,20 @@
 package melonystudios.mellowui.mixin.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.util.GUITextures;
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.ContainerScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,99 +26,102 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-@SuppressWarnings("deprecation")
-@Mixin(ContainerScreen.class)
-public abstract class MUIContainerScreenMixin<T extends Container> extends Screen implements IHasContainer<T> {
+@Mixin(AbstractContainerScreen.class)
+public abstract class MUIAbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
     @Shadow protected int leftPos;
     @Shadow protected int topPos;
-    @Shadow protected abstract void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY);
+    @Shadow protected abstract void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY);
     @Shadow @Nullable protected Slot hoveredSlot;
     @Shadow @Final protected T menu;
-    @Shadow protected abstract void renderSlot(MatrixStack stack, Slot slot);
-    @Shadow protected abstract boolean isHovering(Slot slot, double p_195362_2_, double p_195362_4_);
-    @Shadow protected abstract void renderLabels(MatrixStack stack, int mouseX, int mouseY);
+    @Shadow protected abstract void renderSlot(PoseStack stack, Slot slot);
+    @Shadow protected abstract boolean isHovering(Slot slot, double mouseX, double mouseY);
+    @Shadow protected abstract void renderLabels(PoseStack stack, int mouseX, int mouseY);
     @Shadow private ItemStack draggingItem;
     @Shadow private boolean isSplittingStack;
     @Shadow protected boolean isQuickCrafting;
     @Shadow @Final protected Set<Slot> quickCraftSlots;
     @Shadow private int quickCraftingRemainder;
-    @Shadow protected abstract void renderFloatingItem(ItemStack p_146982_1_, int p_146982_2_, int p_146982_3_, String p_146982_4_);
+    @Shadow protected abstract void renderFloatingItem(ItemStack stack, int x, int y, String altText);
     @Shadow private ItemStack snapbackItem;
     @Shadow private long snapbackTime;
     @Shadow @Nullable private Slot snapbackEnd;
     @Shadow private int snapbackStartX;
     @Shadow private int snapbackStartY;
 
-    public MUIContainerScreenMixin(ITextComponent title) {
+    public MUIAbstractContainerScreenMixin(Component title) {
         super(title);
     }
 
+    @SuppressWarnings("unchecked")
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
         int leftPos1 = this.leftPos;
         int topPos1 = this.topPos;
         this.renderBg(stack, partialTicks, mouseX, mouseY);
-        MinecraftForge.EVENT_BUS.post(new GuiContainerEvent.DrawBackground((ContainerScreen<T>) this.minecraft.screen, stack, mouseX, mouseY));
-        RenderSystem.disableRescaleNormal();
+        MinecraftForge.EVENT_BUS.post(new ContainerScreenEvent.DrawBackground((AbstractContainerScreen<T>) this.minecraft.screen, stack, mouseX, mouseY));
         RenderSystem.disableDepthTest();
         super.render(stack, mouseX, mouseY, partialTicks);
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef((float) leftPos1, (float) topPos1, 0);
-        RenderSystem.color4f(1, 1, 1, 1);
-        RenderSystem.enableRescaleNormal();
+        PoseStack modelStack = RenderSystem.getModelViewStack();
+        modelStack.pushPose();
+        modelStack.translate((float) leftPos1, (float) topPos1, 0);
+        RenderSystem.applyModelViewMatrix();
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         this.hoveredSlot = null;
-        RenderSystem.glMultiTexCoord2f(33986, 240, 240);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
         for (int i = 0; i < this.menu.slots.size(); ++i) {
             Slot slot = this.menu.slots.get(i);
 
-            if (this.isHovering(slot, mouseX, mouseY) && slot.isActive() && this.minecraft != null) {
+            if (this.isHovering(slot, mouseX, mouseY) && slot.isActive() && this.minecraft != null && slot.isActive()) {
                 this.hoveredSlot = slot;
                 RenderSystem.disableDepthTest();
                 RenderSystem.enableBlend();
-                RenderSystem.enableAlphaTest();
                 RenderSystem.enableTexture();
-                RenderSystem.color4f(1, 1, 1, 1);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderColor(1, 1, 1, 1);
                 int x = slot.x;
                 int y = slot.y;
-                this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_BACK);
+                RenderSystem.setShaderTexture(0, GUITextures.SLOT_HIGHLIGHT_BACK);
+                RenderSystem.colorMask(true, true, true, false);
                 blit(stack, x - 4, y - 4, 0, 0, 24, 24, 24, 24);
+                RenderSystem.colorMask(true, true, true, true);
                 RenderSystem.enableDepthTest();
             }
 
-            if (slot.isActive()) this.renderSlot(stack, slot);
+            if (slot.isActive()) {
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                this.renderSlot(stack, slot);
+            }
 
-            if (this.isHovering(slot, mouseX, mouseY) && slot.isActive() && this.minecraft != null) {
-                this.hoveredSlot = slot;
+            if (this.isHovering(slot, mouseX, mouseY) && slot.isActive() && this.minecraft != null && slot.isActive()) {
                 RenderSystem.disableDepthTest();
-                RenderSystem.enableAlphaTest();
                 RenderSystem.enableBlend();
                 RenderSystem.enableTexture();
-                RenderSystem.color4f(1, 1, 1, 1);
+                RenderSystem.setShaderColor(1, 1, 1, 1);
                 int x = slot.x;
                 int y = slot.y;
-                this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_FRONT);
+                RenderSystem.setShaderTexture(0, GUITextures.SLOT_HIGHLIGHT_FRONT);
+                RenderSystem.colorMask(true, true, true, false);
                 blit(stack, x - 4, y - 4, 0, 0, 24, 24, 24, 24);
+                RenderSystem.colorMask(true, true, true, true);
                 RenderSystem.enableDepthTest();
             }
         }
 
         this.renderLabels(stack, mouseX, mouseY);
-        // MinecraftForge.EVENT_BUS.post(new GuiContainerEvent.DrawForeground(this, stack, mouseX, mouseY));
-        PlayerInventory inventory = this.minecraft.player.inventory;
-        ItemStack draggingStack = this.draggingItem.isEmpty() ? inventory.getCarried() : this.draggingItem;
+        MinecraftForge.EVENT_BUS.post(new ContainerScreenEvent.DrawForeground((AbstractContainerScreen<?>) this.minecraft.screen, stack, mouseX, mouseY));
+        ItemStack draggingStack = this.draggingItem.isEmpty() ? this.menu.getCarried() : this.draggingItem;
         if (!draggingStack.isEmpty()) {
             int k2 = this.draggingItem.isEmpty() ? 8 : 16;
             String count = null;
             if (!this.draggingItem.isEmpty() && this.isSplittingStack) {
                 draggingStack = draggingStack.copy();
-                draggingStack.setCount(MathHelper.ceil((float) draggingStack.getCount() / 2));
+                draggingStack.setCount(Mth.ceil((float) draggingStack.getCount() / 2));
             } else if (this.isQuickCrafting && this.quickCraftSlots.size() > 1) {
                 draggingStack = draggingStack.copy();
                 draggingStack.setCount(this.quickCraftingRemainder);
-                if (draggingStack.isEmpty()) count = TextFormatting.YELLOW + "0";
+                if (draggingStack.isEmpty()) count = ChatFormatting.YELLOW + "0";
             }
 
             this.renderFloatingItem(draggingStack, mouseX - leftPos1 - 8, mouseY - topPos1 - k2, count);
@@ -138,7 +141,8 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
             this.renderFloatingItem(this.snapbackItem, l1, i2, null);
         }
 
-        RenderSystem.popMatrix();
+        modelStack.popPose();
+        RenderSystem.applyModelViewMatrix();
         RenderSystem.enableDepthTest();
     }
 }

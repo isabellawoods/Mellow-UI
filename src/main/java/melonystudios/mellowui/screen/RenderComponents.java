@@ -1,31 +1,33 @@
 package melonystudios.mellowui.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import melonystudios.mellowui.methods.InterfaceMethods;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
+import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.shader.ShaderManager;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.OptionsRowList;
-import net.minecraft.client.renderer.RenderSkybox;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.inventory.*;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.PanoramaRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
@@ -35,26 +37,26 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderComponents extends AbstractGui {
+public class RenderComponents extends GuiComponent {
     public static final RenderComponents INSTANCE = new RenderComponents(Minecraft.getInstance());
-    private static RenderSkybox PANORAMA = new RenderSkybox(MainMenuScreen.CUBE_MAP);
+    private static PanoramaRenderer PANORAMA = new PanoramaRenderer(TitleScreen.CUBE_MAP);
     public static float PANORAMA_PITCH = 10;
     public static final int TOOLTIP_MAX_WIDTH = 200; // tooltip width is 170 in 1.21.1
     public static final int DEFAULT_TAB_WIDTH = 130;
     private final ScissorStack scissorStack = new ScissorStack();
     private final Minecraft minecraft;
-    private final MatrixStack stack;
+    private final PoseStack stack;
 
-    private RenderComponents(Minecraft minecraft, MatrixStack stack) {
+    private RenderComponents(Minecraft minecraft, PoseStack stack) {
         this.minecraft = minecraft;
         this.stack = stack;
     }
 
     private RenderComponents(Minecraft minecraft) {
-        this(minecraft, new MatrixStack());
+        this(minecraft, new PoseStack());
     }
 
-    public MatrixStack matrixStack() {
+    public PoseStack poseStack() {
         return this.stack;
     }
 
@@ -74,13 +76,13 @@ public class RenderComponents extends AbstractGui {
             } else {
                 screen.renderDirtBackground(vOffset);
             }
-            MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(screen, this.stack));
+            MinecraftForge.EVENT_BUS.post(new ScreenEvent.BackgroundDrawnEvent(screen, this.stack));
         }
     }
 
     public boolean classifiesAsContainer(Screen screen) {
-        boolean vanillaScreens = screen instanceof ContainerScreen || screen instanceof CommandBlockScreen || screen instanceof EditStructureScreen || screen instanceof JigsawScreen ||
-                screen instanceof EditSignScreen || screen instanceof EditBookScreen;
+        boolean vanillaScreens = screen instanceof AbstractContainerScreen || screen instanceof CommandBlockEditScreen || screen instanceof StructureBlockEditScreen || screen instanceof JigsawBlockEditScreen ||
+                screen instanceof SignEditScreen || screen instanceof BookEditScreen;
         boolean moddedScreens = CLIENT_CONFIGS.classifiedAsContainers.get().contains(screen.getClass().getName());
         return vanillaScreens || moddedScreens;
     }
@@ -99,16 +101,17 @@ public class RenderComponents extends AbstractGui {
 
     public void renderPanorama(float partialTicks, int width, int height, float transparency) {
         PANORAMA.render(partialTicks, 1);
-        RenderSystem.color4f(1, 1, 1, MathHelper.ceil(MathHelper.clamp(transparency, 0, 1)));
+        RenderSystem.setShaderColor(1, 1, 1, Mth.ceil(Mth.clamp(transparency, 0, 1)));
         this.renderBackgroundTexture(GUITextures.PANORAMA_OVERLAY, width, height);
     }
 
-    public void replacePanorama(RenderSkybox panorama) {
+    public void replacePanorama(PanoramaRenderer panorama) {
         if (!((InterfaceMethods.PanoramaRendererMethods) PANORAMA).samePanorama(panorama)) PANORAMA = panorama;
     }
 
     public void renderBackgroundTexture(ResourceLocation backgroundTexture, int width, int height) {
-        this.minecraft.getTextureManager().bind(backgroundTexture);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, backgroundTexture);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         blit(this.stack, 0, 0, width, height, 0, 0, 16, 128, 16, 128);
@@ -125,13 +128,14 @@ public class RenderComponents extends AbstractGui {
     }
 
     public void renderTiledBackground(ResourceLocation backgroundTexture, int brightness, int x, int y, int width, int height, float vOffset) {
-        this.minecraft.getTextureManager().bind(backgroundTexture);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, backgroundTexture);
         RenderSystem.enableBlend();
-        RenderSystem.color4f(brightness / 255F, brightness / 255F, brightness / 255F, 1);
+        RenderSystem.setShaderColor(brightness / 255F, brightness / 255F, brightness / 255F, 1);
         blit(this.stack, x, y, 0, vOffset, width, height, 32, 32);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
-        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, this.stack));
+        MinecraftForge.EVENT_BUS.post(new ScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, this.stack));
     }
 
     public void renderTabHeaderBackground(int x, int y, int width, int height) {
@@ -140,11 +144,12 @@ public class RenderComponents extends AbstractGui {
     }
 
     public void renderTabHeaderBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int brightness) {
-        this.minecraft.getTextureManager().bind(backgroundTexture);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, backgroundTexture);
         RenderSystem.enableBlend();
-        RenderSystem.color4f(brightness / 255F, brightness / 255F, brightness / 255F, 1);
+        RenderSystem.setShaderColor(brightness / 255F, brightness / 255F, brightness / 255F, 1);
         blit(this.stack, x, y, 0, 0, width, height, 32, 32);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
     }
 
@@ -154,16 +159,17 @@ public class RenderComponents extends AbstractGui {
                 CLIENT_CONFIGS.defaultBackground.get() ? 32 : 255, scrollAmount);
     }
 
-    public  void renderListBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int uOffset, int vOffset, int brightness, double scrollAmount) {
-        this.minecraft.getTextureManager().bind(backgroundTexture);
+    public void renderListBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int uOffset, int vOffset, int brightness, double scrollAmount) {
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, backgroundTexture);
         RenderSystem.enableBlend();
-        RenderSystem.color4f(brightness / 255F, brightness / 255F, brightness / 255F, 1);
+        RenderSystem.setShaderColor(brightness / 255F, brightness / 255F, brightness / 255F, 1);
         blit(this.stack, x, y, uOffset, (float) (vOffset + scrollAmount), width, height, 32, 32);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
     }
 
-    public void renderListSeparators(OptionsRowList list, int width, int tabs, int tabWidth) {
+    public void renderListSeparators(OptionsList list, int width, int tabs, int tabWidth) {
         this.renderListSeparators(width, list.getLeft(), list.getBottom(), list.getTop(), tabs, tabWidth);
     }
 
@@ -174,12 +180,13 @@ public class RenderComponents extends AbstractGui {
         int headerOneEnd = tabs == 4 ? width / 2 - tabWidth * 2 : width / 2 - tabWidth / 2 - tabWidth;
         int headerTwoStart = tabs == 4 ? width / 2 + tabWidth * 2 : width / 2 + tabWidth / 2 + tabWidth;
 
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
         blit(this.stack, x, maxY, 0, 0, headerOneEnd, 2, 32, 2);
         blit(this.stack, headerTwoStart, maxY, 0, 0, width, 2, 32, 2);
 
         // Footer
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
+        RenderSystem.setShaderTexture(0, this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
         blit(this.stack, x, minY, 0, 0, x + width, 2, 32, 2);
 
         RenderSystem.disableBlend();
@@ -193,10 +200,10 @@ public class RenderComponents extends AbstractGui {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
-    public IconButton switchStyle(Button.IPressable onPressed, Screen screen, int x, int y) {
-        return new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"),
-                onPressed, (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(screen, button, new TranslationTextComponent("button.mellowui.switch_style"), mouseX, mouseY));
+    public IconButton switchStyle(Button.OnPress onPress, Screen screen, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslatableComponent("button.mellowui.switch_style"),
+                onPress, (button, stack, mouseX, mouseY) ->
+                this.renderTooltip(screen, button, new TranslatableComponent("button.mellowui.switch_style"), mouseX, mouseY));
     }
 
     public void enableScissor(int minX, int minY, int maxX, int maxY) {
@@ -213,7 +220,7 @@ public class RenderComponents extends AbstractGui {
 
     private void applyScissor(@Nullable ScreenRectangle rectangle) {
         if (rectangle != null) {
-            MainWindow window = Minecraft.getInstance().getWindow();
+            Window window = Minecraft.getInstance().getWindow();
             int height = window.getHeight();
             double guiScale = window.getGuiScale();
             double startX = (double) rectangle.left() * guiScale;
@@ -226,7 +233,7 @@ public class RenderComponents extends AbstractGui {
         }
     }
 
-    public void renderTooltip(Screen screen, Widget widget, ITextComponent tooltipText, int mouseX, int mouseY) {
+    public void renderTooltip(Screen screen, AbstractWidget widget, Component tooltipText, int mouseX, int mouseY) {
         int x = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.x : mouseX;
         int y = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.y : mouseY;
         if (this.containsPointInScissor(mouseX, mouseY) || widget.isFocused()) {
@@ -234,7 +241,7 @@ public class RenderComponents extends AbstractGui {
         }
     }
 
-    public void renderTooltip(Screen screen, Widget widget, List<IReorderingProcessor> tooltipText, int mouseX, int mouseY) {
+    public void renderTooltip(Screen screen, AbstractWidget widget, List<FormattedCharSequence> tooltipText, int mouseX, int mouseY) {
         int x = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.x : mouseX;
         int y = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.y : mouseY;
         if (this.containsPointInScissor(mouseX, mouseY) || widget.isFocused()) {

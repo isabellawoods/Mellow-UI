@@ -1,35 +1,29 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.TooltippedButton;
-import net.minecraft.client.AbstractOption;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class OpenMenuOption extends AbstractOption {
+public class OpenMenuOption extends MUIOption implements TooltipAccessor {
     private final String translation;
-    @Nullable
-    private final ITextComponent tooltipText;
     private final Screen optionsScreen;
-    private final boolean onlyInWorld;
     public boolean boldText = true;
 
     public OpenMenuOption(String translation, Screen optionsScreen) {
-        this(translation, false, null, optionsScreen);
+        this(translation, null, optionsScreen);
     }
 
-    public OpenMenuOption(String translation, boolean onlyInWorld, @Nullable ITextComponent tooltipText, Screen optionsScreen) {
-        super(translation);
+    public OpenMenuOption(String translation, @Nullable Component tooltipComponent, Screen optionsScreen) {
+        super(translation, tooltipComponent);
         this.translation = translation;
-        this.onlyInWorld = onlyInWorld;
-        this.tooltipText = tooltipText;
         this.optionsScreen = optionsScreen;
     }
 
@@ -40,11 +34,9 @@ public class OpenMenuOption extends AbstractOption {
 
     @Override
     @Nonnull
-    public Widget createButton(GameSettings options, int x, int y, int width) {
-        if (this.tooltipText != null) this.setTooltip(Minecraft.getInstance().font.split(this.tooltipText, RenderComponents.TOOLTIP_MAX_WIDTH));
-        TooltippedButton menuButton = new TooltippedButton(x, y, width, 20, new TranslationTextComponent(this.translation).withStyle(style -> style.withBold(this.boldText)), this.tooltipText,
+    public AbstractWidget createButton(Options options, int x, int y, int width) {
+        if (this.tooltipComponent != null) this.setTooltip(this.tooltipComponent);
+        return new TooltippedButton(x, y, width, 20, new TranslatableComponent(this.translation).withStyle(style -> style.withBold(this.boldText)), this.tooltipComponent,
                 button -> Minecraft.getInstance().setScreen(this.optionsScreen));
-        menuButton.active = !this.onlyInWorld;
-        return menuButton;
     }
 }

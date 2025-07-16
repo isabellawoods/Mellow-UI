@@ -1,10 +1,10 @@
 package melonystudios.mellowui.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 
 public class IconButton extends Button {
     private final WidgetTextureSet textureSet;
@@ -12,15 +12,15 @@ public class IconButton extends Button {
     private final int textureHeight;
     private boolean renderShadow = true;
 
-    public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, ITextComponent text, IPressable whenPressed) {
-        super(x, y, width, height, text, whenPressed);
+    public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, Component text, OnPress onPress) {
+        super(x, y, width, height, text, onPress);
         this.textureSet = textureSet;
         this.textureWidth = width;
         this.textureHeight = height;
     }
 
-    public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, ITextComponent text, IPressable whenPressed, ITooltip tooltipText) {
-        super(x, y, width, height, text, whenPressed, tooltipText);
+    public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, Component text, OnPress onPress, OnTooltip tooltipText) {
+        super(x, y, width, height, text, onPress, tooltipText);
         this.textureSet = textureSet;
         this.textureWidth = width;
         this.textureHeight = height;
@@ -32,20 +32,19 @@ public class IconButton extends Button {
     }
 
     @Override
-    public void renderButton(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bind(this.textureSet.getWidgetTexture(this.isHovered() || this.isFocused(), this.active));
-
-        RenderSystem.color4f(1, 1, 1, this.alpha);
+    public void renderButton(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, this.textureSet.getWidgetTexture(this.isHoveredOrFocused(), this.active));
+        RenderSystem.setShaderColor(1, 1, 1, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
 
         // Icon shadow
         if (this.renderShadow) {
-            RenderSystem.color4f(0.25F, 0.25F, 0.25F, this.alpha);
+            RenderSystem.setShaderColor(0.25F, 0.25F, 0.25F, this.alpha);
             blit(stack, this.x + 1, this.y + 1, 0, 0, this.width + 1, this.height + 1, this.textureWidth, this.textureHeight);
-            RenderSystem.color4f(1, 1, 1, this.alpha);
+            RenderSystem.setShaderColor(1, 1, 1, this.alpha);
         }
 
         // Icon
@@ -53,6 +52,6 @@ public class IconButton extends Button {
 
         // Tooltip
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
-        else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
+        else if (this.isHovered) this.renderToolTip(stack, mouseX, mouseY);
     }
 }

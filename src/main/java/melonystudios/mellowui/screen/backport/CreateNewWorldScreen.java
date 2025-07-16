@@ -2,8 +2,12 @@ package melonystudios.mellowui.screen.backport;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.google.gson.JsonElement;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.RenderComponents;
@@ -12,34 +16,47 @@ import melonystudios.mellowui.screen.tab.MoreTab;
 import melonystudios.mellowui.screen.tab.TabContents;
 import melonystudios.mellowui.screen.tab.WorldTab;
 import melonystudios.mellowui.screen.widget.TabButton;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.gui.toasts.SystemToast;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.command.Commands;
-import net.minecraft.resources.*;
-import net.minecraft.util.Util;
-import net.minecraft.util.datafix.codec.DatapackCodec;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.WorldStem;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.FolderRepositorySource;
+import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameType;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
-import net.minecraft.world.storage.FolderName;
-import net.minecraft.world.storage.SaveFormat;
+import net.minecraft.world.level.DataPackConfig;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.LevelSettings;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.fml.packs.ResourcePackLoader;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.resource.ResourcePackLoader;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
@@ -57,9 +74,9 @@ public class CreateNewWorldScreen extends Screen {
     @Nullable
     private Path tempDataPackDirectory;
     @Nullable
-    private ResourcePackList tempDataPackRepository;
+    private PackRepository tempDataPackRepository;
     private boolean recreated;
-    protected DatapackCodec dataPacks;
+    protected DataPackConfig dataPacks;
     public TabContents selectedTab;
     @Nullable
     private final Screen lastScreen;
@@ -68,21 +85,20 @@ public class CreateNewWorldScreen extends Screen {
     private String identifier = "game";
 
     public static void openFresh(Minecraft minecraft, @Nullable Screen lastScreen) {
-        queueLoadScreen(minecraft, new TranslationTextComponent("createWorld.preparing"));
-        ResourcePackList repository = new ResourcePackList(new ServerPackFinder());
+        queueLoadScreen(minecraft, new TranslatableComponent("createWorld.preparing"));
+        PackRepository repository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource());
         ResourcePackLoader.loadResourcePacks(repository, ServerLifecycleHooks::buildPackFinder);
-        WorldSettings settings = new WorldSettings(WorldCreationUIState.DEFAULT_WORLD_NAME.getString(), GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.DEFAULT);
-        DynamicRegistries.Impl registries = DynamicRegistries.builtin();
-        DimensionGeneratorSettings generatorSettings = ForgeHooksClient.getDefaultWorldType().map(type ->
+        LevelSettings settings = new LevelSettings(WorldCreationUIState.DEFAULT_WORLD_NAME.getString(), GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DataPackConfig.DEFAULT);
+        RegistryAccess.Frozen registries = RegistryAccess.BUILTIN.get();
+        WorldGenSettings generatorSettings = ForgeHooksClient.getDefaultWorldPreset().map(type ->
                 type.create(registries, new Random().nextLong(), true, false)).orElseGet(() ->
-                DimensionGeneratorSettings.makeDefault(registries.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY), registries.registryOrThrow(Registry.BIOME_REGISTRY),
-                        registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY)));
+                WorldGenSettings.makeDefault(registries));
 
-        minecraft.setScreen(new CreateNewWorldScreen(minecraft, lastScreen, settings, generatorSettings, DatapackCodec.DEFAULT, registries, ForgeHooksClient.getDefaultWorldType(), OptionalLong.empty()));
+        minecraft.setScreen(new CreateNewWorldScreen(minecraft, lastScreen, settings, generatorSettings, DataPackConfig.DEFAULT, registries, ForgeHooksClient.getDefaultWorldPreset(), OptionalLong.empty()));
     }
 
-    public static CreateNewWorldScreen createFromExisting(Minecraft minecraft, @Nullable Screen lastScreen, WorldSettings settings, DimensionGeneratorSettings  generatorSettings, DatapackCodec dataPacks, DynamicRegistries.Impl registries, @Nullable Path tempDataPackDirectory) {
-        CreateNewWorldScreen worldCreationScreen = new CreateNewWorldScreen(minecraft, lastScreen, settings, generatorSettings, dataPacks, registries, BiomeGeneratorTypeScreens.of(generatorSettings), OptionalLong.of(generatorSettings.seed()));
+    public static CreateNewWorldScreen createFromExisting(Minecraft minecraft, @Nullable Screen lastScreen, LevelSettings settings, WorldGenSettings  generatorSettings, DataPackConfig dataPacks, RegistryAccess.Frozen registries, @Nullable Path tempDataPackDirectory) {
+        CreateNewWorldScreen worldCreationScreen = new CreateNewWorldScreen(minecraft, lastScreen, settings, generatorSettings, dataPacks, registries, WorldPreset.of(generatorSettings), OptionalLong.of(generatorSettings.seed()));
         worldCreationScreen.recreated = true;
         worldCreationScreen.uiState.setName(settings.levelName());
         worldCreationScreen.uiState.setAllowCommands(settings.allowCommands());
@@ -108,8 +124,8 @@ public class CreateNewWorldScreen extends Screen {
         return worldCreationScreen;
     }
 
-    private CreateNewWorldScreen(Minecraft minecraft, @Nullable Screen lastScreen, WorldSettings settings, DimensionGeneratorSettings generatorSettings, DatapackCodec dataPacks, DynamicRegistries.Impl registries, Optional<BiomeGeneratorTypeScreens> preset, OptionalLong seed) {
-        super(new TranslationTextComponent("selectWorld.create"));
+    private CreateNewWorldScreen(Minecraft minecraft, @Nullable Screen lastScreen, LevelSettings settings, WorldGenSettings generatorSettings, DataPackConfig dataPacks, RegistryAccess.Frozen registries, Optional<WorldPreset> preset, OptionalLong seed) {
+        super(new TranslatableComponent("selectWorld.create"));
         this.lastScreen = lastScreen;
         this.dataPacks = dataPacks;
         this.uiState = new WorldCreationUIState(minecraft.getLevelSource().getBaseDir(), settings, generatorSettings, registries, preset, seed);
@@ -121,8 +137,8 @@ public class CreateNewWorldScreen extends Screen {
 
     @Override
     @Nonnull
-    public <T extends Widget> T addButton(T widget) {
-        return super.addButton(widget);
+    public <T extends GuiEventListener & Widget & NarratableEntry> T addRenderableWidget(T widget) {
+        return super.addRenderableWidget(widget);
     }
 
     @Override
@@ -139,20 +155,20 @@ public class CreateNewWorldScreen extends Screen {
     @Override
     protected void init() {
         // Create New World
-        this.addButton(this.createWorldButton = new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslationTextComponent("selectWorld.create"),
+        this.addRenderableWidget(this.createWorldButton = new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslatableComponent("selectWorld.create"),
                 button -> this.onCreate()));
         this.createWorldButton.active = !this.uiState.getName().isEmpty();
 
         // Cancel button
-        this.addButton(new Button(this.width / 2 + 5, this.height - 25, 150, 20, DialogTexts.GUI_CANCEL,
+        this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 25, 150, 20, CommonComponents.GUI_CANCEL,
                 button -> this.popScreen()));
 
         // WIP warning button
-        this.addButton(new Button(this.width / 2 + 165, this.height - 25, 20, 20, new TranslationTextComponent("button.mellowui.work_in_progress").withStyle(
-                style -> style.withColor(TextFormatting.YELLOW).withBold(true)), button -> {
+        this.addRenderableWidget(new Button(this.width / 2 + 165, this.height - 25, 20, 20, new TranslatableComponent("button.mellowui.work_in_progress").withStyle(
+                style -> style.withColor(ChatFormatting.YELLOW).withBold(true)), button -> {
             MellowConfigs.CLIENT_CONFIGS.updateCreateNewWorldMenu.set(false);
-            this.minecraft.setScreen(CreateWorldScreen.create(this.lastScreen));
-        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.work_in_progress.desc").withStyle(TextFormatting.YELLOW),
+            this.minecraft.setScreen(CreateWorldScreen.createFresh(this.lastScreen));
+        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.work_in_progress.desc").withStyle(ChatFormatting.YELLOW),
                         mouseX, mouseY)));
 
         this.addTabs();
@@ -165,7 +181,7 @@ public class CreateNewWorldScreen extends Screen {
         GameTab game = new GameTab();
         if (this.selectedTab == null) this.selectedTab = game;
         TabButton gameTab;
-        this.tabs.put(gameTab = this.addButton(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslationTextComponent("tab.mellowui.game"), button -> {
+        this.tabs.put(gameTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.game"), button -> {
             this.tabs.forEach((tab, contents) -> tab.setSelected(false));
             this.setSelectedTab(game.identifier);
         })), game);
@@ -174,7 +190,7 @@ public class CreateNewWorldScreen extends Screen {
         // World tab
         WorldTab world = new WorldTab();
         TabButton worldTab;
-        this.tabs.put(worldTab = this.addButton(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslationTextComponent("tab.mellowui.world"), button -> {
+        this.tabs.put(worldTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.world"), button -> {
             this.tabs.forEach((tab, contents) -> tab.setSelected(false));
             this.setSelectedTab(world.identifier);
         })), world);
@@ -183,7 +199,7 @@ public class CreateNewWorldScreen extends Screen {
         // More tab
         MoreTab more = new MoreTab();
         TabButton moreTab;
-        this.tabs.put(moreTab = this.addButton(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslationTextComponent("tab.mellowui.more"), button -> {
+        this.tabs.put(moreTab = this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.more"), button -> {
             this.tabs.forEach((tab, contents) -> tab.setSelected(false));
             this.setSelectedTab(more.identifier);
         })), more);
@@ -196,36 +212,35 @@ public class CreateNewWorldScreen extends Screen {
         if (!this.identifier.equals(identifier)) {
             if (this.selectedTab != null) this.selectedTab.widgets.clear();
             this.tabs.clear();
-            this.buttons.clear();
-            this.children.clear();
+            this.clearWidgets();
             this.identifier = identifier;
             this.init();
         }
     }
 
-    private static void queueLoadScreen(Minecraft minecraft, ITextComponent title) {
-        minecraft.forceSetScreen(new DirtMessageScreen(title));
+    private static void queueLoadScreen(Minecraft minecraft, Component title) {
+        minecraft.forceSetScreen(new GenericDirtMessageScreen(title));
     }
 
     private void onCreate() {
-        queueLoadScreen(this.minecraft, new TranslationTextComponent("createWorld.preparing"));
+        queueLoadScreen(this.minecraft, new TranslatableComponent("createWorld.preparing"));
         if (this.copyTempDataPackDirectoryToNewWorld()) {
             this.cleanupTempResources();
-            DimensionGeneratorSettings generatorSettings = this.uiState.getGeneratorSettings();
-            WorldSettings settings = this.createWorldSettings(this.uiState.isDebug());
+            WorldGenSettings generatorSettings = this.uiState.getGeneratorSettings();
+            LevelSettings settings = this.createWorldSettings(this.uiState.isDebug());
 
-            this.minecraft.createLevel(this.uiState.getTargetFolder(), settings, this.uiState.getRegistryHolder(), generatorSettings);
+            this.minecraft.createLevel(this.uiState.getTargetFolder(), settings, this.uiState.registryHolder(), generatorSettings);
         }
     }
 
-    private WorldSettings createWorldSettings(boolean debug) {
+    private LevelSettings createWorldSettings(boolean debug) {
         String worldName = this.uiState.getName().trim();
         if (debug) {
             GameRules gameRules = new GameRules();
             gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false, null);
-            return new WorldSettings(worldName, GameType.SPECTATOR, this.uiState.isHardcore(), Difficulty.PEACEFUL, this.uiState.allowsCommands(), gameRules, this.uiState.getSettings().getDataPackConfig());
+            return new LevelSettings(worldName, GameType.SPECTATOR, this.uiState.isHardcore(), Difficulty.PEACEFUL, this.uiState.allowsCommands(), gameRules, this.uiState.getSettings().getDataPackConfig());
         } else {
-            return new WorldSettings(worldName, this.uiState.getGameMode().gameType(), this.uiState.isHardcore(), this.uiState.getDifficulty(), this.uiState.allowsCommands(), this.uiState.getGameRules(), this.uiState.getSettings().getDataPackConfig());
+            return new LevelSettings(worldName, this.uiState.getGameMode().gameType(), this.uiState.isHardcore(), this.uiState.getDifficulty(), this.uiState.allowsCommands(), this.uiState.getGameRules(), this.uiState.getSettings().getDataPackConfig());
         }
     }
 
@@ -260,7 +275,7 @@ public class CreateNewWorldScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.components.renderTabHeaderBackground(0, 0, this.width, 24);
         this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
@@ -275,12 +290,12 @@ public class CreateNewWorldScreen extends Screen {
     }
 
     @Nullable
-    private Pair<File, ResourcePackList> getDataPackSelectionSettings() {
+    private Pair<File, PackRepository> getDataPackSelectionSettings() {
         Path packsFolder = this.getTempDataPackDirectory();
         if (packsFolder != null) {
             File file1 = packsFolder.toFile();
             if (this.tempDataPackRepository == null) {
-                this.tempDataPackRepository = new ResourcePackList(new ServerPackFinder(), new FolderPackFinder(file1, IPackNameDecorator.DEFAULT));
+                this.tempDataPackRepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(file1, PackSource.DEFAULT));
                 ResourcePackLoader.loadResourcePacks(this.tempDataPackRepository, ServerLifecycleHooks::buildPackFinder);
                 this.tempDataPackRepository.reload();
             }
@@ -293,9 +308,9 @@ public class CreateNewWorldScreen extends Screen {
     }
 
     public void openDataPacksSelectionScreen() {
-        Pair<File, ResourcePackList> pair = this.getDataPackSelectionSettings();
+        Pair<File, PackRepository> pair = this.getDataPackSelectionSettings();
         if (pair != null) {
-            this.minecraft.setScreen(new PackScreen(this, pair.getSecond(), this::tryApplyNewDataPacks, pair.getFirst(), new TranslationTextComponent("dataPack.title")));
+            this.minecraft.setScreen(new PackSelectionScreen(this, pair.getSecond(), this::tryApplyNewDataPacks, pair.getFirst(), new TranslatableComponent("dataPack.title")));
         }
     }
 
@@ -313,8 +328,8 @@ public class CreateNewWorldScreen extends Screen {
         if (this.tempDataPackDirectory == null) {
             try {
                 this.tempDataPackDirectory = Files.createTempDirectory("mcworld-");
-            } catch (IOException ioexception) {
-                MellowUI.LOGGER.warn("Failed to create temporary data packs directory", ioexception);
+            } catch (IOException exception) {
+                MellowUI.LOGGER.warn("Failed to create temporary data packs directory", exception);
                 SystemToast.onPackCopyFailure(this.minecraft, this.uiState.getTargetFolder());
                 this.popScreen();
             }
@@ -326,10 +341,10 @@ public class CreateNewWorldScreen extends Screen {
     private boolean copyTempDataPackDirectoryToNewWorld() {
         if (this.tempDataPackDirectory != null) {
             try (
-                    SaveFormat.LevelSave save = this.minecraft.getLevelSource().createAccess(this.uiState.getTargetFolder());
+                    LevelStorageSource.LevelStorageAccess save = this.minecraft.getLevelSource().createAccess(this.uiState.getTargetFolder());
                     Stream<Path> stream = Files.walk(this.tempDataPackDirectory);
             ) {
-                Path datapacksFolder = save.getLevelPath(FolderName.DATAPACK_DIR);
+                Path datapacksFolder = save.getLevelPath(LevelResource.DATAPACK_DIR);
                 Files.createDirectories(datapacksFolder);
                 stream.filter(path -> !path.equals(this.tempDataPackDirectory)).forEach(path -> copyBetweenDirectories(this.tempDataPackDirectory, datapacksFolder, path));
             } catch (DatapackException | IOException exception) {
@@ -361,32 +376,41 @@ public class CreateNewWorldScreen extends Screen {
         }
     }
 
-    private void tryApplyNewDataPacks(ResourcePackList packList) {
-        List<String> selectedPacks = ImmutableList.copyOf(packList.getSelectedIds());
-        List<String> newPacks = packList.getAvailableIds().stream().filter(packID -> !selectedPacks.contains(packID)).collect(ImmutableList.toImmutableList());
-        DatapackCodec codec = new DatapackCodec(selectedPacks, newPacks);
+    private void tryApplyNewDataPacks(PackRepository repository) {
+        List<String> selectedPacks = ImmutableList.copyOf(repository.getSelectedIds());
+        List<String> appliedPacks = repository.getAvailableIds().stream().filter(id -> !selectedPacks.contains(id)).collect(ImmutableList.toImmutableList());
+        DataPackConfig config = new DataPackConfig(selectedPacks, appliedPacks);
         if (selectedPacks.equals(this.dataPacks.getEnabled())) {
-            this.dataPacks = codec;
+            this.dataPacks = config;
         } else {
-            this.minecraft.tell(() -> this.minecraft.setScreen(new DirtMessageScreen(new TranslationTextComponent("dataPack.validation.working"))));
-            DataPackRegistries.loadResources(packList.openAllSelected(), Commands.EnvironmentType.INTEGRATED, 2, Util.backgroundExecutor(), this.minecraft).handle((registries, exception) -> {
+            this.minecraft.tell(() -> this.minecraft.setScreen(new GenericDirtMessageScreen(new TranslatableComponent("dataPack.validation.working"))));
+            WorldStem.load(new WorldStem.InitConfig(repository, Commands.CommandSelection.INTEGRATED, 2, false), () -> config, (manager, config1) -> {
+                RegistryAccess access = this.uiState().registryHolder();
+                RegistryAccess.Writable writableAccess = RegistryAccess.builtinCopy();
+                DynamicOps<JsonElement> exportSettings = RegistryOps.create(JsonOps.INSTANCE, access);
+                DynamicOps<JsonElement> importSettings = RegistryOps.createAndLoad(JsonOps.INSTANCE, writableAccess, manager);
+                DataResult<WorldGenSettings> result = WorldGenSettings.CODEC.encodeStart(exportSettings, this.uiState.makeSettings(this.uiState.isHardcore())).flatMap(
+                        element -> WorldGenSettings.CODEC.parse(importSettings, element));
+                WorldGenSettings generatorSettings = result.getOrThrow(false, Util.prefix("Error parsing world generation settings after loading data packs: ", MellowUI.LOGGER::error));
+                LevelSettings settings = this.createWorldSettings(generatorSettings.isDebug());
+                return Pair.of(new PrimaryLevelData(settings, generatorSettings, result.lifecycle()), writableAccess.freeze());
+            }, Util.backgroundExecutor(), this.minecraft).thenAcceptAsync((stem) -> {
+                this.dataPacks = config;
+                this.uiState.tryUpdateDataConfiguration(stem);
+                stem.close();
+            }, this.minecraft).handle((p_205431_, exception) -> {
                 if (exception != null) {
                     MellowUI.LOGGER.warn("Failed to validate datapack", exception);
                     this.minecraft.tell(() -> this.minecraft.setScreen(new ConfirmScreen(onTrue -> {
                         if (onTrue) {
                             this.openDataPacksSelectionScreen();
                         } else {
-                            this.dataPacks = DatapackCodec.DEFAULT;
+                            this.dataPacks = DataPackConfig.DEFAULT;
                             this.minecraft.setScreen(this);
                         }
-                    }, new TranslationTextComponent("dataPack.validation.failed").withStyle(TextFormatting.BOLD), StringTextComponent.EMPTY, new TranslationTextComponent("dataPack.validation.back"), new TranslationTextComponent("dataPack.validation.reset"))));
+                    }, new TranslatableComponent("dataPack.validation.failed"), TextComponent.EMPTY, new TranslatableComponent("dataPack.validation.back"), new TranslatableComponent("dataPack.validation.reset"))));
                 } else {
-                    this.minecraft.tell(() -> {
-                        this.dataPacks = codec;
-                        this.uiState.tryUpdateDataConfiguration(registries);
-                        registries.close();
-                        this.minecraft.setScreen(this);
-                    });
+                    this.minecraft.tell(() -> this.minecraft.setScreen(this));
                 }
 
                 return null;

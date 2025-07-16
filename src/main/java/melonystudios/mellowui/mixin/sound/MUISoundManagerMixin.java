@@ -1,14 +1,14 @@
 package melonystudios.mellowui.mixin.sound;
 
 import melonystudios.mellowui.methods.InterfaceMethods;
-import net.minecraft.client.audio.SoundEngine;
-import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.sounds.SoundEngine;
+import net.minecraft.client.sounds.SoundManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(SoundHandler.class)
-public class MUISoundHandlerMixin implements InterfaceMethods.SoundEngineMethods {
+@Mixin(SoundManager.class)
+public class MUISoundManagerMixin implements InterfaceMethods.SoundEngineMethods {
     @Shadow
     @Final
     private SoundEngine soundEngine;

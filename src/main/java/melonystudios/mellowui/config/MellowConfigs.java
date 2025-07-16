@@ -9,22 +9,19 @@ import java.util.List;
 
 public class MellowConfigs {
     public static final List<String> CLASSIFIED_AS_CONTAINERS = Lists.newArrayList(
-            "melonystudios.femalegender.gui.screen.BreastCustomizationScreen", "melonystudios.femalegender.gui.screen.CharacterSettingsScreen", "melonystudios.femalegender.gui.screen.PlayerListScreen", "melonystudios.femalegender.gui.screen.WardrobeScreen",
-            "com.wildfire.gui.screen.WildfireSettingsScreen", "com.wildfire.gui.screen.WildfireBrowserScreen", "com.wildfire.gui.screen.WildfireCapeScreen", "com.wildfire.gui.screen.WildfireKeyScreen", "com.wildfire.gui.screen.SteinPlayerListScreen",
+            "com.wildfire.gui.screen.WildfireBrowserScreen", "com.wildfire.gui.screen.WildfireBreastCustomizationScreen", "com.wildfire.gui.screen.WildfireCharacterSettingsScreen", "com.wildfire.gui.screen.WildfirePlayerListScreen",
             "mezz.jei.gui.recipes.RecipesGui");
     private static final Pair<MellowConfigs, ForgeConfigSpec> CLIENT_CONFIG_PAIR = new ForgeConfigSpec.Builder().configure(MellowConfigs::new);
     public static final MellowConfigs CLIENT_CONFIGS = CLIENT_CONFIG_PAIR.getLeft();
     public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_CONFIG_PAIR.getRight();
 
     // Backported Vanilla Configs
-    public final ForgeConfigSpec.BooleanValue monochromeLoadingScreen;
     public final ForgeConfigSpec.DoubleValue panoramaScrollSpeed;
     public final ForgeConfigSpec.BooleanValue hideSplashTexts;
     public final ForgeConfigSpec.BooleanValue showMusicToast;
     public final ForgeConfigSpec.BooleanValue highContrastPack;
     public final ForgeConfigSpec.IntValue menuBackgroundBlurriness;
     public final ForgeConfigSpec.EnumValue<TwoStyles> directionalAudio;
-    public final ForgeConfigSpec.ConfigValue<String> soundDevice;
     public final ForgeConfigSpec.BooleanValue onboardAccessibility;
 
     // Mellow UI Configs
@@ -52,6 +49,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue updatePauseMenu;
     public final ForgeConfigSpec.BooleanValue updateCreateNewWorldMenu;
     public final ForgeConfigSpec.BooleanValue updateOptionsMenu;
+    public final ForgeConfigSpec.BooleanValue updateOnlineOptionsMenu;
     public final ForgeConfigSpec.BooleanValue updateSkinCustomizationMenu;
     public final ForgeConfigSpec.BooleanValue updateMusicAndSoundsMenu;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> updateVideoSettingsMenu;
@@ -72,14 +70,12 @@ public class MellowConfigs {
 
     public MellowConfigs(ForgeConfigSpec.Builder builder) {
         builder.push("vanillaOptions");
-        this.monochromeLoadingScreen = builder.comment("Changes the Mojang Studios loading screen color from red to the color defined in the monochrome loading screen color config.").define("monochromeLoadingScreen", false);
         this.panoramaScrollSpeed = builder.comment("Changes the scrolling speed of the panorama in the menus.").defineInRange("panoramaScrollSpeed", 1F, 0, 1);
         this.hideSplashTexts = builder.comment("Toggles the ability to show or hide splashes on the main menu.").define("hideSplashTexts", false);
         this.showMusicToast = builder.comment("Shows a toast with the name of the currently playing song.").define("showMusicToast", false);
         this.highContrastPack = builder.comment("Whether the 'High Contrast' resource pack is enabled.").define("highContrastPack", false);
         this.menuBackgroundBlurriness = builder.comment("How blurry the panorama background should be.", "Setting this to 20 will result in the same blurring effect as in the pre-1.13 panorama.").defineInRange("menuBackgroundBlurriness", 5, 0, 20);
         this.directionalAudio = builder.comment("Enables the use of HRTF-based directional audio to improve simulation of 3D sound.", "Option 1 = Classic stereo | Option 2 = HRTF-based audio").defineEnum("directionalAudio", TwoStyles.OPTION_1);
-        this.soundDevice = builder.comment("Which device Minecraft should output audio from.").define("soundDevice", "");
         this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").define("onboardAccessibility", true);
         builder.pop();
 
@@ -106,10 +102,11 @@ public class MellowConfigs {
         this.updatePauseMenu = builder.comment("Whether Mellow UI should update the pause menu.").define("updates.pauseMenu", true);
         this.updateCreateNewWorldMenu = builder.comment("Whether Mellow UI should update the create new world menu.").define("updates.createNewWorldMenu", false);
         this.updateOptionsMenu = builder.comment("Whether Mellow UI should update the options' menu.").define("updates.optionsMenu", true);
+        this.updateOnlineOptionsMenu = builder.comment("Whether Mellow UI should update the online options menu.").define("updates.onlineOptionsMenu", true);
         this.updateSkinCustomizationMenu = builder.comment("Whether Mellow UI should update the skin customization menu.").define("updates.skinCustomizationMenu", true);
         this.updateMusicAndSoundsMenu = builder.comment("Whether Mellow UI should update the music & sounds menu.").define("updates.musicAndSoundsMenu", true);
         this.updateVideoSettingsMenu = builder.comment("Whether Mellow UI should update the video settings menu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Rubidium (Sodium)").defineEnum("updates.videoSettingsMenu", ThreeStyles.OPTION_3);
-        this.updateControlsMenu = builder.comment("Whether Mellow UI should update the controls menu, making the old screen the 'key binds' menu.").define("updates.controlsMenu", true);
+        this.updateControlsMenu = builder.comment("Whether Mellow UI should update the controls menu, making it look more like other menus.").define("updates.controlsMenu", true);
         this.updateMouseSettingsMenu = builder.comment("Whether Mellow UI should update the mouse settings menu.").define("updates.mouseSettingsMenu", true);
         this.updateChatSettingsMenu = builder.comment("Whether Mellow UI should update the chat settings menu.").define("updates.chatSettingsMenu", true);
         this.updateAccessibilityMenu = builder.comment("Whether Mellow UI should update the accessibility settings menu.").define("updates.accessibilityMenu", true);

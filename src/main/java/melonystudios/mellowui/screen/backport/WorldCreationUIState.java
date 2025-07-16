@@ -2,24 +2,24 @@ package melonystudios.mellowui.screen.backport;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.methods.InterfaceMethods;
-import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
-import net.minecraft.resources.DataPackRegistries;
-import net.minecraft.util.FileUtil;
-import net.minecraft.util.Util;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.WorldGenSettingsExport;
-import net.minecraft.util.registry.WorldSettingsImport;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.FileUtil;
+import net.minecraft.Util;
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.WorldStem;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameType;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.LevelSettings;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -31,13 +31,11 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens.*;
-
 @OnlyIn(Dist.CLIENT)
 public class WorldCreationUIState {
-    public static final ITextComponent DEFAULT_WORLD_NAME = new TranslationTextComponent("selectWorld.newWorld");
+    public static final Component DEFAULT_WORLD_NAME = new TranslatableComponent("selectWorld.newWorld");
     private final List<Consumer<WorldCreationUIState>> listeners = new ArrayList<>();
-    private Optional<BiomeGeneratorTypeScreens> preset;
+    private Optional<WorldPreset> preset;
     private String name = DEFAULT_WORLD_NAME.getString();
     private SelectedGameMode gameMode = SelectedGameMode.SURVIVAL;
     private Difficulty difficulty = Difficulty.NORMAL;
@@ -49,15 +47,15 @@ public class WorldCreationUIState {
     private boolean hardcore;
     private final Path savesFolder;
     private String targetFolder;
-    private WorldSettings worldSettings;
-    private DimensionGeneratorSettings settings;
+    private LevelSettings worldSettings;
+    private WorldGenSettings settings;
     private WorldTypeEntry worldType;
-    private DynamicRegistries.Impl registryHolder;
+    private RegistryAccess.Frozen registryHolder;
     private final List<WorldTypeEntry> normalPresetList = new ArrayList<>();
     private final List<WorldTypeEntry> alternatePresetList = new ArrayList<>();
     private GameRules gameRules = new GameRules();
 
-    public WorldCreationUIState(Path savesFolder, WorldSettings worldSettings, DimensionGeneratorSettings settings, DynamicRegistries.Impl registryHolder, Optional<BiomeGeneratorTypeScreens> preset, OptionalLong seed) {
+    public WorldCreationUIState(Path savesFolder, LevelSettings worldSettings, WorldGenSettings settings, RegistryAccess.Frozen registryHolder, Optional<WorldPreset> preset, OptionalLong seed) {
         this.savesFolder = savesFolder;
         this.worldSettings = worldSettings;
         this.settings = settings;
@@ -88,7 +86,7 @@ public class WorldCreationUIState {
 
         boolean hardcore = this.isHardcore();
         if (hardcore != this.worldSettings.hardcore()) {
-            this.worldSettings = new WorldSettings(this.worldSettings.levelName(), this.worldSettings.gameType(), hardcore, this.worldSettings.difficulty(), this.worldSettings.allowCommands(), this.worldSettings.gameRules(), this.getSettings().getDataPackConfig());
+            this.worldSettings = new LevelSettings(this.worldSettings.levelName(), this.worldSettings.gameType(), hardcore, this.worldSettings.difficulty(), this.worldSettings.allowCommands(), this.worldSettings.gameRules(), this.getSettings().getDataPackConfig());
         }
 
         for (Consumer<WorldCreationUIState> consumer : this.listeners) {
@@ -220,30 +218,35 @@ public class WorldCreationUIState {
         return !this.isDebug() && !this.isHardcore() && this.bonusChest;
     }
 
-    public void setSettings(WorldSettings settings) {
+    public void setSettings(LevelSettings settings) {
         this.worldSettings = settings;
         this.updatePresetLists();
         this.onChanged();
     }
 
-    public WorldSettings getSettings() {
+    public LevelSettings getSettings() {
         return this.worldSettings;
     }
 
-    public DimensionGeneratorSettings getGeneratorSettings() {
+    public WorldGenSettings getGeneratorSettings() {
         return this.settings;
     }
 
-    public DynamicRegistries.Impl getRegistryHolder() {
+    public RegistryAccess.Frozen registryHolder() {
         return this.registryHolder;
     }
 
-    protected void tryUpdateDataConfiguration(DataPackRegistries registries) {
-        DynamicRegistries.Impl registryHolder = DynamicRegistries.builtin();
-        WorldGenSettingsExport<JsonElement> settingsExport = WorldGenSettingsExport.create(JsonOps.INSTANCE, this.registryHolder);
-        WorldSettingsImport<JsonElement> settingsImport = WorldSettingsImport.create(JsonOps.INSTANCE, registries.getResourceManager(), registryHolder);
-        DataResult<DimensionGeneratorSettings> result = DimensionGeneratorSettings.CODEC.encodeStart(settingsExport, this.settings).flatMap(
-                element -> DimensionGeneratorSettings.CODEC.parse(settingsImport, element));
+    public WorldGenSettings makeSettings(boolean hardcore) {
+        OptionalLong seed1 = this.parseSeed(this.seed);
+        return this.settings.withSeed(hardcore, seed1);
+    }
+
+    protected void tryUpdateDataConfiguration(WorldStem stem) {
+        RegistryAccess.Frozen registryHolder = RegistryAccess.BUILTIN.get();
+        DynamicOps<JsonElement> settingsExport = RegistryOps.create(JsonOps.INSTANCE, this.registryHolder);
+        DynamicOps<JsonElement> settingsImport = RegistryOps.createAndLoad(JsonOps.INSTANCE, RegistryAccess.builtinCopy(), stem.resourceManager());
+        DataResult<WorldGenSettings> result = WorldGenSettings.CODEC.encodeStart(settingsExport, this.settings).flatMap(
+                element -> WorldGenSettings.CODEC.parse(settingsImport, element));
 
         result.resultOrPartial(Util.prefix("Error parsing world generation settings after loading data packs: ", MellowUI.LOGGER::error)).ifPresent(settings -> {
             this.settings = settings;
@@ -268,10 +271,10 @@ public class WorldCreationUIState {
     }
 
     @Nullable
-    public BiomeGeneratorTypeScreens.IFactory getPresetEditor() {
+    public WorldPreset.PresetEditor getPresetEditor() {
         if (!this.preset.isPresent()) return null;
-        IFactory editor = ((InterfaceMethods.WorldPresetsMethods) this.preset.get()).getEditors().get(this.preset);
-        return ForgeHooksClient.getBiomeGeneratorTypeScreenFactory(this.preset, editor);
+        WorldPreset.PresetEditor editor = ((InterfaceMethods.WorldPresetsMethods) this.preset.get()).getEditors().get(this.preset);
+        return ForgeHooksClient.getPresetEditor(this.preset, editor);
     }
 
     public List<WorldTypeEntry> getNormalPresetList() {
@@ -283,11 +286,11 @@ public class WorldCreationUIState {
     }
 
     private void updatePresetLists() {
-        Optional<BiomeGeneratorTypeScreens> optionalPreset = this.preset;
+        Optional<WorldPreset> optionalPreset = this.preset;
         if (optionalPreset != null && optionalPreset.isPresent()) {
-            List<BiomeGeneratorTypeScreens> presets = ((InterfaceMethods.WorldPresetsMethods) optionalPreset.get()).getPresets();
+            List<WorldPreset> presets = ((InterfaceMethods.WorldPresetsMethods) optionalPreset.get()).getPresets();
             this.normalPresetList.clear();
-            presets.stream().filter(preset -> !((TranslationTextComponent) preset.description()).getKey().equals("generator.debug_all_block_states")).forEach(
+            presets.stream().filter(preset -> !((TranslatableComponent) preset.description()).getKey().equals("generator.debug_all_block_states")).forEach(
                     preset -> this.normalPresetList.add(new WorldTypeEntry(preset)));
             this.alternatePresetList.clear();
             presets.forEach(preset -> this.alternatePresetList.add(new WorldTypeEntry(preset)));
@@ -322,39 +325,28 @@ public class WorldCreationUIState {
             return this.gameType;
         }
 
-        public TranslationTextComponent displayName() {
-            return new TranslationTextComponent("selectWorld.gameMode." + this.name);
+        public TranslatableComponent displayName() {
+            return new TranslatableComponent("selectWorld.gameMode." + this.name);
         }
 
-        public IFormattableTextComponent getInfo() {
-            IFormattableTextComponent component = new TranslationTextComponent(this.displayName().getKey() + ".line1");
+        public MutableComponent getInfo() {
+            MutableComponent component = new TranslatableComponent(this.displayName().getKey() + ".line1");
             component.append(" ");
-            component.append(new TranslationTextComponent(this.displayName().getKey() + ".line2"));
+            component.append(new TranslatableComponent(this.displayName().getKey() + ".line2"));
             return component;
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static class WorldTypeEntry {
-        public static final ITextComponent CUSTOM_WORLD_DESCRIPTION = new TranslationTextComponent("generator.custom");
-        @Nullable
-        private final BiomeGeneratorTypeScreens preset;
+    public record WorldTypeEntry(@Nullable WorldPreset preset) {
+        public static final Component CUSTOM_WORLD_DESCRIPTION = new TranslatableComponent("generator.custom");
 
-        public WorldTypeEntry(@Nullable BiomeGeneratorTypeScreens preset) {
-            this.preset = preset;
-        }
-
-        @Nullable
-        public BiomeGeneratorTypeScreens preset() {
-            return this.preset;
-        }
-
-        public ITextComponent describePreset() {
-            return Optional.ofNullable(this.preset).map(BiomeGeneratorTypeScreens::description).orElse(CUSTOM_WORLD_DESCRIPTION);
+        public Component describePreset() {
+            return Optional.ofNullable(this.preset).map(WorldPreset::description).orElse(CUSTOM_WORLD_DESCRIPTION);
         }
 
         public boolean isAmplified() {
-            return this.preset == AMPLIFIED;
-        }
+                return this.preset == WorldPreset.AMPLIFIED;
+            }
     }
 }

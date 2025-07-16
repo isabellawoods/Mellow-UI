@@ -1,24 +1,25 @@
 package melonystudios.mellowui.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class TabButton extends Button implements ScrollingText {
     private boolean selected;
 
-    public TabButton(int x, int y, int width, int height, ITextComponent text, IPressable whenPressed) {
-        super(x, y, width, height, text, whenPressed);
+    public TabButton(int x, int y, int width, int height, Component text, OnPress onPress) {
+        super(x, y, width, height, text, onPress);
     }
 
-    public TabButton(int x, int y, int width, int height, ITextComponent title, IPressable whenPressed, ITooltip tooltip) {
-        super(x, y, width, height, title, whenPressed, tooltip);
+    public TabButton(int x, int y, int width, int height, Component title, OnPress onPress, OnTooltip tooltip) {
+        super(x, y, width, height, title, onPress, tooltip);
     }
 
     public boolean selected() {
@@ -43,23 +44,24 @@ public class TabButton extends Button implements ScrollingText {
     }
 
     @Override
-    public void renderButton(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
-        FontRenderer font = minecraft.font;
+        Font font = minecraft.font;
         int color = this.getFGColor();
         ResourceLocation tabLocation;
-        if (this.selected() && (this.isFocused() || this.isHovered())) {
+        if (this.selected() && (this.isHoveredOrFocused())) {
             tabLocation = GUITextures.TAB_SELECTED_HIGHLIGHTED;
         } else if (this.selected()) {
             tabLocation = GUITextures.TAB_SELECTED;
-        } else if (this.isFocused() || this.isHovered()) {
+        } else if (this.isHoveredOrFocused()) {
             tabLocation = GUITextures.TAB_HIGHLIGHTED;
         } else {
             tabLocation = GUITextures.TAB;
         }
 
-        minecraft.getTextureManager().bind(tabLocation);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, tabLocation);
+        RenderSystem.setShaderColor(1, 1, 1, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
@@ -69,11 +71,13 @@ public class TabButton extends Button implements ScrollingText {
         this.renderString(stack, font, color);
 
         if (this.selected()) this.renderFocusUnderline(stack, font, color);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
-        else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
+        else if (this.isHovered) this.renderToolTip(stack, mouseX, mouseY);
     }
 
-    public void renderString(MatrixStack stack, FontRenderer font, int color) {
+    public void renderString(PoseStack stack, Font font, int color) {
         int padding = WidgetConfigs.WIDGET_CONFIGS.tabTextBorderPadding.get();
         int minX = this.x + padding;
         int minY = this.y + (this.selected() ? 0 : 3);
@@ -82,7 +86,7 @@ public class TabButton extends Button implements ScrollingText {
         this.renderScrollingString(stack, font, this.getMessage(), minX, minY, maxX, maxY, color);
     }
 
-    private void renderFocusUnderline(MatrixStack stack, FontRenderer font, int color) {
+    private void renderFocusUnderline(PoseStack stack, Font font, int color) {
         int xOffset = Math.min(font.width(this.getMessage()), this.width - 4);
         int minX = this.x + (this.width - xOffset) / 2;
         int minY = this.y + this.height - 2;

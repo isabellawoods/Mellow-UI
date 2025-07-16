@@ -1,18 +1,19 @@
 package melonystudios.mellowui.screen.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class HardcoreSetButton extends ImageSetButton {
     private boolean selected = false;
 
-    public HardcoreSetButton(int x, int y, int width, int height, IPressable whenPressed, ITooltip buttonTooltip, ITextComponent buttonText) {
-        super(x, y, width, height, null, whenPressed, buttonTooltip, buttonText);
+    public HardcoreSetButton(int x, int y, int width, int height, OnPress onPress, OnTooltip buttonTooltip, Component buttonText) {
+        super(x, y, width, height, null, onPress, buttonTooltip, buttonText);
     }
 
     public boolean selected() {
@@ -25,14 +26,15 @@ public class HardcoreSetButton extends ImageSetButton {
     }
 
     @Override
-    public void renderButton(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         ResourceLocation iconTexture = this.selected ? GUITextures.HARDCORE_ON : GUITextures.HARDCORE_OFF;
 
         // Button
-        minecraft.getTextureManager().bind(WIDGETS_LOCATION);
-        RenderSystem.color4f(1, 1, 1, this.alpha);
-        int yImage = this.getYImage(this.isHovered());
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+        RenderSystem.setShaderColor(1, 1, 1, this.alpha);
+        int yImage = this.getYImage(this.isHoveredOrFocused());
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
@@ -41,11 +43,11 @@ public class HardcoreSetButton extends ImageSetButton {
 
         // Text
         if (this.renderText) {
-            this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24);
+            this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | Mth.ceil(this.alpha * 255F) << 24);
         }
 
         // Button icon
-        minecraft.getTextureManager().bind(iconTexture);
+        RenderSystem.setShaderTexture(0, iconTexture);
         switch (this.alignment) {
             case RIGHT: {
                 blit(stack, this.x + this.width - 20, this.y, 0, 0, 20, 20, 20, 20);
@@ -62,6 +64,6 @@ public class HardcoreSetButton extends ImageSetButton {
 
         this.renderBg(stack, minecraft, mouseX, mouseY);
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
-        else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
+        else if (this.isHovered) this.renderToolTip(stack, mouseX, mouseY);
     }
 }

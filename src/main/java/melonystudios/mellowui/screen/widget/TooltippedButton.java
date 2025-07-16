@@ -1,29 +1,29 @@
 package melonystudios.mellowui.screen.widget;
 
+import com.google.common.collect.Lists;
 import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IBidiTooltip;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
-public class TooltippedButton extends Button implements IBidiTooltip {
+public class TooltippedButton extends Button implements TooltipAccessor {
     @Nullable
-    private final ITextComponent tooltipText;
+    private final Component tooltipText;
 
-    public TooltippedButton(int x, int y, int width, int height, ITextComponent text, @Nullable ITextComponent tooltipText, IPressable whenPressed) {
-        super(x, y, width, height, text, whenPressed);
+    public TooltippedButton(int x, int y, int width, int height, Component text, @Nullable Component tooltipText, OnPress onPress) {
+        super(x, y, width, height, text, onPress);
         this.tooltipText = tooltipText;
     }
 
     @Nonnull
-    public Optional<List<IReorderingProcessor>> getTooltip() {
-       if (this.tooltipText != null) return Optional.of(Minecraft.getInstance().font.split(this.tooltipText, RenderComponents.TOOLTIP_MAX_WIDTH));
-       return Optional.empty();
+    public List<FormattedCharSequence> getTooltip() {
+       if (this.tooltipText != null) return Minecraft.getInstance().font.split(this.tooltipText, RenderComponents.TOOLTIP_MAX_WIDTH);
+       return Lists.newArrayList();
     }
 }

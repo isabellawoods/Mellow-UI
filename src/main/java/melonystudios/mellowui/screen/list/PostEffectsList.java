@@ -1,25 +1,26 @@
 package melonystudios.mellowui.screen.list;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.PostEffect;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.chat.NarratorChatListener;
-import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
-public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
+public class PostEffectsList extends ObjectSelectionList<PostEffectsList.Shader> {
     private final SuperSecretSettingsScreen parentScreen;
     private final Minecraft minecraft;
 
@@ -46,7 +47,7 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
             ShaderManager.setPostEffect(this.minecraft, shader.effect());
         }
 
-        NarratorChatListener.INSTANCE.sayNow(new TranslationTextComponent("narrator.select", shader.name).getString());
+        NarratorChatListener.INSTANCE.sayNow(new TranslatableComponent("narrator.select", shader.name).getString());
         this.parentScreen.updateButtonValidity();
     }
 
@@ -58,10 +59,10 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public class Shader extends ExtendedList.AbstractListEntry<Shader> {
+    public class Shader extends ObjectSelectionList.Entry<Shader> {
         private final SuperSecretSettingsScreen parentScreen;
         private final PostEffect effect;
-        private final ITextComponent name;
+        private final Component name;
         private int x;
         private int y;
         private int width;
@@ -70,25 +71,25 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
         public Shader(SuperSecretSettingsScreen parentScreen, PostEffect effect) {
             this.parentScreen = parentScreen;
             this.effect = effect;
-            this.name = new TranslationTextComponent(Util.makeDescriptionId("post_effect", this.effect.assetID()));
+            this.name = new TranslatableComponent(Util.makeDescriptionId("post_effect", this.effect.assetID()));
         }
 
         public PostEffect effect() {
             return this.effect;
         }
 
-        public ITextComponent name() {
+        public Component name() {
             return this.name;
         }
 
         @Override
-        public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
+        public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
             this.x = left;
             this.y = top;
             this.width = width;
             this.height = height;
             int color = MellowUtils.getSelectableTextColor(PostEffectsList.this.getSelected() == this, true);
-            drawString(stack, this.parentScreen.getMinecraft().font, new TranslationTextComponent("post_effect.dot", this.name()), left + 5, top + 2, color);
+            drawString(stack, this.parentScreen.getMinecraft().font, new TranslatableComponent("post_effect.dot", this.name()), left + 5, top + 2, color);
         }
 
         @Override
@@ -105,6 +106,12 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
         @Override
         public boolean isMouseOver(double mouseX, double mouseY) {
             return mouseX >= (double) this.x && mouseY >= (double) this.y && mouseX < (double) (this.x + this.width) && mouseY < (double) (this.y + this.height);
+        }
+
+        @Override
+        @Nonnull
+        public Component getNarration() {
+            return new TranslatableComponent("narrator.select", this.name());
         }
     }
 }

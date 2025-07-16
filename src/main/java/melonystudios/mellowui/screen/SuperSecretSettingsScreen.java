@@ -1,18 +1,21 @@
 package melonystudios.mellowui.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.list.PostEffectsList;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.*;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -26,7 +29,7 @@ public class SuperSecretSettingsScreen extends Screen {
     private Button doneButton;
 
     public SuperSecretSettingsScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("menu.mellowui.super_secret_settings.title"));
+        super(new TranslatableComponent("menu.mellowui.super_secret_settings.title"));
         this.lastScreen = lastScreen;
     }
 
@@ -39,33 +42,33 @@ public class SuperSecretSettingsScreen extends Screen {
     protected void init() {
         this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
         this.list = new PostEffectsList(this.minecraft, this);
-        this.children.add(this.list);
+        this.addWidget(this.list);
 
         // Done button
-        this.addButton(this.doneButton = new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
+        this.addRenderableWidget(this.doneButton = new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         this.list.setSelected(this.list.children().stream().filter(shader -> shader.effect().shaderIdentifier() == ShaderManager.CURRENT_EFFECT.shaderIdentifier()).findFirst().orElse(null));
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> processors = tooltipAt(this.list, mouseX, mouseY);
+        List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
         if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
     }
 
     @Nullable
-    public static List<IReorderingProcessor> tooltipAt(PostEffectsList list, int mouseX, int mouseY) {
+    public static List<FormattedCharSequence> tooltipAt(PostEffectsList list, int mouseX, int mouseY) {
         Optional<PostEffectsList.Shader> shader = list.getMouseOver(mouseX, mouseY);
         if (shader.isPresent()) {
-            IFormattableTextComponent component = shader.get().name().copy();
-            component.append("\n").append(new TranslationTextComponent(((TranslationTextComponent) shader.get().name()).getKey() + ".desc").withStyle(TextFormatting.GRAY));
-            component.append("\n").append(new StringTextComponent(shader.get().effect().assetID().toString()).withStyle(TextFormatting.DARK_GRAY));
-            component.append(new TranslationTextComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(TextFormatting.DARK_GRAY));
+            MutableComponent component = shader.get().name().copy();
+            component.append("\n").append(new TranslatableComponent(((TranslatableComponent) shader.get().name()).getKey() + ".desc").withStyle(ChatFormatting.GRAY));
+            component.append("\n").append(new TextComponent(shader.get().effect().assetID().toString()).withStyle(ChatFormatting.DARK_GRAY));
+            component.append(new TranslatableComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(ChatFormatting.DARK_GRAY));
             return Minecraft.getInstance().font.split(component, RenderComponents.TOOLTIP_MAX_WIDTH);
         }
         return null;
@@ -80,7 +83,7 @@ public class SuperSecretSettingsScreen extends Screen {
         SoundEvent[] allSounds = ForgeRegistries.SOUND_EVENTS.getValues().toArray(new SoundEvent[0]);
         SoundEvent sound = allSounds[random.nextInt(allSounds.length)];
         float pitch = MellowUtils.randomBetween(random, 0.01F, 2);
-        minecraft.getSoundManager().play(SimpleSound.forUI(sound, pitch, 1));
+        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, 1));
 
         if (minecraft.getLaunchedVersion().contains("melony-studios-dev")) {
             MellowUI.LOGGER.debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);

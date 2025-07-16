@@ -1,8 +1,8 @@
 package melonystudios.mellowui.mixin.screen;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.WinGameScreen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.WinScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -10,13 +10,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(WinGameScreen.class)
+@Mixin(WinScreen.class)
 public class MUICreditsScreenMixin extends Screen {
     @Shadow
     @Final
     private Runnable onFinished;
 
-    public MUICreditsScreenMixin(ITextComponent title) {
+    public MUICreditsScreenMixin(Component title) {
         super(title);
     }
 

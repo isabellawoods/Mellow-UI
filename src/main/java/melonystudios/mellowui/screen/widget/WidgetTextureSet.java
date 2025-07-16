@@ -1,6 +1,6 @@
 package melonystudios.mellowui.screen.widget;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class WidgetTextureSet {
     private final ResourceLocation defaultTexture;

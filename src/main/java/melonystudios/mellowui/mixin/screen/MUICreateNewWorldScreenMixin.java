@@ -2,9 +2,9 @@ package melonystudios.mellowui.mixin.screen;
 
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.backport.CreateNewWorldScreen;
-import net.minecraft.client.gui.screen.CreateWorldScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,7 +18,7 @@ public class MUICreateNewWorldScreenMixin extends Screen {
     @Final
     private Screen lastScreen;
 
-    public MUICreateNewWorldScreenMixin(ITextComponent title) {
+    public MUICreateNewWorldScreenMixin(Component title) {
         super(title);
     }
 

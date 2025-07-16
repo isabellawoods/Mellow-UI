@@ -2,31 +2,20 @@ package melonystudios.mellowui.methods;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
-import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.client.renderer.RenderSkybox;
-import net.minecraft.client.renderer.RenderSkyboxCube;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.openal.ALUtil;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
+import net.minecraft.client.renderer.CubeMap;
+import net.minecraft.client.renderer.PanoramaRenderer;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class InterfaceMethods {
-    @OnlyIn(Dist.CLIENT)
-    public enum DeviceCheckState {
-        ONGOING,
-        CHANGE_DETECTED,
-        NO_CHANGE
-    }
-
-    public interface MainMenuMethods {
+    public interface TitleScreenMethods {
         default boolean keepsLogoThroughFade() {
             return false;
         }
@@ -50,25 +39,6 @@ public class InterfaceMethods {
 
     public interface SoundEngineMethods {
         default void reloadSoundEngine() {}
-
-        default List<String> getAvailableSoundDevices() {
-            List<String> devices = ALUtil.getStringList(0L, 4115);
-            return devices == null ? Collections.emptyList() : devices;
-        }
-    }
-
-    public interface SoundSystemMethods {
-        default boolean isCurrentDeviceDisconnected() {
-            return false;
-        }
-
-        default boolean hasDefaultDeviceChanged() {
-            return false;
-        }
-
-        default String getCurrentDeviceName() {
-            return "";
-        }
     }
 
     public interface CubeMapMethods {
@@ -79,28 +49,28 @@ public class InterfaceMethods {
     }
 
     public interface PanoramaRendererMethods {
-        default boolean samePanorama(RenderSkybox panoramaRenderer) {
+        default boolean samePanorama(PanoramaRenderer panoramaRenderer) {
             return false;
         }
 
-        default RenderSkyboxCube cubeMap() {
-            return MainMenuScreen.CUBE_MAP;
+        default CubeMap cubeMap() {
+            return TitleScreen.CUBE_MAP;
         }
     }
 
     public interface MusicManagerMethods {
         @Nullable
-        default ISound mui$getNowPlaying() {
+        default SoundInstance mui$getNowPlaying() {
             return null;
         }
     }
 
     public interface WorldPresetsMethods {
-        default List<BiomeGeneratorTypeScreens> getPresets() {
+        default List<WorldPreset> getPresets() {
             return Lists.newArrayList();
         }
 
-        default Map<Optional<BiomeGeneratorTypeScreens>, BiomeGeneratorTypeScreens.IFactory> getEditors() {
+        default Map<Optional<WorldPreset>, WorldPreset.PresetEditor> getEditors() {
             return Maps.newHashMap();
         }
     }

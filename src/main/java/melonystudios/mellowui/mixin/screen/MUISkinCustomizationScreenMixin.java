@@ -1,20 +1,20 @@
 package melonystudios.mellowui.mixin.screen;
 
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.update.SkinCustomizationScreen;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.gui.screen.CustomizeSkinScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.util.text.ITextComponent;
+import melonystudios.mellowui.screen.update.MUISkinCustomizationScreen;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.SkinCustomizationScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(CustomizeSkinScreen.class)
-public class MUISkinCustomizationScreenMixin extends SettingsScreen {
-    public MUISkinCustomizationScreenMixin(Screen lastScreen, GameSettings options, ITextComponent title) {
+@Mixin(SkinCustomizationScreen.class)
+public class MUISkinCustomizationScreenMixin extends OptionsSubScreen {
+    public MUISkinCustomizationScreenMixin(Screen lastScreen, Options options, Component title) {
         super(lastScreen, options, title);
     }
 
@@ -22,7 +22,7 @@ public class MUISkinCustomizationScreenMixin extends SettingsScreen {
     protected void init(CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateSkinCustomizationMenu.get() && this.minecraft != null) {
             callback.cancel();
-            this.minecraft.setScreen(new SkinCustomizationScreen(this.lastScreen, this.minecraft.options));
+            this.minecraft.setScreen(new MUISkinCustomizationScreen(this.lastScreen, this.minecraft.options));
         }
     }
 }

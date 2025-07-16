@@ -1,10 +1,10 @@
 package melonystudios.mellowui.mixin.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.RenderComponents;
-import net.minecraft.client.gui.screen.CreateBuffetWorldScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.CreateBuffetWorldScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,12 +16,12 @@ public class MUIBuffetWorldScreenMixin extends Screen {
     @Unique
     private final RenderComponents components = RenderComponents.INSTANCE;
 
-    public MUIBuffetWorldScreenMixin(ITextComponent title) {
+    public MUIBuffetWorldScreenMixin(Component title) {
         super(title);
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         this.components.renderPanorama(partialTicks, this.width, this.height, 1);
         this.components.renderBlurredBackground(partialTicks);
     }

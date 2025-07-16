@@ -1,10 +1,10 @@
 package melonystudios.mellowui.sound;
 
 import melonystudios.mellowui.MellowUI;
-import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class MUISounds {
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MellowUI.MOD_ID);

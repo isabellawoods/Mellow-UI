@@ -1,26 +1,27 @@
 package melonystudios.mellowui.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.IngameMenuScreen;
-import net.minecraft.client.gui.toasts.IToast;
-import net.minecraft.client.gui.toasts.ToastGui;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.toasts.Toast;
+import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class MusicToast implements IToast {
+public class MusicToast implements Toast {
     private ResourceLocation musicLocation;
     private boolean fromPauseMenu;
     private long animationTicks = 1;
@@ -34,7 +35,7 @@ public class MusicToast implements IToast {
 
     @Override
     @Nonnull
-    public Visibility render(MatrixStack stack, ToastGui toast, long timeSinceLastChanged) {
+    public Visibility render(PoseStack stack, ToastComponent toast, long timeSinceLastChanged) {
         if (this.hasChanged) {
             this.timeSinceLastChanged = timeSinceLastChanged;
             this.hasChanged = false;
@@ -45,36 +46,37 @@ public class MusicToast implements IToast {
 
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.getOverlay() != null) return Visibility.HIDE;
-        minecraft.getTextureManager().bind(GUITextures.NOW_PLAYING_TOAST);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, GUITextures.NOW_PLAYING_TOAST);
 
         // Background
-        AbstractGui.blit(stack, 0, 0, 0, 0, width / 2, 32, width, 32);
-        AbstractGui.blit(stack, width / 2, 0, width - width / 2F, 0, width / 2, 32, width, 32);
+        GuiComponent.blit(stack, 0, 0, 0, 0, width / 2, 32, width, 32);
+        GuiComponent.blit(stack, width / 2, 0, width - width / 2F, 0, width / 2, 32, width, 32);
 
         // Music Notes
         float hue = this.animationTicks < 0 ? -this.animationTicks : this.animationTicks;
         float[] noteColor = hsvToRgb(hue / 50F, 0.7F, 0.6F);
-        RenderSystem.color4f(noteColor[0], noteColor[1], noteColor[2], 1);
+        RenderSystem.setShaderColor(noteColor[0], noteColor[1], noteColor[2], 1);
         int yOffset = (int) Util.getMillis() / 100 * 16;
-        minecraft.getTextureManager().bind(GUITextures.MUSIC_NOTES); // swap for "bind animated texture" in GUITextures
-        AbstractGui.blit(stack, 8, 8, 0, yOffset, 16, 16, 16, 128);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderTexture(0, GUITextures.MUSIC_NOTES); // swap for "bind animated texture" in GUITextures
+        GuiComponent.blit(stack, 8, 8, 0, yOffset, 16, 16, 16, 128);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
         // Text
-        AbstractGui.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xD3D3D3);
+        GuiComponent.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xD3D3D3);
 
         if (this.fromPauseMenu && ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null) {
-            return minecraft.screen instanceof IngameMenuScreen ? Visibility.SHOW : Visibility.HIDE;
+            return minecraft.screen instanceof PauseScreen ? Visibility.SHOW : Visibility.HIDE;
         }
-        return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? IToast.Visibility.SHOW : IToast.Visibility.HIDE;
+        return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? Toast.Visibility.SHOW : Toast.Visibility.HIDE;
     }
 
-    public static void add(ResourceLocation musicLocation, boolean fromPauseMenu, ToastGui toast) {
+    public static void add(ResourceLocation musicLocation, boolean fromPauseMenu, ToastComponent toast) {
         toast.addToast(new MusicToast(musicLocation, fromPauseMenu));
     }
 
-    public static void addOrUpdate(ResourceLocation musicLocation, boolean fromPauseMenu, ToastGui toast) {
+    public static void addOrUpdate(ResourceLocation musicLocation, boolean fromPauseMenu, ToastComponent toast) {
         MusicToast musicToast = toast.getToast(MusicToast.class, NO_TOKEN);
         if (musicToast == null) add(musicLocation, fromPauseMenu, toast);
         else musicToast.reset(musicLocation, fromPauseMenu);
@@ -86,8 +88,8 @@ public class MusicToast implements IToast {
         this.hasChanged = true;
     }
 
-    private ITextComponent getMusicName() {
-        return new TranslationTextComponent("music." + this.musicLocation.toString()
+    private Component getMusicName() {
+        return new TranslatableComponent("music." + this.musicLocation.toString()
                 .replace(":", ".")
                 .replace("/", ".")
                 .replace("sounds.", "")
@@ -135,10 +137,10 @@ public class MusicToast implements IToast {
                 green1 = f1;
                 blue1 = f2;
                 break;
-            default: throw new IllegalArgumentException(new TranslationTextComponent("error.mellowui.hsv_conversion", hue, saturation, value, i).getString());
+            default: throw new IllegalArgumentException(new TranslatableComponent("error.mellowui.hsv_conversion", hue, saturation, value, i).getString());
         }
 
-        return new float[] {MathHelper.clamp(red1, 0, 1), MathHelper.clamp(green1, 0, 1), MathHelper.clamp(blue1, 0, 1)};
+        return new float[] {Mth.clamp(red1, 0, 1), Mth.clamp(green1, 0, 1), Mth.clamp(blue1, 0, 1)};
     }
 
     @Override

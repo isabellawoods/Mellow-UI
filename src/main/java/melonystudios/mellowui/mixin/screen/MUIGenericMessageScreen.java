@@ -1,13 +1,13 @@
 package melonystudios.mellowui.mixin.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.RenderComponents;
-import net.minecraft.client.gui.screen.DirtMessageScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,26 +16,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 
-@Mixin(DirtMessageScreen.class)
+@Mixin(GenericDirtMessageScreen.class)
 public abstract class MUIGenericMessageScreen extends Screen {
     @Unique
     private final RenderComponents components = RenderComponents.INSTANCE;
     @Unique
     @Nullable
-    private TextFieldWidget textBackground;
+    private EditBox textBackground;
 
-    public MUIGenericMessageScreen(ITextComponent title) {
+    public MUIGenericMessageScreen(Component title) {
         super(title);
     }
 
     @Override
     protected void init() {
-        this.textBackground = new TextFieldWidget(this.font, this.width / 2, this.height / 2, this.font.width(this.title) + 20, 30, this.title);
+        this.textBackground = new EditBox(this.font, this.width / 2, this.height / 2, this.font.width(this.title) + 20, 30, this.title);
         this.textBackground.setMaxLength(128);
         this.textBackground.setEditable(false);
         this.textBackground.x = this.width / 2 - this.textBackground.getWidth() / 2;
         this.textBackground.y = ((this.height / 2) - 9 / 2) - 7;
-        this.children.add(this.textBackground);
+        this.addWidget(this.textBackground);
     }
 
     @Override
@@ -44,9 +44,9 @@ public abstract class MUIGenericMessageScreen extends Screen {
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
-        if (this.title instanceof TranslationTextComponent && ((TranslationTextComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
+        if (this.title instanceof TranslatableComponent && ((TranslatableComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
             this.components.renderPanorama(partialTicks, this.width, this.height, 1);
             this.components.renderBlurredBackground(partialTicks);
             this.renderDirtBackground(0);

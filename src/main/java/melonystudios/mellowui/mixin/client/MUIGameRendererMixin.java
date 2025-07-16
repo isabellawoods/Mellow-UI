@@ -3,7 +3,7 @@ package melonystudios.mellowui.mixin.client;
 import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,7 +30,7 @@ public class MUIGameRendererMixin {
     }
 
     @Inject(method = "onResourceManagerReload", at = @At("HEAD"))
-    public void reloadPanoramaShader(IResourceManager resourceManager, CallbackInfo callback) {
+    public void reloadPanoramaShader(ResourceManager resourceManager, CallbackInfo callback) {
         ShaderManager.reloadPanoramaShaders(resourceManager, this.minecraft);
     }
 }

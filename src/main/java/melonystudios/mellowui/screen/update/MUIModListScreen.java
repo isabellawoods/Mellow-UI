@@ -1,12 +1,14 @@
 package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.config.option.IterableOption;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.screen.list.MUIModList;
@@ -14,29 +16,29 @@ import melonystudios.mellowui.screen.widget.ModButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.config.type.ModListSorting;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.ExtendedList;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.settings.IteratableOption;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.*;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.common.util.Size2i;
 import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.client.ConfigGuiHandler;
-import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.fml.packs.ModFileResourcePack;
-import net.minecraftforge.fml.packs.ResourcePackLoader;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.resource.PathResourcePack;
+import net.minecraftforge.resource.ResourcePackLoader;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -51,10 +53,10 @@ import static org.apache.commons.lang3.StringUtils.abbreviateMiddle;
 public class MUIModListScreen extends Screen {
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
-    private TextFieldWidget searchField;
+    private EditBox searchField;
     private MUIModList.Mod selectedMod = null;
-    private List<ModInfo> mods;
-    private final List<ModInfo> unsortedMods;
+    private List<IModInfo> mods;
+    private final List<IModInfo> unsortedMods;
     private String lastFilterText = "";
     private boolean sorted = false;
     private ModListSorting sorting = MellowConfigs.CLIENT_CONFIGS.modListSorting.get();
@@ -68,7 +70,7 @@ public class MUIModListScreen extends Screen {
     private Button changelogsButton;
 
     public MUIModListScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("menu.mellowui.mods.title", ModList.get().getMods().size()));
+        super(new TranslatableComponent("menu.mellowui.mods.title", ModList.get().getMods().size()));
         this.lastScreen = lastScreen;
         this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = this.mods;
@@ -87,7 +89,7 @@ public class MUIModListScreen extends Screen {
             this.mods.sort(this.sorting);
             this.list.refreshModList();
             if (this.selectedMod != null) {
-                this.selectedMod = list.children().stream().filter(mod -> mod.getModInformation() == this.selectedMod.getModInformation()).findFirst().orElse(null);
+                this.selectedMod = this.list.children().stream().filter(mod -> mod.getModInformation() == this.selectedMod.getModInformation()).findFirst().orElse(null);
                 this.updateCache();
             }
             this.sorted = true;
@@ -102,54 +104,54 @@ public class MUIModListScreen extends Screen {
     @Override
     protected void init() {
         // Sort button
-        IteratableOption config = MellowConfigEntries.MOD_LIST_SORTING;
-        this.addButton(new Button(10, 14, 100, 20, config.getMessage(this.minecraft.options), button -> {
+        IterableOption config = MellowConfigEntries.MOD_LIST_SORTING;
+        this.addRenderableWidget(new Button(10, 14, 100, 20, config.getMessage(this.minecraft.options), button -> {
             config.toggle(this.minecraft.options, 1);
             button.setMessage(config.getMessage(this.minecraft.options));
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }));
         // Configure button
-        this.addButton(this.configButton = new ImageSetButton(114, 14, 20, 20, GUITextures.CONFIGURE_SET,
+        this.addRenderableWidget(this.configButton = new ImageSetButton(114, 14, 20, 20, GUITextures.CONFIGURE_SET,
                 button -> this.getModConfigScreen(), (button, stack, mouseX, mouseY) ->
-                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.configure"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.configure")));
+                this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.configure"), mouseX, mouseY), new TranslatableComponent("button.mellowui.configure")));
         this.configButton.active = false;
 
         // Search field
-        this.searchField = new TextFieldWidget(this.minecraft.font, 11, 39, 98, 18, new TranslationTextComponent("fml.menu.mods.search"));
+        this.searchField = new EditBox(this.minecraft.font, 11, 39, 98, 18, new TranslatableComponent("fml.menu.mods.search"));
         this.searchField.setFocus(false);
         this.searchField.setCanLoseFocus(true);
         this.addWidget(this.searchField);
 
         // Open mods folder button
-        this.addButton(new ImageSetButton(114, 38, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addRenderableWidget(new ImageSetButton(114, 38, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
-                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
+                this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslatableComponent("button.mellowui.open_mods_folder")));
 
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
         int width = maxGUIScale ? 100 : 150;
         int buttonOffset = width + 4;
-        ITextComponent updateAvailable = new TranslationTextComponent("button.mellowui.update_available").withStyle(style -> style.withColor(Color.fromRgb(MellowUtils.highContrastEnabled() ?
-                WidgetConfigs.WIDGET_CONFIGS.highContrastUpdateAvailableColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultUpdateAvailableColor.get())).withUnderlined(true));
+        Component updateAvailable = new TranslatableComponent("button.mellowui.update_available").withStyle(style -> style.withColor(MellowUtils.highContrastEnabled() ?
+                WidgetConfigs.WIDGET_CONFIGS.highContrastUpdateAvailableColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultUpdateAvailableColor.get()).withUnderlined(true));
 
         // Mod link buttons
-        this.addButton(this.websiteButton = new Button(140, 120, width, 20,
-                new TranslationTextComponent("button.mellowui.website"), button -> this.getModWebsite()));
+        this.addRenderableWidget(this.websiteButton = new Button(140, 120, width, 20,
+                new TranslatableComponent("button.mellowui.website"), button -> this.getModWebsite()));
         this.websiteButton.active = false;
-        this.addButton(this.issueTrackerButton = new Button(140 + buttonOffset, 120, width, 20,
-                new TranslationTextComponent("button.mellowui.report_issues"), button -> this.getModIssueTracker()));
+        this.addRenderableWidget(this.issueTrackerButton = new Button(140 + buttonOffset, 120, width, 20,
+                new TranslatableComponent("button.mellowui.report_issues"), button -> this.getModIssueTracker()));
         this.issueTrackerButton.active = false;
-        this.addButton(this.updateModButton = new ModButton(140 + buttonOffset * 2, 120, width, 20, updateAvailable, button -> this.getModUpdateSite()).renderOnCorner(maxGUIScale));
+        this.addRenderableWidget(this.updateModButton = new ModButton(140 + buttonOffset * 2, 120, width, 20, updateAvailable, button -> this.getModUpdateSite()).renderOnCorner(maxGUIScale));
         this.updateModButton.active = false;
-        this.addButton(this.changelogsButton = new ImageSetButton(this.width - 24, this.height - 24, 20, 20, GUITextures.CHANGELOGS_SET,
+        this.addRenderableWidget(this.changelogsButton = new ImageSetButton(this.width - 24, this.height - 24, 20, 20, GUITextures.CHANGELOGS_SET,
                 button -> this.getModChangelogs(), (button, stack, mouseX, mouseY) ->
-                this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.changelogs")));
+                this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.changelogs"), mouseX, mouseY), new TranslatableComponent("button.mellowui.changelogs")));
 
         // Mods list
         this.list = new MUIModList(this, 124, this.height, 56, this.height - 25, this.font.lineHeight * 2 + 8);
         this.list.setLeftPos(10);
         this.list.setRenderTopAndBottom(false);
         this.list.setRenderBackground(false);
-        this.children.add(this.list);
+        this.addWidget(this.list);
 
         if (this.selectedMod != null) {
             this.list.setSelected(this.selectedMod);
@@ -158,14 +160,14 @@ public class MUIModListScreen extends Screen {
         }
 
         // Done button
-        this.addButton(new Button(10, this.height - 25, 124, 20, DialogTexts.GUI_DONE,
+        this.addRenderableWidget(new Button(10, this.height - 25, 124, 20, CommonComponents.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         this.updateCache();
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.renderModInformation(stack);
 
@@ -175,22 +177,23 @@ public class MUIModListScreen extends Screen {
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
-    public void renderModInformation(MatrixStack stack) {
+    public void renderModInformation(PoseStack stack) {
         if (this.minecraft == null) return;
         boolean maxGUIScale = this.minecraft.getWindow().getScreenWidth() <= 1366 || this.minecraft.getWindow().getGuiScale() == 4;
 
         if (this.selectedMod == null) {
-            IFormattableTextComponent noModSelected = new TranslationTextComponent("menu.mellowui.mods.no_mod_selected");
-            this.font.drawShadow(stack, noModSelected.withStyle(TextFormatting.GRAY), this.width / 2 - (this.font.width(noModSelected) / 2), this.height / 2 - 10, 0xFFFFFF);
+            MutableComponent noModSelected = new TranslatableComponent("menu.mellowui.mods.no_mod_selected");
+            this.font.drawShadow(stack, noModSelected.withStyle(ChatFormatting.GRAY), this.width / 2 - (this.font.width(noModSelected) / 2), this.height / 2 - 10, 0xFFFFFF);
         }
 
         // Logo
         if (this.logoPath != null && this.selectedMod != null) {
             int logoWidth = this.logoDimension.width;
             int logoHeight = this.logoDimension.height;
-            this.minecraft.getTextureManager().bind(this.logoPath);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderTexture(0, this.logoPath);
             RenderSystem.enableBlend();
-            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
             GuiUtils.drawInscribedRect(stack, 142, 30, this.width, 50, logoWidth, logoHeight, false, false);
             RenderSystem.disableBlend();
         }
@@ -199,46 +202,46 @@ public class MUIModListScreen extends Screen {
         if (this.selectedMod != null) {
             int yOffset = this.logoPath != null ? 100 : 25;
             // Name
-            ModInfo info = this.selectedMod.getModInformation();
+            IModInfo info = this.selectedMod.getModInformation();
             stack.pushPose();
             stack.scale(2, 2, 2);
-            IFormattableTextComponent modName = new StringTextComponent(info.getDisplayName()).withStyle(TextFormatting.BOLD);
+            MutableComponent modName = new TextComponent(info.getDisplayName()).withStyle(ChatFormatting.BOLD);
             this.font.drawShadow(stack, modName, 70, yOffset / 2F, 0xFFFFFF);
             stack.popPose();
 
             // Authors | Mod ID | Version
-            IFormattableTextComponent authors = info.getConfigElement("authors").isPresent() ? new StringTextComponent(info.getConfigElement("authors").get().toString()).withStyle(TextFormatting.WHITE) :
-                    new TranslationTextComponent("menu.mellowui.mods.authors.not_available");
-            IFormattableTextComponent modID = new StringTextComponent(info.getModId()).withStyle(TextFormatting.WHITE);
-            IFormattableTextComponent version = new StringTextComponent(MavenVersionStringHelper.artifactVersionToString(info.getVersion())).withStyle(TextFormatting.WHITE);
+            MutableComponent authors = info.getConfig().getConfigElement("authors").isPresent() ? new TextComponent(info.getConfig().getConfigElement("authors").get().toString()).withStyle(ChatFormatting.WHITE) :
+                    new TranslatableComponent("menu.mellowui.mods.authors.not_available");
+            MutableComponent modID = new TextComponent(info.getModId()).withStyle(ChatFormatting.WHITE);
+            MutableComponent version = new TextComponent(MavenVersionStringHelper.artifactVersionToString(info.getVersion())).withStyle(ChatFormatting.WHITE);
 
-            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mods.mod_id_and_version", modID, version).withStyle(TextFormatting.GRAY),
+            this.font.drawShadow(stack, new TranslatableComponent("menu.mellowui.mods.mod_id_and_version", modID, version).withStyle(ChatFormatting.GRAY),
                     145 + this.font.width(modName) * 2, yOffset, 0xFFFFFF);
-            this.font.drawShadow(stack, new TranslationTextComponent("menu.mellowui.mods.authors", authors).withStyle(TextFormatting.GRAY), 145 + this.font.width(modName) * 2,
+            this.font.drawShadow(stack, new TranslatableComponent("menu.mellowui.mods.authors", authors).withStyle(ChatFormatting.GRAY), 145 + this.font.width(modName) * 2,
                     yOffset + 10, 0xFFFFFF);
 
             // Description, child mods, license and credits
-            List<IReorderingProcessor> descLines = Lists.newArrayList();
+            List<FormattedCharSequence> descLines = Lists.newArrayList();
             int lineWidth = this.width - 150;
-            if (maxGUIScale) descLines.addAll(this.font.split(new StringTextComponent(abbreviateMiddle(info.getDescription(), new TranslationTextComponent("menu.mellowui.ellipsis").getString(), 200)), lineWidth));
-            else descLines.addAll(this.font.split(new StringTextComponent(info.getDescription()), lineWidth));
-            descLines.addAll(this.font.split(new StringTextComponent(" "), lineWidth));
+            if (maxGUIScale) descLines.addAll(this.font.split(new TextComponent(abbreviateMiddle(info.getDescription(), new TranslatableComponent("menu.mellowui.ellipsis").getString(), 200)), lineWidth));
+            else descLines.addAll(this.font.split(new TextComponent(info.getDescription()), lineWidth));
+            descLines.addAll(this.font.split(new TextComponent(" "), lineWidth));
             if (info.getOwningFile() == null || info.getOwningFile().getMods().size() == 1) {
-                descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.no_child_mods_found").withStyle(TextFormatting.GRAY), lineWidth));
+                descLines.addAll(this.font.split(new TranslatableComponent("menu.mellowui.mods.no_child_mods_found").withStyle(ChatFormatting.GRAY), lineWidth));
             } else {
-                descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.child_mods", new StringTextComponent(info.getOwningFile().getMods().stream().map(IModInfo::getDisplayName)
-                        .collect(Collectors.joining(new TranslationTextComponent("menu.mellowui.mods.delimiter").getString()))).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth));
+                descLines.addAll(this.font.split(new TranslatableComponent("menu.mellowui.mods.child_mods", new TextComponent(info.getOwningFile().getMods().stream().map(IModInfo::getDisplayName)
+                        .collect(Collectors.joining(new TranslatableComponent("menu.mellowui.mods.delimiter").getString()))).withStyle(Style.EMPTY.withBold(false))).withStyle(ChatFormatting.BOLD), lineWidth));
             }
-            info.getConfigElement("credits").ifPresent(credits -> descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.credits",
-                    new StringTextComponent((String) credits).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth)));
-            descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.license",
-                    new StringTextComponent(info.getOwningFile().getLicense()).withStyle(Style.EMPTY.withBold(false))).withStyle(TextFormatting.BOLD), lineWidth));
-            descLines.addAll(this.font.split(new TranslationTextComponent("menu.mellowui.mods.state", ModList.get().getModContainerById(info.getModId()).map(ModContainer::getCurrentState)
-                    .map(stage -> new TranslationTextComponent("loading_stage.forge." + stage.toString().toLowerCase(Locale.ROOT)).withStyle(Style.EMPTY.withBold(false))).orElse(new TranslationTextComponent(
-                            "loading_stage.forge.none"))).withStyle(TextFormatting.BOLD), lineWidth));
+            info.getConfig().getConfigElement("credits").ifPresent(credits -> descLines.addAll(this.font.split(new TranslatableComponent("menu.mellowui.mods.credits",
+                    new TextComponent((String) credits).withStyle(Style.EMPTY.withBold(false))).withStyle(ChatFormatting.BOLD), lineWidth)));
+            descLines.addAll(this.font.split(new TranslatableComponent("menu.mellowui.mods.license",
+                    new TextComponent(info.getOwningFile().getLicense()).withStyle(Style.EMPTY.withBold(false))).withStyle(ChatFormatting.BOLD), lineWidth));
+            descLines.addAll(this.font.split(new TranslatableComponent("menu.mellowui.mods.state", ModList.get().getModContainerById(info.getModId()).map(ModContainer::getCurrentState)
+                    .map(stage -> new TranslatableComponent("loading_stage.forge." + stage.toString().toLowerCase(Locale.ROOT)).withStyle(Style.EMPTY.withBold(false))).orElse(new TranslatableComponent(
+                            "loading_stage.forge.none"))).withStyle(ChatFormatting.BOLD), lineWidth));
 
             int descYOffset = yOffset + 50;
-            for (IReorderingProcessor processor : descLines) {
+            for (FormattedCharSequence processor : descLines) {
                 this.font.drawShadow(stack, processor, 142, descYOffset, 0xFFFFFF);
                 descYOffset += this.font.lineHeight + 2;
             }
@@ -250,7 +253,7 @@ public class MUIModListScreen extends Screen {
         this.updateCache();
     }
 
-    public <T extends ExtendedList.AbstractListEntry<T>> void loadModList(Consumer<T> modAdder, Function<ModInfo, T> newEntry) {
+    public <T extends ObjectSelectionList.Entry<T>> void loadModList(Consumer<T> modAdder, Function<IModInfo, T> newEntry) {
         this.mods.forEach(mod -> modAdder.accept(newEntry.apply(mod)));
     }
 
@@ -267,57 +270,59 @@ public class MUIModListScreen extends Screen {
     private void getModConfigScreen() {
         if (this.selectedMod == null) return;
 
-        ModInfo info = this.selectedMod.getModInformation();
+        IModInfo info = this.selectedMod.getModInformation();
         try {
             ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         } catch (final Exception exception) {
-            MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.broken_config_screen", info.getModId()).getString(), exception);
+            MellowUI.LOGGER.error(new TranslatableComponent("error.mellowui.broken_config_screen", info.getModId()).getString(), exception);
         }
     }
 
     private void getModWebsite() {
         if (this.selectedMod == null) return;
 
-        ModInfo info = this.selectedMod.getModInformation();
+        IModInfo info = this.selectedMod.getModInformation();
         if (info.getModId().equals("minecraft")) {
             MellowUtils.openLink(this, "https://minecraft.net", false);
         } else if (info.getModId().equals("forge")) {
             MellowUtils.openLink(this, "https://files.minecraftforge.net", true);
         } else {
-            info.getConfigElement("displayURL").ifPresent(displayURL -> MellowUtils.openLink(this, (String) displayURL, true));
+            info.getConfig().getConfigElement("displayURL").ifPresent(displayURL -> MellowUtils.openLink(this, (String) displayURL, true));
         }
     }
 
     private void getModIssueTracker() {
         if (this.selectedMod == null) return;
 
-        ModInfo info = this.selectedMod.getModInformation();
+        IModInfo info = this.selectedMod.getModInformation();
         if (info.getModId().equals("minecraft")) {
             MellowUtils.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false);
         } else if (info.getModId().equals("forge")) {
             MellowUtils.openLink(this, "https://github.com/MinecraftForge/MinecraftForge/issues", true);
         } else {
-            if (info.getOwningFile().getIssueURL() != null) MellowUtils.openLink(this, info.getOwningFile().getIssueURL().toString(), true);
+            if (info instanceof ModFileInfo && ((ModFileInfo) info).getIssueURL() != null) {
+                MellowUtils.openLink(this, ((ModFileInfo) info).getIssueURL().toString(), true);
+            }
         }
     }
 
     private void getModChangelogs() {
         if (this.selectedMod == null) return;
 
-        ModInfo info = this.selectedMod.getModInformation();
+        IModInfo info = this.selectedMod.getModInformation();
         if (info.getModId().equals("minecraft")) {
             MellowUtils.openLink(this, "https://feedback.minecraft.net/hc/en-us/sections/360002267532-Snapshot-Information-and-Changelogs", false);
         } else if (info.getModId().equals("forge")) {
             MellowUtils.openLink(this, "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.39/forge-1.16.5-36.2.39-changelog.txt", true);
         } else {
-            info.getConfigElement("changelogsURL").ifPresent(changelogsURL -> MellowUtils.openLink(this, (String) changelogsURL, true));
+            info.getConfig().getConfigElement("changelogsURL").ifPresent(changelogsURL -> MellowUtils.openLink(this, (String) changelogsURL, true));
         }
     }
 
     public void getModUpdateSite() {
         if (this.selectedMod == null) return;
         VersionChecker.CheckResult checkResult = VersionChecker.getResult(this.selectedMod.getModInformation());
-        if (checkResult.url != null) MellowUtils.openLink(this, checkResult.url, true);
+        if (checkResult.url() != null) MellowUtils.openLink(this, checkResult.url(), true);
     }
 
     private void updateCache() {
@@ -334,21 +339,21 @@ public class MUIModListScreen extends Screen {
             this.changelogsButton.visible = true;
         }
 
-        ModInfo selectedMod = this.selectedMod.getModInformation();
-        this.configButton.active = ConfigGuiHandler.getGuiFactoryFor(selectedMod).isPresent() || this.defaultModIDs();
-        this.websiteButton.active = this.selectedMod.getModInformation().getConfigElement("displayURL").isPresent() || this.defaultModIDs();
-        this.issueTrackerButton.active = selectedMod.getOwningFile().getIssueURL() != null || this.defaultModIDs();
-        this.changelogsButton.active = this.changelogsButton.visible = this.selectedMod.getModInformation().getConfigElement("changelogsURL").isPresent() || this.defaultModIDs();
+        IModInfo selectedMod = this.selectedMod.getModInformation();
+        this.configButton.active = ConfigGuiHandler.getGuiFactoryFor(selectedMod).isPresent();
+        this.websiteButton.active = this.selectedMod.getModInformation().getConfig().getConfigElement("displayURL").isPresent() || this.defaultModIDs();
+        this.issueTrackerButton.active = (selectedMod instanceof ModFileInfo && ((ModFileInfo) selectedMod).getIssueURL() != null) || this.defaultModIDs();
+        this.changelogsButton.active = this.changelogsButton.visible = this.selectedMod.getModInformation().getConfig().getConfigElement("changelogsURL").isPresent() || this.defaultModIDs();
         VersionChecker.CheckResult checkResult = VersionChecker.getResult(selectedMod);
-        this.updateModButton.active = this.updateModButton.visible = checkResult.url != null;
+        this.updateModButton.active = this.updateModButton.visible = checkResult.url() != null;
 
         Pair<ResourceLocation, Size2i> logoData = selectedMod.getLogoFile().map(logoFile -> {
             TextureManager manager = this.minecraft.getTextureManager();
-            final ModFileResourcePack modFilesPack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId()).orElse(ResourcePackLoader.getResourcePackFor("forge")
-                    .orElseThrow(() -> new RuntimeException(new TranslationTextComponent("error.mellowui.cannot_find_forge").getString())));
+            final PathResourcePack pack = ResourcePackLoader.getPackFor(selectedMod.getModId()).orElse(ResourcePackLoader.getPackFor("forge")
+                    .orElseThrow(() -> new RuntimeException(new TranslatableComponent("error.mellowui.cannot_find_forge").getString())));
 
             try {
-                InputStream logoResource = modFilesPack.getRootResource(logoFile);
+                InputStream logoResource = pack.getRootResource(logoFile);
                 NativeImage logo = NativeImage.read(logoResource);
 
                 return Pair.of(manager.register("modlogo", new DynamicTexture(logo) {
