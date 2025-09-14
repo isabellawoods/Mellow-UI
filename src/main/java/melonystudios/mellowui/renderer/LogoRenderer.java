@@ -44,11 +44,7 @@ public class LogoRenderer {
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
-    public static void renderOldLogo(PoseStack stack, Screen screen, int screenWidth, float transparency, boolean keepLogoThroughFade) {
-        renderOldLogo(stack, screen, screenWidth, transparency, 30, keepLogoThroughFade);
-    }
-
-    public static void renderOldLogo(PoseStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
+    public static void render116Logo(PoseStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
         // Logo
         int logoX = screenWidth / 2 - 137;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -67,6 +63,30 @@ public class LogoRenderer {
                 screen.blit(stack, i1, i2, 0, 0, 155, 44);
                 screen.blit(stack, i1 + 155, i2, 0, 45, 155, 44);
             });
+        }
+
+        // Edition
+        int editionY = height + 37;
+        RenderSystem.setShaderTexture(0, OLD_EDITION_SUBTITLE);
+        GuiComponent.blit(stack, logoX + 88, editionY, 0, 0, 98, 14, 128, 16);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+    }
+
+    public static void renderPre116Logo(PoseStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
+        // Logo
+        int logoX = screenWidth / 2 - 137;
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, OLD_MINECRAFT_LOGO);
+        RenderSystem.setShaderColor(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
+        if (SHOW_EASTER_EGG) {
+            screen.blit(stack, logoX, 30, 0, 0, 99, 44);
+            screen.blit(stack, logoX + 99, 30, 129, 0, 27, 44);
+            screen.blit(stack, logoX + 99 + 26, 30, 126, 0, 3, 44);
+            screen.blit(stack, logoX + 99 + 26 + 3, 30, 99, 0, 26, 44);
+            screen.blit(stack, logoX + 155, 30, 0, 45, 155, 44);
+        } else {
+            screen.blit(stack, logoX, 30, 0, 0, 155, 44);
+            screen.blit(stack, logoX + 155, 30, 0, 45, 155, 44);
         }
 
         // Edition

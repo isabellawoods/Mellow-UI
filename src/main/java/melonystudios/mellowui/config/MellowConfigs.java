@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MellowConfigs {
     public static final List<String> CLASSIFIED_AS_CONTAINERS = Lists.newArrayList(
-            "com.wildfire.gui.screen.WildfireBrowserScreen", "com.wildfire.gui.screen.WildfireBreastCustomizationScreen", "com.wildfire.gui.screen.WildfireCharacterSettingsScreen", "com.wildfire.gui.screen.WildfirePlayerListScreen",
+            "com.wildfire.gui.screen.WardrobeBrowserScreen", "com.wildfire.gui.screen.WildfireBreastCustomizationScreen", "com.wildfire.gui.screen.WildfireCharacterSettingsScreen", "com.wildfire.gui.screen.WildfirePlayerListScreen",
             "mezz.jei.gui.recipes.RecipesGui");
     private static final Pair<MellowConfigs, ForgeConfigSpec> CLIENT_CONFIG_PAIR = new ForgeConfigSpec.Builder().configure(MellowConfigs::new);
     public static final MellowConfigs CLIENT_CONFIGS = CLIENT_CONFIG_PAIR.getLeft();
@@ -30,8 +30,8 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue panoramaBobbing;
     public final ForgeConfigSpec.BooleanValue legacyButtonColors;
     public final ForgeConfigSpec.BooleanValue scrollingText;
-    public final ForgeConfigSpec.EnumValue<ThreeStyles> mainMenuModButton;
-    public final ForgeConfigSpec.EnumValue<ThreeStyles> pauseMenuModButton;
+    public final ForgeConfigSpec.EnumValue<FourStyles> mainMenuModButton;
+    public final ForgeConfigSpec.EnumValue<FourStyles> pauseMenuModButton;
     public final ForgeConfigSpec.BooleanValue backgroundShaders;
     public final ForgeConfigSpec.BooleanValue logGLErrors;
     public final ForgeConfigSpec.BooleanValue blurryContainers;
@@ -63,7 +63,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue updateListBackground;
     public final ForgeConfigSpec.BooleanValue replaceRealmsNotifications;
     public final ForgeConfigSpec.BooleanValue splashTextPosition;
-    public final ForgeConfigSpec.EnumValue<ThreeStyles> logoStyle;
+    public final ForgeConfigSpec.EnumValue<FourStyles> logoStyle;
 
     // Forge Configs
     public final ForgeConfigSpec.EnumValue<ModListSorting> modListSorting;
@@ -89,8 +89,8 @@ public class MellowConfigs {
         this.panoramaBobbing = builder.comment("Whether the panorama should bob up and down instead of being at a consistent pitch.").define("panoramaBobbing", false);
         this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
         this.scrollingText = builder.comment("Whether the text in buttons should scroll if it's too long instead of rendering on top of other widgets.").define("scrollingText", true);
-        this.mainMenuModButton = builder.comment("Where the 'Mods' button should be located in the main menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Realms.").defineEnum("mainMenuModButton", ThreeStyles.OPTION_1);
-        this.pauseMenuModButton = builder.comment("Where the 'Mods' button should be located in the pause menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Feedback.").defineEnum("pauseMenuModButton", ThreeStyles.OPTION_3);
+        this.mainMenuModButton = builder.comment("Where the 'Mods' button should be located in the main menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Realms | Option 4 = Below Realms.").defineEnum("mainMenuModButton", FourStyles.OPTION_1);
+        this.pauseMenuModButton = builder.comment("Where the 'Mods' button should be located in the pause menu.", "Option 1 = Adjacent | Option 2 = Icon | Option 3 = Replace Feedback | Option 4 = Below Options.").defineEnum("pauseMenuModButton", FourStyles.OPTION_3);
         this.backgroundShaders = builder.comment("Whether shaders, like super secret settings and the blur, should render on the panorama.", "This may fix rendering issues with menus added by other mods.").define("backgroundShaders", true);
         this.logGLErrors = builder.comment("Whether to disable OpenGL error messages to not spam the logs.", "Useful if playing with Fabulous! graphics.").define("logGLErrors", false);
         this.blurryContainers = builder.comment("Whether to apply blur (or an extra layer of shaders) on the background while a container (chest, inventory, furnace) is open.").define("blurryContainers", false);
@@ -115,7 +115,7 @@ public class MellowConfigs {
         this.updateListBackground = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").define("updates.listBackground", true);
         this.replaceRealmsNotifications = builder.comment("Whether Mellow UI should replace the 'Realms Notifications' button on the options' menu with the 'Online Settings' menu.").define("updates.realmsNotifications", true);
         this.splashTextPosition = builder.comment("Where the splash texts should be located in the main menu.").define("splashTextPosition", true);
-        this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the current logo (1.16), new logo (1.20+), and the Mellomedley logo.", "Option 1 = -1.19 | Option 2 = +1.20 | Option 3 = Mellomedley").defineEnum("styles.logo", ThreeStyles.OPTION_2);
+        this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the pre-1.16 logo, the current logo (1.16), the new logo (1.20+), and the Mellomedley logo.", "Option 1 = Pre-1.16 | Option 2 = 1.19 | Option 3 = 1.20+ | Option 4 = Mellomedley.").defineEnum("styles.logo", FourStyles.OPTION_3);
         this.modListStyle = builder.comment("Which style to use for the mod list.", "Option 1 = Forge | Option 2 = Mellow UI | Option 3 = Catalogue (if available).").defineEnum("styles.modList", ThreeStyles.OPTION_3);
         this.updatePackMenu = builder.comment("Which style to use for the resource and data packs list.", "True = Mellow UI | False = Vanilla.").define("styles.packList", false);
         builder.pop();

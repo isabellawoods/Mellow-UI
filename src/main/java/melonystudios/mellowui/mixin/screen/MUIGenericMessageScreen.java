@@ -47,9 +47,13 @@ public abstract class MUIGenericMessageScreen extends Screen {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
         if (this.title instanceof TranslatableComponent && ((TranslatableComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
-            this.components.renderPanorama(partialTicks, this.width, this.height, 1);
-            this.components.renderBlurredBackground(partialTicks);
-            this.renderDirtBackground(0);
+            if (MellowConfigs.CLIENT_CONFIGS.defaultBackground.get()) {
+                this.components.renderTiledBackground(BACKGROUND_LOCATION, 0, 0, this.width, this.height, 0);
+            } else {
+                this.components.renderPanorama(partialTicks, this.width, this.height, 1);
+                this.components.renderBlurredBackground(partialTicks, true);
+                this.renderDirtBackground(0);
+            }
         } else {
             this.renderBackground(stack);
         }

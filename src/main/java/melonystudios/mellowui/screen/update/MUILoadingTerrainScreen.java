@@ -94,7 +94,7 @@ public class MUILoadingTerrainScreen extends Screen {
             case OTHER:
             default:
                 this.components.renderPanorama(partialTicks, this.width, this.height, 1);
-                this.components.renderBlurredBackground(partialTicks);
+                this.components.renderBlurredBackground(partialTicks, true);
                 this.renderDirtBackground(vOffset);
         }
     }

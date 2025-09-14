@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -31,9 +32,14 @@ public class ShaderManager {
             DESATURATE, ENTITY_OUTLINE, FLIP, FXAA, GREEN, INVERT, LOVE, NOTCH, NTSC, OUTLINE, PENCIL, PHOSPHOR, SCAN_PINCUSHION, SOBEL, SPIDER, WOBBLE);
     @Nullable
     public static PostChain PANORAMA_SHADER;
+    public static float BLUR_PROGRESS = 0;
 
     public static boolean customShaderLoaded() {
         return CURRENT_EFFECT.shaderIdentifier() != -1;
+    }
+
+    public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation) {
+        setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR));
     }
 
     public static void setPostEffect(Minecraft minecraft, PostEffect effect) {
@@ -62,12 +68,13 @@ public class ShaderManager {
         }
     }
 
-    public static void processPanoramaShaders(float partialTicks) {
+    public static void processPanoramaShaders(float partialTicks, Boolean fadeIn) {
         if (PANORAMA_SHADER == null) return;
         if (CURRENT_EFFECT.shaderIdentifier() == -1 && MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get() <= 0) return;
 
         if (CURRENT_EFFECT.uniforms().isPresent()) {
             for (String uniform : CURRENT_EFFECT.uniforms().get()) {
+                // float radius = uniform.equals("Radius") && fadeIn != null ? fadeBackgroundBlurriness(fadeIn) : getUniformValue(uniform);
                 ((InterfaceMethods.PostChainMethods) PANORAMA_SHADER).setUniform(uniform, getUniformValue(uniform));
             }
         }
@@ -88,6 +95,21 @@ public class ShaderManager {
             case "Radius" -> MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
             default -> 0;
         };
+    }
+
+    private static float fadeBackgroundBlurriness(boolean fadeIn) {
+        int targetValue = MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+        float currentValue = BLUR_PROGRESS;
+        float shift = 0.08F * targetValue;
+
+        if (fadeIn) {
+            BLUR_PROGRESS += shift;
+        } else {
+            BLUR_PROGRESS -= shift;
+        }
+        BLUR_PROGRESS = Mth.clamp(BLUR_PROGRESS, 0, targetValue);
+
+        return currentValue == targetValue ? targetValue : Mth.clampedLerp(fadeIn ? targetValue : currentValue, fadeIn ? currentValue : targetValue, BLUR_PROGRESS);
     }
 
     public static void fillEndPortal(PoseStack stack, int x0, int y0, int x1, int y1, int z) {

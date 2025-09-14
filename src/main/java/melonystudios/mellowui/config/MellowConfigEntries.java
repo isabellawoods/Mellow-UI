@@ -17,9 +17,11 @@ public class MellowConfigEntries {
     public static final MutableComponent ADJACENT_TOOLTIP = new TranslatableComponent("config.mellowui.main_menu_mod_button.desc", new TranslatableComponent("config.mellowui.main_menu_mod_button.option_1.desc"));
     public static final MutableComponent MAIN_MENU_ICON_TOOLTIP = new TranslatableComponent("config.mellowui.main_menu_mod_button.desc", new TranslatableComponent("config.mellowui.main_menu_mod_button.option_2.desc"));
     public static final MutableComponent REPLACE_REALMS_TOOLTIP = new TranslatableComponent("config.mellowui.main_menu_mod_button.desc", new TranslatableComponent("config.mellowui.main_menu_mod_button.option_3.desc"));
+    public static final MutableComponent BELOW_REALMS_TOOLTIP = new TranslatableComponent("config.mellowui.main_menu_mod_button.desc", new TranslatableComponent("config.mellowui.main_menu_mod_button.option_4.desc"));
     public static final MutableComponent PAUSE_MENU_ADJACENT_TOOLTIP = new TranslatableComponent("config.mellowui.pause_menu_mod_button.desc", new TranslatableComponent("config.mellowui.pause_menu_mod_button.option_1.desc"));
     public static final MutableComponent PAUSE_MENU_ICON_TOOLTIP = new TranslatableComponent("config.mellowui.pause_menu_mod_button.desc", new TranslatableComponent("config.mellowui.pause_menu_mod_button.option_2.desc"));
     public static final MutableComponent REPLACE_TOOLTIP = new TranslatableComponent("config.mellowui.pause_menu_mod_button.desc", new TranslatableComponent("config.mellowui.pause_menu_mod_button.option_3.desc"));
+    public static final MutableComponent BELOW_OPTIONS_PM_TOOLTIP = new TranslatableComponent("config.mellowui.pause_menu_mod_button.desc", new TranslatableComponent("config.mellowui.pause_menu_mod_button.option_4.desc"));
     public static final MutableComponent MOD_LIST_STYLE_TOOLTIP = new TranslatableComponent("config.mellowui.mod_list_style.desc");
     public static final MutableComponent MELLOMEDLEY_MAIN_MENU_ICON_TOOLTIP = new TranslatableComponent("config.mellomedley.main_menu_mod_button.desc", new TranslatableComponent("config.mellomedley.main_menu_mod_button.option_1.desc"));
     public static final MutableComponent BELOW_OPTIONS_TOOLTIP = new TranslatableComponent("config.mellomedley.main_menu_mod_button.desc", new TranslatableComponent("config.mellomedley.main_menu_mod_button.option_2.desc"));
@@ -73,7 +75,7 @@ public class MellowConfigEntries {
                 } catch (NumberFormatException ignored) {}
             });
     public static final IterableOption MAIN_MENU_MOD_BUTTON = new IterableOption("config.mellowui.main_menu_mod_button",
-            (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(ThreeStyles.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(FourStyles.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.mainMenuModButton.get()) {
                     case OPTION_1:
@@ -84,11 +86,14 @@ public class MellowConfigEntries {
                         break;
                     case OPTION_3:
                         option.setTooltip(REPLACE_REALMS_TOOLTIP);
+                        break;
+                    case OPTION_4:
+                        option.setTooltip(BELOW_REALMS_TOOLTIP);
                 }
                 return new TranslatableComponent("config.mellowui.main_menu_mod_button", new TranslatableComponent("config.mellowui.main_menu_mod_button." + CLIENT_CONFIGS.mainMenuModButton.get().toString()));
             });
     public static final IterableOption PAUSE_MENU_MOD_BUTTON = new IterableOption("config.mellowui.pause_menu_mod_button",
-            (options, identifier) -> CLIENT_CONFIGS.pauseMenuModButton.set(ThreeStyles.byId(CLIENT_CONFIGS.pauseMenuModButton.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.pauseMenuModButton.set(FourStyles.byId(CLIENT_CONFIGS.pauseMenuModButton.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.pauseMenuModButton.get()) {
                     case OPTION_1:
@@ -99,6 +104,9 @@ public class MellowConfigEntries {
                         break;
                     case OPTION_3:
                         option.setTooltip(REPLACE_TOOLTIP);
+                        break;
+                    case OPTION_4:
+                        option.setTooltip(BELOW_OPTIONS_PM_TOOLTIP);
                 }
                 return new TranslatableComponent("config.mellowui.pause_menu_mod_button", new TranslatableComponent("config.mellowui.pause_menu_mod_button." + CLIENT_CONFIGS.pauseMenuModButton.get().toString()));
             });
@@ -172,8 +180,8 @@ public class MellowConfigEntries {
     public static final StyleBooleanOption SPLASH_TEXT_POSITION = new StyleBooleanOption("config.mellowui.splash_text_position", new TranslatableComponent("config.mellowui.splash_text_position.desc"),
             options -> CLIENT_CONFIGS.splashTextPosition.get(), (options, newValue) -> CLIENT_CONFIGS.splashTextPosition.set(newValue));
     public static final IterableOption LOGO_STYLE = new IterableOption("config.mellowui.logo_style", new TranslatableComponent("config.mellowui.logo_style.desc"),
-            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
-            (options, option) -> new TranslatableComponent("config.mellowui." + CLIENT_CONFIGS.logoStyle.get().toString() + "_style", new TranslatableComponent("config.mellowui.logo_style")));
+            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(FourStyles.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
+            (options, option) -> new TranslatableComponent("config.mellowui.logo_style." + CLIENT_CONFIGS.logoStyle.get().toString(), new TranslatableComponent("config.mellowui.logo_style")));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslatableComponent("config.mellowui.scrolling_text.desc"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));
     public static final BooleanOption BACKGROUND_SHADERS = new BooleanOption("config.mellowui.background_shaders", new TranslatableComponent("config.mellowui.background_shaders.desc"),

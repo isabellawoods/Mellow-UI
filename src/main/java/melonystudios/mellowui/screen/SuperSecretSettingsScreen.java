@@ -16,6 +16,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -82,7 +83,7 @@ public class SuperSecretSettingsScreen extends Screen {
         Random random = new Random();
         SoundEvent[] allSounds = ForgeRegistries.SOUND_EVENTS.getValues().toArray(new SoundEvent[0]);
         SoundEvent sound = allSounds[random.nextInt(allSounds.length)];
-        float pitch = MellowUtils.randomBetween(random, 0.01F, 2);
+        float pitch = Mth.randomBetween(random, 0.01F, 2);
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, 1));
 
         if (minecraft.getLaunchedVersion().contains("melony-studios-dev")) {

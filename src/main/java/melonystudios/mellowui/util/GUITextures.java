@@ -11,7 +11,8 @@ public class GUITextures {
     public static final WidgetTextureSet MODS_SET = new WidgetTextureSet(gui("widget/icon/mods"), gui("widget/icon/mods_highlighted"));
     public static final WidgetTextureSet CONFIGURE_SET = new WidgetTextureSet(gui("widget/icon/configure"), gui("widget/icon/configure_highlighted"), gui("widget/icon/configure_disabled"));
     public static final WidgetTextureSet OPEN_FOLDER_SET = new WidgetTextureSet(gui("widget/icon/open_folder"), gui("widget/icon/open_folder_highlighted"));
-    public static final WidgetTextureSet CHANGELOGS_SET = new WidgetTextureSet(gui("widget/icon/changelogs"), gui("widget/icon/changelogs_highlighted"));
+    public static final WidgetTextureSet CHANGELOGS_SET = new WidgetTextureSet(gui("widget/icon/changelogs"), gui("widget/icon/changelogs_highlighted"), gui("widget/icon/changelogs_disabled"));
+    public static final WidgetTextureSet BREAST_SETTINGS_SET = new WidgetTextureSet(gui("widget/icon/breast_settings"), gui("widget/icon/breast_settings_highlighted"), gui("widget/icon/breast_settings_disabled"));
     public static final WidgetTextureSet ACCESSIBILITY_SET = new WidgetTextureSet(gui("widget/icon/accessibility"), gui("widget/icon/accessibility_highlighted"));
     public static final WidgetTextureSet LANGUAGE_SET = new WidgetTextureSet(gui("widget/icon/language"), gui("widget/icon/language_highlighted"));
 
@@ -48,6 +49,10 @@ public class GUITextures {
     public static final ResourceLocation INWORLD_HEADER_SEPARATOR = gui("background/inworld_header_separator");
     public static final ResourceLocation FOOTER_SEPARATOR = gui("background/footer_separator");
     public static final ResourceLocation INWORLD_FOOTER_SEPARATOR = gui("background/inworld_footer_separator");
+    public static final ResourceLocation LEFT_SEPARATOR = gui("background/left_separator");
+    public static final ResourceLocation INWORLD_LEFT_SEPARATOR = gui("background/inworld_left_separator");
+    public static final ResourceLocation RIGHT_SEPARATOR = gui("background/right_separator");
+    public static final ResourceLocation INWORLD_RIGHT_SEPARATOR = gui("background/inworld_right_separator");
 
     // Overlays
     public static final ResourceLocation WORLD_SELECTION_OVERLAY = gui("miscellaneous/world_selection_overlay");

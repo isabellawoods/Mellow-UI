@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.text2speech.Narrator;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.renderer.LogoRenderer;
+import melonystudios.mellowui.screen.Alignment;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
@@ -33,7 +34,7 @@ public class AccessibilityOnboardingScreen extends Screen {
     private EditBox textWidget;
 
     public AccessibilityOnboardingScreen(Runnable onClose) {
-        super(new TranslatableComponent("menu.minecraft.accessibility_settings.title"));
+        super(new TranslatableComponent("menu.minecraft.accessibility_onboarding.title"));
         this.onClose = onClose;
         this.narratorAvailable = NarratorChatListener.INSTANCE.isActive();
     }
@@ -74,12 +75,12 @@ public class AccessibilityOnboardingScreen extends Screen {
         // Accessibility Settings
         this.addRenderableWidget(new ImageSetButton(this.width / 2 - 75, 175, 150, 20, GUITextures.ACCESSIBILITY_SET,
                 button -> this.closeAndSetScreen(new AccessibilityOptionsScreen(this, this.minecraft.options)), new TranslatableComponent("options.accessibility.title"))
-                .renderText(true).alignment(ImageSetButton.Alignment.RIGHT));
+                .renderText(true).alignment(Alignment.RIGHT));
 
         // Language
         this.addRenderableWidget(new ImageSetButton(this.width / 2 - 75, 203, 150, 20, GUITextures.LANGUAGE_SET,
                 button -> this.closeAndSetScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())),
-                new TranslatableComponent("options.language")).renderText(true).alignment(ImageSetButton.Alignment.RIGHT));
+                new TranslatableComponent("options.language")).renderText(true).alignment(Alignment.RIGHT));
 
         // Continue
         this.addRenderableWidget(new Button(this.width / 2 - 75, this.height - 25, 150, 20, new TranslatableComponent("button.mellowui.continue"),
@@ -92,7 +93,7 @@ public class AccessibilityOnboardingScreen extends Screen {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.handleInitialNarrationDelay();
         this.components.renderPanorama(0, this.width, this.height, 1);
-        this.components.renderBlurredBackground(partialTicks);
+        this.components.renderBlurredBackground(partialTicks, true);
         this.renderDirtBackground(0);
         this.components.renderTiledBackground(GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, 255, 0, 0, this.width, this.height, 0);
         this.renderLogo(stack);
@@ -114,7 +115,7 @@ public class AccessibilityOnboardingScreen extends Screen {
     private void renderLogo(PoseStack stack) {
         switch (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get()) {
             case OPTION_1: {
-                LogoRenderer.renderOldLogo(stack, this, this.width, 1, true);
+                LogoRenderer.render116Logo(stack, this, this.width, 1, 30, true);
                 break;
             }
             case OPTION_3: {
@@ -123,13 +124,16 @@ public class AccessibilityOnboardingScreen extends Screen {
             }
             case OPTION_2: {
                 switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
-                    case OPTION_1: // Pre 1.19
-                        LogoRenderer.renderOldLogo(stack, this, this.width, 1, true);
+                    case OPTION_1: // Pre-1.16
+                        LogoRenderer.renderPre116Logo(stack, this, this.width, 1, 30, true);
                         break;
-                    case OPTION_2: // 1.20 and above
+                    case OPTION_2: // 1.16
+                        LogoRenderer.render116Logo(stack, this, this.width, 1, 30, true);
+                        break;
+                    case OPTION_3: // 1.20 and above
                         LogoRenderer.renderUpdatedLogo(stack, this.width, 1, true);
                         break;
-                    case OPTION_3: // Mellomedley's logo
+                    case OPTION_4: // Mellomedley's logo
                         LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
                         break;
                 }

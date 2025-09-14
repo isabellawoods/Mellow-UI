@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Mod.EventBusSubscriber(modid = MellowUI.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class MUIClientEventBus {
+public class MUIClientEvents {
     // Copied from teamtwilight/twilightforest.
     @SubscribeEvent
     public static void addHighContrastPack(AddPackFindersEvent event) {

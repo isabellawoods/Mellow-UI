@@ -3,12 +3,13 @@ package melonystudios.mellowui.screen.list;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.WidgetConfigs;
-import melonystudios.mellowui.screen.update.MUIModListScreen;
+import melonystudios.mellowui.screen.update.MellowModListScreen;
 import melonystudios.mellowui.screen.widget.ScrollingText;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -21,12 +22,12 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MUIModList extends ObjectSelectionList<MUIModList.Mod> {
-    private final MUIModListScreen parentScreen;
+public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
+    private final MellowModListScreen parentScreen;
     private final int listWidth;
 
-    public MUIModList(MUIModListScreen parentScreen, int width, int height, int y0, int y1, int itemWidth) {
-        super(parentScreen.getMinecraft(), width, height, y0, y1, itemWidth);
+    public MellowModList(MellowModListScreen parentScreen, int width, int height, int y0, int y1, int entryWidth) {
+        super(parentScreen.getMinecraft(), width, height, y0, y1, entryWidth);
         this.parentScreen = parentScreen;
         this.listWidth = width;
         this.setRenderSelection(false);
@@ -47,13 +48,19 @@ public class MUIModList extends ObjectSelectionList<MUIModList.Mod> {
     }
 
     @Override
+    public void setFocused(@Nullable GuiEventListener listener) {
+        super.setFocused(listener);
+        this.parentScreen.setFocused(listener);
+    }
+
+    @Override
     protected boolean isFocused() {
         return this.parentScreen.getFocused() == this;
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.listWidth + 4;
+        return this.listWidth - 6;
     }
 
     @Override
@@ -63,14 +70,14 @@ public class MUIModList extends ObjectSelectionList<MUIModList.Mod> {
 
     public void refreshModList() {
         this.clearEntries();
-        this.parentScreen.loadModList(this::addEntry, mod -> new Mod(this.parentScreen, mod));
+        this.parentScreen.loadMods(this::addEntry, mod -> new Mod(this.parentScreen, mod));
     }
 
-    public class Mod extends ObjectSelectionList.Entry<MUIModList.Mod> implements ScrollingText {
-        private final MUIModListScreen parentScreen;
+    public class Mod extends ObjectSelectionList.Entry<MellowModList.Mod> implements ScrollingText {
+        private final MellowModListScreen parentScreen;
         private final IModInfo modInfo;
 
-        public Mod(MUIModListScreen parentScreen, IModInfo modInfo) {
+        public Mod(MellowModListScreen parentScreen, IModInfo modInfo) {
             this.parentScreen = parentScreen;
             this.modInfo = modInfo;
         }
@@ -82,11 +89,11 @@ public class MUIModList extends ObjectSelectionList<MUIModList.Mod> {
                     style -> style.withColor(0xA0A0A0));
             VersionChecker.CheckResult checkResult = VersionChecker.getResult(this.modInfo);
             Font font = this.parentScreen.getMinecraft().font;
-            int rowWidth = MUIModList.this.getRowWidth() - (MUIModList.this.getMaxScroll() > 0 ? 6 : 0);
+            int rowWidth = MellowModList.this.getRowWidth() - (MellowModList.this.getMaxScroll() > 0 ? 6 : 0);
 
             RenderSystem.enableBlend();
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, MUIModList.this.getSelected() == this ? GUITextures.MOD_ENTRY_HIGHLIGHTED : GUITextures.MOD_ENTRY);
+            RenderSystem.setShaderTexture(0, MellowModList.this.getSelected() == this ? GUITextures.MOD_ENTRY_HIGHLIGHTED : GUITextures.MOD_ENTRY);
             blit(stack, left - 2, top - 1, 0, 0, rowWidth / 2, 26, rowWidth, 26);
             blit(stack, left - 2 + rowWidth / 2, top - 1, rowWidth - rowWidth / 2F, 0, rowWidth, 26, rowWidth, 26);
             RenderSystem.disableBlend();
@@ -94,10 +101,10 @@ public class MUIModList extends ObjectSelectionList<MUIModList.Mod> {
             // Mod name
             int padding = WidgetConfigs.WIDGET_CONFIGS.modNameTextBorderPadding.get() - 2;
             this.renderScrollingString(stack, font, modName, left + padding, top, left + rowWidth - padding - 4, top + height - 8,
-                    MellowUtils.getSelectableTextColor(MUIModList.this.getSelected() == this, true));
+                    MellowUtils.getSelectableTextColor(MellowModList.this.getSelected() == this, true));
 
             // Version
-            FormattedText versionComponent = FormattedText.composite(font.substrByWidth(modVersion, MUIModList.this.listWidth));
+            FormattedText versionComponent = FormattedText.composite(font.substrByWidth(modVersion, MellowModList.this.listWidth));
             font.drawShadow(stack, Language.getInstance().getVisualOrder(versionComponent), left + 3, top + 4 + font.lineHeight, 0xFFFFFF);
 
             if (checkResult.status().shouldDraw()) {
@@ -109,11 +116,10 @@ public class MUIModList extends ObjectSelectionList<MUIModList.Mod> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            Mod selectedMod = MellowModList.this.getSelected() == this ? null : this;
             if (button == 0) {
-                this.parentScreen.setSelected(this);
-                this.parentScreen.setFocused(this);
-                MUIModList.this.setSelected(this);
-                MUIModList.this.setFocused(this);
+                MellowModList.this.setSelected(selectedMod);
+                MellowModList.this.setFocused(selectedMod);
                 return true;
             }
             return super.mouseClicked(mouseX, mouseY, button);
