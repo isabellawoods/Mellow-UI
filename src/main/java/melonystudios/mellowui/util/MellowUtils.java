@@ -5,9 +5,9 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
-import melonystudios.mellowui.screen.update.MUIModListScreen;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import melonystudios.mellowui.screen.update.MUIPackSelectionScreen;
+import melonystudios.mellowui.screen.update.MellowModListScreen;
 import melonystudios.mellowui.util.pack.HighContrastPack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.*;
@@ -15,7 +15,9 @@ import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.Util;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
@@ -33,21 +35,22 @@ import static net.minecraft.util.ColorHelper.PackedColor.*;
 
 public class MellowUtils {
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
+    public static final ITextComponent SEARCH_TEXT = new TranslationTextComponent("button.mellowui.search").withStyle(withColor(0xA0A0A0).withItalic(true));
     public static final String PROGRAMMER_ART_ID = "programer_art";
     public static final int DEFAULT_TITLE_HEIGHT = 12;
     public static final int TABBED_TITLE_HEIGHT = 2;
-    public static final int PAUSE_MENU_Y_OFFSET = 0;
+    public static final int PAUSE_MENU_Y_OFFSET = -16;
 
     public static Screen modList(Screen lastScreen) {
         switch (CLIENT_CONFIGS.modListStyle.get()) {
-            case OPTION_2: return new MUIModListScreen(lastScreen);
+            case OPTION_2: return new MellowModListScreen(lastScreen);
             case OPTION_3: {
-                if (!ModList.get().isLoaded("catalogue")) return new MUIModListScreen(lastScreen);
+                if (!ModList.get().isLoaded("catalogue")) return new MellowModListScreen(lastScreen);
                 try {
                     Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
                     return (Screen) screen.newInstance();
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
-                    return new MUIModListScreen(lastScreen);
+                    return new MellowModListScreen(lastScreen);
                 }
             }
             case OPTION_1: default: return new ModListScreen(lastScreen);
@@ -114,6 +117,10 @@ public class MellowUtils {
 
     public static boolean highContrastUnavailable() {
         return !Minecraft.getInstance().getResourcePackRepository().getAvailableIds().contains(GUITextures.MUI_HIGH_CONTRAST.toString());
+    }
+
+    public static Style withColor(int color) {
+        return Style.EMPTY.withColor(Color.fromRgb(color));
     }
 
     public static float randomBetween(Random rand, float minimum, float maximum) {

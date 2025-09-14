@@ -37,7 +37,7 @@ import net.minecraftforge.versions.forge.ForgeVersion;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
-public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.MainMenuMethods {
+public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.TitleScreenMethods {
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final boolean fading;
     private long fadeInStart;
@@ -239,15 +239,20 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.M
         LogoRenderer.renderMellomedleyLogo(stack, 10, 16, 210, 75, buttonAlpha, this.keepLogoThroughFade);
 
         if ((textAlpha & 0xFC000000) != 0) {
+            boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height;
+            int textColor = MellowUtils.getSelectableTextColor(false, true);
+
+            // Forge's beta warning
+            this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
+
             // Splashes
             if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) SplashRenderer.mellomedleySplash(stack, this.font, this.splash, textAlpha);
 
             // Text
-            boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height;
             ITextComponent mellomedleyVersion = new TranslationTextComponent("menu.mellomedley.version.modpack", MellowConfigs.CLIENT_CONFIGS.mellomedleyVersion.get());
             ITextComponent vanillaVersion = new TranslationTextComponent(this.minecraft.isDemo() ? "menu.mellomedley.version.vanilla_demo" : "menu.mellomedley.version.vanilla", SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion());
-            drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 2, this.height - 30, 0xFFFFFF | textAlpha);
-            drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 2, this.height - 20, 0xFFFFFF | textAlpha);
+            drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 2, this.height - 30, textColor | textAlpha);
+            drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 2, this.height - 20, textColor | textAlpha);
             drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, MellowUtils.getSelectableTextColor(copyrightTextHovered, true) | textAlpha);
             if (copyrightTextHovered) {
                 fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, MellowUtils.getSelectableTextColor(true, true) | textAlpha);

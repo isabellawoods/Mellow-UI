@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
@@ -22,11 +23,15 @@ import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.versions.forge.ForgeVersion;
 
 import javax.annotation.Nullable;
 
@@ -41,6 +46,10 @@ public class RenderComponents extends AbstractGui {
     public static float PANORAMA_PITCH = 10;
     public static final int TOOLTIP_MAX_WIDTH = 200; // tooltip width is 170 in 1.21.1
     public static final int DEFAULT_TAB_WIDTH = 130;
+    public static final int DEFAULT_BACKGROUND_BRIGHTNESS = 255;
+    public static final int OLD_BACKGROUND_BRIGHTNESS = 64;
+    public static final int OLD_LIST_BACKGROUND_BRIGHTNESS = 32;
+    public static final int DEFAULT_TEXTURE_WIDTH = 32;
     private final ScissorStack scissorStack = new ScissorStack();
     private final Minecraft minecraft;
     private final MatrixStack stack;
@@ -61,12 +70,12 @@ public class RenderComponents extends AbstractGui {
     public void renderBackground(Screen screen, float partialTicks, int vOffset, int width, int height) {
         if (this.minecraft.level == null) {
             this.renderPanorama(partialTicks, width, height, 1);
-            this.renderBlurredBackground(partialTicks);
+            this.renderBlurredBackground(partialTicks, true);
             screen.renderDirtBackground(vOffset);
         } else {
             boolean classifiesAsContainer = this.classifiesAsContainer(screen);
             if (CLIENT_CONFIGS.blurryContainers.get() || !classifiesAsContainer) {
-                this.renderBlurredBackground(partialTicks);
+                this.renderBlurredBackground(partialTicks, true);
             }
 
             if (CLIENT_CONFIGS.gradientBackground.get() || classifiesAsContainer) {
@@ -86,13 +95,13 @@ public class RenderComponents extends AbstractGui {
     }
 
     public void renderBackgroundShaders(float partialTicks) {
-        if (ShaderManager.customShaderLoaded()) this.renderBlurredBackground(partialTicks);
+        if (ShaderManager.customShaderLoaded()) this.renderBlurredBackground(partialTicks, null);
     }
 
-    public void renderBlurredBackground(float partialTicks) {
+    public void renderBlurredBackground(float partialTicks, Boolean fadeIn) {
         if (!CLIENT_CONFIGS.backgroundShaders.get()) return;
         RenderSystem.disableDepthTest();
-        ShaderManager.processPanoramaShaders(partialTicks);
+        ShaderManager.processPanoramaShaders(partialTicks, fadeIn);
         this.minecraft.getMainRenderTarget().bindWrite(false);
         RenderSystem.enableDepthTest();
     }
@@ -116,49 +125,51 @@ public class RenderComponents extends AbstractGui {
     }
 
     public void renderMenuBackground(int x, int y, int width, int height, float vOffset) {
-        this.renderTiledBackground(CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION : (this.minecraft.level != null ?
-                GUITextures.INWORLD_MENU_BACKGROUND : GUITextures.MENU_BACKGROUND), x, y, width, height, vOffset);
+        ResourceLocation backgroundTexture = this.minecraft.level == null ? (CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION :
+                GUITextures.MENU_BACKGROUND) : GUITextures.INWORLD_MENU_BACKGROUND;
+        this.renderTiledBackground(backgroundTexture, x, y, width, height, vOffset);
     }
 
     public void renderTiledBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, float vOffset) {
-        this.renderTiledBackground(backgroundTexture, CLIENT_CONFIGS.defaultBackground.get() ? 64 : 255, x, y, width, height, vOffset);
+        this.renderTiledBackground(backgroundTexture, CLIENT_CONFIGS.defaultBackground.get() ? OLD_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS, x, y, width, height, vOffset);
     }
 
     public void renderTiledBackground(ResourceLocation backgroundTexture, int brightness, int x, int y, int width, int height, float vOffset) {
         this.minecraft.getTextureManager().bind(backgroundTexture);
         RenderSystem.enableBlend();
         RenderSystem.color4f(brightness / 255F, brightness / 255F, brightness / 255F, 1);
-        blit(this.stack, x, y, 0, vOffset, width, height, 32, 32);
+        blit(this.stack, x, y, 0, vOffset, width, height, DEFAULT_TEXTURE_WIDTH, DEFAULT_TEXTURE_WIDTH);
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, this.stack));
     }
 
     public void renderTabHeaderBackground(int x, int y, int width, int height) {
-        this.renderTabHeaderBackground(CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION : GUITextures.TAB_HEADER_BACKGROUND,
-                x, y, width, height, CLIENT_CONFIGS.defaultBackground.get() ? 64 : 255);
+        ResourceLocation backgroundTexture = this.minecraft.level == null ? (CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION :
+                GUITextures.TAB_HEADER_BACKGROUND) : GUITextures.TAB_HEADER_BACKGROUND;
+        this.renderTabHeaderBackground(backgroundTexture, x, y, width, height, CLIENT_CONFIGS.defaultBackground.get() ? OLD_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS);
     }
 
     public void renderTabHeaderBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int brightness) {
         this.minecraft.getTextureManager().bind(backgroundTexture);
         RenderSystem.enableBlend();
         RenderSystem.color4f(brightness / 255F, brightness / 255F, brightness / 255F, 1);
-        blit(this.stack, x, y, 0, 0, width, height, 32, 32);
+        blit(this.stack, x, y, 0, 0, width, height, DEFAULT_TEXTURE_WIDTH, DEFAULT_TEXTURE_WIDTH);
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
     }
 
     public void renderListBackground(int x, int y, int width, int height, int uOffset, int vOffset, double scrollAmount) {
-        this.renderListBackground(CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION : (this.minecraft.level != null ?
-                GUITextures.INWORLD_MENU_LIST_BACKGROUND : GUITextures.MENU_LIST_BACKGROUND), x, y, width, height, uOffset, vOffset,
-                CLIENT_CONFIGS.defaultBackground.get() ? 32 : 255, scrollAmount);
+        ResourceLocation backgroundTexture = this.minecraft.level == null ? (CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION :
+                GUITextures.MENU_LIST_BACKGROUND) : GUITextures.INWORLD_MENU_LIST_BACKGROUND;
+        this.renderListBackground(backgroundTexture, x, y, width, height, uOffset, vOffset, CLIENT_CONFIGS.defaultBackground.get() ? OLD_LIST_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS, scrollAmount);
     }
 
-    public  void renderListBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int uOffset, int vOffset, int brightness, double scrollAmount) {
+    public void renderListBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int uOffset, int vOffset, int brightness, double scrollAmount) {
         this.minecraft.getTextureManager().bind(backgroundTexture);
         RenderSystem.enableBlend();
         RenderSystem.color4f(brightness / 255F, brightness / 255F, brightness / 255F, 1);
-        blit(this.stack, x, y, uOffset, (float) (vOffset + scrollAmount), width, height, 32, 32);
+        blit(this.stack, x, y, uOffset, (float) (vOffset + scrollAmount), width, height, DEFAULT_TEXTURE_WIDTH, DEFAULT_TEXTURE_WIDTH);
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
     }
@@ -185,12 +196,37 @@ public class RenderComponents extends AbstractGui {
         RenderSystem.disableBlend();
     }
 
+    public void renderVerticalSeparator(int x, int minY, int maxY, boolean right) {
+        RenderSystem.enableBlend();
+        ResourceLocation rightLocation = this.minecraft.level != null ? GUITextures.INWORLD_RIGHT_SEPARATOR : GUITextures.RIGHT_SEPARATOR;
+        ResourceLocation leftLocation = this.minecraft.level != null ? GUITextures.INWORLD_LEFT_SEPARATOR : GUITextures.LEFT_SEPARATOR;
+        this.minecraft.getTextureManager().bind(right ? rightLocation : leftLocation);
+        blit(this.stack, x, minY, 0, 0, 2, maxY, 2, 32);
+        RenderSystem.disableBlend();
+    }
+
     public int fourTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH * 2 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
     public int threeTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
+    }
+
+    public void renderTextBoxSuggestion(@Nullable TextFieldWidget textField, ITextComponent suggestion) {
+        if (textField != null && textField.getValue().isEmpty() && !textField.isFocused()) {
+            drawString(this.stack, this.minecraft.font, suggestion, textField.x + 4, textField.y + (textField.getHeight() - 8) / 2, 0xFFFFFF);
+        }
+    }
+
+    public void renderForgeBetaText(int width, int textHeight, int textColor, int alpha) {
+        VersionChecker.Status status = ForgeVersion.getStatus();
+        if (status == VersionChecker.Status.BETA || status == VersionChecker.Status.BETA_OUTDATED) {
+            drawCenteredString(this.stack, this.minecraft.font, new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).withStyle(TextFormatting.RED, TextFormatting.BOLD),
+                    width / 2, textHeight, textColor | alpha);
+            drawCenteredString(this.stack, this.minecraft.font, new TranslationTextComponent("forge.update.beta.2"), width / 2, textHeight + 10, textColor | alpha);
+            ForgeHooksClient.forgeStatusLine = new TranslationTextComponent("forge.update.newversion", ForgeVersion.getTarget()).getString();
+        }
     }
 
     public IconButton switchStyle(Button.IPressable onPressed, Screen screen, int x, int y) {

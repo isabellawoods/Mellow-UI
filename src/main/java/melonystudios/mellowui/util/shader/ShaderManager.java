@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -33,9 +34,14 @@ public class ShaderManager {
     @Nullable
     public static ShaderGroup PANORAMA_SHADER;
     private static final List<RenderType> END_PORTAL_TYPES = IntStream.range(0, 16).mapToObj(layer -> RenderType.endPortal(layer + 1)).collect(ImmutableList.toImmutableList());
+    public static float BLUR_PROGRESS = 0;
 
     public static boolean customShaderLoaded() {
         return CURRENT_EFFECT.shaderIdentifier() != -1;
+    }
+
+    public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation) {
+        setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR));
     }
 
     public static void setPostEffect(Minecraft minecraft, PostEffect effect) {
@@ -64,12 +70,13 @@ public class ShaderManager {
         }
     }
 
-    public static void processPanoramaShaders(float partialTicks) {
+    public static void processPanoramaShaders(float partialTicks, Boolean fadeIn) {
         if (PANORAMA_SHADER == null) return;
         if (CURRENT_EFFECT.shaderIdentifier() == -1 && MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get() <= 0) return;
 
         if (CURRENT_EFFECT.uniforms().isPresent()) {
             for (String uniform : CURRENT_EFFECT.uniforms().get()) {
+                // float radius = uniform.equals("Radius") && fadeIn != null ? fadeBackgroundBlurriness(fadeIn) : getUniformValue(uniform);
                 ((InterfaceMethods.PostChainMethods) PANORAMA_SHADER).setUniform(uniform, getUniformValue(uniform));
             }
         }
@@ -92,6 +99,21 @@ public class ShaderManager {
             case "Radius": return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
             default: return 0;
         }
+    }
+
+    private static float fadeBackgroundBlurriness(boolean fadeIn) {
+        int targetValue = MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+        float currentValue = BLUR_PROGRESS;
+        float shift = 0.08F * targetValue;
+
+        if (fadeIn) {
+            BLUR_PROGRESS += shift;
+        } else {
+            BLUR_PROGRESS -= shift;
+        }
+        BLUR_PROGRESS = MathHelper.clamp(BLUR_PROGRESS, 0, targetValue);
+
+        return currentValue == targetValue ? targetValue : (float) MathHelper.clampedLerp(fadeIn ? targetValue : currentValue, fadeIn ? currentValue : targetValue, BLUR_PROGRESS);
     }
 
     public static void fillEndPortal(MatrixStack stack, int x0, int y0, int x1, int y1, int z) {

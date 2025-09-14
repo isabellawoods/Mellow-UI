@@ -20,6 +20,8 @@ public class WidgetConfigs {
     public final ForgeConfigSpec.IntValue defaultLegacyWidgetTextColor;
     public final ForgeConfigSpec.IntValue highlightedLegacyWidgetTextColor;
     public final ForgeConfigSpec.IntValue disabledLegacyWidgetTextColor;
+    public final ForgeConfigSpec.IntValue defaultFlairAccentColor; // temporary configs until I actually add mod list flairs ~isa 14-9-25
+    public final ForgeConfigSpec.IntValue highContrastFlairAccentColor;
 
     public final ForgeConfigSpec.IntValue highContrastUpdateAvailableColor;
     public final ForgeConfigSpec.IntValue defaultUpdateAvailableColor;
@@ -44,6 +46,8 @@ public class WidgetConfigs {
         this.defaultLegacyWidgetTextColor = builder.comment("Text color for an unselected widget with 'Legacy Button Colors' turned on.").defineInRange("widget.defaultLegacyTextColor", 0xE0E0E0, 0, 0xFFFFFF);
         this.highlightedLegacyWidgetTextColor = builder.comment("Text color for a selected/hovered widget with 'Legacy Button Colors' turned on.").defineInRange("widget.highlightedLegacyTextColor", 0xFFFFA0, 0, 0xFFFFFF);
         this.disabledLegacyWidgetTextColor = builder.comment("Text color for a disabled widget with 'Legacy Button Colors' turned on.").defineInRange("widget.disabledLegacyTextColor", 0xA0A0A0, 0, 0xFFFFFF);
+        this.defaultFlairAccentColor = builder.comment("Text color for the default mod list flair.").defineInRange("flair.defaultAccentColor", 0xFFFFA0, 0, 0xFFFFFF);
+        this.highContrastFlairAccentColor = builder.comment("Text color for the default mod list flair.").defineInRange("flair.highContrastFlairAccentColor", 0xFFFF55, 0, 0xFFFFFF);
 
         // Splash Texts
         this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").defineInRange("splash.defaultTextColor", 0xFFFF00, 0, 0xFFFFFF);

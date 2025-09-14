@@ -23,6 +23,6 @@ public class MUIMultiplayerWarningScreenMixin extends Screen {
     @Inject(method = "render", at = @At("HEAD"))
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         this.components.renderPanorama(partialTicks, this.width, this.height, 1);
-        this.components.renderBlurredBackground(partialTicks);
+        this.components.renderBlurredBackground(partialTicks, true);
     }
 }

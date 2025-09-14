@@ -2,11 +2,15 @@ package melonystudios.mellowui.screen.update;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
 import melonystudios.mellowui.screen.backport.OnlineOptionsScreen;
+import melonystudios.mellowui.screen.widget.ImageSetButton;
+import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
@@ -23,8 +27,11 @@ import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Difficulty;
+import net.minecraftforge.fml.ModList;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.UUID;
 
 public class MUIOptionsScreen extends SettingsScreen {
     private Button difficultyButton;
@@ -74,6 +81,9 @@ public class MUIOptionsScreen extends SettingsScreen {
         }
         buttonHeight += 54;
 
+        // Breast Settings (Female Gender Mod)
+        this.addBreastSettingsButton(buttonHeight);
+
         // Skin Customization
         this.addButton(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslationTextComponent("options.skinCustomisation"),
                 button -> this.minecraft.setScreen(new CustomizeSkinScreen(this, this.minecraft.options))));
@@ -121,6 +131,22 @@ public class MUIOptionsScreen extends SettingsScreen {
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
+    }
+
+    private void addBreastSettingsButton(int buttonHeight) {
+        if (ModList.get().isLoaded("femalegender") || ModList.get().isLoaded("wildfire_gender")) {
+            try {
+                Class<?> screen = Class.forName(ModList.get().isLoaded("femalegender") ? "melonystudios.femalegender.gui.screen.WardrobeScreen" : "com.wildfire.gui.screen.WardrobeBrowserScreen");
+                Screen wardrobeScreen = (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId());
+                Button settingsButton = this.addButton(new ImageSetButton(this.width / 2 - 180, buttonHeight, 20, 20, GUITextures.BREAST_SETTINGS_SET,
+                        button -> this.minecraft.setScreen(wardrobeScreen), (button, stack, mouseX, mouseY) ->
+                        RenderComponents.INSTANCE.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.breast_settings.desc" + (this.minecraft.level == null ? ".in_world" : "")), mouseX, mouseY),
+                        new TranslationTextComponent("button.mellowui.breast_settings")));
+                settingsButton.active = this.minecraft.level != null;
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+                MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
+            }
+        }
     }
 
     @Override

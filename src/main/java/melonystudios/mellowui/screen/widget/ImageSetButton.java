@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.screen.Alignment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
@@ -79,9 +80,5 @@ public class ImageSetButton extends Button implements ScrollingText {
         int minX = this.x + width;
         int maxX = this.x + this.width - width;
         this.renderScrollingString(stack, font, this.getMessage(), minX, this.y, maxX, this.y + this.height, color);
-    }
-
-    public enum Alignment {
-        LEFT, CENTER, RIGHT
     }
 }

@@ -49,7 +49,7 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
             callback.cancel();
             // Background
             this.components.renderPanorama(partialTicks, this.width, this.height, 1);
-            this.components.renderBlurredBackground(partialTicks);
+            this.components.renderBlurredBackground(partialTicks, true);
             this.components.renderTiledBackground(GUITextures.OUT_OF_MEMORY_BACKGROUND, 255, 0, 0, this.width, this.height, 0);
 
             stack.pushPose();

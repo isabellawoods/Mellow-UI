@@ -1,0 +1,30 @@
+{
+  "homepage": "https://github.com/isabellawoods/Mellow-UI/tree/forge-1.16.5",
+  "promos": {
+    "1.18.2-latest": "2.4.3.1",
+    "1.18.2-recommended": "2.4.3.1",
+    "1.16.5-latest": "4.4.0",
+    "1.16.5-recommended": "4.4.0"
+  },
+  "1.18.2": {
+    "2.4.3.1": "Initial Release of the 1.18 version"
+  },
+  "1.16.5": {
+    "4.4.0": "New Mod List Screen & Misc. Changes",
+    "1.4.3.1": "Fixes from 'forge-1.18.2' branch",
+    "1.4.3": "MellowUtils Overhaul & Updated CNW Screen",
+    "1.4.2": "Just Bugfixes & Backports",
+    "1.4.1.1": "Loading Screen Duration Fix",
+    "1.4.1": "Shaders List & Bug Fixes",
+    "1.4.0.1": "New Logo & Moved Classes",
+    "1.4.0": "Background Blur & Super Secret Settings",
+    "1.3.2": "MUI Config Tabs & Access. Onboarding",
+    "1.3.1": "Small Fixes & Mod Compats",
+    "1.3": "Near-Perfect Main Menu & Texture Renames",
+    "1.2.2": "Sliding Buttons & Updated Loading World Screen",
+    "1.2.1": "Small Bugfixes",
+    "1.2.0": "Culled Lists & Updated OOM Screen",
+    "1.1.0": "Updated Mod List & Main Menu",
+    "1.0.0": "Initial Release"
+  }
+}

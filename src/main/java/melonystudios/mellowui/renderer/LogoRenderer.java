@@ -44,11 +44,7 @@ public class LogoRenderer {
         RenderSystem.color4f(1, 1, 1, 1);
     }
 
-    public static void renderOldLogo(MatrixStack stack, Screen screen, int screenWidth, float transparency, boolean keepLogoThroughFade) {
-        renderOldLogo(stack, screen, screenWidth, transparency, 30, keepLogoThroughFade);
-    }
-
-    public static void renderOldLogo(MatrixStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
+    public static void render116Logo(MatrixStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
         Minecraft minecraft = Minecraft.getInstance();
 
         // Logo
@@ -68,6 +64,31 @@ public class LogoRenderer {
                 screen.blit(stack, i1, i2, 0, 0, 155, 44);
                 screen.blit(stack, i1 + 155, i2, 0, 45, 155, 44);
             });
+        }
+
+        // Edition
+        int editionY = height + 37;
+        minecraft.getTextureManager().bind(OLD_EDITION_SUBTITLE);
+        AbstractGui.blit(stack, logoX + 88, editionY, 0, 0, 98, 14, 128, 16);
+        RenderSystem.color4f(1, 1, 1, 1);
+    }
+
+    public static void renderPre116Logo(MatrixStack stack, Screen screen, int screenWidth, float transparency, int height, boolean keepLogoThroughFade) {
+        Minecraft minecraft = Minecraft.getInstance();
+
+        // Logo
+        int logoX = screenWidth / 2 - 137;
+        minecraft.getTextureManager().bind(OLD_MINECRAFT_LOGO);
+        RenderSystem.color4f(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
+        if (SHOW_EASTER_EGG) {
+            screen.blit(stack, logoX, 30, 0, 0, 99, 44);
+            screen.blit(stack, logoX + 99, 30, 129, 0, 27, 44);
+            screen.blit(stack, logoX + 99 + 26, 30, 126, 0, 3, 44);
+            screen.blit(stack, logoX + 99 + 26 + 3, 30, 99, 0, 26, 44);
+            screen.blit(stack, logoX + 155, 30, 0, 45, 155, 44);
+        } else {
+            screen.blit(stack, logoX, 30, 0, 0, 155, 44);
+            screen.blit(stack, logoX + 155, 30, 0, 45, 155, 44);
         }
 
         // Edition

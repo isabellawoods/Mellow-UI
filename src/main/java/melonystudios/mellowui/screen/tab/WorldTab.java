@@ -130,9 +130,7 @@ public class WorldTab extends TabContents {
         super.render(stack, mouseX, mouseY, partialTicks);
         if (this.screen != null) {
             FontRenderer font = Minecraft.getInstance().font;
-            if (this.seedEdit != null && this.seedEdit.getValue().isEmpty() && !this.seedEdit.isFocused()) {
-                drawString(stack, font, new TranslationTextComponent("selectWorld.seedInfo").withStyle(TextFormatting.DARK_GRAY), this.seedEdit.x + 4, this.seedEdit.y + (this.seedEdit.getHeight() - 8) / 2, 0xFFFFFF);
-            }
+            this.components.renderTextBoxSuggestion(this.seedEdit, new TranslationTextComponent("selectWorld.seedInfo").withStyle(TextFormatting.DARK_GRAY));
             drawString(stack, font, new TranslationTextComponent("selectWorld.enterSeed"), this.screen.width / 2 - 155, 84, 0xFFFFFF);
             drawString(stack, font, new TranslationTextComponent("selectWorld.mapFeatures"), this.screen.width / 2 - 155, 135, 0xFFFFFF);
             drawString(stack, font, new TranslationTextComponent("selectWorld.bonusItems"), this.screen.width / 2 - 155, 159, 0xFFFFFF);

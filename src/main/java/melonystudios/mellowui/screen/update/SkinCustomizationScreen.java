@@ -22,7 +22,6 @@ import net.minecraftforge.fml.ModList;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.UUID;
 
 public class SkinCustomizationScreen extends SettingsScreen {
     private OptionsRowList list;
@@ -46,30 +45,6 @@ public class SkinCustomizationScreen extends SettingsScreen {
                 this.list.addBig(slabfishHatSettings);
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
                 MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.blueprint_slabfish_hat").getString());
-            }
-        }
-
-        if (ModList.get().isLoaded("femalegender") && this.minecraft.level != null) { // add breast settings button
-            try {
-                Class<?> screen = Class.forName("melonystudios.femalegender.gui.screen.WardrobeScreen");
-                OpenMenuOption wardrobe = new OpenMenuOption("button.mellowui.femalegender_breast_settings",
-                        (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId()));
-                if (ModList.get().isLoaded("wildfire_gender")) settings.add(wardrobe);
-                else this.list.addBig(wardrobe);
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-                MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
-            }
-        }
-
-        if (ModList.get().isLoaded("wildfire_gender") && this.minecraft.level != null) { // add breast settings button
-            try {
-                Class<?> screen = Class.forName("com.wildfire.gui.screen.WardrobeBrowserScreen");
-                OpenMenuOption wardrobe = new OpenMenuOption("button.mellowui.wildfire_gender_breast_settings",
-                        (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId()));
-                if (ModList.get().isLoaded("femalegender")) settings.add(wardrobe);
-                else this.list.addBig(wardrobe);
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-                MellowUI.LOGGER.error(new TranslationTextComponent("error.mellowui.compatibility.femalegender_breast_settings").getString());
             }
         }
 

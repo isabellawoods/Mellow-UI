@@ -26,7 +26,7 @@ public class InterfaceMethods {
         NO_CHANGE
     }
 
-    public interface MainMenuMethods {
+    public interface TitleScreenMethods {
         default boolean keepsLogoThroughFade() {
             return false;
         }
