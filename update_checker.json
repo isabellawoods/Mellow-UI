@@ -1,15 +1,17 @@
 {
   "homepage": "https://github.com/isabellawoods/Mellow-UI/tree/forge-1.16.5",
   "promos": {
-    "1.18.2-latest": "2.4.3.1",
-    "1.18.2-recommended": "2.4.3.1",
-    "1.16.5-latest": "4.4.0",
-    "1.16.5-recommended": "4.4.0"
+    "1.18.2-latest": "4.4.0",
+    "1.18.2-recommended": "4.4.0",
+    "1.16.5-latest": "4.4.1",
+    "1.16.5-recommended": "4.4.1"
   },
   "1.18.2": {
+    "4.4.0": "New Mod List Screen & Misc. Changes",
     "2.4.3.1": "Initial Release of the 1.18 version"
   },
   "1.16.5": {
+    "4.4.1": "",
     "4.4.0": "New Mod List Screen & Misc. Changes",
     "1.4.3.1": "Fixes from 'forge-1.18.2' branch",
     "1.4.3": "MellowUtils Overhaul & Updated CNW Screen",

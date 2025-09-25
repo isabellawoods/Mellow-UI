@@ -16,7 +16,6 @@ import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,8 +27,8 @@ public class UpdatedMouseSettingsScreen extends SettingsScreen {
     @Shadow
     @Final
     private static AbstractOption[] OPTIONS;
-    @Unique
-    private OptionsRowList updatedList;
+    @Shadow
+    private OptionsRowList list;
 
     public UpdatedMouseSettingsScreen(Screen lastScreen, GameSettings options, ITextComponent title) {
         super(lastScreen, options, title);
@@ -39,9 +38,9 @@ public class UpdatedMouseSettingsScreen extends SettingsScreen {
     protected void init(CallbackInfo callback) {
         if (!MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) return;
         callback.cancel();
-        this.updatedList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.updatedList.addSmall(OPTIONS);
-        this.children.add(this.updatedList);
+        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.list.addSmall(OPTIONS);
+        this.children.add(this.list);
 
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
@@ -53,10 +52,10 @@ public class UpdatedMouseSettingsScreen extends SettingsScreen {
         if (!MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) return;
         callback.cancel();
         this.renderBackground(stack);
-        this.updatedList.render(stack, mouseX, mouseY, partialTicks);
+        this.list.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> tooltip = tooltipAt(this.updatedList, mouseX, mouseY);
+        List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
         if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

@@ -7,6 +7,7 @@ import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.MusicToast;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.FeedbackScreen;
+import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import melonystudios.mellowui.screen.widget.ImageSetModButton;
 import melonystudios.mellowui.screen.widget.ModButton;
 import melonystudios.mellowui.util.GUITextures;
@@ -75,7 +76,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             // Statistics
             this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 48 + yOffset, 98, 20, new TranslationTextComponent("gui.stats"), button -> {
                 if (this.minecraft.player != null)
-                    this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
+                    this.minecraft.setScreen(new StatisticsScreen(this, this.minecraft.player.getStats()));
             }, (button, stack, mouseX, mouseY) -> {
                 if (this.minecraft.level == null) this.components.renderTooltip(this, button, new TranslationTextComponent("error.mellowui.cannot_load_statistics").withStyle(TextFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;

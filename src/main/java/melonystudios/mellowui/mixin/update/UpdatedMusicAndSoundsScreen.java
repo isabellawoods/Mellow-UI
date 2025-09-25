@@ -59,6 +59,7 @@ public class UpdatedMusicAndSoundsScreen extends SettingsScreen {
         for (SoundCategory category : SoundCategory.values()) {
             if (category != SoundCategory.MASTER) sliders.add(new SoundCategoryOption("soundCategory." + category.getName(), category));
         }
+        sliders.add(VanillaConfigEntries.UI_VOLUME);
         return sliders;
     }
 

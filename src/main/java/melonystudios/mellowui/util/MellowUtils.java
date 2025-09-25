@@ -22,6 +22,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.screen.ModListScreen;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,17 +43,10 @@ public class MellowUtils {
     public static final int PAUSE_MENU_Y_OFFSET = -16;
 
     public static Screen modList(Screen lastScreen) {
+        Screen defaultScreen = new MellowModListScreen(lastScreen);;
         switch (CLIENT_CONFIGS.modListStyle.get()) {
-            case OPTION_2: return new MellowModListScreen(lastScreen);
-            case OPTION_3: {
-                if (!ModList.get().isLoaded("catalogue")) return new MellowModListScreen(lastScreen);
-                try {
-                    Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
-                    return (Screen) screen.newInstance();
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
-                    return new MellowModListScreen(lastScreen);
-                }
-            }
+            case OPTION_2: return defaultScreen;
+            case OPTION_3: return getExternalScreen("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen", "catalogue", defaultScreen);
             case OPTION_1: default: return new ModListScreen(lastScreen);
         }
     }
@@ -63,15 +57,11 @@ public class MellowUtils {
     }
 
     public static Screen videoSettings(Screen lastScreen, Minecraft minecraft) {
+        Screen defaultScreen = new VideoSettingsScreen(lastScreen, minecraft.options);
         if (CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_3) {
-            try {
-                Class<?> screen = Class.forName("me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI");
-                return (Screen) screen.getConstructor(Screen.class).newInstance(lastScreen);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
-                return new VideoSettingsScreen(lastScreen, minecraft.options);
-            }
+            return getExternalScreen("me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI", null, defaultScreen, lastScreen);
         } else {
-            return new VideoSettingsScreen(lastScreen, minecraft.options);
+            return defaultScreen;
         }
     }
 
@@ -101,6 +91,18 @@ public class MellowUtils {
             if (confirmed) Util.getPlatform().openUri(url);
             minecraft.setScreen(lastScreen);
         }, url, !showWarning));
+    }
+
+    public static Screen getExternalScreen(String classPath, @Nullable String modID, Screen fallbackScreen, Object... parameters) {
+        if (modID == null || ModList.get().isLoaded(modID)) {
+            try {
+                Class<?> screen = Class.forName(classPath);
+                return (Screen) screen.getConstructor(Screen.class).newInstance(parameters);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+                return fallbackScreen;
+            }
+        }
+        return fallbackScreen;
     }
 
     // Copied from teamtwilight/twilightforest.

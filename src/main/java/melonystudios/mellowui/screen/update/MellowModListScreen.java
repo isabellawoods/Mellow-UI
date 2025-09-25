@@ -184,7 +184,7 @@ public class MellowModListScreen extends Screen {
         this.components.renderListSeparators(this.width, 0, this.height - 32, 32, 0, 0);
 
         int rightSeparatorX = (this.width / 4) * 3;
-        this.components.enableScissor(0, 34, rightSeparatorX + 2, this.height - 32);
+        this.components.enableScissor(this.modList.getRight(), 34, rightSeparatorX + 2, this.height - 32);
         this.components.renderVerticalSeparator(this.modList.getRight(), 34, this.height - 32, false);
         this.components.renderVerticalSeparator(rightSeparatorX, 34, this.height - 32, true);
         this.panel.render(stack, mouseX, mouseY, partialTicks);
@@ -333,7 +333,7 @@ public class MellowModListScreen extends Screen {
         this.websiteButton.active = info.getConfigElement("displayURL").isPresent() || this.defaultModIDs();
         this.issueTrackerButton.active = info.getOwningFile().getIssueURL() != null || this.defaultModIDs();
         this.changelogsButton.active = info.getConfigElement("changelogsURL").isPresent() || this.defaultModIDs();
-        this.updateAvailableButton.active = this.updateAvailableButton.visible = VersionChecker.getResult(info).url != null;
+        this.updateAvailableButton.active = this.updateAvailableButton.visible = VersionChecker.getResult(info).status.shouldDraw();
     }
 
     private void openConfigScreen() {

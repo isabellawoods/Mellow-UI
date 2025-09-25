@@ -27,7 +27,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     private final RenderComponents components = RenderComponents.INSTANCE;
 
     // Mellow UI
-    public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, DEFAULT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS, LOG_GL_ERRORS);
+    public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, DEFAULT_BACKGROUND, CULL_OVERSIZED_ITEMS, BACKGROUND_SHADERS, BLURRY_CONTAINERS, LOG_GL_ERRORS);
     public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
     public static final List<AbstractOption> INGAME_MENUS = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON, GRADIENT_BACKGROUND);
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_CREATE_NEW_WORLD_MENU, UPDATED_PAUSE_MENU, UPDATED_OUT_OF_MEMORY_MENU);
@@ -40,7 +40,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
     // Vanilla
     public static final List<AbstractOption> ACCESSIBILITY = Lists.newArrayList(MONOCHROME_LOADING_SCREEN, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS, HIGH_CONTRAST, MENU_BACKGROUND_BLURRINESS);
-    public static final List<AbstractOption> MUSIC_AND_SOUNDS = Lists.newArrayList(DIRECTIONAL_AUDIO, SHOW_MUSIC_TOAST);
+    public static final List<AbstractOption> MUSIC_AND_SOUNDS = Lists.newArrayList(UI_VOLUME, DIRECTIONAL_AUDIO, SHOW_MUSIC_TOAST);
     private OptionsRowList vanillaList;
 
     // Forge
@@ -49,7 +49,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
     // Tabs and lists
     private final List<TabButton> tabs = Lists.newArrayList();
-    private OptionsRowList currentList = null;
+    private OptionsRowList activeList = null;
 
     public MellowUIOptionsScreen(Screen lastScreen, GameSettings options) {
         super(lastScreen, options, new TranslationTextComponent("menu.mellowui.options.title"));
@@ -106,8 +106,8 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.forgeList.setRenderBackground(false);
 
         int tabWidth = this.components.fourTabWidth(this.width);
-        this.currentList = this.mellowUIList;
-        this.children.add(this.currentList);
+        this.activeList = this.mellowUIList;
+        this.children.add(this.activeList);
 
         // Button toggles
         Widget panoramaCameraPitch = this.mellowUIList.findOption(PANORAMA_CAMERA_PITCH);
@@ -145,37 +145,37 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     }
 
     private void selectList(OptionsRowList list) {
-        this.children.remove(this.currentList);
-        this.currentList = list;
-        this.children.add(this.currentList);
-        this.currentList.setScrollAmount(0);
+        this.children.remove(this.activeList);
+        this.activeList = list;
+        this.children.add(this.activeList);
+        this.activeList.setScrollAmount(0);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
 
-        if (this.currentList != null) {
+        if (this.activeList != null) {
             if (!MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
-                this.components.enableScissor(this.currentList.getLeft(), this.currentList.getTop() + 2, this.currentList.getRight(), this.currentList.getBottom());
-                this.currentList.render(stack, mouseX, mouseY, partialTicks);
+                this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop() + 2, this.activeList.getRight(), this.activeList.getBottom());
+                this.activeList.render(stack, mouseX, mouseY, partialTicks);
                 this.components.disableScissor();
             } else {
                 this.components.renderTabHeaderBackground(0, 0, this.width, 34);
-                this.currentList.render(stack, mouseX, mouseY, partialTicks);
+                this.activeList.render(stack, mouseX, mouseY, partialTicks);
             }
-            this.components.renderListSeparators(this.currentList, this.width, 4, this.components.fourTabWidth(this.width));
+            this.components.renderListSeparators(this.activeList, this.width, 4, this.components.fourTabWidth(this.width));
         }
 
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.TABBED_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> processors = tooltipAt(this.currentList, mouseX, mouseY);
+        List<IReorderingProcessor> processors = tooltipAt(this.activeList, mouseX, mouseY);
         if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
     }
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 34, this.width,  this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 34, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 }

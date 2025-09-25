@@ -192,6 +192,8 @@ public class MellowConfigEntries {
             (options, option) -> new TranslationTextComponent("config.mellowui.logo_style." + CLIENT_CONFIGS.logoStyle.get().toString(), new TranslationTextComponent("config.mellowui.logo_style")));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslationTextComponent("config.mellowui.scrolling_text.desc"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));
+    public static final BooleanOption CULL_OVERSIZED_ITEMS = new BooleanOption("config.mellowui.cull_oversized_items", new TranslationTextComponent("config.mellowui.cull_oversized_items.desc"),
+            options -> CLIENT_CONFIGS.cullOversizedItems.get(), (options, newValue) -> CLIENT_CONFIGS.cullOversizedItems.set(newValue));
     public static final BooleanOption BACKGROUND_SHADERS = new BooleanOption("config.mellowui.background_shaders", new TranslationTextComponent("config.mellowui.background_shaders.desc"),
             options -> CLIENT_CONFIGS.backgroundShaders.get(), (options, newValue) -> CLIENT_CONFIGS.backgroundShaders.set(newValue));
     public static final BooleanOption BLURRY_CONTAINERS = new BooleanOption("config.mellowui.blurry_containers", new TranslationTextComponent("config.mellowui.blurry_containers.desc"),

@@ -35,10 +35,10 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
     @Shadow
     @Final
     private static AbstractOption[] OPTIONS;
+    @Shadow
+    private OptionsRowList list;
     @Unique
     private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(GRAPHICS, RENDER_DISTANCE, VanillaConfigEntries.SMOOTH_LIGHTING, FRAMERATE_LIMIT, ENABLE_VSYNC, VIEW_BOBBING, GUI_SCALE, ATTACK_INDICATOR, VanillaConfigEntries.BRIGHTNESS, RENDER_CLOUDS, USE_FULLSCREEN, PARTICLES, MIPMAP_LEVELS, ENTITY_SHADOWS, SCREEN_EFFECTS_SCALE, ENTITY_DISTANCE_SCALING, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS);
-    @Unique
-    private OptionsRowList updatedList;
 
     public UpdatedVideoSettingsScreen(Screen lastScreen, GameSettings options, ITextComponent title) {
         super(lastScreen, options, title);
@@ -48,9 +48,9 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
     protected void init(CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
-        this.updatedList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.updatedList.addBig(new FullscreenResolutionOption(this.minecraft.getWindow()));
-        this.updatedList.addBig(BIOME_BLEND_RADIUS);
+        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.list.addBig(new FullscreenResolutionOption(this.minecraft.getWindow()));
+        this.list.addBig(BIOME_BLEND_RADIUS);
 
         // I tried to make Oculus compatible... it did not work. ~ 3-7-25
         // for some reason, it injects its options directly into the end of the list during init() via a @ModifyArg annotation
@@ -60,8 +60,8 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
                 UPDATED_OPTIONS.add(option);
             }
         }
-        this.updatedList.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
-        this.children.add(this.updatedList);
+        this.list.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
+        this.children.add(this.list);
 
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
@@ -73,10 +73,10 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
         if (MellowConfigs.CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
         this.renderBackground(stack);
-        this.updatedList.render(stack, mouseX, mouseY, partialTicks);
+        this.list.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> tooltip = tooltipAt(this.updatedList, mouseX, mouseY);
+        List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
         if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 
@@ -87,7 +87,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
         int guiScale = this.options.guiScale;
         if (super.mouseReleased(mouseX, mouseY, button)) {
             callback.setReturnValue(true);
-        } else if (this.updatedList.mouseReleased(mouseX, mouseY, button)) {
+        } else if (this.list.mouseReleased(mouseX, mouseY, button)) {
             if (this.options.guiScale != guiScale) this.minecraft.resizeDisplay();
             callback.setReturnValue(true);
         } else {
