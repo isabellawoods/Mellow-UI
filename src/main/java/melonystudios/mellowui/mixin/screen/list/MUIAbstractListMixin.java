@@ -53,7 +53,7 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
             callback.cancel();
             RenderComponents components = RenderComponents.INSTANCE;
             Tessellator tessellator = Tessellator.getInstance();

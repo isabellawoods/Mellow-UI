@@ -36,7 +36,7 @@ public class UpdatedChatSettingsScreen extends WithNarratorSettingsScreen {
 
     @Override
     protected void init() {
-        if (MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) {
             this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             this.list.addSmall(CHAT_OPTIONS);
             this.children.add(this.list);
@@ -51,7 +51,7 @@ public class UpdatedChatSettingsScreen extends WithNarratorSettingsScreen {
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) {
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
             drawCenteredString(stack, this.font, new TranslationTextComponent("menu.minecraft.chat_settings.title"), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);

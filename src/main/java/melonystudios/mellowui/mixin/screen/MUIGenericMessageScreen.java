@@ -46,7 +46,7 @@ public abstract class MUIGenericMessageScreen extends Screen {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         callback.cancel();
-        if (this.title instanceof TranslationTextComponent && ((TranslationTextComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) {
+        if (this.title instanceof TranslationTextComponent && ((TranslationTextComponent) this.title).getKey().equals("menu.savingLevel") && MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) {
             if (MellowConfigs.CLIENT_CONFIGS.defaultBackground.get()) {
                 this.components.renderTiledBackground(BACKGROUND_LOCATION, 0, 0, this.width, this.height, 0);
             } else {

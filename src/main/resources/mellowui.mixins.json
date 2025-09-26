@@ -1,10 +1,9 @@
 {
   "required": true,
-  "minVersion": "0.8.4",
+  "minVersion": "0.8.5",
   "package": "melonystudios.mellowui.mixin",
   "refmap": "mellowui.refmap.json",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
   "client": [
     "MUIWorldPresetMixin",
     "client.MUIGameRendererMixin",
@@ -53,7 +52,6 @@
     "widget.MUITextFieldMixin",
     "widget.MUIWidgetMixin"
   ],
-  "server": [],
   "injectors": {
     "defaultRequire": 1
   }

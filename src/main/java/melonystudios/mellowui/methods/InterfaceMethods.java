@@ -27,30 +27,42 @@ public class InterfaceMethods {
     }
 
     public interface TitleScreenMethods {
+        /// @return Whether this title screen keeps its logo visible during the fading animation.
         default boolean keepsLogoThroughFade() {
             return false;
         }
 
+        /// Sets whether the title screen keeps its logo visible during the fading animation.
+        /// @param keep Whether to keep it visible.
         default void keepLogoThroughFade(boolean keep) {}
     }
 
     public interface PackRepositoryMethods {
+        /// Adds a pack to the list of currently selected resource pack.
+        /// @param id The id of the resource pack.
         default boolean addPack(String id) {
             return false;
         }
 
+        /// Removes a pack to the list of currently selected resource pack.
+        /// @param id The id of the resource pack.
         default boolean removePack(String id) {
             return false;
         }
     }
 
     public interface PostChainMethods {
+        /// Sets the value of a provided uniform.
+        /// @param name The uniform name.
+        /// @param value The value of the uniform.
         default void setUniform(String name, float value) {}
     }
 
     public interface SoundEngineMethods {
+        /// Reloads *Minecraft*'s {@linkplain net.minecraft.client.audio.SoundEngine#reload **sound engine**}.
         default void reloadSoundEngine() {}
 
+        /// @return A list of all available sound devices to use.
         default List<String> getAvailableSoundDevices() {
             List<String> devices = ALUtil.getStringList(0L, 4115);
             return devices == null ? Collections.emptyList() : devices;
@@ -58,20 +70,24 @@ public class InterfaceMethods {
     }
 
     public interface SoundSystemMethods {
+        /// @return Whether the current audio device is disconnected
         default boolean isCurrentDeviceDisconnected() {
             return false;
         }
 
+        /// @return Whether the default audio device has changed.
         default boolean hasDefaultDeviceChanged() {
             return false;
         }
 
+        /// @return The name of the current audio device.
         default String getCurrentDeviceName() {
             return "";
         }
     }
 
     public interface CubeMapMethods {
+        /// @return A *nullable* array of {@linkplain ResourceLocation resource locations} representing all six panorama textures.
         @Nullable
         default ResourceLocation[] getPanoramaTextures() {
             return null;
@@ -79,16 +95,19 @@ public class InterfaceMethods {
     }
 
     public interface PanoramaRendererMethods {
+        /// @return Whether the provided panorama is the same as the panorama currently being rendered.
         default boolean samePanorama(RenderSkybox panoramaRenderer) {
             return false;
         }
 
+        /// Gets the {@linkplain RenderSkyboxCube cube map} used by the panorama renderer.
         default RenderSkyboxCube cubeMap() {
             return MainMenuScreen.CUBE_MAP;
         }
     }
 
     public interface MusicManagerMethods {
+        /// A *nullable* {@linkplain ISound sound instance} of the music currently being played.
         @Nullable
         default ISound mui$getNowPlaying() {
             return null;
@@ -96,10 +115,12 @@ public class InterfaceMethods {
     }
 
     public interface WorldPresetsMethods {
+        /// @return A list of all registered world types.
         default List<BiomeGeneratorTypeScreens> getPresets() {
             return Lists.newArrayList();
         }
 
+        /// @return A map of all registered world types and their screen factories.
         default Map<Optional<BiomeGeneratorTypeScreens>, BiomeGeneratorTypeScreens.IFactory> getEditors() {
             return Maps.newHashMap();
         }

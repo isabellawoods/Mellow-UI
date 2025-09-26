@@ -48,7 +48,7 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
 
     @Override
     protected void init() {
-        if (MellowConfigs.CLIENT_CONFIGS.updateAccessibilityMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
             this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             for (AbstractOption option : OPTIONS) {
                 if (!UPDATED_OPTIONS.contains(option) && option != FOV_EFFECTS_SCALE) UPDATED_OPTIONS.add(option);
@@ -70,7 +70,7 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
 
     @Inject(method = "createFooter", at = @At("HEAD"), cancellable = true)
     public void createFooter(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateAccessibilityMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
             callback.cancel();
 
             // Accessibility Guide
@@ -85,7 +85,7 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateAccessibilityMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
             drawCenteredString(stack, this.font, new TranslationTextComponent("menu.minecraft.accessibility_settings.title"), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);

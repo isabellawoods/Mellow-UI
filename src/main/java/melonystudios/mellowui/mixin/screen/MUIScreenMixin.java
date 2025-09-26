@@ -31,7 +31,7 @@ public abstract class MUIScreenMixin extends FocusableGui {
 
     @Inject(method = "renderBackground(Lcom/mojang/blaze3d/matrix/MatrixStack;I)V", at = @At("HEAD"), cancellable = true)
     public void renderBackground(MatrixStack stack, int vOffset, CallbackInfo callback) {
-        if (!MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) return;
+        if (!MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) return;
         callback.cancel();
         float partialTicks = this.minecraft.getDeltaFrameTime();
         this.components.renderBackground(this.minecraft.screen, partialTicks, vOffset, this.width, this.height);
@@ -39,7 +39,7 @@ public abstract class MUIScreenMixin extends FocusableGui {
 
     @Inject(method = "renderDirtBackground", at = @At("HEAD"), cancellable = true)
     public void renderTransparentBackground(int vOffset, CallbackInfo callback) {
-        if (!MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) return;
+        if (!MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) return;
         callback.cancel();
         this.components.renderMenuBackground(0, 0, this.width, this.height, vOffset);
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent(this.minecraft.screen, this.components.matrixStack()));

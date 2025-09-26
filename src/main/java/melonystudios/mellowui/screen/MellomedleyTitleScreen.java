@@ -132,7 +132,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             // Mods
             this.addButton(new ImageSetModButton(70, 206 + modsOffset, 20, 20,
                     GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
-                    this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                    this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.tooltip", ModList.get().getMods().size()), mouseX, mouseY),
                     new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
 
             // Language

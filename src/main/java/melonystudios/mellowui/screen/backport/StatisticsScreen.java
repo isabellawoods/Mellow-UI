@@ -133,7 +133,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
             drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2, 0xFFFFFF);
             drawCenteredString(stack, this.font, LOADING_SYMBOLS[(int) (Util.getMillis() / 150L % (long) LOADING_SYMBOLS.length)], this.width / 2, this.height / 2 + 9 * 2, 0xFFFFFF);
         } else {
-            if (!MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
+            if (!MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
                 this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop() + 2, this.activeList.getRight(), this.activeList.getBottom());
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
                 this.components.disableScissor();
@@ -148,7 +148,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 

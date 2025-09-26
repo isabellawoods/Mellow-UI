@@ -50,8 +50,8 @@ public class WidgetConfigs {
         this.highContrastFlairAccentColor = builder.comment("Text color for the default mod list flair.").defineInRange("flair.highContrastFlairAccentColor", 0xFFFF55, 0, 0xFFFFFF);
 
         // Splash Texts
-        this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").defineInRange("splash.defaultTextColor", 0xFFFF00, 0, 0xFFFFFF);
-        this.mellomedleySplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").defineInRange("splash.mellomedleyTextColor", 0xBDCF73, 0, 0xFFFFFF);
+        this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").translation("config.mellowui.splash_text_color").defineInRange("splash.defaultTextColor", 0xFFFF00, 0, 0xFFFFFF);
+        this.mellomedleySplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").translation("config.mellomedley.splash_text_color").defineInRange("splash.mellomedleyTextColor", 0xBDCF73, 0, 0xFFFFFF);
         this.highContrastSplashTextColor = builder.comment("The color to use for the splash text while the high contrast resource pack is enabled.").defineInRange("splash.highContrastTextColor", 0x57FFE1, 0, 0xFFFFFF);
 
         // Mod Update Availability
@@ -59,7 +59,7 @@ public class WidgetConfigs {
         this.highContrastUpdateAvailableColor = builder.comment("Text color for the 'Update Available!' button on Mellow UI's mod list screen.").defineInRange("widget.highContrastUpdateAvailableColor", 0x57FFE1, 0, 0xFFFFFF);
 
         // Backgrounds
-        this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").defineInRange("background.loadingScreenColor", 0, 0, 0xFFFFFF);
+        this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").translation("config.mellowui.monochrome_loading_screen_color").defineInRange("background.loadingScreenColor", 0, 0, 0xFFFFFF);
         builder.pop();
     }
 }

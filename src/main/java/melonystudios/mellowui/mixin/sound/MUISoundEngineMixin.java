@@ -5,6 +5,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.audio.SoundSystem;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,7 +44,7 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
     @Unique
     private boolean shouldChangeDevice() {
         if (((InterfaceMethods.SoundSystemMethods) this.library).isCurrentDeviceDisconnected()) {
-            MellowUI.LOGGER.info("Audio device was lost!");
+            MellowUI.logger("SoundEngine").info(I18n.get("logger.mellowui.sound_engine.lost_device"));
             return true;
         } else {
             long millis = Util.getMillis();
@@ -55,11 +56,11 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
                     Util.ioPool().execute(() -> {
                         if ("".equals(soundDevice)) {
                             if (((InterfaceMethods.SoundSystemMethods) this.library).hasDefaultDeviceChanged()) {
-                                MellowUI.LOGGER.info("System default audio device has changed!");
+                                MellowUI.logger("SoundEngine").info(I18n.get("logger.mellowui.sound_engine.changed_device"));
                                 this.devicePoolState.compareAndSet(ONGOING, CHANGE_DETECTED);
                             }
                         } else if (!((InterfaceMethods.SoundSystemMethods) this.library).getCurrentDeviceName().equals(soundDevice) && this.getAvailableSoundDevices().contains(soundDevice)) {
-                            MellowUI.LOGGER.info("Preferred audio device has become available!");
+                            MellowUI.logger("SoundEngine").info(I18n.get("logger.mellowui.sound_engine.preferred_device"));
                             this.devicePoolState.compareAndSet(ONGOING, CHANGE_DETECTED);
                         }
 

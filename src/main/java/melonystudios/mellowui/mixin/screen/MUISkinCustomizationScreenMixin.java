@@ -20,7 +20,7 @@ public class MUISkinCustomizationScreenMixin extends SettingsScreen {
 
     @Inject(method = "init", at = @At("TAIL"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateSkinCustomizationMenu.get() && this.minecraft != null) {
+        if (MellowConfigs.CLIENT_CONFIGS.skinCustomizationStyle.get() && this.minecraft != null) {
             callback.cancel();
             this.minecraft.setScreen(new SkinCustomizationScreen(this.lastScreen, this.minecraft.options));
         }

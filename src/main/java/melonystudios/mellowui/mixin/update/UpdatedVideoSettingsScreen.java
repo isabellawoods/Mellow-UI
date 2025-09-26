@@ -46,7 +46,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_1) return;
+        if (MellowConfigs.CLIENT_CONFIGS.videoSettingsStyle.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
         this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         this.list.addBig(new FullscreenResolutionOption(this.minecraft.getWindow()));
@@ -70,7 +70,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_1) return;
+        if (MellowConfigs.CLIENT_CONFIGS.videoSettingsStyle.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
@@ -82,7 +82,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
 
     @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
     public void mouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_1) return;
+        if (MellowConfigs.CLIENT_CONFIGS.videoSettingsStyle.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
         int guiScale = this.options.guiScale;
         if (super.mouseReleased(mouseX, mouseY, button)) {

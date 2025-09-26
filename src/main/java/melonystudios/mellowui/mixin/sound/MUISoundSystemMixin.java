@@ -5,6 +5,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.audio.SoundSystem;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.openal.*;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,12 +44,14 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
     @Inject(method = "init", at = @At("TAIL"))
     public void initTail(CallbackInfo callback) {
         ALCCapabilities capabilities = ALC.createCapabilities(this.device);
-        if (checkForALCError(this.device, "Get capabilities")) {
-            throw new IllegalStateException("Failed to get OpenAL capabilities");
+        if (checkForALCError(this.device, "Get Capabilities")) {
+            throw new IllegalStateException(I18n.get("logger.mellowui.sound_system.no_capabilities"));
         } else if (!capabilities.OpenALC11) {
-            throw new IllegalStateException("OpenAL 1.1 not supported");
+            throw new IllegalStateException(I18n.get("logger.mellowui.sound_system.unsupported"));
         } else {
             // Enabling HRTF audio
+            String translation = "logger.mellowui.sound_system.initialized" + (this.getCurrentDeviceName().isEmpty() ? ".unknown" : "");
+            MellowUI.logger("SoundEngine").info(I18n.get(translation));
             this.setHRTF(capabilities.ALC_SOFT_HRTF && MellowConfigs.CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
         }
     }
@@ -60,7 +63,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 IntBuffer buffer = (IntBuffer) stack.callocInt(10).put(6546).put(directionalAudio ? 1 : 0).put(6550).put(0).put(0).flip();
                 if (!SOFTHRTF.alcResetDeviceSOFT(this.device, buffer)) {
-                    MellowUI.LOGGER.warn("Failed to reset device: {}", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device)));
+                    MellowUI.logger("SoundEngine").warn(I18n.get("logger.mellowui.sound_system.reset", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device))));
                 }
             }
         }
@@ -77,7 +80,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
         if (!deviceSpecifier.isPresent()) deviceSpecifier = tryOpenDevice(null);
 
         if (!deviceSpecifier.isPresent()) {
-            throw new IllegalStateException("Failed to open OpenAL device");
+            throw new IllegalStateException(I18n.get("logger.mellowui.sound_system.failed"));
         } else {
             callback.setReturnValue(deviceSpecifier.getAsLong());
         }
@@ -104,7 +107,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
         String deviceName = ALC10.alcGetString(this.device, 4115);
 
         if (deviceName == null) deviceName = ALC10.alcGetString(this.device, 4101);
-        if (deviceName == null) deviceName = "Unknown";
+        if (deviceName == null) deviceName = "";
 
         return deviceName;
     }
@@ -112,7 +115,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
     @Unique
     private static OptionalLong tryOpenDevice(@Nullable String deviceSpecifier) {
         long deviceHandle = ALC10.alcOpenDevice(deviceSpecifier);
-        return deviceHandle != 0L && !checkForALCError(deviceHandle, "Open device") ? OptionalLong.of(deviceHandle) : OptionalLong.empty();
+        return deviceHandle != 0L && !checkForALCError(deviceHandle, "Open Device") ? OptionalLong.of(deviceHandle) : OptionalLong.empty();
     }
 
     @Unique
@@ -127,10 +130,10 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
     }
 
     @Unique
-    private static boolean checkForALCError(long deviceHandle, String operationState) {
+    private static boolean checkForALCError(long deviceHandle, String operation) {
         int errorID = ALC10.alcGetError(deviceHandle);
         if (errorID != 0) {
-            MellowUI.LOGGER.error("{}{}: {}", operationState, deviceHandle, getErrorMessage(errorID));
+            MellowUI.logger("SoundEngine").error("[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
             return true;
         } else {
             return false;
@@ -139,13 +142,13 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
 
     @Unique
     private static String getErrorMessage(int errorID) {
-        switch(errorID) {
-            case 40961: return "Invalid device.";
-            case 40962: return "Invalid context.";
-            case 40963: return "Illegal enum.";
-            case 40964: return "Invalid value.";
-            case 40965: return "Unable to allocate memory.";
-            default: return "An unrecognized error occurred.";
+        switch (errorID) {
+            case 40961: return I18n.get("logger.mellowui.sound_system.error_device");
+            case 40962: return I18n.get("logger.mellowui.sound_system.error_context");
+            case 40963: return I18n.get("logger.mellowui.sound_system.error_enum");
+            case 40964: return I18n.get("logger.mellowui.sound_system.error_value");
+            case 40965: return I18n.get("logger.mellowui.sound_system.error_memory");
+            default: return I18n.get("logger.mellowui.sound_system.error_unknown");
         }
     }
 }

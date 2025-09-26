@@ -2,6 +2,8 @@ package melonystudios.mellowui.screen;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.config.ForgeConfigEntries;
+import melonystudios.mellowui.config.MellomedleyConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.screen.widget.TabButton;
@@ -28,14 +30,15 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
     // Mellow UI
     public static final List<AbstractOption> MELLOW_UI = Lists.newArrayList(PANORAMA_BOBBING, MONOCHROME_LOADING_SCREEN_COLOR, LEGACY_BUTTON_COLORS, SCROLLING_TEXT, DEFAULT_BACKGROUND, CULL_OVERSIZED_ITEMS, BACKGROUND_SHADERS, BLURRY_CONTAINERS, LOG_GL_ERRORS);
-    public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON, LOGO_STYLE);
+    public static final List<AbstractOption> MAIN_MENU = Lists.newArrayList(SPLASH_TEXT_COLOR, SPLASH_TEXT_POSITION, DISABLE_BRANDING, MAIN_MENU_MOD_BUTTON);
     public static final List<AbstractOption> INGAME_MENUS = Lists.newArrayList(PAUSE_MENU_MOD_BUTTON, GRADIENT_BACKGROUND);
-    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(UPDATED_SCREEN_BACKGROUND, UPDATED_LIST_BACKGROUND, MAIN_MENU_STYLE, UPDATED_CREATE_NEW_WORLD_MENU, UPDATED_PAUSE_MENU, UPDATED_OUT_OF_MEMORY_MENU);
-    public static final List<AbstractOption> OPTION_UPDATES = Lists.newArrayList(UPDATED_OPTIONS_MENU, REPLACE_REALMS_NOTIFICATIONS, UPDATED_SKIN_CUSTOMIZATION_MENU, UPDATED_MUSIC_AND_SOUNDS_MENU, UPDATED_VIDEO_SETTINGS_MENU, UPDATED_CONTROLS_MENU, UPDATED_MOUSE_SETTINGS_MENU, UPDATED_CHAT_SETTINGS_MENU, UPDATED_PACK_MENU, UPDATED_ACCESSIBILITY_MENU);
+    public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, PAUSE_STYLE, OUT_OF_MEMORY_STYLE);
+    public static final List<AbstractOption> OPTION_UPDATES = Lists.newArrayList(OPTIONS_STYLE, REPLACE_REALMS_NOTIFICATIONS, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE);
+    public static final List<AbstractOption> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, PAUSE_STYLE, OPTIONS_STYLE, REPLACE_REALMS_NOTIFICATIONS, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE);
     private OptionsRowList mellowUIList;
 
     // Mellomedley
-    public static final List<AbstractOption> MELLOMEDLEY = Lists.newArrayList(MELLO_SPLASH_TEXT_COLOR, MELLOMEDLEY_MAIN_MENU_MOD_BUTTON);
+    public static final List<AbstractOption> MELLOMEDLEY = Lists.newArrayList(MellomedleyConfigEntries.SPLASH_TEXT_COLOR, MellomedleyConfigEntries.MAIN_MENU_MOD_BUTTON, MellomedleyConfigEntries.MELLOMEDLEY_VERSION);
     private OptionsRowList mellomedleyList;
 
     // Vanilla
@@ -44,7 +47,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     private OptionsRowList vanillaList;
 
     // Forge
-    public static final List<AbstractOption> FORGE = Lists.newArrayList(MOD_LIST_SORTING, MOD_LIST_STYLE);
+    public static final List<AbstractOption> FORGE = Lists.newArrayList(ForgeConfigEntries.MOD_LIST_SORTING, MOD_LIST_STYLE);
     private OptionsRowList forgeList;
 
     // Tabs and lists
@@ -66,7 +69,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         super.tick();
         MONOCHROME_LOADING_SCREEN_COLOR.tick();
         SPLASH_TEXT_COLOR.tick();
-        MELLO_SPLASH_TEXT_COLOR.tick();
+        MellomedleyConfigEntries.SPLASH_TEXT_COLOR.tick();
     }
 
     @Override
@@ -79,10 +82,12 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.mellowUIList.addSmall(MAIN_MENU.toArray(new AbstractOption[0]));
         this.mellowUIList.addBig(INGAME_MENUS_SEPARATOR);
         this.mellowUIList.addSmall(INGAME_MENUS.toArray(new AbstractOption[0]));
-        this.mellowUIList.addBig(MENU_UPDATES_SEPARATOR);
-        this.mellowUIList.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
-        this.mellowUIList.addBig(OPTION_MENU_UPDATES_SEPARATOR);
-        this.mellowUIList.addSmall(OPTION_UPDATES.toArray(new AbstractOption[0]));
+//        this.mellowUIList.addBig(MENU_UPDATES_SEPARATOR);
+//        this.mellowUIList.addSmall(MENU_UPDATES.toArray(new AbstractOption[0]));
+//        this.mellowUIList.addBig(OPTION_MENU_UPDATES_SEPARATOR);
+//        this.mellowUIList.addSmall(OPTION_UPDATES.toArray(new AbstractOption[0]));
+        this.mellowUIList.addBig(STYLES_SEPARATOR);
+        this.mellowUIList.addSmall(STYLES.toArray(new AbstractOption[0]));
         this.mellowUIList.setRenderTopAndBottom(false);
         this.mellowUIList.setRenderBackground(false);
 
@@ -92,6 +97,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.mellomedleyList.setRenderBackground(false);
 
         this.vanillaList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.vanillaList.addSmall(ONBOARD_ACCESSIBILITY, null);
         this.vanillaList.addBig(ACCESSIBILITY_SEPARATOR);
         this.vanillaList.addSmall(ACCESSIBILITY.toArray(new AbstractOption[0]));
         this.vanillaList.addBig(MUSIC_AND_SOUNDS_SEPARATOR);
@@ -113,7 +119,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         Widget panoramaCameraPitch = this.mellowUIList.findOption(PANORAMA_CAMERA_PITCH);
         if (panoramaCameraPitch != null) panoramaCameraPitch.active = !MellowConfigs.CLIENT_CONFIGS.panoramaBobbing.get();
 
-        Widget updatedCreateNewWorldMenu = this.mellowUIList.findOption(UPDATED_CREATE_NEW_WORLD_MENU);
+        Widget updatedCreateNewWorldMenu = this.mellowUIList.findOption(CREATE_NEW_WORLD_STYLE);
         if (updatedCreateNewWorldMenu != null) updatedCreateNewWorldMenu.active = false;
 
         Widget highContrast = this.vanillaList.findOption(VanillaConfigEntries.HIGH_CONTRAST);
@@ -156,7 +162,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.renderBackground(stack);
 
         if (this.activeList != null) {
-            if (!MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
+            if (!MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
                 this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop() + 2, this.activeList.getRight(), this.activeList.getBottom());
                 this.activeList.render(stack, mouseX, mouseY, partialTicks);
                 this.components.disableScissor();
@@ -175,7 +181,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 34, this.width, this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, 34, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 }

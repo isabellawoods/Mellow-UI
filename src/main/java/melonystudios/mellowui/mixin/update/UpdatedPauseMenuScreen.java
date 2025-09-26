@@ -49,7 +49,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
 
     @Inject(method = "createPauseMenu", at = @At("HEAD"), cancellable = true)
     protected void createPauseMenu(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updatePauseMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.pauseStyle.get()) {
             if (this.minecraft == null) return;
             callback.cancel();
             FourStyles buttonStyle = MellowConfigs.CLIENT_CONFIGS.pauseMenuModButton.get();
@@ -108,7 +108,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
                 if (!this.minecraft.isDemo() && buttonStyle == FourStyles.OPTION_2) {
                     this.addButton(new ImageSetModButton(this.width / 2 + 106, this.height / 4 + 72 + yOffset, 20, 20,
                             GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
-                            this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                            this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.tooltip", ModList.get().getMods().size()), mouseX, mouseY),
                             new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
                 }
             }
@@ -164,7 +164,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updatePauseMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.pauseStyle.get()) {
             callback.cancel();
             if (this.showPauseMenu) {
                 this.renderBackground(stack);

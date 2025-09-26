@@ -5,6 +5,8 @@ import melonystudios.mellowui.screen.widget.WidgetTextureSet;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
+import static melonystudios.mellowui.MellowUI.gui;
+
 public class GUITextures {
     // Texture Sets
     public static final WidgetTextureSet SWITCH_STYLE_SET = new WidgetTextureSet(gui("widget/icon/switch_style"), gui("widget/icon/switch_style_highlighted"), gui("widget/icon/switch_style_disabled"));
@@ -80,8 +82,4 @@ public class GUITextures {
     // by default points to a copy of the vanilla "blur" shader (because I don't know how to port the updated blur shader, however this works fine)
     public static final ResourceLocation MUI_HIGH_CONTRAST = MellowUI.mellowUI("high_contrast");
     public static final ResourceLocation LIBRARY_HIGH_CONTRAST = new ResourceLocation("melonylib", "high_contrast"); // adding this for compatibility with my older mods
-
-    public static ResourceLocation gui(String name) {
-        return MellowUI.mellowUI("textures/gui/" + name + ".png");
-    }
 }

@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 
 import static melonystudios.mellowui.util.shader.PostEffects.*;
 
+/// *Mellow UI*'s default **shader manager**, for handling the selection and rendering of panoramic or world shaders.
 public class ShaderManager {
     public static PostEffect CURRENT_EFFECT = MUI_BLUR;
     public static List<PostEffect> EFFECTS = Lists.newArrayList(MUI_BLUR, ANTIALIAS, ART, BITS, BLOBS, BLOBS2, BLUR, BUMPY, COLOR_CONVOLVE, CREEPER, DECONVERGE,
@@ -36,26 +37,38 @@ public class ShaderManager {
     private static final List<RenderType> END_PORTAL_TYPES = IntStream.range(0, 16).mapToObj(layer -> RenderType.endPortal(layer + 1)).collect(ImmutableList.toImmutableList());
     public static float BLUR_PROGRESS = 0;
 
+    /// @return `true` whether a custom {@link PostEffect} is loaded.
     public static boolean customShaderLoaded() {
         return CURRENT_EFFECT.shaderIdentifier() != -1;
     }
 
+    /// Sets the currently selected {@link PostEffect}.
+    /// @param minecraft The *Minecraft* client instance.
+    /// @param effectLocation A resource location of a post effect.
     public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation) {
         setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR));
     }
 
+    /// Sets the currently selected {@link PostEffect}.
+    /// @param minecraft The *Minecraft* client instance.
+    /// @param effect The post effect to be selected.
     public static void setPostEffect(Minecraft minecraft, PostEffect effect) {
         CURRENT_EFFECT = effect;
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
         if (minecraft.level != null) minecraft.gameRenderer.loadEffect(CURRENT_EFFECT.getPostEffectFile());
     }
 
+    /// Clears any selected {@link PostEffect PostEffects} from the panorama and the game renderer.
+    /// @param minecraft The *Minecraft* client instance.
     public static void clearPostEffect(Minecraft minecraft) {
         CURRENT_EFFECT = MUI_BLUR;
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
         minecraft.gameRenderer.shutdownEffect();
     }
 
+    /// Reloads the {@link PostEffect} on the panorama.
+    /// @param resourceManager The default resource manager,
+    /// @param minecraft The *Minecraft* client instance.
     public static void reloadPanoramaShaders(IResourceManager resourceManager, Minecraft minecraft) {
         if (PANORAMA_SHADER != null) PANORAMA_SHADER.close();
         ResourceLocation shaderLocation = CURRENT_EFFECT.getPostEffectFile();
@@ -64,13 +77,17 @@ public class ShaderManager {
             PANORAMA_SHADER = new ShaderGroup(minecraft.getTextureManager(), resourceManager, minecraft.getMainRenderTarget(), shaderLocation);
             PANORAMA_SHADER.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
         } catch (IOException exception) {
-            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.load_shader", shaderLocation).getString(), exception);
+            MellowUI.logger("ShaderManager").warn(new TranslationTextComponent("error.mellowui.load_shader", shaderLocation).getString(), exception);
         } catch (JsonSyntaxException exception) {
-            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.parse_shader", shaderLocation).getString(), exception);
+            MellowUI.logger("ShaderManager").warn(new TranslationTextComponent("error.mellowui.parse_shader", shaderLocation).getString(), exception);
         }
     }
 
-    public static void processPanoramaShaders(float partialTicks, Boolean fadeIn) {
+    /// Prepares the currently selected panorama {@linkplain PostEffect shader} to be bound to the {@linkplain Minecraft#mainRenderTarget **main render target**}.
+    /// @param partialTicks The partial tick time.
+    /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
+    /// @apiNote Fading is **not** fully implemented.
+    public static void preparePanoramaShaders(float partialTicks, Boolean fadeIn) {
         if (PANORAMA_SHADER == null) return;
         if (CURRENT_EFFECT.shaderIdentifier() == -1 && MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get() <= 0) return;
 
@@ -94,6 +111,9 @@ public class ShaderManager {
         RenderSystem.enableTexture();
     }
 
+    /// Gets the value of a uniform based on its name.
+    /// @param name The shader uniform name.
+    /// @return {@linkplain MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**} if the uniform is `Radius`, or `0` if not.
     private static float getUniformValue(String name) {
         switch (name) {
             case "Radius": return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
@@ -101,6 +121,9 @@ public class ShaderManager {
         }
     }
 
+    /// Processes the panorama {@linkplain PostEffect shader} fade in/out.
+    /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
+    /// @apiNote Fading is **not** fully implemented.
     private static float fadeBackgroundBlurriness(boolean fadeIn) {
         int targetValue = MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
         float currentValue = BLUR_PROGRESS;
@@ -116,6 +139,13 @@ public class ShaderManager {
         return currentValue == targetValue ? targetValue : (float) MathHelper.clampedLerp(fadeIn ? targetValue : currentValue, fadeIn ? currentValue : targetValue, BLUR_PROGRESS);
     }
 
+    /// Renders the **end portal** effect onto the screen.
+    /// @param stack The default {@link MatrixStack} used for rendering.
+    /// @param x0 The minimum x-position to render the effect.
+    /// @param y0 The minimum y-position to render the effect.
+    /// @param x1 The maximum x-position to render the effect.
+    /// @param y1 The maximum y-position to render the effect.
+    /// @param z The z-position to render the effect, usually set to `-90`.
     public static void fillEndPortal(MatrixStack stack, int x0, int y0, int x1, int y1, int z) {
         IRenderTypeBuffer buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         Matrix4f matrix4F = stack.last().pose();
@@ -134,6 +164,14 @@ public class ShaderManager {
         }
     }
 
+    /// Renders any **render types** onto the screen.
+    /// @param stack The default {@link MatrixStack} used for rendering.
+    /// @param renderType The {@link RenderType} being rendered.
+    /// @param x0 The minimum x-position to render the effect.
+    /// @param y0 The minimum y-position to render the effect.
+    /// @param x1 The maximum x-position to render the effect.
+    /// @param y1 The maximum y-position to render the effect.
+    /// @param z The z-position to render the effect.
     // this currently doesn't work because shader rendering in 1.16 is hard ~isa 27-4-25
     public static void fillRenderType(MatrixStack stack, RenderType renderType, int x0, int y0, int x1, int y1, int z) {
         IRenderTypeBuffer buffer = Minecraft.getInstance().renderBuffers().bufferSource();

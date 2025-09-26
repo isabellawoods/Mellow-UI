@@ -140,7 +140,7 @@ public class MUIOptionsScreen extends SettingsScreen {
                 Screen wardrobeScreen = (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId());
                 Button settingsButton = this.addButton(new ImageSetButton(this.width / 2 - 180, buttonHeight, 20, 20, GUITextures.BREAST_SETTINGS_SET,
                         button -> this.minecraft.setScreen(wardrobeScreen), (button, stack, mouseX, mouseY) ->
-                        RenderComponents.INSTANCE.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.breast_settings.desc" + (this.minecraft.level == null ? ".in_world" : "")), mouseX, mouseY),
+                        RenderComponents.INSTANCE.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.breast_settings.tooltip" + (this.minecraft.level == null ? ".in_world" : "")), mouseX, mouseY),
                         new TranslationTextComponent("button.mellowui.breast_settings")));
                 settingsButton.active = this.minecraft.level != null;
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
