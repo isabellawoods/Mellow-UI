@@ -8,6 +8,8 @@ import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
+import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.screen.MellowCustomizationScreen;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.widget.*;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
@@ -23,6 +25,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.realms.RealmsBridgeScreen;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedConstants;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Util;
@@ -42,6 +45,7 @@ import javax.annotation.Nullable;
 @Mixin(value = MainMenuScreen.class, priority = 900)
 public abstract class UpdatedTitleScreen extends Screen implements InterfaceMethods.TitleScreenMethods {
     @Unique private final RenderComponents components = RenderComponents.INSTANCE;
+    @Shadow @Final private static ResourceLocation PANORAMA_OVERLAY;
     @Mutable @Shadow @Final private RenderSkybox panorama;
     @Shadow private boolean realmsNotificationsInitialized;
     @Shadow private Screen realmsNotificationsScreen;
@@ -70,9 +74,14 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         this.keepLogoThroughFade = keep;
     }
 
+    @Override
+    public ResourceLocation getPanoramaOverlay() {
+        return PANORAMA_OVERLAY;
+    }
+
     @Inject(method = "<init>(Z)V", at = @At("TAIL"))
     public void constructor(boolean fading, CallbackInfo callback) {
-        this.components.replacePanorama(this.panorama);
+        this.components.replacePanorama(this.panorama, true);
     }
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
@@ -90,6 +99,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             return;
         }
         LogoRenderer.rerollEasterEgg();
+        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
@@ -155,7 +165,10 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         }
 
         // Switch Style
-        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this, this.width - 20, 8));
+        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 20, 8));
+
+        // Customize
+        this.addButton(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 20, 21));
     }
 
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
@@ -224,6 +237,9 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
                 // Forge's beta warning
                 this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
+
+                // Title screen icons background
+                this.components.renderTitleScreenIconsBackground(this.width - 21, 7, buttonAlpha);
 
                 // Splashes
                 if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {

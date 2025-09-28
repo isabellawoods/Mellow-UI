@@ -1,0 +1,17 @@
+{
+  "cube_map": [
+    "mellowui:gui/panorama/beta/panorama_0",
+    "mellowui:gui/panorama/beta/panorama_1",
+    "mellowui:gui/panorama/beta/panorama_2",
+    "mellowui:gui/panorama/beta/panorama_3",
+    "mellowui:gui/panorama/beta/panorama_4",
+    "mellowui:gui/panorama/beta/panorama_5"
+  ],
+  "overlay": "mellowui:gui/background/panorama_overlay",
+  "pitch_override": {
+    "type": "mellowui:bobbing",
+    "bobbing_strength": 0.01
+  },
+  "shader": "minecraft:blur",
+  "blur_strength": 20
+}

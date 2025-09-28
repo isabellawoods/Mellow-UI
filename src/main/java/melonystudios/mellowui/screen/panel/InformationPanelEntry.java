@@ -1,21 +1,28 @@
 package melonystudios.mellowui.screen.panel;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static melonystudios.mellowui.util.MellowUtils.withColor;
 
 /// Represents a **panel entry** that renders basic information, like mod id and authors, of a mod.
 public class InformationPanelEntry extends PanelEntry {
+    public static final List<String> WARN_ONCE_MODS = Lists.newArrayList();
     private final ModInfo mod;
     private final int accentColor;
     private int contentHeight;
@@ -31,6 +38,7 @@ public class InformationPanelEntry extends PanelEntry {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void renderEntry(MatrixStack stack, RenderComponents components, int x, int y, int width, int height) {
         FontRenderer font = this.panel.getFont();
         this.contentHeight = font.lineHeight;
@@ -50,8 +58,26 @@ public class InformationPanelEntry extends PanelEntry {
 
         // Authors
         yOffset += font.lineHeight;
-        ITextComponent authors = this.mod.getConfigElement("authors").map(object -> new TranslationTextComponent("menu.mellowui.mods.authors",
-                new StringTextComponent(((String) object)).withStyle(withColor(0xFFFFFF).withBold(false))).withStyle(withColor(this.accentColor).withBold(true))).orElse(null);
+        ITextComponent authors = this.mod.getConfigElement("authors").map(object -> {
+            if (object instanceof String) {
+                return new TranslationTextComponent("menu.mellowui.mods.authors",
+                        new StringTextComponent(((String) object)).withStyle(withColor(0xFFFFFF).withBold(false)))
+                        .withStyle(withColor(this.accentColor).withBold(true));
+            } else if (object instanceof ArrayList) {
+                try {
+                    ArrayList<String> authorList = (ArrayList<String>) object;
+                    IFormattableTextComponent component = new StringTextComponent(authorList.stream().collect(Collectors.joining(I18n.get("menu.mellowui.delimiter"))))
+                            .withStyle(withColor(0xFFFFFF).withBold(false));
+                    return new TranslationTextComponent("menu.mellowui.mods.authors", component).withStyle(withColor(this.accentColor).withBold(true));
+                } catch (Exception exception) {
+                    if (!WARN_ONCE_MODS.contains(this.mod.getModId())) {
+                        WARN_ONCE_MODS.add(this.mod.getModId());
+                        MellowUI.logger("InformationPanelEntry").warn(I18n.get("panel.mellowui.mod_information.broken_authors"));
+                    }
+                }
+            }
+            return null;
+        }).orElse(null);
 
         if (authors != null) {
             List<IReorderingProcessor> lines = font.split(authors, x * 2 - 12);

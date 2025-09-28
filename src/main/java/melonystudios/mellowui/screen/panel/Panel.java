@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen.panel;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
@@ -10,6 +11,9 @@ import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -52,7 +56,7 @@ public class Panel extends FocusableGui implements IRenderable {
         this.height = height;
         this.parentScreen = parentScreen;
         this.title = title;
-        this.barLeft = this.x + this.width - this.barWidth;
+        this.barLeft = this.width - this.x / 2 - 1;
     }
 
     /// Renders the contents of this panel.
@@ -79,10 +83,44 @@ public class Panel extends FocusableGui implements IRenderable {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         int relativeY = (int) (this.y - this.scrollAmount);
 
+        // Panel entries
         this.components.enableScissor(this.x, this.y, this.width, this.height + this.y);
         this.renderContents(stack, relativeY, mouseX, mouseY, partialTicks);
         for (Widget widget : this.widgets) widget.render(stack, mouseX, mouseY, partialTicks);
         this.components.disableScissor();
+
+        // Scroller
+        int maxScroll = this.getMaxScroll();
+        int y1 = this.y + this.height;
+        if (maxScroll > 0) {
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder buffer = tessellator.getBuilder();
+            RenderSystem.enableBlend();
+            RenderSystem.disableTexture();
+            int scrollX0 = this.getScrollbarPosition(); // checkerzon e checkerzinho ~sophie 27-9-25
+            int scrollX1 = scrollX0 + this.barWidth;
+            int scrollY0 = this.y;
+            int i1 = (int) ((float) ((y1 - scrollY0) * (y1 - scrollY0)) / (float) this.getContentHeight());
+            i1 = MathHelper.clamp(i1, 32, y1 - scrollY0 - 8);
+            int i2 = (int) (this.scrollAmount * (y1 - scrollY0 - i1) / maxScroll + scrollY0);
+            if (i2 < scrollY0) i2 = scrollY0;
+
+            buffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            buffer.vertex(scrollX0 + 1, y1, 0).uv(0, 1).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX1 - 1, y1, 0).uv(1, 1).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX1 - 1, scrollY0, 0).uv(1, 0).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX0 + 1, scrollY0, 0).uv(0, 0).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX0, (i2 + i1), 0).uv(0, 1).color(128, 128, 128, 191).endVertex();
+            buffer.vertex(scrollX1, (i2 + i1), 0).uv(1, 1).color(128, 128, 128, 191).endVertex();
+            buffer.vertex(scrollX1, i2, 0).uv(1, 0).color(128, 128, 128, 255).endVertex();
+            buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(128, 128, 128, 255).endVertex();
+            buffer.vertex(scrollX0, (i2 + i1 - 1), 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
+            buffer.vertex((scrollX1 - 1), (i2 + i1 - 1), 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
+            buffer.vertex((scrollX1 - 1), i2, 0).uv(1, 0).color(192, 192, 192, 255).endVertex();
+            buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(192, 192, 192, 255).endVertex();
+            tessellator.end();
+            RenderSystem.disableBlend();
+        }
     }
 
     protected <T extends Widget> T addWidget(T widget) {
@@ -133,11 +171,11 @@ public class Panel extends FocusableGui implements IRenderable {
 
     /// Gets the total height, in **Minecraft Pixels** (`mpx`), of all the content being rendered.
     ///
-    /// This is different from the {@linkplain PanelEntry#getContentHeight() entry's `getContentHeight()`} as it is multiplied by a factor of **1.5** to better match the scroll height in-game.
+    /// This is different from the {@linkplain PanelEntry#getContentHeight() entry's `getContentHeight()`} as it is made to better match the scroll height in-game.
     public int getContentHeight() {
         int height = 0;
         for (PanelEntry entry : this.entries) height += entry.getContentHeight();
-        return (int) (height * 1.5F);
+        return height + 32;
     }
 
     private void applyScrollLimits() {
@@ -150,6 +188,10 @@ public class Panel extends FocusableGui implements IRenderable {
 
     public int getScrollAmount() {
         return 20;
+    }
+
+    protected int getScrollbarPosition() {
+        return this.width - this.x / 2 - 1;
     }
 
     @Override

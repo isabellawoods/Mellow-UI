@@ -38,7 +38,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
     @Shadow
     private OptionsRowList list;
     @Unique
-    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(GRAPHICS, RENDER_DISTANCE, VanillaConfigEntries.SMOOTH_LIGHTING, FRAMERATE_LIMIT, ENABLE_VSYNC, VIEW_BOBBING, GUI_SCALE, ATTACK_INDICATOR, VanillaConfigEntries.BRIGHTNESS, RENDER_CLOUDS, USE_FULLSCREEN, PARTICLES, MIPMAP_LEVELS, ENTITY_SHADOWS, SCREEN_EFFECTS_SCALE, ENTITY_DISTANCE_SCALING, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS);
+    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(GRAPHICS, RENDER_DISTANCE, VanillaConfigEntries.SMOOTH_LIGHTING, FRAMERATE_LIMIT, ENABLE_VSYNC, GUI_SCALE, ATTACK_INDICATOR, VanillaConfigEntries.BRIGHTNESS, RENDER_CLOUDS, USE_FULLSCREEN, PARTICLES, MIPMAP_LEVELS, ENTITY_SHADOWS, SCREEN_EFFECTS_SCALE, ENTITY_DISTANCE_SCALING, VanillaConfigEntries.FOV_EFFECTS, VanillaConfigEntries.MENU_BACKGROUND_BLURRINESS, VIEW_BOBBING);
 
     public UpdatedVideoSettingsScreen(Screen lastScreen, GameSettings options, ITextComponent title) {
         super(lastScreen, options, title);

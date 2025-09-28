@@ -1,11 +1,13 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.PostEffect;
 import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.Util;
@@ -22,12 +24,20 @@ import java.util.Optional;
 public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
     private final SuperSecretSettingsScreen parentScreen;
     private final Minecraft minecraft;
+    private final boolean canSelectShaders = Panoramas.panorama().shader() == null;
 
     public PostEffectsList(Minecraft minecraft, SuperSecretSettingsScreen parentScreen) {
         super(minecraft, parentScreen.width, parentScreen.height, 32, parentScreen.height - 32, 16);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
         ShaderManager.EFFECTS.stream().sorted(Comparator.comparingInt(PostEffect::shaderIdentifier)).forEach(effect -> this.addEntry(new Shader(this.parentScreen, effect)));
+        this.centerScrollOn(this.children().stream().filter(shader -> shader.effect.shaderIdentifier() == ShaderManager.CURRENT_EFFECT.shaderIdentifier()).findFirst().orElse(this.children().get(0)));
+    }
+
+    @Override
+    public void setFocused(@Nullable IGuiEventListener listener) {
+        super.setFocused(listener);
+        this.parentScreen.setFocused(listener);
     }
 
     @Override
@@ -38,7 +48,7 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
     @Override
     public void setSelected(@Nullable Shader shader) {
         super.setSelected(shader);
-        if (shader == null) return;
+        if (shader == null || !this.canSelectShaders) return;
 
         if (shader.effect().shaderIdentifier() == -1) {
             ShaderManager.clearPostEffect(this.minecraft);
@@ -87,15 +97,16 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
             this.y = top;
             this.width = width;
             this.height = height;
-            int color = MellowUtils.getSelectableTextColor(PostEffectsList.this.getSelected() == this, true);
+            int color = MellowUtils.getSelectableTextColor(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders);
             drawString(stack, this.parentScreen.getMinecraft().font, new TranslationTextComponent("post_effect.dot", this.name()), left + 5, top + 2, color);
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int item) {
-            if (item == 0) {
+            if (item == 0 && PostEffectsList.this.canSelectShaders) {
                 if (PostEffectsList.this.getSelected() != this && this.effect().shaderIdentifier() != -1) SuperSecretSettingsScreen.playRandomSound(this.parentScreen.getMinecraft());
                 PostEffectsList.this.setSelected(this);
+                PostEffectsList.this.setFocused(this);
                 return true;
             } else {
                 return false;

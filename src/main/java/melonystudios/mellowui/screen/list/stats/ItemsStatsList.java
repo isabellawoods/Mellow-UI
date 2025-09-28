@@ -9,9 +9,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.screen.StatsScreen;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -35,7 +35,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
     private final StatisticsScreen parentScreen;
     protected final List<StatType<Block>> blockColumns;
     protected final List<StatType<Item>> itemColumns;
-    private final int[] iconOffsets = new int[]{3, 4, 1, 2, 5, 6};
+    private final int[] iconOffsets = new int[] {3, 4, 1, 2, 5, 6};
     protected int headerPressed = -1;
     protected final List<Item> statItemList;
     protected final Comparator<Item> itemStatSorter = new StatComparator();
@@ -49,7 +49,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
         this.blockColumns = Lists.newArrayList();
         this.blockColumns.add(Stats.BLOCK_MINED);
         this.itemColumns = Lists.newArrayList(Stats.ITEM_BROKEN, Stats.ITEM_CRAFTED, Stats.ITEM_USED, Stats.ITEM_PICKED_UP, Stats.ITEM_DROPPED);
-        this.setRenderHeader(true, 20);
+        this.setRenderHeader(true, 19);
         Set<Item> items = Sets.newIdentityHashSet();
 
         for (Item item : ForgeRegistries.ITEMS) {
@@ -68,9 +68,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
             boolean hasBlock = false;
 
             for (StatType<Block> type : this.blockColumns) {
-                if (type.contains(block) && this.parentScreen.statisticsManager().getValue(type.get(block)) > 0) {
-                    hasBlock = true;
-                }
+                if (type.contains(block) && this.parentScreen.statisticsManager().getValue(type.get(block)) > 0) hasBlock = true;
             }
 
             if (hasBlock) items.add(block.asItem());
@@ -95,34 +93,32 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
 
     @Override
     protected void renderHeader(MatrixStack stack, int x, int y, Tessellator tesselator) {
-        if (!this.minecraft.mouseHandler.isLeftPressed()) {
-            this.headerPressed = -1;
-        }
+        if (!this.minecraft.mouseHandler.isLeftPressed()) this.headerPressed = -1;
 
         for (int i = 0; i < this.iconOffsets.length; ++i) {
-            this.parentScreen.blitSlotIcon(stack, x + this.parentScreen.getColumnX(i) - 18, y + 1, 0, this.headerPressed == i ? 0 : 18);
+            this.parentScreen.blitSlotIcon(stack, x + StatisticsScreen.getColumnX(i) - 18, y + 1, 0, this.headerPressed == i ? 0 : 18);
         }
 
         if (this.sortColumn != null) {
-            int xOffset = this.parentScreen.getColumnX(this.getColumnIndex(this.sortColumn)) - 36;
+            int xOffset = StatisticsScreen.getColumnX(this.getColumnIndex(this.sortColumn)) - 36;
             int width = this.sortOrder == 1 ? 2 : 1;
             this.parentScreen.blitSlotIcon(stack, x + xOffset, y + 1, 18 * width, 0);
         }
 
         for (int i = 0; i < this.iconOffsets.length; ++i) {
             int offset = this.headerPressed == i ? 1 : 0;
-            this.parentScreen.blitSlotIcon(stack, x + this.parentScreen.getColumnX(i) - 18 + offset, y + 1 + offset, 18 * this.iconOffsets[i], 18);
+            this.parentScreen.blitSlotIcon(stack, x + StatisticsScreen.getColumnX(i) - 18 + offset, y + 1 + offset, 18 * this.iconOffsets[i], 18);
         }
     }
 
     @Override
     public int getRowWidth() {
-        return 375;
+        return 280;
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.width / 2 + 140;
+        return this.width / 2 + 148;
     }
 
     @Override
@@ -130,7 +126,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
         this.headerPressed = -1;
 
         for (int i = 0; i < this.iconOffsets.length; ++i) {
-            int position = x - this.parentScreen.getColumnX(i);
+            int position = x - StatisticsScreen.getColumnX(i);
             if (position >= -36 && position <= 0) {
                 this.headerPressed = i;
                 break;
@@ -161,28 +157,20 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
     protected void renderDecorations(MatrixStack stack, int mouseX, int mouseY) {
         if (mouseY >= this.y0 && mouseY <= this.y1) {
             Entry entry = this.getEntryAtPosition(mouseX, mouseY);
+            ITextComponent text = null;
             int i = (this.width - this.getRowWidth()) / 2;
-            if (entry != null) {
-                if (mouseX < i + 40 || mouseX > i + 40 + 20) {
-                    return;
+            int pos = mouseX - i;
+            if (entry != null) return;
+
+            for (int k = 0; k < this.iconOffsets.length; ++k) {
+                int l = StatisticsScreen.getColumnX(k);
+                if (pos >= l - 18 && pos <= l) {
+                    text = this.getColumn(k).getDisplayName();
+                    break;
                 }
-
-                Item item = this.statItemList.get(this.children().indexOf(entry));
-                this.parentScreen.renderTooltip(stack, item.getDescription(), mouseX, mouseY);
-            } else {
-                ITextComponent text = null;
-                int pos = mouseX - i;
-
-                for (int k = 0; k < this.iconOffsets.length; ++k) {
-                    int l = this.parentScreen.getColumnX(k);
-                    if (pos >= l - 18 && pos <= l) {
-                        text = this.getColumn(k).getDisplayName();
-                        break;
-                    }
-                }
-
-                if (text != null) this.parentScreen.renderTooltip(stack, text, mouseX, mouseY);
             }
+
+            if (text != null) this.parentScreen.renderTooltip(stack, text, mouseX, mouseY);
         }
     }
 
@@ -232,9 +220,10 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
             Item item = ItemsStatsList.this.statItemList.get(index);
-            ItemsStatsList.this.parentScreen.blitSlot(stack, left + 40, top, item);
+            boolean hovered = this.isHovered(mouseX, mouseY, left - 1, top - 1, 18, 18);
+            ItemsStatsList.this.parentScreen.blitSlot(stack, left - 2, top - 2, item);
 
-            for(int i = 0; i < ItemsStatsList.this.blockColumns.size(); ++i) {
+            for (int i = 0; i < ItemsStatsList.this.blockColumns.size(); ++i) {
                 Stat<Block> stat;
                 if (item instanceof BlockItem) {
                     stat = ItemsStatsList.this.blockColumns.get(i).get(((BlockItem)item).getBlock());
@@ -242,17 +231,19 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
                     stat = null;
                 }
 
-                this.renderStat(stack, stat, left + ItemsStatsList.this.parentScreen.getColumnX(i), top, index % 2 == 0);
+                this.renderStat(stack, stat, left + StatisticsScreen.getColumnX(i), top, index % 2 == 0);
             }
 
-            for(int j = 0; j < ItemsStatsList.this.itemColumns.size(); ++j) {
-                this.renderStat(stack, ItemsStatsList.this.itemColumns.get(j).get(item), left + ItemsStatsList.this.parentScreen.getColumnX(j + ItemsStatsList.this.blockColumns.size()), top, index % 2 == 0);
+            for (int column = 0; column < ItemsStatsList.this.itemColumns.size(); ++column) {
+                this.renderStat(stack, ItemsStatsList.this.itemColumns.get(column).get(item), left + StatisticsScreen.getColumnX(column + ItemsStatsList.this.blockColumns.size()), top, index % 2 == 0);
             }
+
+            if (hovered) ItemsStatsList.this.parentScreen.renderTooltip(stack, item.getDefaultInstance(), left + 15, top + 10);
         }
 
         protected void renderStat(MatrixStack stack, @Nullable Stat<?> stat, int x, int y, boolean odd) {
-            String text = stat == null ? "-" : stat.format(ItemsStatsList.this.parentScreen.statisticsManager().getValue(stat));
-            AbstractGui.drawString(stack, ItemsStatsList.this.parentScreen.getMinecraft().font, text, x - ItemsStatsList.this.parentScreen.getMinecraft().font.width(text), y + 5, odd ? 0xFFFFFF : 0xAAAAAA);
+            String text = stat == null ? I18n.get("menu.mellowui.statistics.not_applicable") : stat.format(ItemsStatsList.this.parentScreen.statisticsManager().getValue(stat));
+            AbstractGui.drawString(stack, ItemsStatsList.this.parentScreen.getMinecraft().font, text, x - ItemsStatsList.this.parentScreen.getMinecraft().font.width(text), y + 5, odd ? 0xFFFFFF : 0xBBBBBB);
         }
 
         @Override
@@ -263,6 +254,10 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
             } else {
                 return false;
             }
+        }
+
+        public boolean isHovered(double mouseX, double mouseY, int x, int y, int width, int height) {
+            return mouseX >= (double) x && mouseY >= (double) y && mouseX < (double) (x + width) && mouseY < (double) (y + height);
         }
     }
 }

@@ -13,6 +13,9 @@ import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 import static net.minecraftforge.common.ForgeConfig.*;
 
 public class ForgeConfigEntries {
+    // Tooltips
+    public static final ITextComponent SORTING_TOOLTIP = new TranslationTextComponent("config.forge.mod_list_sorting.tooltip");
+
     // Client config
     public static final BooleanOption DISABLE_STAIR_SLAB_CULLING = new BooleanOption("config.forge.disable_stair_slab_culling", new TranslationTextComponent("config.forge.disable_stair_slab_culling.tooltip"),
             options -> CLIENT.disableStairSlabCulling.get(), (options, newValue) -> CLIENT.disableStairSlabCulling.set(newValue));
@@ -73,7 +76,10 @@ public class ForgeConfigEntries {
     // Mellow UI's common config
     public static final IteratableOption MOD_LIST_SORTING = new IteratableOption("config.forge.mod_list_sorting",
             (options, identifier) -> CLIENT_CONFIGS.modListSorting.set(ModListSorting.byId(CLIENT_CONFIGS.modListSorting.get().getId() + identifier)),
-            (options, newValue) -> new TranslationTextComponent("config.forge.mod_list_sorting", new TranslationTextComponent("config.forge.mod_list_sorting." + CLIENT_CONFIGS.modListSorting.get().toString())));
+            (options, option) -> {
+                option.setTooltip(Minecraft.getInstance().font.split(SORTING_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                return new TranslationTextComponent("config.forge.mod_list_sorting", new TranslationTextComponent("config.forge.mod_list_sorting." + CLIENT_CONFIGS.modListSorting.get().toString()));
+            });
 
     public static ITextComponent percentValueLabel(String buttonTranslation, double value) {
         return new TranslationTextComponent("options.percent_value", new TranslationTextComponent(buttonTranslation), (int) (value * 100));

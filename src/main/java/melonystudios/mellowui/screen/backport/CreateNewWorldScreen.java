@@ -160,6 +160,7 @@ public class CreateNewWorldScreen extends Screen {
 
     private void addTabs() {
         int tabWidth = this.components.threeTabWidth(this.width);
+        this.tabs.clear();
 
         // Game tab
         GameTab game = new GameTab();

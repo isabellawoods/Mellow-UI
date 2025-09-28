@@ -50,8 +50,9 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
             throw new IllegalStateException(I18n.get("logger.mellowui.sound_system.unsupported"));
         } else {
             // Enabling HRTF audio
-            String translation = "logger.mellowui.sound_system.initialized" + (this.getCurrentDeviceName().isEmpty() ? ".unknown" : "");
-            MellowUI.logger("SoundEngine").info(I18n.get(translation));
+            String currentDeviceName = this.getCurrentDeviceName().replace("OpenAL Soft on ", "");
+            String translation = "logger.mellowui.sound_system.initialized" + (currentDeviceName.isEmpty() ? ".unknown" : "");
+            MellowUI.logger("SoundSystem").info(I18n.get(translation, currentDeviceName));
             this.setHRTF(capabilities.ALC_SOFT_HRTF && MellowConfigs.CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
         }
     }
@@ -63,7 +64,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 IntBuffer buffer = (IntBuffer) stack.callocInt(10).put(6546).put(directionalAudio ? 1 : 0).put(6550).put(0).put(0).flip();
                 if (!SOFTHRTF.alcResetDeviceSOFT(this.device, buffer)) {
-                    MellowUI.logger("SoundEngine").warn(I18n.get("logger.mellowui.sound_system.reset", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device))));
+                    MellowUI.logger("SoundSystem").warn(I18n.get("logger.mellowui.sound_system.reset", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device))));
                 }
             }
         }
@@ -133,7 +134,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
     private static boolean checkForALCError(long deviceHandle, String operation) {
         int errorID = ALC10.alcGetError(deviceHandle);
         if (errorID != 0) {
-            MellowUI.logger("SoundEngine").error("[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
+            MellowUI.logger("SoundSystem").error("[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
             return true;
         } else {
             return false;

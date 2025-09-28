@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.list.PostEffectsList;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
@@ -62,10 +63,12 @@ public class SuperSecretSettingsScreen extends Screen {
     public static List<IReorderingProcessor> tooltipAt(PostEffectsList list, int mouseX, int mouseY) {
         Optional<PostEffectsList.Shader> shader = list.getMouseOver(mouseX, mouseY);
         if (shader.isPresent()) {
-            IFormattableTextComponent component = shader.get().name().copy();
+            boolean canSelectShader = Panoramas.panorama().shader() == null;
+            IFormattableTextComponent component = shader.get().name().copy().withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(list.getSelected() == shader.get(), canSelectShader)));
             component.append("\n").append(new TranslationTextComponent(((TranslationTextComponent) shader.get().name()).getKey() + ".tooltip").withStyle(TextFormatting.GRAY));
             component.append("\n").append(new StringTextComponent(shader.get().effect().assetID().toString()).withStyle(TextFormatting.DARK_GRAY));
             component.append(new TranslationTextComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(TextFormatting.DARK_GRAY));
+            if (!canSelectShader) component.append("\n").append(new TranslationTextComponent("post_effect.locked"));
             return Minecraft.getInstance().font.split(component, RenderComponents.TOOLTIP_MAX_WIDTH);
         }
         return null;
@@ -83,7 +86,7 @@ public class SuperSecretSettingsScreen extends Screen {
         minecraft.getSoundManager().play(SimpleSound.forUI(sound, pitch, 1));
 
         if (minecraft.getLaunchedVersion().contains("melony-studios-dev")) {
-            MellowUI.LOGGER.debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
+            MellowUI.logger("SuperSecretSettings").debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
         }
     }
 }

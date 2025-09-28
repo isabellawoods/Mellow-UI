@@ -1,5 +1,6 @@
 package melonystudios.mellowui.mixin.screen;
 
+import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.StatsScreen;
@@ -27,7 +28,9 @@ public class MUIStatsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        callback.cancel();
-        this.minecraft.setScreen(new StatisticsScreen(this.lastScreen, this.stats));
+        if (MellowConfigs.CLIENT_CONFIGS.statisticsStyle.get()) {
+            callback.cancel();
+            this.minecraft.setScreen(new StatisticsScreen(this.lastScreen, this.stats));
+        }
     }
 }

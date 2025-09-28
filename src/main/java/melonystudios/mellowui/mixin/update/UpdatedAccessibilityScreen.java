@@ -3,9 +3,12 @@ package melonystudios.mellowui.mixin.update;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.option.OpenMenuOption;
+import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.chat.NarratorChatListener;
@@ -29,6 +32,8 @@ import static net.minecraft.client.AbstractOption.*;
 
 @Mixin(value = AccessibilityScreen.class, priority = 900)
 public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
+    @Unique
+    private final OpenMenuOption controls = new OpenMenuOption("options.controls", new MUIControlsScreen(this, Minecraft.getInstance().options)).boldText(false);
     @Mutable
     @Shadow
     @Final
@@ -37,7 +42,7 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
     protected abstract void createFooter();
 
     @Unique
-    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, HIGH_CONTRAST, AUTO_JUMP, MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
+    private static final List<AbstractOption> UPDATED_OPTIONS = Lists.newArrayList(CLOSED_CAPTIONS, HIGH_CONTRAST, MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING,
             SCREEN_EFFECTS_SCALE, FOV_EFFECTS, MONOCHROME_LOADING_SCREEN, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS);
     @Unique
     private OptionsRowList list;
@@ -51,8 +56,12 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
         if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
             this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             for (AbstractOption option : OPTIONS) {
-                if (!UPDATED_OPTIONS.contains(option) && option != FOV_EFFECTS_SCALE) UPDATED_OPTIONS.add(option);
+                if (!UPDATED_OPTIONS.contains(option) && option != FOV_EFFECTS_SCALE && option != NARRATOR && option != AUTO_JUMP && option != SHOW_SUBTITLES &&
+                        option != TOGGLE_CROUCH && option != TOGGLE_SPRINT) {
+                    UPDATED_OPTIONS.add(option);
+                }
             }
+            this.list.addSmall(NARRATOR, this.controls);
             this.list.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
             this.children.add(this.list);
             this.createFooter();

@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -116,7 +117,10 @@ public class ShaderManager {
     /// @return {@linkplain MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**} if the uniform is `Radius`, or `0` if not.
     private static float getUniformValue(String name) {
         switch (name) {
-            case "Radius": return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+            case "Radius": {
+                if (Panoramas.panorama().blurStrength() != null) return Panoramas.panorama().blurStrength();
+                return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+            }
             default: return 0;
         }
     }

@@ -1,6 +1,6 @@
 {
   "required": true,
-  "minVersion": "0.8.5",
+  "minVersion": "0.8.4",
   "package": "melonystudios.mellowui.mixin",
   "refmap": "mellowui.refmap.json",
   "compatibilityLevel": "JAVA_8",

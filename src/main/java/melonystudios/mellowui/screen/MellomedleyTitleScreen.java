@@ -8,6 +8,7 @@ import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
 import melonystudios.mellowui.screen.widget.*;
@@ -85,6 +86,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             return;
         }
         LogoRenderer.rerollEasterEgg();
+        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         // Demo-dependent options
         if (this.minecraft.isDemo()) this.demoMenu();
@@ -143,7 +145,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
         }
 
         // Switch Style
-        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this, this.width - 20, 8));
+        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 20, 8));
+
+        // Customize
+        this.addButton(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 20, 21));
     }
 
     private void defaultMenu() {
@@ -244,6 +249,9 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
 
             // Forge's beta warning
             this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
+
+            // Title screen icons background
+            this.components.renderTitleScreenIconsBackground(this.width - 21, 7, buttonAlpha);
 
             // Splashes
             if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) SplashRenderer.mellomedleySplash(stack, this.font, this.splash, textAlpha);

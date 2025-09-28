@@ -3,6 +3,7 @@ package melonystudios.mellowui;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.resource.flair.FlairReloadListener;
+import melonystudios.mellowui.resource.panorama.PanoramaReloadListener;
 import melonystudios.mellowui.screen.MellowUIOptionsScreen;
 import melonystudios.mellowui.sound.MUISounds;
 import melonystudios.mellowui.util.MellowUtils;
@@ -43,6 +44,12 @@ public class MellowUI {
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options));
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable) MellowUtils::addHighContrastPack);
+
+        if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
+            IReloadableResourceManager manager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+            manager.registerReloadListener(new FlairReloadListener());
+            manager.registerReloadListener(new PanoramaReloadListener());
+        }
     }
 
     /// Gets a logger instance with the `mellowui/<name>` name.
@@ -64,12 +71,14 @@ public class MellowUI {
         return mellowUI("textures/gui/" + name + ".png");
     }
 
+    /// Transforms the provided resource location into a texture path.
+    /// @param location The resource location.
+    /// @return A new location, with the `textures/` prefix and `.png` suffix added.
+    public static ResourceLocation toTexturePath(ResourceLocation location) {
+        return new ResourceLocation(location.getNamespace(), (location.getPath().startsWith("textures/") ? "" : "textures/") + location.getPath() + (location.getPath().endsWith(".png") ? "" : ".png"));
+    }
+
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
-    private void clientSetup(final FMLClientSetupEvent event) {
-        if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
-            IReloadableResourceManager manager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-            manager.registerReloadListener(new FlairReloadListener());
-        }
-    }
+    private void clientSetup(final FMLClientSetupEvent event) {}
 }

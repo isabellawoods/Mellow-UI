@@ -4,11 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import melonystudios.mellowui.MellowUI;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ReloadListener;
+import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,16 +21,24 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
-public abstract class AssetReloadListener extends ReloadListener<Map<ResourceLocation, JsonElement>> {
+public abstract class AssetReloadListener extends ReloadListener<Map<ResourceLocation, JsonElement>> implements ISelectiveResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/AssetReloader");
     public static final int PATH_SUFFIX_LENGTH = ".json".length();
     private final Gson gson;
     private final String directory;
+    private final IResourceType type;
 
-    public AssetReloadListener(Gson gson, String directory) {
+    public AssetReloadListener(Gson gson, IResourceType type, String directory) {
         this.gson = gson;
         this.directory = directory;
+        this.type = type;
+    }
+
+    @Override
+    public void onResourceManagerReload(IResourceManager manager, Predicate<IResourceType> predicate) {
+        if (predicate.test(this.type)) this.prepare(manager, EmptyProfiler.INSTANCE);
     }
 
     @Override
@@ -43,12 +55,12 @@ public abstract class AssetReloadListener extends ReloadListener<Map<ResourceLoc
                 JsonElement element = JSONUtils.fromJson(this.gson, reader, JsonElement.class);
                 if (element != null) {
                     JsonElement element1 = entries.put(entryLocation, element);
-                    if (element1 != null) throw new IllegalArgumentException("Duplicate asset file with ID " + entryLocation + " ignored");
+                    if (element1 != null) throw new IllegalArgumentException(I18n.get("logger.mellowui.asset_reloader.duplicate", entryLocation));
                 } else {
-                    MellowUI.LOGGER.error("Couldn't load asset file {} from {} as it's null or empty", entryLocation, fileLocation);
+                    LOGGER.error(I18n.get("logger.mellowui.asset_reloader.loading", entryLocation, fileLocation));
                 }
             } catch (IllegalArgumentException | IOException | JsonParseException exception) {
-                MellowUI.LOGGER.error("Couldn't parse asset file {} from {}", entryLocation, fileLocation, exception);
+                LOGGER.error(I18n.get("logger.mellowui.asset_reloader.parsing", entryLocation, fileLocation), exception);
             }
         }
 

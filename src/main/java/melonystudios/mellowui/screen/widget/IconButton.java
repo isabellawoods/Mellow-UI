@@ -2,8 +2,10 @@ package melonystudios.mellowui.screen.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.config.WidgetConfigs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
 public class IconButton extends Button {
@@ -11,6 +13,7 @@ public class IconButton extends Button {
     private final int textureWidth;
     private final int textureHeight;
     private boolean renderShadow = true;
+    private float textAlpha = 0;
 
     public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, ITextComponent text, IPressable whenPressed) {
         super(x, y, width, height, text, whenPressed);
@@ -41,6 +44,10 @@ public class IconButton extends Button {
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
 
+        // Text alpha
+        if (this.isFocused() || this.isHovered()) this.textAlpha = MathHelper.clamp(this.textAlpha + 0.15F, 0, 1);
+        else this.textAlpha = MathHelper.clamp(this.textAlpha - 0.15F, 0, 1);
+
         // Icon shadow
         if (this.renderShadow) {
             RenderSystem.color4f(0.25F, 0.25F, 0.25F, this.alpha);
@@ -50,6 +57,11 @@ public class IconButton extends Button {
 
         // Icon
         blit(stack, this.x, this.y, 0, 0, this.width, this.height, this.textureWidth, this.textureHeight);
+
+        // Text
+        int color = this.isFocused() || this.isHovered() ? WidgetConfigs.WIDGET_CONFIGS.highlightedIconButtonColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultWidgetTextColor.get();
+        int alpha = MathHelper.ceil(this.textAlpha * 255) << 24;
+        if (this.textAlpha > 0) drawString(stack, minecraft.font, this.getMessage(), this.x - minecraft.font.width(this.getMessage()) - 2, this.y + 2, color | alpha);
 
         // Tooltip
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);

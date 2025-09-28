@@ -86,6 +86,6 @@ public class TabButton extends Button implements ScrollingText {
         int xOffset = Math.min(font.width(this.getMessage()), this.width - 4);
         int minX = this.x + (this.width - xOffset) / 2;
         int minY = this.y + this.height - 2;
-        fill(stack, minX, minY, minX + xOffset, minY + 1, color | 255 << 24);
+        fill(stack, minX, minY, minX + xOffset, minY + 1, color | ((int) (this.alpha * 255) << 24));
     }
 }

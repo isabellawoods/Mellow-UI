@@ -33,9 +33,9 @@ public class MUILoadingTerrainScreen extends Screen {
     @Nullable
     private TextureAtlasSprite cachedEverdawnPortalSprite;
 
-    public MUILoadingTerrainScreen(BooleanSupplier levelReceived, Reason reason) {
+    public MUILoadingTerrainScreen(BooleanSupplier worldReceived, Reason reason) {
         super(NarratorChatListener.NO_TITLE);
-        this.worldReceived = levelReceived;
+        this.worldReceived = worldReceived;
         this.reason = reason;
         this.createdAt = System.currentTimeMillis();
     }

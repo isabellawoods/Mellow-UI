@@ -53,6 +53,7 @@ public class CustomizedWorldOptionsScreen extends Screen {
         this.list.setRenderTopAndBottom(false);
         this.list.setRenderBackground(false);
         this.children.add(this.list);
+        this.tabs.clear();
         int buttonWidth = this.components.fourTabWidth(this.width);
 
         // Tabs
