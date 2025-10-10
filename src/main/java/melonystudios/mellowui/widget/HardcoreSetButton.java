@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -40,9 +40,10 @@ public class HardcoreSetButton extends ImageSetButton {
         this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + yImage * 20, this.width / 2, this.height);
 
         // Text
-        if (this.renderText) {
-            this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24);
-        }
+        if (this.renderText) this.renderWidgetText(
+                () -> this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
+                () ->  drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
+        );
 
         // Button icon
         minecraft.getTextureManager().bind(iconTexture);

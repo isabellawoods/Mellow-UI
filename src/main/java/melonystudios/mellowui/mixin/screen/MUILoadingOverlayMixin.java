@@ -26,16 +26,16 @@ public class MUILoadingOverlayMixin {
     private static int BRAND_BACKGROUND_NO_ALPHA;
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+    private void swapBackgroundColor(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         int brandBackground = 0xFFEF323D;
 
         if (MellowConfigs.CLIENT_CONFIGS.monochromeLoadingScreen.get()) {
             int color = WidgetConfigs.WIDGET_CONFIGS.monochromeLoadingScreenColor.get();
             BRAND_BACKGROUND = color(255, red(color), green(color), blue(color));
-            BRAND_BACKGROUND_NO_ALPHA = color & 16777215;
+            BRAND_BACKGROUND_NO_ALPHA = color & 0xFFFFFF;
         } else {
             BRAND_BACKGROUND = brandBackground;
-            BRAND_BACKGROUND_NO_ALPHA = brandBackground & 16777215;
+            BRAND_BACKGROUND_NO_ALPHA = brandBackground & 0xFFFFFF;
         }
     }
 }

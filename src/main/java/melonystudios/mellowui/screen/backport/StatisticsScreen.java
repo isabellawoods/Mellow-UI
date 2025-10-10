@@ -8,7 +8,9 @@ import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
 import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
 import melonystudios.mellowui.screen.list.stats.MobsStatsList;
-import melonystudios.mellowui.screen.widget.TabButton;
+import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.widget.TabButton;
+import melonystudios.mellowui.util.text.TooltipProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.FontRenderer;
@@ -190,6 +192,14 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
             }
             this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+
+            if (this.getActiveList() instanceof TooltipProvider) {
+                TooltipProvider provider = (TooltipProvider) this.getActiveList();
+                if (provider.tooltipData() != null) {
+                    provider.renderTooltip(stack, this);
+                    provider.setTooltipData(null);
+                }
+            }
         }
     }
 
@@ -232,11 +242,27 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         return 74 + 40 * index;
     }
 
-    public void blitSlot(MatrixStack stack, int x, int y, Item item) {
+    public void blitSlot(MatrixStack stack, int x, int y, Item item, boolean hovered) {
         this.blitSlotIcon(stack, x + 1, y + 1, 0, 0);
+        if (hovered) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.enableBlend();
+            this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_BACK);
+            blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableBlend();
+        }
         RenderSystem.enableRescaleNormal();
         this.itemRenderer.renderGuiItem(item.getDefaultInstance(), x + 2, y + 2);
         RenderSystem.disableRescaleNormal();
+        if (hovered) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.enableBlend();
+            this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_FRONT);
+            blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableBlend();
+        }
     }
 
     public void blitSlotIcon(MatrixStack stack, int x, int y, int width, int height) {

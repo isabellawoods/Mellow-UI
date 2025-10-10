@@ -6,7 +6,7 @@
 while adding more functionality to existing menus, like readding super secret settings.
 
 ## Updated Screens
-As of version **4.4.0**, most screens accessed from the title screen have been updated, except for a few (like the resource packs screen).
+As of version **4.5.1**, most screens accessed from the title screen have been updated, except for a few (like the resource packs screen).
 
 Below is a demonstration of some of these updated screens:
 

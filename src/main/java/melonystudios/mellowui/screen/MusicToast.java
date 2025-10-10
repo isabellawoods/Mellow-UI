@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
@@ -135,7 +136,7 @@ public class MusicToast implements IToast {
                 green1 = f1;
                 blue1 = f2;
                 break;
-            default: throw new IllegalArgumentException(new TranslationTextComponent("error.mellowui.hsv_conversion", hue, saturation, value, i).getString());
+            default: throw new IllegalArgumentException(MellowUtils.translate("error.mellowui.hsv_conversion", "Something went wrong while converting from HSV to RGB. Inputs were %s, %s, %s, and output was %s", hue, saturation, value, i));
         }
 
         return new float[] {MathHelper.clamp(red1, 0, 1), MathHelper.clamp(green1, 0, 1), MathHelper.clamp(blue1, 0, 1)};

@@ -7,7 +7,6 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.resource.AssetReloadListener;
 import melonystudios.mellowui.resource.MUIResourceTypes;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 public class FlairReloadListener extends AssetReloadListener {
     public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/FlairReloader");
-    public static final Gson GSON = ModListFlair.createFlairSerializer().create();
+    public static final Gson GSON = Flair.createFlairSerializer().create();
 
     public FlairReloadListener() {
         super(GSON, MUIResourceTypes.FLAIRS, "flair");
@@ -26,17 +25,17 @@ public class FlairReloadListener extends AssetReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> entries, IResourceManager manager, IProfiler profiler) {
-        ImmutableMap.Builder<ResourceLocation, ModListFlair> flairs = ImmutableMap.builder();
+        ImmutableMap.Builder<ResourceLocation, Flair> flairs = ImmutableMap.builder();
 
         entries.forEach((location, element) -> {
             try {
-                if (element.isJsonObject()) flairs.put(location, GSON.fromJson(element, ModListFlair.class));
+                if (element.isJsonObject()) flairs.put(location, GSON.fromJson(element, Flair.class));
             } catch (Exception exception) {
-                LOGGER.error(I18n.get("logger.mellowui.mod_list_flair.parsing", location), exception);
+                LOGGER.error(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse mod list flair '%s'", location), exception);
             }
         });
         MellowUtils.FLAIRS.clear();
         MellowUtils.FLAIRS.putAll(flairs.build());
-        LOGGER.info(I18n.get("logger.mellowui.mod_list_flair.loaded", flairs.build().size()));
+        LOGGER.info(MellowUtils.translate("logger.mellowui.flair.loaded", "Loaded %s mod list flair(s)", flairs.build().size()));
     }
 }

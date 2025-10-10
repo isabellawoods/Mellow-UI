@@ -8,10 +8,8 @@ import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -219,7 +217,7 @@ public class Panorama {
 
                 return Panorama.builder(cubeMap).overlay(overlay).overrideSpeed(speedOverride).overridePitch(pitchOverride).applyShader(shader).blurStrength(blurStrength).build();
             } else {
-                throw new JsonParseException(new TranslationTextComponent("logger.mellowui.panorama.parsing", element.toString()).getString());
+                throw new JsonParseException(MellowUtils.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", element.toString()));
             }
         }
 
@@ -232,8 +230,8 @@ public class Panorama {
                 for (ResourceLocation location : panorama.cubeMap()) cubeMap.add(location.toString());
                 object.add("cube_map", cubeMap);
             } else {
-                if (cubeMapTextures > 6) throw new JsonSyntaxException(I18n.get("logger.mellowui.panorama.cube_map.too_many"));
-                else throw new JsonSyntaxException(I18n.get("logger.mellowui.panorama.cube_map.too_few"));
+                if (cubeMapTextures > 6) throw new JsonSyntaxException(MellowUtils.translate("logger.mellowui.panorama.cube_map.too_many", "Panorama has more than 6 cube map textures"));
+                else throw new JsonSyntaxException(MellowUtils.translate("logger.mellowui.panorama.cube_map.too_few", "Panorama has less than 6 cube map textures"));
             }
 
             if (!panorama.overlayTexture().equals(GUITextures.PANORAMA_OVERLAY)) {

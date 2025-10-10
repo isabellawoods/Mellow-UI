@@ -6,8 +6,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
-import melonystudios.mellowui.screen.widget.ImageSetButton;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.widget.ImageSetButton;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.PackLoadingManager;
 import net.minecraft.client.gui.screen.Screen;
@@ -101,7 +102,7 @@ public class MUIPackSelectionScreen extends Screen {
             return packLocation;
         } catch (FileNotFoundException ignored) {
         } catch (Exception exception) {
-            MellowUI.LOGGER.warn(new TranslationTextComponent("error.mellowui.pack_icon", pack.getId()).getString(), exception);
+            MellowUI.LOGGER.warn(MellowUtils.translate("error.mellowui.pack_icon", "Failed to load icon from pack '%s'", pack.getId()), exception);
         }
 
         return GUITextures.DEFAULT_PACK_ICON;

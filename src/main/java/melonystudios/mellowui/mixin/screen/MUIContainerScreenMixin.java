@@ -2,8 +2,6 @@ package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.Screen;
@@ -21,7 +19,6 @@ import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -32,7 +29,6 @@ import java.util.Set;
 @SuppressWarnings("deprecation")
 @Mixin(ContainerScreen.class)
 public abstract class MUIContainerScreenMixin<T extends Container> extends Screen implements IHasContainer<T> {
-    @Unique private final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow protected int leftPos;
     @Shadow protected int topPos;
     @Shadow protected abstract void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY);
@@ -93,14 +89,9 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
                 RenderSystem.enableDepthTest();
             }
 
-            if (slot.isActive() && !MellowConfigs.oversizedInGUI(slot.getItem().getItem())) {
-                this.components.enableScissor(leftPos1 + slot.x, topPos1 + slot.y, leftPos1 + slot.x + 16, topPos1 + slot.y + 16);
-                this.renderSlot(stack, slot);
-                this.components.disableScissor();
-            }
+            if (slot.isActive()) this.renderSlot(stack, slot);
 
             if (this.isHovering(slot, mouseX, mouseY) && slot.isActive() && this.minecraft != null) {
-                this.hoveredSlot = slot;
                 RenderSystem.disableDepthTest();
                 RenderSystem.enableAlphaTest();
                 RenderSystem.enableBlend();
@@ -150,4 +141,16 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
         RenderSystem.popMatrix();
         RenderSystem.enableDepthTest();
     }
+
+    // temporarily disable item culling since it breaks the whole GUI rendering ~isa 29-9-25
+    /*@Inject(method = "renderSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderAndDecorateItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;II)V"), cancellable = true)
+    public void cullItemInSlot(MatrixStack stack, Slot slot, CallbackInfo callback) {
+        ItemStack slotStack = slot.getItem();
+        if (!MellowConfigs.oversizedInGUI(slotStack.getItem())) {
+            callback.cancel();
+            this.components.enableScissor(this.leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, this.topPos + slot.y + 16);
+            this.itemRenderer.renderAndDecorateItem(this.minecraft.player, slotStack, slot.x, slot.y);
+            this.components.disableScissor();
+        }
+    }*/
 }

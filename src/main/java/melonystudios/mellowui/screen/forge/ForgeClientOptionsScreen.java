@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.forge;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
@@ -23,7 +24,7 @@ public class ForgeClientOptionsScreen extends SettingsScreen {
     private OptionsRowList list;
 
     public ForgeClientOptionsScreen(Screen screen, GameSettings options) {
-        super(screen, options, new TranslationTextComponent("menu.forge.client_options.title"));
+        super(screen, options, TextComponents.buildScreenSubtitle("forge", "Forge", new TranslationTextComponent("menu.forge.client_options.title")));
     }
 
     @Override

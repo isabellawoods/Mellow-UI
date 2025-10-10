@@ -9,10 +9,10 @@ import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
 import melonystudios.mellowui.resource.panorama.Panoramas;
-import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.widget.IconButton;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -53,7 +53,7 @@ public class RenderComponents extends AbstractGui {
     /// The panorama that's currently being rendered by *Mellow UI*.
     public static RenderSkybox PANORAMA = new RenderSkybox(MainMenuScreen.CUBE_MAP);
     public static float PANORAMA_PITCH = 10;
-    public static final int TOOLTIP_MAX_WIDTH = 200; // tooltip width is 170 in 1.21.1
+    public static final int TOOLTIP_MAX_WIDTH = 170; // tooltip width is 200 in 1.16.5
     public static final int DEFAULT_TAB_WIDTH = 130;
     public static final int DEFAULT_BACKGROUND_BRIGHTNESS = 255;
     public static final int OLD_BACKGROUND_BRIGHTNESS = 64;
@@ -149,7 +149,7 @@ public class RenderComponents extends AbstractGui {
     /// Replaces the {@linkplain #PANORAMA **default panorama**} used by *Mellow UI* with another.
     ///
     /// This method also creates a new **Generated** panorama with the ID of the old panorama, when the substitution occurs.
-    /// This only happens if the replacement came from the {@link MainMenuScreen vanilla title screen}.
+    /// This only happens if the replacement came from the {@linkplain MainMenuScreen vanilla title screen}.
     /// @param panorama The panorama to replace the current one.
     /// @param fromTitleScreen Whether the replacement came from the title screen.
     public void replacePanorama(RenderSkybox panorama, boolean fromTitleScreen) {
@@ -337,13 +337,13 @@ public class RenderComponents extends AbstractGui {
     }
 
     /// @param width The width of the screen.
-    /// @return The width of four {@link melonystudios.mellowui.screen.widget.TabButton TabButtons} based on the screen width.
+    /// @return The width of four {@link melonystudios.mellowui.widget.TabButton TabButtons} based on the screen width.
     public int fourTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH * 2 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
     /// @param width The width of the screen.
-    /// @return The width of three {@link melonystudios.mellowui.screen.widget.TabButton TabButtons} based on the screen width.
+    /// @return The width of three {@link melonystudios.mellowui.widget.TabButton TabButtons} based on the screen width.
     public int threeTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }

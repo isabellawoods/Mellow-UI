@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.forge;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
@@ -24,7 +25,7 @@ public class ForgeOptionsScreen extends SettingsScreen {
     private OptionsRowList list;
 
     public ForgeOptionsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("menu.forge.options.title"));
+        super(lastScreen, options, TextComponents.buildScreenTitle("forge", "Forge"));
     }
 
     @Override

@@ -4,19 +4,21 @@ import com.google.gson.JsonObject;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
-import melonystudios.mellowui.resource.flair.ModListFlair;
+import melonystudios.mellowui.resource.flair.Flair;
 import melonystudios.mellowui.resource.panorama.BobbingPitch;
 import melonystudios.mellowui.resource.panorama.ConstantPitch;
 import melonystudios.mellowui.resource.panorama.Panorama;
 import melonystudios.mellowui.resource.panorama.PitchOverrider;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
+import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import melonystudios.mellowui.screen.update.MUIPackSelectionScreen;
 import melonystudios.mellowui.screen.update.MellowModListScreen;
 import melonystudios.mellowui.util.pack.HighContrastPack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.*;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
@@ -46,7 +48,7 @@ import static net.minecraft.util.ColorHelper.PackedColor.*;
 
 public class MellowUtils {
     // Resource pack entries
-    public static final Map<ResourceLocation, ModListFlair> FLAIRS = new HashMap<>(1024, 0.75F);
+    public static final Map<ResourceLocation, Flair> FLAIRS = new HashMap<>(1024, 0.75F);
     public static final Map<ResourceLocation, Panorama> PANORAMAS = new HashMap<>(1024, 0.75F);
     public static final Map<ResourceLocation, Function<JsonObject, PitchOverrider>> OVERRIDERS = Util.make(new HashMap<>(), map -> {
         map.put(MellowUI.mellowUI("constant"), ConstantPitch.DEFAULT::fromJSON);
@@ -94,6 +96,11 @@ public class MellowUtils {
         else return new PackScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
     }
 
+    public static Screen statistics(Screen lastScreen, Minecraft minecraft) {
+        if (CLIENT_CONFIGS.statisticsStyle.get()) return new StatisticsScreen(lastScreen, minecraft.player.getStats());
+        else return new StatsScreen(lastScreen, minecraft.player.getStats());
+    }
+
     public static void switchTitleScreenStyle(Minecraft minecraft) {
         ThreeStyles menuStyle = MellowConfigs.CLIENT_CONFIGS.titleStyle.get();
         MellowConfigs.CLIENT_CONFIGS.titleStyle.set(ThreeStyles.byId(menuStyle.getId() + 1));
@@ -137,6 +144,11 @@ public class MellowUtils {
 
     public static boolean highContrastUnavailable() {
         return !Minecraft.getInstance().getResourcePackRepository().getAvailableIds().contains(GUITextures.MUI_HIGH_CONTRAST.toString());
+    }
+
+    public static String translate(String key, String fallback, Object... args) {
+        if (I18n.exists(key)) return I18n.get(key, args);
+        else return String.format(fallback, args);
     }
 
     public static Style withColor(int color) {

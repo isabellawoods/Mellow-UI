@@ -1,8 +1,9 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import melonystudios.mellowui.screen.Alignment;
+import melonystudios.mellowui.util.Alignment;
+import melonystudios.mellowui.util.text.ScrollingText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
@@ -51,9 +52,10 @@ public class ImageSetButton extends Button implements ScrollingText {
         this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + yImage * 20, this.width / 2, this.height);
 
         // Text
-        if (this.renderText) {
-            this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24);
-        }
+        if (this.renderText) this.renderWidgetText(
+                () -> this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
+                () ->  drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
+        );
 
         // Button icon
         minecraft.getTextureManager().bind(iconTexture);
@@ -79,6 +81,6 @@ public class ImageSetButton extends Button implements ScrollingText {
     public void renderScrollingString(MatrixStack stack, FontRenderer font, int width, int color) {
         int minX = this.x + width;
         int maxX = this.x + this.width - width;
-        this.renderScrollingString(stack, font, this.getMessage(), minX, this.y, maxX, this.y + this.height, color);
+        this.renderAlignedScrollingText(stack, font, this.getMessage(), Alignment.CENTER, minX, this.y, maxX, this.y + this.height, color);
     }
 }

@@ -10,6 +10,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -18,7 +19,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -78,9 +78,9 @@ public class ShaderManager {
             PANORAMA_SHADER = new ShaderGroup(minecraft.getTextureManager(), resourceManager, minecraft.getMainRenderTarget(), shaderLocation);
             PANORAMA_SHADER.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
         } catch (IOException exception) {
-            MellowUI.logger("ShaderManager").warn(new TranslationTextComponent("error.mellowui.load_shader", shaderLocation).getString(), exception);
+            MellowUI.logger("ShaderManager").warn(MellowUtils.translate("error.mellowui.load_shader", "Failed to load shader: '%s'", shaderLocation), exception);
         } catch (JsonSyntaxException exception) {
-            MellowUI.logger("ShaderManager").warn(new TranslationTextComponent("error.mellowui.parse_shader", shaderLocation).getString(), exception);
+            MellowUI.logger("ShaderManager").warn(MellowUtils.translate("error.mellowui.parse_shader", "Failed to parse shader: '%s'", shaderLocation), exception);
         }
     }
 
@@ -118,7 +118,7 @@ public class ShaderManager {
     private static float getUniformValue(String name) {
         switch (name) {
             case "Radius": {
-                if (Panoramas.panorama().blurStrength() != null) return Panoramas.panorama().blurStrength();
+                if (Panoramas.panorama().blurStrength() != null) return MathHelper.clamp(Panoramas.panorama().blurStrength(), 0, 20);
                 return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
             }
             default: return 0;

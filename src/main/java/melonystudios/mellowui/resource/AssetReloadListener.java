@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import melonystudios.mellowui.MellowUI;
-import net.minecraft.client.resources.I18n;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.profiler.IProfiler;
@@ -55,12 +55,12 @@ public abstract class AssetReloadListener extends ReloadListener<Map<ResourceLoc
                 JsonElement element = JSONUtils.fromJson(this.gson, reader, JsonElement.class);
                 if (element != null) {
                     JsonElement element1 = entries.put(entryLocation, element);
-                    if (element1 != null) throw new IllegalArgumentException(I18n.get("logger.mellowui.asset_reloader.duplicate", entryLocation));
+                    if (element1 != null) throw new IllegalArgumentException(MellowUtils.translate("logger.mellowui.asset_reloader.duplicate", "Ignored duplicate asset file with ID '%s'", entryLocation));
                 } else {
-                    LOGGER.error(I18n.get("logger.mellowui.asset_reloader.loading", entryLocation, fileLocation));
+                    LOGGER.error(MellowUtils.translate("logger.mellowui.asset_reloader.loading", "Couldn't load asset file '%s' from '%s' as it's null or empty", entryLocation, fileLocation));
                 }
             } catch (IllegalArgumentException | IOException | JsonParseException exception) {
-                LOGGER.error(I18n.get("logger.mellowui.asset_reloader.parsing", entryLocation, fileLocation), exception);
+                LOGGER.error(MellowUtils.translate("logger.mellowui.asset_reloader.parsing", "Couldn't parse asset file '%s' from '%s'", entryLocation, fileLocation), exception);
             }
         }
 

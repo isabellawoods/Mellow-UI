@@ -1,23 +1,16 @@
 package melonystudios.mellowui.config;
 
-import melonystudios.mellowui.config.option.SeparatorOption;
-import melonystudios.mellowui.config.option.StyleBooleanOption;
-import melonystudios.mellowui.config.option.TextFieldOption;
-import melonystudios.mellowui.config.option.TooltippedIterableOption;
+import melonystudios.mellowui.config.option.*;
 import melonystudios.mellowui.config.type.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.client.settings.SliderPercentageOption;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.Color;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
-import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
 import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 
 public class MellowConfigEntries {
@@ -34,12 +27,9 @@ public class MellowConfigEntries {
     public static final IFormattableTextComponent MOD_LIST_STYLE_TOOLTIP = new TranslationTextComponent("config.mellowui.mod_list_style.tooltip");
 
     // Separators
-    public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.main_menu"));
-    public static final SeparatorOption INGAME_MENUS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.ingame_menus"));
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
-    public static final SeparatorOption OPTION_MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.option_menu_updates"));
+    public static final SeparatorOption MISCELLANEOUS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.miscellaneous"));
     public static final SeparatorOption STYLES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.styles"));
-    public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.realms").withStyle(Style.EMPTY.withColor(Color.fromRgb(0xE43DC3))));
 
     // Options
     public static final SliderPercentageOption PANORAMA_CAMERA_PITCH = new SliderPercentageOption("config.mellowui.panorama_camera_pitch", -90, 90, 1,
@@ -51,26 +41,6 @@ public class MellowConfigEntries {
             });
     public static final BooleanOption PANORAMA_BOBBING = new BooleanOption("config.mellowui.panorama_bobbing", new TranslationTextComponent("config.mellowui.panorama_bobbing.tooltip"),
             options -> CLIENT_CONFIGS.panoramaBobbing.get(), (options, newValue) -> CLIENT_CONFIGS.panoramaBobbing.set(newValue));
-    public static final TextFieldOption MONOCHROME_LOADING_SCREEN_COLOR = new TextFieldOption("config.mellowui.monochrome_loading_screen_color",
-            new TranslationTextComponent("config.mellowui.monochrome_loading_screen_color.tooltip"),
-            WIDGET_CONFIGS.monochromeLoadingScreenColor.get().toString(),
-            newValue -> WIDGET_CONFIGS.monochromeLoadingScreenColor.set(Integer.valueOf(newValue)),
-            (text, setter) -> {
-                try {
-                    int newValue = Integer.parseInt(text);
-                    setter.accept(Integer.toString(MathHelper.clamp(newValue, 0, 16777215)));
-                } catch (NumberFormatException ignored) {}
-            });
-    public static final TextFieldOption SPLASH_TEXT_COLOR = new TextFieldOption("config.mellowui.splash_text_color",
-            new TranslationTextComponent("config.mellowui.splash_text_color.tooltip"),
-            WIDGET_CONFIGS.splashTextColor.get().toString(),
-            newValue -> WIDGET_CONFIGS.splashTextColor.set(Integer.valueOf(newValue)),
-            (text, setter) -> {
-                try {
-                    int newValue = Integer.parseInt(text);
-                    setter.accept(Integer.toString(MathHelper.clamp(newValue, 0, 16777215)));
-                } catch (NumberFormatException ignored) {}
-            });
     public static final IteratableOption MAIN_MENU_MOD_BUTTON = new IteratableOption("config.mellowui.main_menu_mod_button",
             (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(FourStyles.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
             (options, option) -> {
@@ -182,4 +152,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.gradientBackground.get(), (options, newValue) -> CLIENT_CONFIGS.gradientBackground.set(newValue));
     public static final BooleanOption LOG_GL_ERRORS = new BooleanOption("config.mellowui.log_gl_errors", new TranslationTextComponent("config.mellowui.log_gl_errors.tooltip"),
             options -> CLIENT_CONFIGS.logGLErrors.get(), (options, newValue) -> CLIENT_CONFIGS.logGLErrors.set(newValue));
+    public static final EditListConfigOption<String> CLASSIFIED_AS_CONTAINERS = new EditListConfigOption<>("config.mellowui.classified_as_containers", new TranslationTextComponent("config.mellowui.classified_as_containers.tooltip"),
+            CLIENT_CONFIGS.classifiedAsContainers);
+    public static final EditListConfigOption<String> OVERSIZED_IN_GUI = new EditListConfigOption<>("config.mellowui.oversized_in_gui", new TranslationTextComponent("config.mellowui.oversized_in_gui.tooltip"),
+            CLIENT_CONFIGS.oversizedInGUI);
 }

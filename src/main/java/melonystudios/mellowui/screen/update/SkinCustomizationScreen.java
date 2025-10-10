@@ -40,7 +40,7 @@ public class SkinCustomizationScreen extends SettingsScreen {
                 Class<?> screen = Class.forName("com.minecraftabnormals.abnormals_core.client.screen.SlabfishHatScreen");
                 OpenMenuOption slabfishHatSettings = new OpenMenuOption("abnormals_core.screen.slabfish_settings",
                         new TranslationTextComponent("abnormals_core.screen.slabfish_settings.tooltip",
-                                new StringTextComponent("patreon.com/teamabnormals").withStyle(style -> style.withColor(Color.fromRgb(0xEF323D)).withBold(true))),
+                                new StringTextComponent("patreon.com/teamabnormals").withStyle(style -> style.withColor(Color.fromRgb(0xFF424D)).withBold(true))),
                         (Screen) screen.getConstructor(Screen.class).newInstance(this));
                 this.list.addBig(slabfishHatSettings);
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {

@@ -3,7 +3,7 @@ package melonystudios.mellowui.screen;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.widget.TabButton;
+import melonystudios.mellowui.widget.TabButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;

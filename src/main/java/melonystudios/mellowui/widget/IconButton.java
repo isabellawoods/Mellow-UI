@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;

@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.CreateNewWorldScreen;
-import melonystudios.mellowui.screen.widget.TabButton;
+import melonystudios.mellowui.widget.TabButton;
 import net.minecraft.client.gui.IBidiTooltip;
 import net.minecraft.client.gui.IRenderable;
 import net.minecraft.client.gui.screen.IScreen;

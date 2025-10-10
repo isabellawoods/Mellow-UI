@@ -1,6 +1,6 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.screen.widget.SeparatorWidget;
+import melonystudios.mellowui.widget.SeparatorWidget;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.widget.Widget;

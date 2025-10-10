@@ -1,8 +1,8 @@
 package melonystudios.mellowui.screen.panel;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.screen.Alignment;
 import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
@@ -35,7 +35,7 @@ public class TextPanelEntry extends PanelEntry {
     @Override
     public void renderEntry(MatrixStack stack, RenderComponents components, int x, int y, int width, int height) {
         FontRenderer font = this.panel.getFont();
-        List<IReorderingProcessor> lines = font.split(this.text, x * 2 - 14);
+        List<IReorderingProcessor> lines = font.split(this.text, x * 2 - 16);
         this.contentHeight = lines.size() * font.lineHeight;
 
         switch (this.alignment) {

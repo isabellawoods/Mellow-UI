@@ -29,24 +29,27 @@ import org.apache.logging.log4j.Logger;
 @Mod(MellowUI.MOD_ID)
 public class MellowUI {
     public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID);
+    public static final String MOD_NAME = "Mellow UI";
     public static final String MOD_ID = "mellowui";
 
     public MellowUI() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModLoadingContext context = ModLoadingContext.get();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
 
         MUISounds.SOUNDS.register(eventBus);
-
         MinecraftForge.EVENT_BUS.register(this);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WidgetConfigs.WIDGET_SPEC, "melonystudios/mellowui-widgets.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MellowConfigs.CLIENT_SPEC, "melonystudios/mellowui-client.toml");
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options));
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> (DistExecutor.SafeRunnable) MellowUtils::addHighContrastPack);
 
-        if (Minecraft.getInstance().getResourceManager() instanceof IReloadableResourceManager) {
-            IReloadableResourceManager manager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+        context.registerConfig(ModConfig.Type.CLIENT, WidgetConfigs.WIDGET_SPEC, "melonystudios/mellowui-widgets.toml");
+        context.registerConfig(ModConfig.Type.CLIENT, MellowConfigs.CLIENT_SPEC, "melonystudios/mellowui-client.toml");
+        context.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options));
+        context.registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
+
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> MellowUtils::addHighContrastPack);
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.getResourceManager() instanceof IReloadableResourceManager) {
+            IReloadableResourceManager manager = (IReloadableResourceManager) minecraft.getResourceManager();
             manager.registerReloadListener(new FlairReloadListener());
             manager.registerReloadListener(new PanoramaReloadListener());
         }

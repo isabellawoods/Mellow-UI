@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import net.minecraft.util.ResourceLocation;
 

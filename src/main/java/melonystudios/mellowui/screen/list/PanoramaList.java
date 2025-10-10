@@ -19,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
@@ -30,9 +31,17 @@ public class PanoramaList extends ExtendedList<PanoramaList.Entry> {
         super(minecraft, parentScreen.width, parentScreen.height, 22, parentScreen.height - 32, 84);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
-        // todo make it sort alphabetically, and make "default" always be at the top
-        MellowUtils.PANORAMAS.forEach((key, value) -> this.addEntry(new Entry(key, value)));
-        this.centerScrollOn(this.children().stream().filter(entry -> entry.location.equals(Panoramas.panoramaLocation())).findFirst().orElse(this.children().get(0)));
+
+        MellowUtils.PANORAMAS.forEach((key, value) -> {
+            ResourceLocation texture = Panoramas.cubeMapTexture(value, 0);
+            if (this.minecraft.getResourceManager().hasResource(texture)) {
+                this.addEntry(new Entry(key, value));
+            }
+        });
+        this.centerScrollOn(this.children().stream()
+                .sorted(Comparator.comparing(entry -> entry.location.getPath()))
+                .filter(entry -> entry.location.equals(Panoramas.panoramaLocation())).findFirst()
+                .orElse(this.children().get(0)));
     }
 
     @Override
@@ -49,10 +58,7 @@ public class PanoramaList extends ExtendedList<PanoramaList.Entry> {
     @Override
     public void setSelected(@Nullable Entry entry) {
         super.setSelected(entry);
-        if (entry != null) {
-            Panoramas.selectPanorama(entry.panorama, entry.location.toString());
-            this.centerScrollOn(entry);
-        }
+        if (entry != null) Panoramas.selectPanorama(entry.panorama, entry.location.toString());
     }
 
     @Override
@@ -116,7 +122,6 @@ public class PanoramaList extends ExtendedList<PanoramaList.Entry> {
                 component.append(new TranslationTextComponent("panorama.mellowui.generated", this.location.getPath().substring(this.location.getPath().indexOf('/') + 1)));
             } else {
                 component.append(new TranslationTextComponent(descriptionID)).withStyle(colorStyle);
-
             }
             if (I18n.exists(descriptionID + ".desc")) {
                 component.append("\n").append(new TranslationTextComponent(descriptionID + ".desc").withStyle(TextFormatting.GRAY));

@@ -3,7 +3,10 @@ package melonystudios.mellowui.screen.list.stats;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
+import melonystudios.mellowui.util.text.TooltipDisplayData;
+import melonystudios.mellowui.util.text.TooltipProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -19,6 +22,7 @@ import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatType;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,8 +35,9 @@ import java.util.List;
 import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
-public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
+public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> implements TooltipProvider {
     private final StatisticsScreen parentScreen;
+    private TooltipDisplayData tooltipData;
     protected final List<StatType<Block>> blockColumns;
     protected final List<StatType<Item>> itemColumns;
     private final int[] iconOffsets = new int[] {3, 4, 1, 2, 5, 6};
@@ -49,7 +54,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
         this.blockColumns = Lists.newArrayList();
         this.blockColumns.add(Stats.BLOCK_MINED);
         this.itemColumns = Lists.newArrayList(Stats.ITEM_BROKEN, Stats.ITEM_CRAFTED, Stats.ITEM_USED, Stats.ITEM_PICKED_UP, Stats.ITEM_DROPPED);
-        this.setRenderHeader(true, 19);
+        this.setRenderHeader(true, 21);
         Set<Item> items = Sets.newIdentityHashSet();
 
         for (Item item : ForgeRegistries.ITEMS) {
@@ -78,6 +83,16 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
         this.statItemList = Lists.newArrayList(items);
 
         for (int i = 0; i < this.statItemList.size(); ++i) this.addEntry(new Entry());
+    }
+
+    @Override
+    public TooltipDisplayData tooltipData() {
+        return this.tooltipData;
+    }
+
+    @Override
+    public void setTooltipData(TooltipDisplayData data) {
+        this.tooltipData = data;
     }
 
     @Override
@@ -163,14 +178,14 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
             if (entry != null) return;
 
             for (int k = 0; k < this.iconOffsets.length; ++k) {
-                int l = StatisticsScreen.getColumnX(k);
-                if (pos >= l - 18 && pos <= l) {
+                int l = StatisticsScreen.getColumnX(k) + 1;
+                if (pos >= l - 17 && pos <= l) {
                     text = this.getColumn(k).getDisplayName();
                     break;
                 }
             }
 
-            if (text != null) this.parentScreen.renderTooltip(stack, text, mouseX, mouseY);
+            if (text != null) this.setTooltipData(new TooltipDisplayData(text, RenderComponents.TOOLTIP_MAX_WIDTH, mouseX, mouseY));
         }
     }
 
@@ -221,7 +236,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
             Item item = ItemsStatsList.this.statItemList.get(index);
             boolean hovered = this.isHovered(mouseX, mouseY, left - 1, top - 1, 18, 18);
-            ItemsStatsList.this.parentScreen.blitSlot(stack, left - 2, top - 2, item);
+            ItemsStatsList.this.parentScreen.blitSlot(stack, left - 2, top - 2, item, hovered || ItemsStatsList.this.getSelected() == this);
 
             for (int i = 0; i < ItemsStatsList.this.blockColumns.size(); ++i) {
                 Stat<Block> stat;
@@ -238,7 +253,10 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> {
                 this.renderStat(stack, ItemsStatsList.this.itemColumns.get(column).get(item), left + StatisticsScreen.getColumnX(column + ItemsStatsList.this.blockColumns.size()), top, index % 2 == 0);
             }
 
-            if (hovered) ItemsStatsList.this.parentScreen.renderTooltip(stack, item.getDefaultInstance(), left + 15, top + 10);
+            if (hovered) {
+                List<IReorderingProcessor> lines = TooltipProvider.getVisualOrder(ItemsStatsList.this.parentScreen.getTooltipFromItem(item.getDefaultInstance()));
+                ItemsStatsList.this.setTooltipData(new TooltipDisplayData(lines, left + 15, top + 10));
+            }
         }
 
         protected void renderStat(MatrixStack stack, @Nullable Stat<?> stat, int x, int y, boolean odd) {

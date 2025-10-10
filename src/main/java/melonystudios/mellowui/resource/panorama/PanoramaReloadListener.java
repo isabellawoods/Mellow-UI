@@ -7,7 +7,6 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.resource.AssetReloadListener;
 import melonystudios.mellowui.resource.MUIResourceTypes;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -32,17 +31,17 @@ public class PanoramaReloadListener extends AssetReloadListener {
             try {
                 if (element.isJsonObject()) panoramas.put(location, GSON.fromJson(element, Panorama.class));
             } catch (Exception exception) {
-                LOGGER.error(I18n.get("logger.mellowui.panorama.parsing", location), exception);
+                LOGGER.error(MellowUtils.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", location), exception);
             }
         });
         ImmutableMap<ResourceLocation, Panorama> map = panoramas.build();
         MellowUtils.PANORAMAS.clear();
         MellowUtils.PANORAMAS.putAll(map);
-        LOGGER.info(I18n.get("logger.mellowui.panorama.loaded", map.size()));
+        LOGGER.info(MellowUtils.translate("logger.mellowui.panorama.loaded", "Loaded %s panorama(s)", map.size()));
 
         // rollback to default panorama if the currently selected one was unloaded ~isa 28-9-25
         if (!map.containsKey(Panoramas.panoramaLocation())) {
-            LOGGER.warn(I18n.get("logger.mellowui.panorama.reset", Panoramas.panoramaLocation()));
+            LOGGER.warn(MellowUtils.translate("logger.mellowui.panorama.reset", "Set the panorama to default since '%s' was unloaded", Panoramas.panoramaLocation()));
             Panoramas.selectPanorama(Panoramas.DEFAULT, Panorama.DEFAULT_LOCATION.toString());
         }
     }

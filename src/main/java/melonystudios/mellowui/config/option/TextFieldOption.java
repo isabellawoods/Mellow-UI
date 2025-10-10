@@ -1,7 +1,7 @@
 package melonystudios.mellowui.config.option;
 
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.screen.widget.TooltippedTextField;
+import melonystudios.mellowui.widget.TooltippedTextField;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;

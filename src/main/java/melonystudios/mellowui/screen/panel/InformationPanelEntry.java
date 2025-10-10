@@ -30,7 +30,7 @@ public class InformationPanelEntry extends PanelEntry {
     /// Represents a **panel entry** that renders basic information, like mod id and authors, of a mod.
     /// @param panel The parent panel.
     /// @param mod The {@linkplain ModInfo information about the mod}.
-    /// @param accentColor The accent color provided by the {@linkplain melonystudios.mellowui.resource.flair.ModListFlair **flair**}.
+    /// @param accentColor The accent color provided by the {@linkplain melonystudios.mellowui.resource.flair.Flair **flair**}.
     public InformationPanelEntry(Panel panel, ModInfo mod, int accentColor) {
         super(panel);
         this.mod = mod;
@@ -72,7 +72,7 @@ public class InformationPanelEntry extends PanelEntry {
                 } catch (Exception exception) {
                     if (!WARN_ONCE_MODS.contains(this.mod.getModId())) {
                         WARN_ONCE_MODS.add(this.mod.getModId());
-                        MellowUI.logger("InformationPanelEntry").warn(I18n.get("panel.mellowui.mod_information.broken_authors"));
+                        MellowUI.logger("InformationPanelEntry").error(I18n.get("panel.mellowui.mod_information.broken_authors"), exception);
                     }
                 }
             }
@@ -80,7 +80,7 @@ public class InformationPanelEntry extends PanelEntry {
         }).orElse(null);
 
         if (authors != null) {
-            List<IReorderingProcessor> lines = font.split(authors, x * 2 - 12);
+            List<IReorderingProcessor> lines = font.split(authors, x * 2 - 16);
             for (IReorderingProcessor line : lines) {
                 font.drawShadow(stack, line, x, yOffset, 0xFFFFFF);
                 yOffset += font.lineHeight;
