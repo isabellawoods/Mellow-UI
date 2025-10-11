@@ -1,0 +1,199 @@
+package melonystudios.mellowui.screen.backport;
+
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
+import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
+import melonystudios.mellowui.screen.list.stats.MobsStatsList;
+import melonystudios.mellowui.screen.widget.TabButton;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.achievement.StatsUpdateListener;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.stats.Stat;
+import net.minecraft.stats.StatsCounter;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+@OnlyIn(Dist.CLIENT)
+public class StatisticsScreen extends Screen implements StatsUpdateListener {
+    public static final Component RETRIEVING_STATISTICS = new TranslatableComponent("multiplayer.downloadingStats");
+    public final RenderComponents components = RenderComponents.INSTANCE;
+    private final Screen lastScreen;
+    private final StatsCounter manager;
+    private boolean isLoading = true;
+
+    // Tabs
+    private final List<TabButton> tabs = Lists.newArrayList();
+    private GeneralStatsList general;
+    private ItemsStatsList items;
+    private MobsStatsList mobs;
+    @Nullable
+    private ObjectSelectionList<?> activeList = null;
+
+    public StatisticsScreen(Screen lastScreen, StatsCounter manager) {
+        super(new TranslatableComponent("gui.stats"));
+        this.lastScreen = lastScreen;
+        this.manager = manager;
+    }
+
+    public StatsCounter statisticsManager() {
+        return this.manager;
+    }
+
+    @Override
+    public void resize(Minecraft minecraft, int width, int height) {
+        super.resize(minecraft, width, height);
+        this.tabs.get(0).setSelected(true);
+    }
+
+    @Override
+    public void onClose() {
+        if (this.minecraft != null) this.minecraft.setScreen(this.lastScreen);
+    }
+
+    @Override
+    protected void init() {
+        this.isLoading = true;
+        if (this.minecraft.getConnection() != null) {
+            this.minecraft.getConnection().send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.REQUEST_STATS));
+        }
+    }
+
+    public void createLists() {
+        this.general = new GeneralStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 14);
+        this.general.setRenderBackground(false);
+        this.general.setRenderTopAndBottom(false);
+        this.items = new ItemsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 20);
+        this.items.setRenderBackground(false);
+        this.items.setRenderTopAndBottom(false);
+        this.mobs = new MobsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 14);
+        this.mobs.setRenderBackground(false);
+        this.mobs.setRenderTopAndBottom(false);
+    }
+
+    public void createButtons() {
+        // Tabs
+        int tabWidth = this.components.threeTabWidth(this.width);
+        this.activeList = this.general;
+        this.addWidget(this.activeList);
+
+        // General
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("stat.generalButton"), button -> {
+            this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectList(this.general);
+        })));
+
+        // Items
+        TabButton itemsTab;
+        this.tabs.add(itemsTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("stat.itemsButton"), button -> {
+            this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectList(this.items);
+        }, (button, stack, mouseX, mouseY) -> {
+            if (!button.active) this.components.renderTooltip(this, button, new TranslatableComponent("menu.mellowui.statistics.no_statistics_found"), mouseX, mouseY);
+        })));
+        itemsTab.active = !this.items.children().isEmpty();
+
+        // Mobs
+        TabButton mobsTab;
+        this.tabs.add(mobsTab = this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("stat.mobsButton"), button -> {
+            this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectList(this.mobs);
+        }, (button, stack, mouseX, mouseY) -> {
+            if (!button.active) this.components.renderTooltip(this, button, new TranslatableComponent("menu.mellowui.statistics.no_statistics_found"), mouseX, mouseY);
+        })));
+        mobsTab.active = !this.mobs.children().isEmpty();
+
+        // Done button
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
+                button -> this.minecraft.setScreen(this.lastScreen)));
+
+        this.tabs.get(0).setSelected(true);
+    }
+
+    @Override
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(stack);
+        if (this.isLoading) {
+            drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2, 0xFFFFFF);
+            drawCenteredString(stack, this.font, LOADING_SYMBOLS[(int) (Util.getMillis() / 150L % (long) LOADING_SYMBOLS.length)], this.width / 2, this.height / 2 + 9 * 2, 0xFFFFFF);
+        } else {
+            if (!MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
+                this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop() + 2, this.activeList.getRight(), this.activeList.getBottom());
+                if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
+                this.components.disableScissor();
+            } else {
+                this.components.renderTabHeaderBackground(0, 0, this.width, 24);
+                if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
+            }
+            this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+            super.render(stack, mouseX, mouseY, partialTicks);
+        }
+    }
+
+    @Override
+    public void renderDirtBackground(int vOffset) {
+        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
+        else super.renderDirtBackground(vOffset);
+    }
+
+    @Override
+    public void onStatsUpdated() {
+        if (this.isLoading) {
+            this.createLists();
+            this.createButtons();
+            this.selectList(this.general);
+            this.isLoading = false;
+        }
+    }
+
+    @Nullable
+    public ObjectSelectionList<?> getActiveList() {
+        return this.activeList;
+    }
+
+    private void selectList(ObjectSelectionList<?> list) {
+        this.removeWidget(this.general);
+        this.removeWidget(this.items);
+        this.removeWidget(this.mobs);
+        if (list != null) {
+            this.addWidget(list);
+            this.activeList = list;
+        }
+    }
+
+    public static String getTranslationKey(Stat<ResourceLocation> stat) {
+        return "stat." + stat.getValue().toString().replace(':', '.');
+    }
+
+    public int getColumnX(int index) {
+        return 115 + 40 * index;
+    }
+
+    public void blitSlot(PoseStack stack, int x, int y, Item item) {
+        this.blitSlotIcon(stack, x + 1, y + 1, 0, 0);
+        this.itemRenderer.renderGuiItem(item.getDefaultInstance(), x + 2, y + 2);
+    }
+
+    public void blitSlotIcon(PoseStack stack, int x, int y, int width, int height) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, STATS_ICON_LOCATION);
+        blit(stack, x, y, this.getBlitOffset(), (float) width, (float) height, 18, 18, 128, 128);
+    }
+}

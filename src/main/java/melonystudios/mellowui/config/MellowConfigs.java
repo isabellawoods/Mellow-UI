@@ -2,6 +2,7 @@ package melonystudios.mellowui.config;
 
 import com.google.common.collect.Lists;
 import melonystudios.mellowui.config.type.*;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -23,15 +24,18 @@ public class MellowConfigs {
     public final ForgeConfigSpec.IntValue menuBackgroundBlurriness;
     public final ForgeConfigSpec.EnumValue<TwoStyles> directionalAudio;
     public final ForgeConfigSpec.BooleanValue onboardAccessibility;
+    public final ForgeConfigSpec.DoubleValue uiVolume;
 
     // Mellow UI Configs
     public final ForgeConfigSpec.ConfigValue<List<String>> classifiedAsContainers;
+    public final ForgeConfigSpec.ConfigValue<List<String>> oversizedInGUI;
     public final ForgeConfigSpec.IntValue panoramaCameraPitch;
     public final ForgeConfigSpec.BooleanValue panoramaBobbing;
     public final ForgeConfigSpec.BooleanValue legacyButtonColors;
     public final ForgeConfigSpec.BooleanValue scrollingText;
     public final ForgeConfigSpec.EnumValue<FourStyles> mainMenuModButton;
     public final ForgeConfigSpec.EnumValue<FourStyles> pauseMenuModButton;
+    public final ForgeConfigSpec.BooleanValue cullOversizedItems;
     public final ForgeConfigSpec.BooleanValue backgroundShaders;
     public final ForgeConfigSpec.BooleanValue logGLErrors;
     public final ForgeConfigSpec.BooleanValue blurryContainers;
@@ -77,6 +81,7 @@ public class MellowConfigs {
         this.menuBackgroundBlurriness = builder.comment("How blurry the panorama background should be.", "Setting this to 20 will result in the same blurring effect as in the pre-1.13 panorama.").defineInRange("menuBackgroundBlurriness", 5, 0, 20);
         this.directionalAudio = builder.comment("Enables the use of HRTF-based directional audio to improve simulation of 3D sound.", "Option 1 = Classic stereo | Option 2 = HRTF-based audio").defineEnum("directionalAudio", TwoStyles.OPTION_1);
         this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").define("onboardAccessibility", true);
+        this.uiVolume = builder.comment("The volume of the in-game UI elements.").defineInRange("uiVolume", 1F, 0, 1);
         builder.pop();
 
         builder.push("forgeOptions");
@@ -85,6 +90,8 @@ public class MellowConfigs {
 
         builder.push("mellowUI");
         this.classifiedAsContainers = builder.comment("List of class paths for screens that don't blur the background and instead render a transparent gradient.").define("classifiedAsContainers", CLASSIFIED_AS_CONTAINERS);
+        this.oversizedInGUI = builder.comment("List of items that are allowed to render past their slot.").define("oversizedInGUI", Lists.newArrayList());
+        this.cullOversizedItems = builder.comment("Whether items that render past their slot should be culled to fit.").define("cullOversizedItems", true);
         this.panoramaCameraPitch = builder.comment("The pitch used by the camera in the panorama. Defaults to 10.").defineInRange("panoramaCameraPitch", 10, -90, 90);
         this.panoramaBobbing = builder.comment("Whether the panorama should bob up and down instead of being at a consistent pitch.").define("panoramaBobbing", false);
         this.legacyButtonColors = builder.comment("When enabled, buttons will have slightly darker text, and hovering on them will make it have a slight yellow tint.").define("legacyButtonColors", false);
@@ -124,5 +131,11 @@ public class MellowConfigs {
         this.mellomedleyMainMenuModButton = builder.comment("Where the 'Mods' button should be located in Mellomedley's main menu. Rearranges buttons to fit.", "Option 1 = Below 'Options' | Option 2 = With Accessibility and Language").defineEnum("mainMenuModButton", TwoStyles.OPTION_1);
         this.mellomedleyVersion = builder.comment("The current version of the Mellomedley modpack.").define("mellomedleyVersion", "0.4");
         builder.pop();
+    }
+
+    /// Whether the specified item can render outside its slot boundary.
+    /// @param item The item to check.
+    public static boolean oversizedInGUI(Item item) {
+        return !CLIENT_CONFIGS.cullOversizedItems.get() || CLIENT_CONFIGS.oversizedInGUI.get().contains(item.getRegistryName().toString());
     }
 }

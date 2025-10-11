@@ -59,6 +59,7 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
         for (SoundSource category : SoundSource.values()) {
             if (category != SoundSource.MASTER) sliders.add(new SoundSourceOption("soundCategory." + category.getName(), category));
         }
+        sliders.add(VanillaConfigEntries.UI_VOLUME);
         return sliders;
     }
 

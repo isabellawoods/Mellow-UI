@@ -30,8 +30,12 @@ import static net.minecraft.client.Option.*;
 
 @Mixin(value = AccessibilityOptionsScreen.class, priority = 900)
 public abstract class UpdatedAccessibilityScreen extends OptionsSubScreen {
-    @Mutable @Shadow @Final private static Option[] OPTIONS;
-    @Shadow protected abstract void createFooter();
+    @Mutable
+    @Shadow
+    @Final
+    private static Option[] OPTIONS;
+    @Shadow
+    protected abstract void createFooter();
 
     @Unique
     private static final List<Option> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, HIGH_CONTRAST, AUTO_JUMP, MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,

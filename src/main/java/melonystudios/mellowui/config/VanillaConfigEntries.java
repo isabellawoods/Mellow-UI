@@ -12,6 +12,7 @@ import net.minecraft.client.AmbientOcclusionStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ProgressOption;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -62,6 +63,13 @@ public class VanillaConfigEntries {
                         option.setTooltip(HRTF_BASED_AUDIO_TOOLTIP);
                 }
                 return CommonComponents.optionStatus(new TranslatableComponent("config.minecraft.directional_audio"), CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
+            });
+    public static final ProgressOption UI_VOLUME = new ProgressOption("config.minecraft.ui_volume", 0, 1, 0.01F,
+            options -> CLIENT_CONFIGS.uiVolume.get(),
+            (options, newValue) -> CLIENT_CONFIGS.uiVolume.set(newValue),
+            (options, slider) -> {
+                Component value = (int) (slider.get(options) * 100) == 0 ? CommonComponents.OPTION_OFF : new TranslatableComponent("config.minecraft.sound_category.percent", Integer.toString((int) (slider.get(options) * 100)));
+                return new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.sound_category.ui"), value);
             });
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslatableComponent("config.minecraft.realms_notifications.desc"),
             options -> options.realmsNotifications, (options, newValue) -> options.realmsNotifications = newValue);

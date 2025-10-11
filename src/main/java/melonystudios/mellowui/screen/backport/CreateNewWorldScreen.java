@@ -285,7 +285,7 @@ public class CreateNewWorldScreen extends Screen {
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 24, this.width,  this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 

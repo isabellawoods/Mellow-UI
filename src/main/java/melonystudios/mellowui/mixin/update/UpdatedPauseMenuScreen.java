@@ -8,6 +8,7 @@ import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.MusicToast;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.FeedbackScreen;
+import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import melonystudios.mellowui.screen.widget.ImageSetModButton;
 import melonystudios.mellowui.screen.widget.ModButton;
 import melonystudios.mellowui.util.GUITextures;
@@ -16,7 +17,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
-import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.advancements.AdvancementsScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.social.SocialInteractionsScreen;
@@ -77,7 +77,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             // Statistics
             this.addRenderableWidget(new Button(this.width / 2 + 4, this.height / 4 + 48 + yOffset, 98, 20, new TranslatableComponent("gui.stats"), button -> {
                 if (this.minecraft.player != null)
-                    this.minecraft.setScreen(new StatsScreen(this, this.minecraft.player.getStats()));
+                    this.minecraft.setScreen(new StatisticsScreen(this, this.minecraft.player.getStats()));
             }, (button, stack, mouseX, mouseY) -> {
                 if (this.minecraft.level == null) this.components.renderTooltip(this, button, new TranslatableComponent("error.mellowui.cannot_load_statistics").withStyle(ChatFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;
