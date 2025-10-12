@@ -1,0 +1,11 @@
+{
+  "cube_map": [
+    "minecraft:gui/title/background/panorama_0",
+    "minecraft:gui/title/background/panorama_1",
+    "minecraft:gui/title/background/panorama_2",
+    "minecraft:gui/title/background/panorama_3",
+    "minecraft:gui/title/background/panorama_4",
+    "minecraft:gui/title/background/panorama_5"
+  ],
+  "overlay": "minecraft:gui/title/background/panorama_overlay"
+}

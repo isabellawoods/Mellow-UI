@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.resource.AssetReloadListener;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -16,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 
 public class FlairReloadListener extends AssetReloadListener {
-    public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/Flairs");
+    public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/FlairReloader");
     public static final Gson GSON = Flair.createFlairSerializer().create();
 
     public FlairReloadListener() {
@@ -31,11 +30,11 @@ public class FlairReloadListener extends AssetReloadListener {
             try {
                 if (element.isJsonObject()) flairs.put(location, GSON.fromJson(element, Flair.class));
             } catch (Exception exception) {
-                LOGGER.error(I18n.get("logger.mellowui.flair.parsing", location), exception);
+                LOGGER.error(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse mod list flair '%s'", location), exception);
             }
         });
         MellowUtils.FLAIRS.clear();
         MellowUtils.FLAIRS.putAll(flairs.build());
-        LOGGER.info(I18n.get("logger.mellowui.flair.loaded", flairs.build().size()));
+        LOGGER.info(MellowUtils.translate("logger.mellowui.flair.loaded", "Loaded %s mod list flair(s)", flairs.build().size()));
     }
 }

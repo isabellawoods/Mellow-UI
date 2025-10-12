@@ -2,15 +2,19 @@ package melonystudios.mellowui.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.config.WidgetConfigs;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 public class IconButton extends Button {
     private final WidgetTextureSet textureSet;
     private final int textureWidth;
     private final int textureHeight;
     private boolean renderShadow = true;
+    private float textAlpha = 0;
 
     public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, Component text, OnPress onPress) {
         super(x, y, width, height, text, onPress);
@@ -40,6 +44,10 @@ public class IconButton extends Button {
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
 
+        // Text alpha
+        if (this.isHoveredOrFocused()) this.textAlpha = Mth.clamp(this.textAlpha + 0.15F, 0, 1);
+        else this.textAlpha = Mth.clamp(this.textAlpha - 0.15F, 0, 1);
+
         // Icon shadow
         if (this.renderShadow) {
             RenderSystem.setShaderColor(0.25F, 0.25F, 0.25F, this.alpha);
@@ -49,6 +57,12 @@ public class IconButton extends Button {
 
         // Icon
         blit(stack, this.x, this.y, 0, 0, this.width, this.height, this.textureWidth, this.textureHeight);
+
+        // Text
+        Minecraft minecraft = Minecraft.getInstance();
+        int color = this.isHoveredOrFocused() ? WidgetConfigs.WIDGET_CONFIGS.highlightedIconButtonColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultWidgetTextColor.get();
+        int alpha = Mth.ceil(this.textAlpha * 255F) << 24;
+        if (this.textAlpha > 0) drawString(stack, minecraft.font, this.getMessage(), this.x - minecraft.font.width(this.getMessage()) - 2, this.y + 2, color | alpha);
 
         // Tooltip
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);

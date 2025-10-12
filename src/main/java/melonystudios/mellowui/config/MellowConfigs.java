@@ -2,6 +2,7 @@ package melonystudios.mellowui.config;
 
 import com.google.common.collect.Lists;
 import melonystudios.mellowui.config.type.*;
+import melonystudios.mellowui.resource.panorama.Panorama;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -11,7 +12,7 @@ import java.util.List;
 public class MellowConfigs {
     public static final List<String> CLASSIFIED_AS_CONTAINERS = Lists.newArrayList(
             "com.wildfire.gui.screen.WardrobeBrowserScreen", "com.wildfire.gui.screen.WildfireBreastCustomizationScreen", "com.wildfire.gui.screen.WildfireCharacterSettingsScreen", "com.wildfire.gui.screen.WildfirePlayerListScreen",
-            "mezz.jei.gui.recipes.RecipesGui");
+            "mezz.jei.gui.recipes.RecipesGui", "me.shedaniel.rei.impl.client.gui.screen.DefaultDisplayViewingScreen");
     private static final Pair<MellowConfigs, ForgeConfigSpec> CLIENT_CONFIG_PAIR = new ForgeConfigSpec.Builder().configure(MellowConfigs::new);
     public static final MellowConfigs CLIENT_CONFIGS = CLIENT_CONFIG_PAIR.getLeft();
     public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_CONFIG_PAIR.getRight();
@@ -72,6 +73,9 @@ public class MellowConfigs {
 
     // Forge Configs
     public final ForgeConfigSpec.EnumValue<ModListSorting> modListSorting;
+
+    // Dynamic resource configs
+    public final ForgeConfigSpec.ConfigValue<String> selectedPanorama;
 
     public MellowConfigs(ForgeConfigSpec.Builder builder) {
         builder.push("vanillaOptions");
@@ -134,6 +138,10 @@ public class MellowConfigs {
         builder.push("mellomedleyOptions");
         this.mellomedleyMainMenuModButton = builder.comment("Where the 'Mods' button should be located in Mellomedley's main menu.", "Option 1 = Icon | Option 2 = Below 'Options'").translation("config.mellomedley.main_menu_mod_button").defineEnum("mainMenuModButton", TwoStyles.OPTION_1);
         this.mellomedleyVersion = builder.comment("The current version of the Mellomedley modpack, displayed on its variant of the main menu.").translation("config.mellomedley.mellomedley_version").define("mellomedleyVersion", "0.6");
+        builder.pop();
+
+        builder.push("dynamicResources");
+        this.selectedPanorama = builder.comment("The currently selected panorama. This overrides any panoramas added via resource packs.").define("selectedPanorama", Panorama.DEFAULT_LOCATION.toString());
         builder.pop();
     }
 

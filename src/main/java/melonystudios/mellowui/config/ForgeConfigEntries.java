@@ -7,6 +7,7 @@ import melonystudios.mellowui.config.option.TextFieldOption;
 import melonystudios.mellowui.config.type.ModListSorting;
 import net.minecraft.client.ProgressOption;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 
@@ -17,6 +18,9 @@ import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 import static net.minecraftforge.common.ForgeConfig.*;
 
 public class ForgeConfigEntries {
+    // Tooltips
+    public static final MutableComponent SORTING_TOOLTIP = new TranslatableComponent("config.forge.mod_list_sorting.tooltip");
+
     // Client config
     public static final BooleanOption THREADED_CHUNK_RENDERING = new BooleanOption("config.forge.threaded_chunk_rendering", new TranslatableComponent("config.forge.threaded_chunk_rendering.tooltip"),
             options -> CLIENT.alwaysSetupTerrainOffThread.get(), (options, newValue) -> CLIENT.alwaysSetupTerrainOffThread.set(newValue));
@@ -66,7 +70,10 @@ public class ForgeConfigEntries {
     // Mellow UI's common config
     public static final IterableOption MOD_LIST_SORTING = new IterableOption("config.forge.mod_list_sorting",
             (options, identifier) -> CLIENT_CONFIGS.modListSorting.set(ModListSorting.byId(CLIENT_CONFIGS.modListSorting.get().getId() + identifier)),
-            (options, newValue) -> new TranslatableComponent("config.forge.mod_list_sorting", new TranslatableComponent("config.forge.mod_list_sorting." + CLIENT_CONFIGS.modListSorting.get().toString())));
+            (options, option) -> {
+                option.setTooltip(SORTING_TOOLTIP);
+                return new TranslatableComponent("config.forge.mod_list_sorting", new TranslatableComponent("config.forge.mod_list_sorting." + CLIENT_CONFIGS.modListSorting.get().toString()));
+            });
 
     public static Component percentValueLabel(String buttonTranslation, double value) {
         return new TranslatableComponent("options.percent_value", new TranslatableComponent(buttonTranslation), (int) (value * 100));

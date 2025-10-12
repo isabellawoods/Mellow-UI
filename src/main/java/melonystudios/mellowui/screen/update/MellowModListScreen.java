@@ -8,6 +8,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.config.option.IterableOption;
 import melonystudios.mellowui.config.type.ModListSorting;
+import melonystudios.mellowui.resource.flair.Flairs;
 import melonystudios.mellowui.screen.Alignment;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MellowModList;
@@ -34,10 +35,12 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -158,19 +161,19 @@ public class MellowModListScreen extends Screen {
 
         // Sort
         IterableOption sortingConfig = ForgeConfigEntries.MOD_LIST_SORTING;
-        this.addRenderableWidget(new Button(this.width / 2 - 165, this.height - 25, 150, 20, sortingConfig.getMessage(this.minecraft.options), button -> {
+        this.addRenderableWidget(new Button(this.width / 2 - 125, this.height - 25, 20, 20, sortingConfig.getMessage(this.minecraft.options), button -> {
             sortingConfig.toggle(this.minecraft.options, 1);
             button.setMessage(sortingConfig.getMessage(this.minecraft.options));
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
-        }));
+        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, ForgeConfigEntries.SORTING_TOOLTIP, mouseX, mouseY)));
 
         // Open mods folder
-        this.addRenderableWidget(new ImageSetButton(this.width / 2 - 10, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addRenderableWidget(new ImageSetButton(this.width / 2 + 105, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslatableComponent("button.mellowui.open_mods_folder")));
 
         // Done button
-        this.addRenderableWidget(new Button(this.width / 2 + 15, this.height - 25, 150, 20, CommonComponents.GUI_DONE,
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         if (this.selectedMod != null) this.modList.centerScrollOn(this.selectedMod);
@@ -184,9 +187,9 @@ public class MellowModListScreen extends Screen {
         this.components.renderListSeparators(this.width, 0, this.height - 32, 32, 0, 0);
 
         int rightSeparatorX = (this.width / 4) * 3;
-        this.components.enableScissor(this.modList.getRight(), 34, rightSeparatorX + 2, this.height - 32);
+        this.components.enableScissor(this.modList.getRight(), 34, rightSeparatorX + 4, this.height - 32);
         this.components.renderVerticalSeparator(this.modList.getRight(), 34, this.height - 32, false);
-        this.components.renderVerticalSeparator(rightSeparatorX, 34, this.height - 32, true);
+        if (this.panel.getMaxScroll() <= 0) this.components.renderVerticalSeparator(rightSeparatorX, 34, this.height - 32, true);
         this.panel.render(stack, mouseX, mouseY, partialTicks);
         this.components.disableScissor();
 
@@ -206,7 +209,7 @@ public class MellowModListScreen extends Screen {
         if (mod == null) return;
 
         IModInfo info = mod.getModInformation();
-        int accentColor = this.getAccentColor(info.getModId());
+        int accentColor = Flairs.accentColor(info.getModId());
         ImagePanelEntry imageEntry = new ImagePanelEntry(this.panel, info);
         this.setModLogo(imageEntry.loadModLogo());
         if (this.logoData.getFirst() != null) this.panel.addEntry(imageEntry);
@@ -249,6 +252,17 @@ public class MellowModListScreen extends Screen {
         this.panel.addEntry(new TextPanelEntry(this.panel, new TranslatableComponent("menu.mellowui.mods.state",
                 this.getLoadingStage(info).withStyle(withColor(0xFFFFFF).withBold(false)))
                 .withStyle(withColor(accentColor).withBold(true))));
+
+        // changelogs (from forge's own mod list screen)
+        VersionChecker.CheckResult result = VersionChecker.getResult(this.selectedMod.getModInformation());
+        if ((result.status() == VersionChecker.Status.OUTDATED || result.status() == VersionChecker.Status.BETA_OUTDATED) && result.changes() != null && !result.changes().isEmpty()) {
+            this.panel.addEntry(new SeparatorPanelEntry(this.panel, this.font.lineHeight));
+            this.panel.addEntry(new TextPanelEntry(this.panel, Alignment.CENTER, new TranslatableComponent("menu.mellowui.mods.changelogs").withStyle(withColor(accentColor).withBold(true))));
+
+            for (Map.Entry<ComparableVersion, String> entry : result.changes().entrySet()) {
+                this.panel.addEntry(new TextPanelEntry(this.panel, new TranslatableComponent("menu.mellowui.mods.changelog_line", entry.getKey(), entry.getValue())));
+            }
+        }
     }
 
     private MutableComponent getLoadingStage(IModInfo info) {
@@ -262,16 +276,6 @@ public class MellowModListScreen extends Screen {
         return info.getOwningFile().getMods().stream()
                 .map(IModInfo::getDisplayName)
                 .collect(Collectors.joining(new TranslatableComponent("menu.mellowui.delimiter").getString()));
-    }
-
-    public int getAccentColor(String modID) {
-        if (modID.equals("mellowui")) {
-            return 0x955AE0;
-        } else if (modID.equals("forge")) {
-            return 0xDFA76A;
-        } else {
-            return MellowUtils.highContrastEnabled() ? WidgetConfigs.WIDGET_CONFIGS.highContrastFlairAccentColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultFlairAccentColor.get();
-        }
     }
 
     public void setSelected(MellowModList.Mod mod) {

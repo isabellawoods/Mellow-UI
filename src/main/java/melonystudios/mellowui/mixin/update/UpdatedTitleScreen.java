@@ -9,7 +9,9 @@ import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
+import melonystudios.mellowui.screen.MellowCustomizationScreen;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.AttributionsScreen;
@@ -33,6 +35,7 @@ import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraftforge.fml.ModList;
@@ -49,6 +52,7 @@ import java.util.concurrent.CompletableFuture;
 @Mixin(value = TitleScreen.class, priority = 900)
 public abstract class UpdatedTitleScreen extends Screen implements InterfaceMethods.TitleScreenMethods {
     @Unique private final RenderComponents components = RenderComponents.INSTANCE;
+    @Shadow @Final private static ResourceLocation PANORAMA_OVERLAY;
     @Mutable @Shadow @Final private PanoramaRenderer panorama;
     @Shadow private Screen realmsNotificationsScreen;
     @Shadow @Nullable private String splash;
@@ -59,7 +63,6 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
     @Shadow protected abstract boolean realmsNotificationsEnabled();
     @Shadow protected abstract void realmsButtonClicked();
     @Shadow protected abstract boolean hasRealmsSubscription();
-
     @Unique @Nullable private TitleScreenWarning32Bit warning32Bit;
     @Unique public boolean keepLogoThroughFade;
     @Unique private int copyrightWidth;
@@ -79,9 +82,14 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         this.keepLogoThroughFade = keep;
     }
 
+    @Override
+    public ResourceLocation getPanoramaOverlay() {
+        return PANORAMA_OVERLAY;
+    }
+
     @Inject(method = "<init>(Z)V", at = @At("TAIL"))
     public void constructor(boolean fading, CallbackInfo callback) {
-        this.components.replacePanorama(this.panorama);
+        this.components.replacePanorama(this.panorama, true);
     }
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
@@ -99,6 +107,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             return;
         }
         LogoRenderer.rerollEasterEgg();
+        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
@@ -167,7 +176,10 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         }
 
         // Switch Style
-        this.addRenderableWidget(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this, this.width - 20, 8));
+        this.addRenderableWidget(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 20, 8));
+
+        // Customize
+        this.addRenderableWidget(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 20, 21));
     }
 
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
@@ -242,6 +254,9 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
                 // Forge's beta warning
                 this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
+
+                // Title screen icons background
+                this.components.renderTitleScreenIconsBackground(this.width - 21, 7, buttonAlpha);
 
                 // Splashes
                 if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {

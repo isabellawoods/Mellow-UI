@@ -23,7 +23,7 @@ import java.util.function.BooleanSupplier;
 @OnlyIn(Dist.CLIENT)
 public class MUILoadingTerrainScreen extends Screen {
     public static final Component DOWNLOADING_TERRAIN_TEXT = new TranslatableComponent("multiplayer.downloadingTerrain");
-    public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 500L;
+    public static final long CHUNK_LOADING_START_WAIT_LIMIT_MS = 30000L;
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final long createdAt;
     private final BooleanSupplier worldReceived;
@@ -35,9 +35,9 @@ public class MUILoadingTerrainScreen extends Screen {
     @Nullable
     private TextureAtlasSprite cachedEverdawnPortalSprite;
 
-    public MUILoadingTerrainScreen(BooleanSupplier levelReceived, Reason reason) {
+    public MUILoadingTerrainScreen(BooleanSupplier worldReceived, Reason reason) {
         super(NarratorChatListener.NO_TITLE);
-        this.worldReceived = levelReceived;
+        this.worldReceived = worldReceived;
         this.reason = reason;
         this.createdAt = System.currentTimeMillis();
     }

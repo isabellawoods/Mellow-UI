@@ -1,8 +1,14 @@
 package melonystudios.mellowui.util;
 
+import com.google.gson.JsonObject;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.resource.flair.Flair;
+import melonystudios.mellowui.resource.panorama.BobbingPitch;
+import melonystudios.mellowui.resource.panorama.ConstantPitch;
+import melonystudios.mellowui.resource.panorama.Panorama;
+import melonystudios.mellowui.resource.panorama.PitchOverrider;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
@@ -13,6 +19,7 @@ import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -29,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
@@ -37,6 +45,11 @@ import static net.minecraft.util.FastColor.ARGB32.*;
 public class MellowUtils {
     // Resource pack entries
     public static final Map<ResourceLocation, Flair> FLAIRS = new HashMap<>();
+    public static final Map<ResourceLocation, Panorama> PANORAMAS = new HashMap<>();
+    public static final Map<ResourceLocation, Function<JsonObject, PitchOverrider>> OVERRIDERS = Util.make(new HashMap<>(), map -> {
+        map.put(MellowUI.mellowUI("constant"), ConstantPitch.DEFAULT::fromJSON);
+        map.put(MellowUI.mellowUI("bobbing"), BobbingPitch.DEFAULT::fromJSON);
+    });
 
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
     public static final Component SEARCH_TEXT = new TranslatableComponent("button.mellowui.search").withStyle(withColor(0xA0A0A0).withItalic(true));
@@ -45,11 +58,20 @@ public class MellowUtils {
     public static final int TABBED_TITLE_HEIGHT = 2;
     public static final int PAUSE_MENU_Y_OFFSET = -16;
 
+    @SuppressWarnings("deprecation")
     public static Screen modList(Screen lastScreen) {
         Screen defaultScreen = new MellowModListScreen(lastScreen);
         return switch (CLIENT_CONFIGS.modListStyle.get()) {
             case OPTION_2 -> defaultScreen;
-            case OPTION_3 -> getExternalScreen("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen", "catalogue", defaultScreen);
+            case OPTION_3 -> {
+                if (!ModList.get().isLoaded("catalogue")) yield defaultScreen;
+                try {
+                    Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
+                    yield (Screen) screen.newInstance();
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+                    yield defaultScreen;
+                }
+            }
             default -> new ModListScreen(lastScreen);
         };
     }
@@ -125,6 +147,11 @@ public class MellowUtils {
 
     public static boolean highContrastUnavailable() {
         return !Minecraft.getInstance().getResourcePackRepository().getAvailableIds().contains(GUITextures.MUI_HIGH_CONTRAST.toString());
+    }
+
+    public static String translate(String key, String fallback, Object... args) {
+        if (I18n.exists(key)) return I18n.get(key, args);
+        else return String.format(fallback, args);
     }
 
     public static Style withColor(int color) {

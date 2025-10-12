@@ -9,6 +9,7 @@ import com.mojang.math.Matrix4f;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -111,10 +112,14 @@ public class ShaderManager {
     /// @param name The shader uniform name.
     /// @return {@linkplain MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**} if the uniform is `Radius`, or `0` if not.
     private static float getUniformValue(String name) {
-        return switch (name) {
-            case "Radius" -> MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
-            default -> 0;
-        };
+        switch (name) {
+            case "Radius": {
+                Integer blurStrength = Panoramas.panorama().blurStrength();
+                if (blurStrength != null) return Mth.clamp(blurStrength, 0, 20);
+                return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+            }
+            default: return 0;
+        }
     }
 
     /// Processes the panorama {@linkplain PostEffect shader} fade in/out.

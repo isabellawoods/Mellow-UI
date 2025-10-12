@@ -1,7 +1,8 @@
 package melonystudios.mellowui.screen.panel;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
@@ -54,7 +56,7 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
         this.height = height;
         this.parentScreen = parentScreen;
         this.title = title;
-        this.barLeft = this.x + this.width - this.barWidth;
+        this.barLeft = this.width - this.x / 2 - 1;
     }
 
     /// Renders the contents of this panel.
@@ -81,10 +83,45 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         int relativeY = (int) (this.y - this.scrollAmount);
 
+        // Panel entries
         this.components.enableScissor(this.x, this.y, this.width, this.height + this.y);
         this.renderContents(stack, relativeY, mouseX, mouseY, partialTicks);
         for (Widget widget : this.renderables) widget.render(stack, mouseX, mouseY, partialTicks);
         this.components.disableScissor();
+
+        // Scroller
+        int maxScroll = this.getMaxScroll();
+        int y1 = this.y + this.height;
+        if (maxScroll > 0) {
+            Tesselator tessellator = Tesselator.getInstance();
+            BufferBuilder buffer = tessellator.getBuilder();
+            RenderSystem.enableBlend();
+            RenderSystem.disableTexture();
+            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            int scrollX0 = this.barLeft; // checkerzon e checkerzinho ~sophie 27-9-25
+            int scrollX1 = scrollX0 + this.barWidth;
+            int scrollY0 = this.y;
+            int i1 = (int) ((float) ((y1 - scrollY0) * (y1 - scrollY0)) / (float) this.getContentHeight());
+            i1 = Mth.clamp(i1, 32, y1 - scrollY0 - 8);
+            int i2 = (int) (this.scrollAmount * (y1 - scrollY0 - i1) / maxScroll + scrollY0);
+            if (i2 < scrollY0) i2 = scrollY0;
+
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            buffer.vertex(scrollX0 + 1, y1, 0).uv(0, 1).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX1 - 1, y1, 0).uv(1, 1).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX1 - 1, scrollY0, 0).uv(1, 0).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX0 + 1, scrollY0, 0).uv(0, 0).color(0, 0, 0, 191).endVertex();
+            buffer.vertex(scrollX0, (i2 + i1), 0).uv(0, 1).color(128, 128, 128, 191).endVertex();
+            buffer.vertex(scrollX1, (i2 + i1), 0).uv(1, 1).color(128, 128, 128, 191).endVertex();
+            buffer.vertex(scrollX1, i2, 0).uv(1, 0).color(128, 128, 128, 255).endVertex();
+            buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(128, 128, 128, 255).endVertex();
+            buffer.vertex(scrollX0, (i2 + i1 - 1), 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
+            buffer.vertex((scrollX1 - 1), (i2 + i1 - 1), 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
+            buffer.vertex((scrollX1 - 1), i2, 0).uv(1, 0).color(192, 192, 192, 255).endVertex();
+            buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(192, 192, 192, 255).endVertex();
+            tessellator.end();
+            RenderSystem.disableBlend();
+        }
     }
 
     protected <T extends GuiEventListener & Widget & NarratableEntry> T addRenderableWidget(T widget) {
@@ -141,11 +178,11 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
 
     /// Gets the total height, in **Minecraft Pixels** (`mpx`), of all the content being rendered.
     ///
-    /// This is different from the {@linkplain PanelEntry#getContentHeight() entry's `getContentHeight()`} as it is multiplied by a factor of **1.5** to better match the scroll height in-game.
+    /// This is different from the {@linkplain PanelEntry#getContentHeight() entry's `getContentHeight()`} as it is made to better match the scroll height in-game.
     public int getContentHeight() {
         int height = 0;
         for (PanelEntry entry : this.entries) height += entry.getContentHeight();
-        return (int) (height * 1.5F);
+        return height + 32;
     }
 
     private void applyScrollLimits() {

@@ -4,12 +4,15 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
+import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -45,11 +48,12 @@ import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 /// The global ***Render Components*** used by *Mellow UI*.
 /// Contains almost every rendering method used more than once throughout the codebase.
 @OnlyIn(Dist.CLIENT)
+@SuppressWarnings("deprecation")
 public class RenderComponents extends GuiComponent {
     /// The default instance of *Mellow UI*'s ***Render Components***.
     public static final RenderComponents INSTANCE = new RenderComponents(Minecraft.getInstance());
     /// The panorama that's currently being used by *Mellow UI*.
-    private static PanoramaRenderer PANORAMA = new PanoramaRenderer(TitleScreen.CUBE_MAP);
+    public static PanoramaRenderer PANORAMA = new PanoramaRenderer(TitleScreen.CUBE_MAP);
     public static float PANORAMA_PITCH = 10;
     public static final int TOOLTIP_MAX_WIDTH = 200; // tooltip width is 170 in 1.21.1
     public static final int DEFAULT_TAB_WIDTH = 130;
@@ -141,13 +145,23 @@ public class RenderComponents extends GuiComponent {
     public void renderPanorama(float partialTicks, int width, int height, float transparency) {
         PANORAMA.render(partialTicks, 1);
         RenderSystem.setShaderColor(1, 1, 1, Mth.ceil(Mth.clamp(transparency, 0, 1)));
-        this.renderBackgroundTexture(GUITextures.PANORAMA_OVERLAY, width, height);
+        this.renderBackgroundTexture(Panoramas.overlayTexture(Panoramas.panorama()), width, height);
     }
 
     /// Replaces the {@linkplain #PANORAMA **default panorama**} used by *Mellow UI* with another.
+    ///
+    /// This method also creates a new **Generated** panorama with the ID of the old panorama, when the substitution occurs.
+    /// This only happens if the replacement came from the {@linkplain TitleScreen vanilla title screen}.
     /// @param panorama The panorama to replace the current one.
-    public void replacePanorama(PanoramaRenderer panorama) {
-        if (!((InterfaceMethods.PanoramaRendererMethods) PANORAMA).samePanorama(panorama)) PANORAMA = panorama;
+    /// @param fromTitleScreen Whether the replacement came from the title screen.
+    public void replacePanorama(PanoramaRenderer panorama, boolean fromTitleScreen) {
+        if (fromTitleScreen && Minecraft.getInstance().screen instanceof TitleScreen) {
+            int hashCode = panorama.hashCode();
+            if (hashCode != -1294886725) { // hash code of the default panorama from the vanilla title screen ~isa 28-9-25
+                MellowUtils.PANORAMAS.put(MellowUI.mellowUI("generated/" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) Minecraft.getInstance().screen).getPanoramaOverlay()));
+            }
+        }
+        if (((InterfaceMethods.PanoramaRendererMethods) PANORAMA).differentPanorama(panorama)) PANORAMA = panorama;
     }
 
     /// Renders a tiled, vertical **background texture** onto the screen, like the panorama overlay.
@@ -257,11 +271,25 @@ public class RenderComponents extends GuiComponent {
     /// @param brightness The brightness of the background, ranging from `0` to `255`.
     /// @param scrollAmount The amount scrolled on the list, added with the vertical offset.
     public void renderListBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, int uOffset, int vOffset, int brightness, double scrollAmount) {
+        RenderSystem.enableBlend();
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, backgroundTexture);
-        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(brightness / 255F, brightness / 255F, brightness / 255F, 1);
         blit(this.stack, x, y, uOffset, (float) (vOffset + scrollAmount), width, height, DEFAULT_TEXTURE_WIDTH, DEFAULT_TEXTURE_WIDTH);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.disableBlend();
+    }
+
+    /// Renders a small, transparent background for the **title screen icons**.
+    /// @param x The x-position of the background.
+    /// @param y The y-position of the background.
+    /// @param alpha The transparency of the background.
+    public void renderTitleScreenIconsBackground(int x, int y, float alpha) {
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, GUITextures.TITLE_SCREEN_ICONS_BACKGROUND);
+        RenderSystem.setShaderColor(1, 1, 1, alpha);
+        blit(this.stack, x, y, 0, 0, 14, 27, 14, 27);
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
     }
@@ -361,10 +389,16 @@ public class RenderComponents extends GuiComponent {
     /// @param onPress What happens when this button is {@linkplain net.minecraft.client.gui.components.Button.OnPress pressed}.
     /// @param x The x-position of the button.
     /// @param y The y-position of the button.
-    public IconButton switchStyle(Button.OnPress onPress, Screen screen, int x, int y) {
-        return new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslatableComponent("button.mellowui.switch_style"),
-                onPress, (button, stack, mouseX, mouseY) ->
-                this.renderTooltip(screen, button, new TranslatableComponent("button.mellowui.switch_style"), mouseX, mouseY));
+    public IconButton switchStyle(Button.OnPress onPress, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslatableComponent("button.mellowui.switch_style"), onPress);
+    }
+
+    /// Creates a new *"Customize"* {@link IconButton}.
+    /// @param onPress What happens when this button is {@linkplain net.minecraft.client.gui.components.Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public IconButton customize(Button.OnPress onPress, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.CUSTOMIZE_SET, new TranslatableComponent("button.mellowui.customize.title"), onPress);
     }
 
     /// Creates a new **scissor** rectangle to blit things into.

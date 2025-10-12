@@ -57,6 +57,13 @@ public class MellowUI {
         return mellowUI("textures/gui/" + name + ".png");
     }
 
+    /// Transforms the provided resource location into a texture path.
+    /// @param location The resource location.
+    /// @return A new location, with the `textures/` prefix and `.png` suffix added.
+    public static ResourceLocation toTexturePath(ResourceLocation location) {
+        return new ResourceLocation(location.getNamespace(), (location.getPath().startsWith("textures/") ? "" : "textures/") + location.getPath() + (location.getPath().endsWith(".png") ? "" : ".png"));
+    }
+
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
     private void clientSetup(final FMLClientSetupEvent event) {}

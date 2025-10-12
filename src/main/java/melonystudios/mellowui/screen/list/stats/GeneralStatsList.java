@@ -27,6 +27,7 @@ public class GeneralStatsList extends ObjectSelectionList<GeneralStatsList.Entry
     public GeneralStatsList(StatisticsScreen parentScreen, Minecraft minecraft, int width, int height, int y0, int y1, int entryWidth) {
         super(minecraft, width, height, y0, y1, entryWidth);
         this.parentScreen = parentScreen;
+        this.setRenderHeader(true, 1);
         ObjectArrayList<Stat<ResourceLocation>> customStats = new ObjectArrayList<>(Stats.CUSTOM.iterator());
         customStats.sort(Comparator.comparing(stat -> I18n.get(StatisticsScreen.getTranslationKey(stat))));
         for (Stat<ResourceLocation> stat : customStats) this.addEntry(new Entry(stat));
@@ -45,12 +46,12 @@ public class GeneralStatsList extends ObjectSelectionList<GeneralStatsList.Entry
 
     @Override
     public int getRowWidth() {
-        return 350;
+        return 280;
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return this.width / 2 + 140;
+        return this.width / 2 + 148;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -66,9 +67,9 @@ public class GeneralStatsList extends ObjectSelectionList<GeneralStatsList.Entry
         @Override
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
             Font font = GeneralStatsList.this.minecraft.font;
-            drawString(stack, font, this.name, left + 2, top + 1, index % 2 == 0 ? 0xFFFFFF : 0xAAAAAA);
+            drawString(stack, font, this.name, left + 2, top + 1, index % 2 == 0 ? 0xFFFFFF : 0xBBBBBB);
             String value = this.stat.format(GeneralStatsList.this.parentScreen.statisticsManager().getValue(this.stat));
-            drawString(stack, font, value, left + 320 - font.width(value), top + 1, index % 2 == 0 ? 0xFFFFFF : 0xAAAAAA);
+            drawString(stack, font, value, left + GeneralStatsList.this.getRowWidth() - 8 - font.width(value), top + 1, index % 2 == 0 ? 0xFFFFFF : 0xBBBBBB);
         }
 
         @Override

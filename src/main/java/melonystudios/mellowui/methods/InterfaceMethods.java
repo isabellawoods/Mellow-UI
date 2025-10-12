@@ -2,6 +2,7 @@ package melonystudios.mellowui.methods;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.client.renderer.CubeMap;
@@ -24,6 +25,11 @@ public class InterfaceMethods {
         /// Sets whether the title screen keeps its logo visible during the fading animation.
         /// @param keep Whether to keep it visible.
         default void keepLogoThroughFade(boolean keep) {}
+
+        /// @return The panorama overlay texture from the title screen, as it may've been modified by other mods.
+        default ResourceLocation getPanoramaOverlay() {
+            return GUITextures.PANORAMA_OVERLAY;
+        }
     }
 
     public interface PackRepositoryMethods {
@@ -58,11 +64,16 @@ public class InterfaceMethods {
         default ResourceLocation[] getPanoramaTextures() {
             return null;
         }
+
+        /// Sets the textures of a cube map.
+        /// @param textures A list of 6 {@linkplain ResourceLocation resource locations} to use.
+        default void setPanoramaTextures(List<ResourceLocation> textures) {}
     }
 
     public interface PanoramaRendererMethods {
-        /// @return Whether the provided panorama is the same as the panorama currently being rendered.
-        default boolean samePanorama(PanoramaRenderer panoramaRenderer) {
+        /// @param renderer The panorama to compare.
+        /// @return Whether the provided panorama is different from the panorama currently being rendered.
+        default boolean differentPanorama(PanoramaRenderer renderer) {
             return false;
         }
 

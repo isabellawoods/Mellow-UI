@@ -3,7 +3,10 @@ package melonystudios.mellowui.mixin.update;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.option.OpenMenuOption;
+import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.util.MellowUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.chat.NarratorChatListener;
@@ -30,6 +33,8 @@ import static net.minecraft.client.Option.*;
 
 @Mixin(value = AccessibilityOptionsScreen.class, priority = 900)
 public abstract class UpdatedAccessibilityScreen extends OptionsSubScreen {
+    @Unique
+    private final OpenMenuOption controls = new OpenMenuOption("options.controls", new MUIControlsScreen(this, Minecraft.getInstance().options)).boldText(false);
     @Mutable
     @Shadow
     @Final
@@ -38,7 +43,7 @@ public abstract class UpdatedAccessibilityScreen extends OptionsSubScreen {
     protected abstract void createFooter();
 
     @Unique
-    private static final List<Option> UPDATED_OPTIONS = Lists.newArrayList(NARRATOR, SHOW_SUBTITLES, HIGH_CONTRAST, AUTO_JUMP, MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING, TOGGLE_CROUCH, TOGGLE_SPRINT,
+    private static final List<Option> UPDATED_OPTIONS = Lists.newArrayList(CLOSED_CAPTIONS, HIGH_CONTRAST, MENU_BACKGROUND_BLURRINESS, TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_OPACITY, CHAT_LINE_SPACING, CHAT_DELAY, VIEW_BOBBING,
             SCREEN_EFFECTS_SCALE, FOV_EFFECTS_SCALE, HIDE_LIGHTNING_FLASH, DARK_MOJANG_STUDIOS_BACKGROUND_COLOR, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS);
     @Unique
     private OptionsList list;
@@ -52,8 +57,11 @@ public abstract class UpdatedAccessibilityScreen extends OptionsSubScreen {
         if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
             this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             for (Option option : OPTIONS) {
-                if (!UPDATED_OPTIONS.contains(option)) UPDATED_OPTIONS.add(option);
+                if (!UPDATED_OPTIONS.contains(option) && option != NARRATOR && option != AUTO_JUMP && option != SHOW_SUBTITLES && option != TOGGLE_CROUCH && option != TOGGLE_SPRINT) {
+                    UPDATED_OPTIONS.add(option);
+                }
             }
+            this.list.addSmall(NARRATOR, this.controls);
             this.list.addSmall(UPDATED_OPTIONS.toArray(new Option[0]));
             this.addWidget(this.list);
             this.createFooter();

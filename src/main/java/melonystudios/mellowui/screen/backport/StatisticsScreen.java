@@ -9,21 +9,26 @@ import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
 import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
 import melonystudios.mellowui.screen.list.stats.MobsStatsList;
 import melonystudios.mellowui.screen.widget.TabButton;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.achievement.StatsUpdateListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatsCounter;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +42,8 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     private final Screen lastScreen;
     private final StatsCounter manager;
     private boolean isLoading = true;
+    @Nullable
+    private EditBox textBackground;
 
     // Tabs
     private final List<TabButton> tabs = Lists.newArrayList();
@@ -46,14 +53,28 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     @Nullable
     private ObjectSelectionList<?> activeList = null;
 
+    // Loading
+    public static final long STATISTICS_RECEIVAL_WAIT_LIMIT_MS = 2000L;
+    private Button doneButton;
+    private final long createdAt;
+    private float textAlpha = 0;
+
     public StatisticsScreen(Screen lastScreen, StatsCounter manager) {
         super(new TranslatableComponent("gui.stats"));
         this.lastScreen = lastScreen;
         this.manager = manager;
+        this.createdAt = System.currentTimeMillis();
     }
 
     public StatsCounter statisticsManager() {
         return this.manager;
+    }
+
+    @Override
+    public void tick() {
+        if (System.currentTimeMillis() > this.createdAt + STATISTICS_RECEIVAL_WAIT_LIMIT_MS) {
+            this.textAlpha = Mth.clamp(this.textAlpha + 0.06F, 0, 0.7F);
+        }
     }
 
     @Override
@@ -70,6 +91,19 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     @Override
     protected void init() {
         this.isLoading = true;
+
+        // Retrieving statistics background
+        this.textBackground = new EditBox(this.font, this.width / 2, this.height / 2, this.font.width(RETRIEVING_STATISTICS) + 20, 30, RETRIEVING_STATISTICS);
+        this.textBackground.setMaxLength(128);
+        this.textBackground.setEditable(false);
+        this.textBackground.x = this.width / 2 - this.textBackground.getWidth() / 2;
+        this.textBackground.y = ((this.height / 2) - 9 / 2) - 7;
+        this.addWidget(this.textBackground);
+
+        // Done button
+        this.addRenderableWidget(this.doneButton = new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
+                button -> this.minecraft.setScreen(this.lastScreen)));
+
         if (this.minecraft.getConnection() != null) {
             this.minecraft.getConnection().send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.REQUEST_STATS));
         }
@@ -82,7 +116,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         this.items = new ItemsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 20);
         this.items.setRenderBackground(false);
         this.items.setRenderTopAndBottom(false);
-        this.mobs = new MobsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 14);
+        this.mobs = new MobsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 36);
         this.mobs.setRenderBackground(false);
         this.mobs.setRenderTopAndBottom(false);
     }
@@ -92,6 +126,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         int tabWidth = this.components.threeTabWidth(this.width);
         this.activeList = this.general;
         this.addWidget(this.activeList);
+        this.tabs.clear();
 
         // General
         this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("stat.generalButton"), button -> {
@@ -119,10 +154,6 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         })));
         mobsTab.active = !this.mobs.children().isEmpty();
 
-        // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
-
         this.tabs.get(0).setSelected(true);
     }
 
@@ -130,9 +161,24 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         if (this.isLoading) {
-            drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2, 0xFFFFFF);
-            drawCenteredString(stack, this.font, LOADING_SYMBOLS[(int) (Util.getMillis() / 150L % (long) LOADING_SYMBOLS.length)], this.width / 2, this.height / 2 + 9 * 2, 0xFFFFFF);
+            if (this.textBackground != null) this.textBackground.render(stack, mouseX, mouseY, partialTicks);
+            if (this.doneButton != null) {
+                this.doneButton.setAlpha(this.textAlpha);
+                this.doneButton.active = this.doneButton.visible = this.textAlpha > 0F;
+                this.doneButton.render(stack, mouseX, mouseY, partialTicks);
+            }
+            int textAlpha = Mth.ceil(this.textAlpha * 255) << 24;
+            if (this.textAlpha > 0F) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.statistics.too_long").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+                    this.width / 2, this.height / 2 + 26, 0xFFFFFF | textAlpha);
+
+            drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2 - 5, 0xFFFFFF);
+            drawCenteredString(stack, this.font, new TextComponent(LOADING_SYMBOLS[(int) (Util.getMillis() / 150L % (long) LOADING_SYMBOLS.length)]).withStyle(ChatFormatting.GRAY),
+                    this.width / 2, this.height / 2 + 4, 0xFFFFFF);
         } else {
+            this.doneButton.setAlpha(1);
+            this.doneButton.active = this.doneButton.visible = true;
+
+            super.render(stack, mouseX, mouseY, partialTicks);
             if (!MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
                 this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop() + 2, this.activeList.getRight(), this.activeList.getBottom());
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
@@ -142,13 +188,12 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
             }
             this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
-            super.render(stack, mouseX, mouseY, partialTicks);
         }
     }
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, this.isLoading ? 0 : 24, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 
@@ -181,8 +226,8 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         return "stat." + stat.getValue().toString().replace(':', '.');
     }
 
-    public int getColumnX(int index) {
-        return 115 + 40 * index;
+    public static int getColumnX(int index) {
+        return 74 + 40 * index;
     }
 
     public void blitSlot(PoseStack stack, int x, int y, Item item) {
@@ -191,9 +236,16 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     }
 
     public void blitSlotIcon(PoseStack stack, int x, int y, int width, int height) {
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, STATS_ICON_LOCATION);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         blit(stack, x, y, this.getBlitOffset(), (float) width, (float) height, 18, 18, 128, 128);
+        RenderSystem.disableBlend();
+    }
+
+    @Override
+    public void renderTooltip(PoseStack stack, ItemStack stack1, int mouseX, int mouseY) {
+        super.renderTooltip(stack, stack1, mouseX, mouseY);
     }
 }
