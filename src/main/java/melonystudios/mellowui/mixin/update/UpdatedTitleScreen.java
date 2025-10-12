@@ -87,7 +87,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void init(CallbackInfo callback) {
         // Go to Mellomedley's main menu if set.
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3) {
+        if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_3) {
             this.minecraft.setScreen(new MellomedleyTitleScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
             return;
         }
@@ -100,7 +100,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         }
         LogoRenderer.rerollEasterEgg();
 
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
+        if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
             if (this.splash == null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) this.splash = this.minecraft.getSplashManager().getSplash();
 
@@ -124,7 +124,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 } else if (buttonStyle == FourStyles.OPTION_2) {
                     this.addRenderableWidget(new ImageSetModButton(this.width / 2 + 104, buttonsPos + 48, 20, 20,
                             GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
-                            this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.mods.desc", ModList.get().getMods().size()), mouseX, mouseY),
+                            this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.mods.tooltip", ModList.get().getMods().size()), mouseX, mouseY),
                             new TranslatableComponent("fml.menu.mods")).renderOnCorner(true));
                 } else if (buttonStyle == FourStyles.OPTION_4) {
                     this.addRenderableWidget(new ModButton(this.width / 2 - 100, buttonsPos + 72, 200, 20,
@@ -172,7 +172,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
     private void createNormalMenuOptions(int y, int rowHeight, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
+        if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
 
             // Singleplayer
@@ -203,8 +203,8 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() != ThreeStyles.OPTION_1) {
-            if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3) return;
+        if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() != ThreeStyles.OPTION_1) {
+            if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_3) return;
             callback.cancel();
             if (this.fadeInStart == 0L && this.fading) this.fadeInStart = Util.getMillis();
 
@@ -281,7 +281,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_2) {
+        if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();
             if (super.mouseClicked(mouseX, mouseY, button)) {
                 callback.setReturnValue(true);

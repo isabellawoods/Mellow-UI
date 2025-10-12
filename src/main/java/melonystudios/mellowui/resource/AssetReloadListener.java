@@ -1,0 +1,61 @@
+package melonystudios.mellowui.resource;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import melonystudios.mellowui.MellowUI;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.profiling.ProfilerFiller;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class AssetReloadListener extends SimplePreparableReloadListener<Map<ResourceLocation, JsonElement>> {
+    public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/AssetReloader");
+    public static final int PATH_SUFFIX_LENGTH = ".json".length();
+    private final Gson gson;
+    private final String directory;
+
+    public AssetReloadListener(Gson gson, String directory) {
+        this.gson = gson;
+        this.directory = directory;
+    }
+
+    @Override
+    @Nonnull
+    protected Map<ResourceLocation, JsonElement> prepare(ResourceManager manager, ProfilerFiller profiler) {
+        Map<ResourceLocation, JsonElement> entries = new HashMap<>();
+        int length = this.directory.length() + 1;
+
+        for (ResourceLocation fileLocation : manager.listResources(this.directory, name -> name.endsWith(".json"))) {
+            String path = fileLocation.getPath();
+            ResourceLocation entryLocation = new ResourceLocation(fileLocation.getNamespace(), path.substring(length, path.length() - PATH_SUFFIX_LENGTH));
+
+            try (Reader reader = new BufferedReader(new InputStreamReader(manager.getResource(fileLocation).getInputStream(), StandardCharsets.UTF_8))) {
+                JsonElement element = GsonHelper.fromJson(this.gson, reader, JsonElement.class);
+                if (element != null) {
+                    JsonElement element1 = entries.put(entryLocation, element);
+                    if (element1 != null) throw new IllegalArgumentException(I18n.get("logger.mellowui.asset_reloader.duplicate", entryLocation));
+                } else {
+                    LOGGER.error(I18n.get("logger.mellowui.asset_reloader.loading", entryLocation, fileLocation));
+                }
+            } catch (IllegalArgumentException | IOException | JsonParseException exception) {
+                LOGGER.error(I18n.get("logger.mellowui.asset_reloader.parsing", entryLocation, fileLocation), exception);
+            }
+        }
+
+        return entries;
+    }
+}

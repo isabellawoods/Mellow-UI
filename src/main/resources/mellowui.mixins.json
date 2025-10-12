@@ -4,7 +4,6 @@
   "package": "melonystudios.mellowui.mixin",
   "refmap": "mellowui.refmap.json",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [],
   "client": [
     "MUIWorldPresetMixin",
     "client.MUIGameRendererMixin",
@@ -53,7 +52,6 @@
     "widget.MUIEditBoxMixin",
     "widget.MUIImageButtonMixin"
   ],
-  "server": [],
   "injectors": {
     "defaultRequire": 1
   }

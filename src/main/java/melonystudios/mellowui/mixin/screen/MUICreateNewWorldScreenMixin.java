@@ -24,7 +24,7 @@ public class MUICreateNewWorldScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateCreateNewWorldMenu.get() && this.minecraft != null) {
+        if (MellowConfigs.CLIENT_CONFIGS.createNewWorldStyle.get() && this.minecraft != null) {
             callback.cancel();
             CreateNewWorldScreen.openFresh(this.minecraft, this.lastScreen);
         }

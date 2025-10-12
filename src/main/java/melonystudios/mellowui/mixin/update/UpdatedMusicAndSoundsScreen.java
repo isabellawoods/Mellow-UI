@@ -36,13 +36,13 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateMusicAndSoundsMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.musicAndSoundsStyle.get()) {
             callback.cancel();
             this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
             this.list.addBig(new SoundSourceOption("soundCategory.master", SoundSource.MASTER));
             this.list.addSmall(this.makeSoundSliders().toArray(new Option[0]));
             this.list.addBig(Option.AUDIO_DEVICE);
-            this.list.addSmall(Option.SHOW_SUBTITLES, VanillaConfigEntries.DIRECTIONAL_AUDIO);
+            this.list.addSmall(VanillaConfigEntries.CLOSED_CAPTIONS, VanillaConfigEntries.DIRECTIONAL_AUDIO);
             this.list.addSmall(VanillaConfigEntries.SHOW_MUSIC_TOAST, null);
             this.addWidget(this.list);
 
@@ -65,7 +65,7 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateMusicAndSoundsMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.musicAndSoundsStyle.get()) {
             callback.cancel();
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);

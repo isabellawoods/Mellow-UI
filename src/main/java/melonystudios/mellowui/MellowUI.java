@@ -38,10 +38,21 @@ public class MellowUI {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
     }
 
+    /// Gets a logger instance with the `mellowui/<name>` name.
+    /// @param name The name of this logger instance.
+    public static Logger logger(String name) {
+        return LogManager.getLogger(MOD_ID + "/" + name);
+    }
+
+    /// Creates a new resource location under ***Mellow UI***'s namespace.
+    /// @param name The path of this resource location.
     public static ResourceLocation mellowUI(String name) {
         return new ResourceLocation(MellowUI.MOD_ID, name);
     }
 
+    /// Creates a new resource location under ***Mellow UI***'s namespace.
+    /// @param name The path of this resource location.
+    /// @return A new resource location, being prefixed with `textures/gui/` and its extension being `.png`.
     public static ResourceLocation gui(String name) {
         return mellowUI("textures/gui/" + name + ".png");
     }

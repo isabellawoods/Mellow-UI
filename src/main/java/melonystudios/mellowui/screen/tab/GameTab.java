@@ -78,7 +78,7 @@ public class GameTab extends TabContents {
         // Hardcore
         HardcoreSetButton hardcoreButton = new HardcoreSetButton(screen.width / 2 + 114, widgetY, 20, 20,
                 button -> screen.uiState().setHardcore(!screen.uiState().isHardcore()), (button, stack, mouseX, mouseY) ->
-                this.components.renderTooltip(screen, button, new TranslatableComponent("config.minecraft.difficulty.hardcore.desc"), mouseX, mouseY),
+                this.components.renderTooltip(screen, button, new TranslatableComponent("config.minecraft.difficulty.hardcore.tooltip"), mouseX, mouseY),
                 new TranslatableComponent("options.difficulty.hardcore")).setSelected(screen.uiState().isHardcore());
         screen.uiState().addListener(state -> {
             SoundManager manager = Minecraft.getInstance().getSoundManager();
@@ -124,7 +124,7 @@ public class GameTab extends TabContents {
     }
 
     private Component getDifficultyDescription(String difficultyKey) {
-        return new TranslatableComponent("config.minecraft.difficulty." + difficultyKey + ".desc");
+        return new TranslatableComponent("config.minecraft.difficulty." + difficultyKey + ".tooltip");
     }
 
     @Override

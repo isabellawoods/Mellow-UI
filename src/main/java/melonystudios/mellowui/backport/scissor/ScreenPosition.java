@@ -15,12 +15,9 @@ public record ScreenPosition(int x, int y) {
     }
 
     public int getCoordinate(ScreenAxis axis) {
-        switch (axis) {
-            case VERTICAL:
-                return this.y;
-            case HORIZONTAL:
-            default:
-                return this.x;
-        }
+        return switch (axis) {
+            case VERTICAL -> this.y;
+            default -> this.x;
+        };
     }
 }

@@ -67,7 +67,7 @@ public class SuperSecretSettingsScreen extends Screen {
         Optional<PostEffectsList.Shader> shader = list.getMouseOver(mouseX, mouseY);
         if (shader.isPresent()) {
             MutableComponent component = shader.get().name().copy();
-            component.append("\n").append(new TranslatableComponent(((TranslatableComponent) shader.get().name()).getKey() + ".desc").withStyle(ChatFormatting.GRAY));
+            component.append("\n").append(new TranslatableComponent(((TranslatableComponent) shader.get().name()).getKey() + ".tooltip").withStyle(ChatFormatting.GRAY));
             component.append("\n").append(new TextComponent(shader.get().effect().assetID().toString()).withStyle(ChatFormatting.DARK_GRAY));
             component.append(new TranslatableComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(ChatFormatting.DARK_GRAY));
             return Minecraft.getInstance().font.split(component, RenderComponents.TOOLTIP_MAX_WIDTH);

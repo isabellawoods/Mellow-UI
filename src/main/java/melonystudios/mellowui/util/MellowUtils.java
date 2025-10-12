@@ -2,17 +2,21 @@ package melonystudios.mellowui.util;
 
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
+import melonystudios.mellowui.resource.flair.Flair;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
+import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import melonystudios.mellowui.screen.update.*;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraftforge.client.gui.ModListScreen;
 import net.minecraftforge.fml.ModList;
@@ -22,6 +26,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
@@ -29,6 +35,9 @@ import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
 import static net.minecraft.util.FastColor.ARGB32.*;
 
 public class MellowUtils {
+    // Resource pack entries
+    public static final Map<ResourceLocation, Flair> FLAIRS = new HashMap<>();
+
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
     public static final Component SEARCH_TEXT = new TranslatableComponent("button.mellowui.search").withStyle(withColor(0xA0A0A0).withItalic(true));
     public static final String PROGRAMMER_ART_ID = "programer_art";
@@ -46,18 +55,18 @@ public class MellowUtils {
     }
 
     public static Screen onlineOptions(Screen lastScreen, Minecraft minecraft) {
-        if (CLIENT_CONFIGS.updateOnlineOptionsMenu.get()) return new MUIOnlineOptionsScreen(lastScreen, minecraft.options);
+        if (CLIENT_CONFIGS.onlineOptionsStyle.get()) return new MUIOnlineOptionsScreen(lastScreen, minecraft.options);
         else return new OnlineOptionsScreen(lastScreen, minecraft.options);
     }
 
     public static Screen options(Screen lastScreen, Minecraft minecraft) {
-        if (CLIENT_CONFIGS.updateOptionsMenu.get()) return new MUIOptionsScreen(lastScreen, minecraft.options);
+        if (CLIENT_CONFIGS.optionsStyle.get()) return new MUIOptionsScreen(lastScreen, minecraft.options);
         else return new OptionsScreen(lastScreen, minecraft.options);
     }
 
     public static Screen videoSettings(Screen lastScreen, Minecraft minecraft) {
         Screen defaultScreen = new VideoSettingsScreen(lastScreen, minecraft.options);
-        if (CLIENT_CONFIGS.updateVideoSettingsMenu.get() == ThreeStyles.OPTION_3) {
+        if (CLIENT_CONFIGS.videoSettingsStyle.get() == ThreeStyles.OPTION_3) {
             return getExternalScreen("me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI", null, defaultScreen, lastScreen);
         } else {
             return defaultScreen;
@@ -65,19 +74,24 @@ public class MellowUtils {
     }
 
     public static Screen controls(Screen lastScreen, Minecraft minecraft) {
-        if (CLIENT_CONFIGS.updateControlsMenu.get()) return new MUIControlsScreen(lastScreen, minecraft.options);
+        if (CLIENT_CONFIGS.controlsStyle.get()) return new MUIControlsScreen(lastScreen, minecraft.options);
         else return new ControlsScreen(lastScreen, minecraft.options);
     }
 
     public static Screen resourcePackList(Screen lastScreen, Minecraft minecraft, Consumer<PackRepository> packInfo) {
         Component title = new TranslatableComponent("resourcePack.title");
-        if (CLIENT_CONFIGS.updatePackMenu.get()) return new MUIPackSelectionScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
+        if (CLIENT_CONFIGS.packListStyle.get()) return new MUIPackSelectionScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
         else return new PackSelectionScreen(lastScreen, minecraft.getResourcePackRepository(), packInfo, minecraft.getResourcePackDirectory(), title);
     }
 
+    public static Screen statistics(Screen lastScreen, Minecraft minecraft) {
+        if (CLIENT_CONFIGS.statisticsStyle.get()) return new StatisticsScreen(lastScreen, minecraft.player.getStats());
+        else return new StatsScreen(lastScreen, minecraft.player.getStats());
+    }
+
     public static void switchTitleScreenStyle(Minecraft minecraft) {
-        ThreeStyles menuStyle = MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get();
-        MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.set(ThreeStyles.byId(menuStyle.getId() + 1));
+        ThreeStyles menuStyle = MellowConfigs.CLIENT_CONFIGS.titleStyle.get();
+        MellowConfigs.CLIENT_CONFIGS.titleStyle.set(ThreeStyles.byId(menuStyle.getId() + 1));
         switch (menuStyle) {
             case OPTION_3: minecraft.setScreen(new MellomedleyTitleScreen());
             case OPTION_1: case OPTION_2: default: minecraft.setScreen(new TitleScreen());

@@ -33,11 +33,11 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateOutOfMemoryMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.outOfMemoryStyle.get()) {
             callback.cancel();
 
             this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslatableComponent("gui.toTitle"),
-                    button -> this.minecraft.setScreen(MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get() == ThreeStyles.OPTION_3 ? new MellomedleyTitleScreen() : new TitleScreen())));
+                    button -> this.minecraft.setScreen(MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_3 ? new MellomedleyTitleScreen() : new TitleScreen())));
             this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 25, 150, 20, new TranslatableComponent("menu.quit"),
                     button -> this.minecraft.stop()));
         }
@@ -45,7 +45,7 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateOutOfMemoryMenu.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.outOfMemoryStyle.get()) {
             callback.cancel();
             // Background
             this.components.renderPanorama(partialTicks, this.width, this.height, 1);

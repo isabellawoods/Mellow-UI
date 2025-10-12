@@ -7,20 +7,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-/**
- * A utility class for managing a stack of screen rectangles for scissoring.
- */
+/// A utility class for managing a stack of screen rectangles for scissoring.
 @OnlyIn(Dist.CLIENT)
 public class ScissorStack {
     private final Deque<ScreenRectangle> stack = new ArrayDeque<>();
 
-    /**
-     * Pushes a screen rectangle onto the scissor stack.
-     * <p>
-     * @return The resulting intersection of the pushed rectangle with the previous top rectangle on the stack, or the pushed rectangle if the stack is empty.
-     *
-     * @param scissor the screen rectangle to push.
-     */
+    /// Pushes a screen rectangle onto the scissor stack.
+    /// @param scissor the screen rectangle to push.
+    /// @return The resulting intersection of the pushed rectangle with the previous top rectangle on the stack, or the pushed rectangle if the stack is empty.
     public ScreenRectangle push(ScreenRectangle scissor) {
         ScreenRectangle rectangle = this.stack.peekLast();
         if (rectangle != null) {

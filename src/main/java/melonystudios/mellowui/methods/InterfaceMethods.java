@@ -16,32 +16,44 @@ import java.util.Optional;
 
 public class InterfaceMethods {
     public interface TitleScreenMethods {
+        /// @return Whether this title screen keeps its logo visible during the fading animation.
         default boolean keepsLogoThroughFade() {
             return false;
         }
 
+        /// Sets whether the title screen keeps its logo visible during the fading animation.
+        /// @param keep Whether to keep it visible.
         default void keepLogoThroughFade(boolean keep) {}
     }
 
     public interface PackRepositoryMethods {
+        /// Adds a pack to the list of currently selected resource packs.
+        /// @param id The id of the resource pack.
         default boolean addPack(String id) {
             return false;
         }
 
+        /// Removes a pack from the list of currently selected resource packs.
+        /// @param id The id of the resource pack.
         default boolean removePack(String id) {
             return false;
         }
     }
 
     public interface PostChainMethods {
+        /// Sets the value of a provided uniform.
+        /// @param name The uniform name.
+        /// @param value The value of the uniform.
         default void setUniform(String name, float value) {}
     }
 
     public interface SoundEngineMethods {
+        /// Reloads *Minecraft*'s {@linkplain net.minecraft.client.sounds.SoundEngine#reload() **sound engine**}.
         default void reloadSoundEngine() {}
     }
 
     public interface CubeMapMethods {
+        /// @return A *nullable* array of {@linkplain ResourceLocation resource locations} representing all six panorama textures.
         @Nullable
         default ResourceLocation[] getPanoramaTextures() {
             return null;
@@ -49,16 +61,19 @@ public class InterfaceMethods {
     }
 
     public interface PanoramaRendererMethods {
+        /// @return Whether the provided panorama is the same as the panorama currently being rendered.
         default boolean samePanorama(PanoramaRenderer panoramaRenderer) {
             return false;
         }
 
+        /// Gets the {@linkplain CubeMap cube map} used by the panorama renderer.
         default CubeMap cubeMap() {
             return TitleScreen.CUBE_MAP;
         }
     }
 
     public interface MusicManagerMethods {
+        /// A *nullable* {@linkplain SoundInstance sound instance} of the music currently being played.
         @Nullable
         default SoundInstance mui$getNowPlaying() {
             return null;
@@ -66,10 +81,12 @@ public class InterfaceMethods {
     }
 
     public interface WorldPresetsMethods {
+        /// @return A list of all registered world presets.
         default List<WorldPreset> getPresets() {
             return Lists.newArrayList();
         }
 
+        /// @return A map of all registered world presets and their editors.
         default Map<Optional<WorldPreset>, WorldPreset.PresetEditor> getEditors() {
             return Maps.newHashMap();
         }

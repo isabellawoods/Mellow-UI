@@ -113,7 +113,7 @@ public class AccessibilityOnboardingScreen extends Screen {
     }
 
     private void renderLogo(PoseStack stack) {
-        switch (MellowConfigs.CLIENT_CONFIGS.mainMenuStyle.get()) {
+        switch (MellowConfigs.CLIENT_CONFIGS.titleStyle.get()) {
             case OPTION_1: {
                 LogoRenderer.render116Logo(stack, this, this.width, 1, 30, true);
                 break;

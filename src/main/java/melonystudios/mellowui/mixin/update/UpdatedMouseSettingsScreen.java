@@ -36,7 +36,7 @@ public class UpdatedMouseSettingsScreen extends OptionsSubScreen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (!MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) return;
+        if (!MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) return;
         callback.cancel();
         this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         this.list.addSmall(OPTIONS);
@@ -49,7 +49,7 @@ public class UpdatedMouseSettingsScreen extends OptionsSubScreen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (!MellowConfigs.CLIENT_CONFIGS.updateMouseSettingsMenu.get()) return;
+        if (!MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) return;
         callback.cancel();
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);

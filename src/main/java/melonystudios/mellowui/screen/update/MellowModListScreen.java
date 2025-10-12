@@ -3,7 +3,7 @@ package melonystudios.mellowui.screen.update;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.config.MellowConfigEntries;
+import melonystudios.mellowui.config.ForgeConfigEntries;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.config.option.IterableOption;
@@ -32,7 +32,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
@@ -158,7 +157,7 @@ public class MellowModListScreen extends Screen {
                 button -> this.openUpdateCheckerHomepage()).renderOnCorner(buttonWidth < 110));
 
         // Sort
-        IterableOption sortingConfig = MellowConfigEntries.MOD_LIST_SORTING;
+        IterableOption sortingConfig = ForgeConfigEntries.MOD_LIST_SORTING;
         this.addRenderableWidget(new Button(this.width / 2 - 165, this.height - 25, 150, 20, sortingConfig.getMessage(this.minecraft.options), button -> {
             sortingConfig.toggle(this.minecraft.options, 1);
             button.setMessage(sortingConfig.getMessage(this.minecraft.options));

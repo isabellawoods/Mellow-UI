@@ -54,7 +54,7 @@ public abstract class MUIAbstractSelectionListMixin<E extends AbstractSelectionL
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateListBackground.get()) {
+        if (MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
             callback.cancel();
             RenderComponents components = RenderComponents.INSTANCE;
             Tesselator tessellator = Tesselator.getInstance();

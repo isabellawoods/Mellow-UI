@@ -1,6 +1,7 @@
 package melonystudios.mellowui.event;
 
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.resource.flair.FlairReloadListener;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.packs.PackResources;
@@ -8,6 +9,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -36,5 +38,10 @@ public class MUIClientEvents {
         } catch (IOException exception) {
             throw new RuntimeException("[MUI] Failed to add High Contrast resource pack", exception);
         }
+    }
+
+    @SubscribeEvent
+    public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new FlairReloadListener());
     }
 }

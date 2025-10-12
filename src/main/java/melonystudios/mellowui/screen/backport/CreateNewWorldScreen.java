@@ -166,9 +166,9 @@ public class CreateNewWorldScreen extends Screen {
         // WIP warning button
         this.addRenderableWidget(new Button(this.width / 2 + 165, this.height - 25, 20, 20, new TranslatableComponent("button.mellowui.work_in_progress").withStyle(
                 style -> style.withColor(ChatFormatting.YELLOW).withBold(true)), button -> {
-            MellowConfigs.CLIENT_CONFIGS.updateCreateNewWorldMenu.set(false);
+            MellowConfigs.CLIENT_CONFIGS.createNewWorldStyle.set(false);
             this.minecraft.setScreen(CreateWorldScreen.createFresh(this.lastScreen));
-        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.work_in_progress.desc").withStyle(ChatFormatting.YELLOW),
+        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.work_in_progress.tooltip").withStyle(ChatFormatting.YELLOW),
                         mouseX, mouseY)));
 
         this.addTabs();
@@ -285,7 +285,7 @@ public class CreateNewWorldScreen extends Screen {
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.updateScreenBackground.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 

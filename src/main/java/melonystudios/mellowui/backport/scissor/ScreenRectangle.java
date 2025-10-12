@@ -6,32 +6,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class ScreenRectangle {
+public record ScreenRectangle(ScreenPosition position, int width, int height) {
     private static final ScreenRectangle EMPTY = new ScreenRectangle(0, 0, 0, 0);
-    private final ScreenPosition position;
-    private final int width;
-    private final int height;
-
-    public ScreenRectangle(ScreenPosition position, int width, int height) {
-        this.position = position;
-        this.width = width;
-        this.height = height;
-    }
 
     public ScreenRectangle(int x, int y, int width, int height) {
         this(new ScreenPosition(x, y), width, height);
-    }
-
-    public ScreenPosition position() {
-        return this.position;
-    }
-
-    public int height() {
-        return this.height;
-    }
-
-    public int width() {
-        return this.width;
     }
 
     public static ScreenRectangle empty() {
@@ -39,10 +18,10 @@ public class ScreenRectangle {
     }
 
     public static ScreenRectangle of(ScreenAxis axis, int primaryPosition, int secondaryPosition, int primaryLength, int secondaryLength) {
-        switch (axis) {
-            case VERTICAL: return new ScreenRectangle(secondaryPosition, primaryPosition, secondaryLength, primaryLength);
-            case HORIZONTAL: default: return new ScreenRectangle(primaryPosition, secondaryPosition, primaryLength, secondaryLength);
-        }
+        return switch (axis) {
+            case VERTICAL -> new ScreenRectangle(secondaryPosition, primaryPosition, secondaryLength, primaryLength);
+            default -> new ScreenRectangle(primaryPosition, secondaryPosition, primaryLength, secondaryLength);
+        };
     }
 
     public ScreenRectangle step(ScreenDirection direction) {
