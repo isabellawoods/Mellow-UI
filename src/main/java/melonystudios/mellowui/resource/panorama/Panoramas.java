@@ -41,8 +41,8 @@ public class Panoramas {
         }
 
         // setting the shader
-        if (newPanorama.shader() != null) ShaderManager.setPostEffect(Minecraft.getInstance(), newPanorama.shader());
-        else ShaderManager.setPostEffect(Minecraft.getInstance(), PostEffects.MUI_BLUR);
+        if (newPanorama.shader() != null) ShaderManager.setPostEffect(Minecraft.getInstance(), newPanorama.shader(), false);
+        else ShaderManager.setPostEffect(Minecraft.getInstance(), PostEffects.MUI_BLUR, false);
     }
 
     /// @return The **asset id** of the currently selected panorama.

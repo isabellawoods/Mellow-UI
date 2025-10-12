@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import com.google.common.collect.Lists;
 import melonystudios.mellowui.config.option.MUIOption;

@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.forge;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -11,7 +12,6 @@ import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class ForgeOptionsScreen extends OptionsSubScreen {
     private OptionsList list;
 
     public ForgeOptionsScreen(Screen lastScreen, Options options) {
-        super(lastScreen, options, new TranslatableComponent("menu.forge.options.title"));
+        super(lastScreen, options, TextComponents.buildScreenTitle("forge", "Forge"));
     }
 
     @Override

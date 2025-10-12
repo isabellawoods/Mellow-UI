@@ -10,10 +10,10 @@ import melonystudios.mellowui.backport.scissor.ScreenRectangle;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.resource.panorama.Panoramas;
-import melonystudios.mellowui.screen.widget.IconButton;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.widget.IconButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -48,14 +48,13 @@ import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 /// The global ***Render Components*** used by *Mellow UI*.
 /// Contains almost every rendering method used more than once throughout the codebase.
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("deprecation")
 public class RenderComponents extends GuiComponent {
     /// The default instance of *Mellow UI*'s ***Render Components***.
     public static final RenderComponents INSTANCE = new RenderComponents(Minecraft.getInstance());
     /// The panorama that's currently being used by *Mellow UI*.
     public static PanoramaRenderer PANORAMA = new PanoramaRenderer(TitleScreen.CUBE_MAP);
     public static float PANORAMA_PITCH = 10;
-    public static final int TOOLTIP_MAX_WIDTH = 200; // tooltip width is 170 in 1.21.1
+    public static final int TOOLTIP_MAX_WIDTH = 170; // tooltip width is 200 in 1.18.2
     public static final int DEFAULT_TAB_WIDTH = 130;
     public static final int DEFAULT_BACKGROUND_BRIGHTNESS = 255;
     public static final int OLD_BACKGROUND_BRIGHTNESS = 64;
@@ -346,13 +345,13 @@ public class RenderComponents extends GuiComponent {
     }
 
     /// @param width The width of the screen.
-    /// @return The width of four {@link melonystudios.mellowui.screen.widget.TabButton TabButtons} based on the screen width.
+    /// @return The width of four {@link melonystudios.mellowui.widget.TabButton TabButtons} based on the screen width.
     public int fourTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH * 2 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
     /// @param width The width of the screen.
-    /// @return The width of three {@link melonystudios.mellowui.screen.widget.TabButton TabButtons} based on the screen width.
+    /// @return The width of three {@link melonystudios.mellowui.widget.TabButton TabButtons} based on the screen width.
     public int threeTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }

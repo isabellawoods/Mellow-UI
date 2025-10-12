@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.forge;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -24,7 +25,7 @@ public class ForgeServerOptionsScreen extends OptionsSubScreen {
     private OptionsList list;
 
     public ForgeServerOptionsScreen(Screen screen, Options options) {
-        super(screen, options, new TranslatableComponent("menu.forge.server_options.title"));
+        super(screen, options, TextComponents.buildScreenSubtitle("forge", "Forge", new TranslatableComponent("menu.forge.server_options.title")));
     }
 
     @Override
@@ -36,8 +37,8 @@ public class ForgeServerOptionsScreen extends OptionsSubScreen {
     @Override
     protected void init() {
         this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addBig(PERMISSION_HANDLER);
         this.list.addSmall(SETTINGS.toArray(new Option[0]));
+        this.list.addBig(PERMISSION_HANDLER);
         this.addWidget(this.list);
 
         // Done button

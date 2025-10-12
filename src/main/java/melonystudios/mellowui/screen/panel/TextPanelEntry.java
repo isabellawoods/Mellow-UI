@@ -1,7 +1,7 @@
 package melonystudios.mellowui.screen.panel;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.mellowui.screen.Alignment;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -35,7 +35,7 @@ public class TextPanelEntry extends PanelEntry {
     @Override
     public void renderEntry(PoseStack stack, RenderComponents components, int x, int y, int width, int height) {
         Font font = this.panel.getFont();
-        List<FormattedCharSequence> lines = font.split(this.text, x * 2 - 14);
+        List<FormattedCharSequence> lines = font.split(this.text, x * 2 - 16);
         this.contentHeight = lines.size() * font.lineHeight;
 
         switch (this.alignment) {

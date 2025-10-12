@@ -15,7 +15,7 @@ import melonystudios.mellowui.screen.tab.GameTab;
 import melonystudios.mellowui.screen.tab.MoreTab;
 import melonystudios.mellowui.screen.tab.TabContents;
 import melonystudios.mellowui.screen.tab.WorldTab;
-import melonystudios.mellowui.screen.widget.TabButton;
+import melonystudios.mellowui.widget.TabButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;

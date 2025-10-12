@@ -26,7 +26,7 @@ public class MUILoadingOverlayMixin {
     private static IntSupplier BRAND_BACKGROUND;
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+    private void swapBackgroundColor(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         BRAND_BACKGROUND = () -> Minecraft.getInstance().options.darkMojangStudiosBackground ? WidgetConfigs.WIDGET_CONFIGS.monochromeLoadingScreenColor.get() : LOGO_BACKGROUND_COLOR;
     }
 }

@@ -22,20 +22,22 @@ import org.apache.logging.log4j.Logger;
 @Mod(MellowUI.MOD_ID)
 public class MellowUI {
     public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID);
+    public static final String MOD_NAME = "Mellow UI";
     public static final String MOD_ID = "mellowui";
 
     public MellowUI() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModLoadingContext context = ModLoadingContext.get();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
 
         MUISounds.SOUNDS.register(eventBus);
-
         MinecraftForge.EVENT_BUS.register(this);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WidgetConfigs.WIDGET_SPEC, "melonystudios/mellowui-widgets.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, MellowConfigs.CLIENT_SPEC, "melonystudios/mellowui-client.toml");
-        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () -> new ConfigGuiHandler.ConfigGuiFactory((minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options)));
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
+
+        context.registerConfig(ModConfig.Type.CLIENT, WidgetConfigs.WIDGET_SPEC, "melonystudios/mellowui-widgets.toml");
+        context.registerConfig(ModConfig.Type.CLIENT, MellowConfigs.CLIENT_SPEC, "melonystudios/mellowui-client.toml");
+        context.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () -> new ConfigGuiHandler.ConfigGuiFactory((minecraft, lastScreen) -> new MellowUIOptionsScreen(lastScreen, minecraft.options)));
+        context.registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
     }
 
     /// Gets a logger instance with the `mellowui/<name>` name.

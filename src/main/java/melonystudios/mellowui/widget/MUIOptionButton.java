@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import melonystudios.mellowui.config.option.MUIOption;
 import net.minecraft.client.gui.components.Button;

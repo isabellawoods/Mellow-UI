@@ -8,7 +8,10 @@ import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
 import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
 import melonystudios.mellowui.screen.list.stats.MobsStatsList;
-import melonystudios.mellowui.screen.widget.TabButton;
+import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.util.text.TooltipProvider;
+import melonystudios.mellowui.widget.TabButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -168,7 +171,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
                 this.doneButton.render(stack, mouseX, mouseY, partialTicks);
             }
             int textAlpha = Mth.ceil(this.textAlpha * 255) << 24;
-            if (this.textAlpha > 0F) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.statistics.too_long").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+            if (this.textAlpha > 0F) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.statistics.too_long").withStyle(TextComponents.descriptionStyle().withItalic(true)),
                     this.width / 2, this.height / 2 + 26, 0xFFFFFF | textAlpha);
 
             drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2 - 5, 0xFFFFFF);
@@ -188,6 +191,11 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
             }
             this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+
+            if (this.getActiveList() instanceof TooltipProvider provider && provider.tooltipData() != null) {
+                provider.renderTooltip(stack, this);
+                provider.setTooltipData(null);
+            }
         }
     }
 
@@ -230,9 +238,29 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         return 74 + 40 * index;
     }
 
-    public void blitSlot(PoseStack stack, int x, int y, Item item) {
+    public void blitSlot(PoseStack stack, int x, int y, Item item, boolean hovered) {
         this.blitSlotIcon(stack, x + 1, y + 1, 0, 0);
+        if (hovered) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.enableBlend();
+            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+            RenderSystem.setShaderTexture(0, GUITextures.SLOT_HIGHLIGHT_BACK);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
+            blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableBlend();
+        }
         this.itemRenderer.renderGuiItem(item.getDefaultInstance(), x + 2, y + 2);
+        if (hovered) {
+            RenderSystem.disableDepthTest();
+            RenderSystem.enableBlend();
+            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+            RenderSystem.setShaderTexture(0, GUITextures.SLOT_HIGHLIGHT_FRONT);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
+            blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableBlend();
+        }
     }
 
     public void blitSlotIcon(PoseStack stack, int x, int y, int width, int height) {

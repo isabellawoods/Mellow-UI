@@ -33,7 +33,7 @@ public class VanillaConfigEntries {
             (options, slider) -> new TranslatableComponent("options.percent_value", new TranslatableComponent("config.minecraft.panorama_scroll_speed"), (int) (slider.get(options) * 100)));
     public static final BooleanOption HIDE_SPLASH_TEXTS = new BooleanOption("config.minecraft.hide_splash_texts", new TranslatableComponent("config.minecraft.hide_splash_texts.tooltip"),
             options -> CLIENT_CONFIGS.hideSplashTexts.get(), (options, newValue) -> CLIENT_CONFIGS.hideSplashTexts.set(newValue));
-    public static final ProgressOption MENU_BACKGROUND_BLURRINESS = new ProgressOption("config.minecraft.menu_background_blurriness", 0, 10, 1,
+    public static final ProgressOption MENU_BACKGROUND_BLURRINESS = new ProgressOption("config.minecraft.menu_background_blurriness", 0, 20, 1,
             options -> CLIENT_CONFIGS.menuBackgroundBlurriness.get().doubleValue(),
             (options, newValue) -> CLIENT_CONFIGS.menuBackgroundBlurriness.set((int) Math.round(newValue)),
             (options, slider) -> new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.menu_background_blurriness"), (int) Math.round(slider.get(options))),

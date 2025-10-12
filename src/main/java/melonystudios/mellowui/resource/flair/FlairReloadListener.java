@@ -30,11 +30,11 @@ public class FlairReloadListener extends AssetReloadListener {
             try {
                 if (element.isJsonObject()) flairs.put(location, GSON.fromJson(element, Flair.class));
             } catch (Exception exception) {
-                LOGGER.error(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse mod list flair '%s'", location), exception);
+                LOGGER.error(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", location), exception);
             }
         });
         MellowUtils.FLAIRS.clear();
         MellowUtils.FLAIRS.putAll(flairs.build());
-        LOGGER.info(MellowUtils.translate("logger.mellowui.flair.loaded", "Loaded %s mod list flair(s)", flairs.build().size()));
+        LOGGER.info(MellowUtils.translate("logger.mellowui.flair.loaded", "Loaded %s flair(s)", flairs.build().size()));
     }
 }

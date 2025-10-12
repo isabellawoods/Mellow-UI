@@ -5,7 +5,7 @@ import melonystudios.mellowui.config.option.BooleanOption;
 import melonystudios.mellowui.config.option.IterableOption;
 import melonystudios.mellowui.screen.backport.CreateNewWorldScreen;
 import melonystudios.mellowui.screen.backport.WorldCreationUIState;
-import melonystudios.mellowui.screen.widget.MUIOptionButton;
+import melonystudios.mellowui.widget.MUIOptionButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;

@@ -7,10 +7,10 @@ import com.mojang.datafixers.util.Pair;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.update.MellowModListScreen;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.GuiUtils;
 import net.minecraftforge.common.util.Size2i;
@@ -63,7 +63,7 @@ public class ImagePanelEntry extends PanelEntry {
             TextureManager manager = this.panel.getMinecraft().getTextureManager();
             PathResourcePack resourcePack = ResourcePackLoader.getPackFor(this.mod.getModId())
                     .orElse(ResourcePackLoader.getPackFor("forge")
-                            .orElseThrow(() -> new RuntimeException(new TranslatableComponent("error.mellowui.cannot_find_forge").getString())));
+                            .orElseThrow(() -> new RuntimeException(MellowUtils.translate("error.mellowui.cannot_find_forge", "Failed to find Forge, WHAT!"))));
 
             if (this.mod.getModId().equals("minecraft")) {
                 return Pair.of(LogoRenderer.MINECRAFT_LOGO, new Size2i(1024, 256));
@@ -73,7 +73,7 @@ public class ImagePanelEntry extends PanelEntry {
                 InputStream logoFile = resourcePack.getRootResource(fileName);
                 NativeImage logo = NativeImage.read(logoFile);
 
-                return Pair.of(manager.register("modlogo", new DynamicTexture(logo) {
+                return Pair.of(manager.register("logo_" + this.mod.getModId(), new DynamicTexture(logo) {
                     @Override
                     public void upload() {
                         this.bind();

@@ -1,15 +1,18 @@
-package melonystudios.mellowui.screen.widget;
+package melonystudios.mellowui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.text.ScrollingText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class TabButton extends Button implements ScrollingText {
     private boolean selected;
@@ -68,9 +71,12 @@ public class TabButton extends Button implements ScrollingText {
         blit(stack, this.x, this.y, 0, 0, this.width / 2, this.height, 130, 24);
         blit(stack, this.x + this.width / 2, this.y, 130 - this.width / 2F, 0, this.width / 2, this.height, 130, 24);
         this.renderBg(stack, minecraft, mouseX, mouseY);
-        this.renderString(stack, font, color);
+        this.renderWidgetText(
+                () -> this.renderString(stack, font, color | Mth.ceil(this.alpha * 255F) << 24),
+                () -> drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2 + (this.selected() ? 0 : 2), color | Mth.ceil(this.alpha * 255F) << 24)
+        );
 
-        if (this.selected()) this.renderFocusUnderline(stack, font, color);
+        if (this.selected()) this.renderFocusUnderline(stack, font, color | Mth.ceil(this.alpha * 255F) << 24);
         RenderSystem.setShaderColor(1, 1, 1, 1);
 
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
@@ -78,18 +84,18 @@ public class TabButton extends Button implements ScrollingText {
     }
 
     public void renderString(PoseStack stack, Font font, int color) {
-        int padding = WidgetConfigs.WIDGET_CONFIGS.tabTextBorderPadding.get();
+        int padding = WidgetConfigs.WIDGET_CONFIGS.tabTextPadding.get();
         int minX = this.x + padding;
         int minY = this.y + (this.selected() ? 0 : 3);
         int maxX = this.x + this.getWidth() - padding;
         int maxY = this.y + this.getHeight();
-        this.renderScrollingString(stack, font, this.getMessage(), minX, minY, maxX, maxY, color);
+        this.renderAlignedScrollingText(stack, font, this.getMessage(), Alignment.CENTER, minX, minY, maxX, maxY, color);
     }
 
     private void renderFocusUnderline(PoseStack stack, Font font, int color) {
         int xOffset = Math.min(font.width(this.getMessage()), this.width - 4);
         int minX = this.x + (this.width - xOffset) / 2;
         int minY = this.y + this.height - 2;
-        fill(stack, minX, minY, minX + xOffset, minY + 1, color | ((int) (this.alpha * 255F) << 24));
+        fill(stack, minX, minY, minX + xOffset, minY + 1, color);
     }
 }

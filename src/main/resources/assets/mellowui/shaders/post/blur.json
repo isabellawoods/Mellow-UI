@@ -11,10 +11,6 @@
         {
           "name": "BlurDir",
           "values": [1.0, 0.0]
-        },
-        {
-          "name": "Radius",
-          "values": [5]
         }
       ]
     },
@@ -26,10 +22,54 @@
         {
           "name": "BlurDir",
           "values": [0.0, 1.0]
-        },
+        }
+      ]
+    },
+    {
+      "name": "mellowui:blur",
+      "intarget": "minecraft:main",
+      "outtarget": "swap",
+      "uniforms": [
         {
-          "name": "Radius",
-          "values": [5]
+          "name": "BlurDir",
+          "values": [1.0, 0.0],
+          "RadiusMultiplier": 0.5
+        }
+      ]
+    },
+    {
+      "name": "mellowui:blur",
+      "intarget": "swap",
+      "outtarget": "minecraft:main",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [0.0, 1.0],
+          "RadiusMultiplier": 0.5
+        }
+      ]
+    },
+    {
+      "name": "mellowui:blur",
+      "intarget": "minecraft:main",
+      "outtarget": "swap",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [1.0, 0.0],
+          "RadiusMultiplier": 0.25
+        }
+      ]
+    },
+    {
+      "name": "mellowui:blur",
+      "intarget": "swap",
+      "outtarget": "minecraft:main",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [0.0, 1.0],
+          "RadiusMultiplier": 0.25
         }
       ]
     }

@@ -1,17 +1,13 @@
 package melonystudios.mellowui.config;
 
-import com.google.common.collect.Lists;
 import melonystudios.mellowui.config.option.BooleanOption;
+import melonystudios.mellowui.config.option.EditPermissionHandlerOption;
 import melonystudios.mellowui.config.option.IterableOption;
-import melonystudios.mellowui.config.option.TextFieldOption;
 import melonystudios.mellowui.config.type.ModListSorting;
 import net.minecraft.client.ProgressOption;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-
-import java.util.List;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
@@ -58,14 +54,8 @@ public class ForgeConfigEntries {
             (options, newValue) -> SERVER.zombieBaseSummonChance.set(newValue),
             (options, slider) -> percentValueLabel("config.forge.base_zombie_summon_chance", slider.toPct(slider.get(options))),
             minecraft -> minecraft.font.split(new TranslatableComponent("config.forge.base_zombie_summon_chance.tooltip"), TOOLTIP_MAX_WIDTH));
-    public static final TextFieldOption PERMISSION_HANDLER = new TextFieldOption("config.forge.permission_handler",
-            new TranslatableComponent("config.forge.permission_handler.tooltip"), SERVER.permissionHandler.get(), SERVER.permissionHandler::set,
-            (text, setter) -> {
-                List<String> handlerIDs = Lists.newArrayList();
-                PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();
-                handlerEvent.getAvailablePermissionHandlerFactories().keySet().forEach(location -> handlerIDs.add(location.toString()));
-                if (handlerIDs.contains(text)) setter.accept(text);
-            });
+    public static final EditPermissionHandlerOption PERMISSION_HANDLER = new EditPermissionHandlerOption("config.forge.permission_handler",
+            new TranslatableComponent("config.forge.permission_handler.tooltip"), SERVER.permissionHandler);
 
     // Mellow UI's common config
     public static final IterableOption MOD_LIST_SORTING = new IterableOption("config.forge.mod_list_sorting",

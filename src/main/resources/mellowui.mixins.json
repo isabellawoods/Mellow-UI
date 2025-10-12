@@ -18,6 +18,7 @@
     "client.MUISubtitleOverlayMixin",
     "forge.MUIConfigGUIHandlerMixin",
     "forge.MUIForgeInGameGUIMixin",
+    "option.MUICycleOptionMixin",
     "screen.MUIAbstractContainerScreenMixin",
     "screen.MUIBuffetWorldScreenMixin",
     "screen.MUICreateNewWorldScreenMixin",

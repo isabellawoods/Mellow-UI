@@ -1,7 +1,6 @@
 package melonystudios.mellowui.util;
 
 import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.screen.widget.WidgetTextureSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.versions.forge.ForgeVersion;
 

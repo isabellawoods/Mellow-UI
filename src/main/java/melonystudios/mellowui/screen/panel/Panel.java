@@ -69,7 +69,7 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
         int yOffset = relativeY + 3;
 
         for (PanelEntry entry : this.entries) {
-            entry.renderEntry(stack, this.components, this.x + 3, yOffset, this.width, this.height);
+            entry.renderEntry(stack, this.components, this.x + 3, yOffset, this.width - (this.getMaxScroll() > 0 ? 2 : 0), this.height);
             yOffset += entry.getContentHeight() + 3;
         }
     }

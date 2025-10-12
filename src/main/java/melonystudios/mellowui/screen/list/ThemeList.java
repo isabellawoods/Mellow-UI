@@ -3,7 +3,7 @@ package melonystudios.mellowui.screen.list;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.ChatFormatting;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -60,7 +60,7 @@ public class ThemeList extends ObjectSelectionList<ThemeList.Entry> {
                 this.width / 3, this.height / 3 - 15, 0xFFFFFF);
         stack.popPose();
 
-        List<FormattedCharSequence> processors = this.minecraft.font.split(new TranslatableComponent("menu.mellowui.customization.theme.desc").withStyle(ChatFormatting.GRAY), this.width - 50);
+        List<FormattedCharSequence> processors = this.minecraft.font.split(new TranslatableComponent("menu.mellowui.customization.theme.desc").withStyle(TextComponents.descriptionStyle()), this.width - 50);
         int yOffset = this.height / 2;
         for (FormattedCharSequence processor : processors) {
             this.minecraft.font.drawShadow(stack, processor, this.width / 2 - this.minecraft.font.width(processor) / 2, yOffset, 0xFFFFFF);

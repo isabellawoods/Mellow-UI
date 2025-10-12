@@ -2,10 +2,12 @@ package melonystudios.mellowui.screen;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.screen.list.PanoramaList;
 import melonystudios.mellowui.screen.list.ThemeList;
-import melonystudios.mellowui.screen.widget.TabButton;
+import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.widget.TabButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
@@ -25,7 +27,7 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowCustomizationScreen extends OptionsSubScreen {
-    public static final List<Option> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, PAUSE_STYLE, OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE);
+    public static final List<Option> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, PAUSE_STYLE, OPTIONS_STYLE, ONLINE_OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE);
     private final RenderComponents components = RenderComponents.INSTANCE;
 
     // Tabs
@@ -37,7 +39,7 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
     private AbstractSelectionList<?> activeList = null;
 
     public MellowCustomizationScreen(Screen lastScreen, Options options) {
-        super(lastScreen, options, new TranslatableComponent("menu.mellowui.customization.title"));
+        super(lastScreen, options, TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, new TranslatableComponent("menu.mellowui.customization.title")));
     }
 
     @Override
@@ -64,16 +66,14 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
         this.panoramas.setRenderTopAndBottom(false);
         this.panoramas.setSelected(this.panoramas.children().stream().filter(entry -> entry.location().equals(MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get())).findFirst().orElse(null));
 
+        int tabWidth = this.components.threeTabWidth(this.width);
         this.activeList = this.styles;
         this.addWidget(this.activeList);
+        this.tabs.clear();
 
         // Button toggles
         AbstractWidget createNewWorldStyle = this.styles.findOption(CREATE_NEW_WORLD_STYLE);
         if (createNewWorldStyle != null) createNewWorldStyle.active = false;
-
-        // Tabs
-        int tabWidth = this.components.threeTabWidth(this.width);
-        this.tabs.clear();
 
         // Styles
         this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.styles"), button -> {
@@ -113,19 +113,22 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
-        if (!MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get() && this.activeList != null) {
-            this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop(), this.activeList.getRight(), this.activeList.getBottom());
-            this.activeList.render(stack, mouseX, mouseY, partialTicks);
-            this.components.disableScissor();
-        } else if (this.activeList != null) {
-            this.components.renderTabHeaderBackground(0, 0, this.width, 24);
-            this.activeList.render(stack, mouseX, mouseY, partialTicks);
-        }
-        this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
-        super.render(stack, mouseX, mouseY, partialTicks);
 
-        if (this.activeList instanceof OptionsList optionsList) {
-            List<FormattedCharSequence> processors = tooltipAt(optionsList, mouseX, mouseY);
+        if (this.activeList != null) {
+            if (!MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
+                this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop(), this.activeList.getRight(), this.activeList.getBottom());
+                this.activeList.render(stack, mouseX, mouseY, partialTicks);
+                this.components.disableScissor();
+            } else {
+                this.components.renderTabHeaderBackground(0, 0, this.width, 24);
+                this.activeList.render(stack, mouseX, mouseY, partialTicks);
+            }
+            this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+        }
+
+        super.render(stack, mouseX, mouseY, partialTicks);
+        if (this.activeList instanceof OptionsList list) {
+            List<FormattedCharSequence> processors = tooltipAt(list, mouseX, mouseY);
             if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);
         }
     }

@@ -9,14 +9,14 @@ import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.config.option.IterableOption;
 import melonystudios.mellowui.config.type.ModListSorting;
 import melonystudios.mellowui.resource.flair.Flairs;
-import melonystudios.mellowui.screen.Alignment;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MellowModList;
 import melonystudios.mellowui.screen.panel.*;
-import melonystudios.mellowui.screen.widget.ImageSetButton;
-import melonystudios.mellowui.screen.widget.ModButton;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.widget.ImageSetButton;
+import melonystudios.mellowui.widget.ModButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
@@ -347,7 +347,7 @@ public class MellowModListScreen extends Screen {
         try {
             ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         } catch (final Exception exception) {
-            MellowUI.LOGGER.error(new TranslatableComponent("error.mellowui.broken_config_screen", info.getModId()).getString(), exception);
+            MellowUI.LOGGER.error(MellowUtils.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
         }
     }
 

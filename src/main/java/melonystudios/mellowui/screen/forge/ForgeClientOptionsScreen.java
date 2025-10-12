@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.forge;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
@@ -22,7 +23,7 @@ public class ForgeClientOptionsScreen extends OptionsSubScreen {
     private OptionsList list;
 
     public ForgeClientOptionsScreen(Screen screen, Options options) {
-        super(screen, options, new TranslatableComponent("menu.forge.client_options.title"));
+        super(screen, options, TextComponents.buildScreenSubtitle("forge", "Forge", new TranslatableComponent("menu.forge.client_options.title")));
     }
 
     @Override

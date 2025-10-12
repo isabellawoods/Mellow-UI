@@ -145,4 +145,16 @@ public abstract class MUIAbstractContainerScreenMixin<T extends AbstractContaine
         RenderSystem.applyModelViewMatrix();
         RenderSystem.enableDepthTest();
     }
+
+    // leaving this method here for when I finally get this working ~isa 12-10-25
+    /*@Inject(method = "renderSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;renderAndDecorateItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V"), cancellable = true)
+    public void cullItemInSlot(PoseStack stack, Slot slot, CallbackInfo callback) {
+        ItemStack slotStack = slot.getItem();
+        if (!MellowConfigs.oversizedInGUI(slotStack.getItem())) {
+            callback.cancel();
+            this.components.enableScissor(this.leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, this.topPos + slot.y + 16);
+            this.itemRenderer.renderAndDecorateItem(this.minecraft.player, slotStack, slot.x, slot.y, slot.x + slot.y * this.imageWidth);
+            this.components.disableScissor();
+        }
+    }*/
 }

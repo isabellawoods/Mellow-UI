@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen;
+package melonystudios.mellowui.util;
 
 /// Defines where the content should be aligned.
 public enum Alignment {

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -46,9 +47,9 @@ public class MusicToast implements Toast {
 
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.getOverlay() != null) return Visibility.HIDE;
-        RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, GUITextures.NOW_PLAYING_TOAST);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
         // Background
         GuiComponent.blit(stack, 0, 0, 0, 0, width / 2, 32, width, 32);
@@ -57,8 +58,8 @@ public class MusicToast implements Toast {
         // Music Notes
         float hue = this.animationTicks < 0 ? -this.animationTicks : this.animationTicks;
         float[] noteColor = hsvToRgb(hue / 50F, 0.7F, 0.6F);
-        RenderSystem.setShaderColor(noteColor[0], noteColor[1], noteColor[2], 1);
         int yOffset = (int) Util.getMillis() / 100 * 16;
+        RenderSystem.setShaderColor(noteColor[0], noteColor[1], noteColor[2], 1);
         RenderSystem.setShaderTexture(0, GUITextures.MUSIC_NOTES); // swap for "bind animated texture" in GUITextures
         GuiComponent.blit(stack, 8, 8, 0, yOffset, 16, 16, 16, 128);
         RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -137,7 +138,7 @@ public class MusicToast implements Toast {
                 green1 = f1;
                 blue1 = f2;
                 break;
-            default: throw new IllegalArgumentException(new TranslatableComponent("error.mellowui.hsv_conversion", hue, saturation, value, i).getString());
+            default: throw new IllegalArgumentException(MellowUtils.translate("error.mellowui.hsv_conversion", "Something went wrong while converting from HSV to RGB. Inputs were %s, %s, %s, and output was %s", hue, saturation, value, i));
         }
 
         return new float[] {Mth.clamp(red1, 0, 1), Mth.clamp(green1, 0, 1), Mth.clamp(blue1, 0, 1)};

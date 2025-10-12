@@ -10,12 +10,12 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
@@ -44,17 +44,19 @@ public class ShaderManager {
     /// Sets the currently selected {@link PostEffect}.
     /// @param minecraft The *Minecraft* client instance.
     /// @param effectLocation A resource location of a post effect.
-    public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation) {
-        setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR));
+    /// @param applyInWorld Whether to apply the shader in-game through the game renderer.
+    public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation, boolean applyInWorld) {
+        setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR), applyInWorld);
     }
 
     /// Sets the currently selected {@link PostEffect}.
     /// @param minecraft The *Minecraft* client instance.
     /// @param effect The post effect to be selected.
-    public static void setPostEffect(Minecraft minecraft, PostEffect effect) {
+    /// @param applyInWorld Whether to apply the shader in-game through the game renderer.
+    public static void setPostEffect(Minecraft minecraft, PostEffect effect, boolean applyInWorld) {
         CURRENT_EFFECT = effect;
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
-        if (minecraft.level != null) minecraft.gameRenderer.loadEffect(CURRENT_EFFECT.getPostEffectFile());
+        if (minecraft.level != null && applyInWorld) minecraft.gameRenderer.loadEffect(CURRENT_EFFECT.getPostEffectFile());
     }
 
     /// Clears any selected {@link PostEffect PostEffects} from the panorama and the game renderer.
@@ -76,9 +78,9 @@ public class ShaderManager {
             PANORAMA_SHADER = new PostChain(minecraft.getTextureManager(), resourceManager, minecraft.getMainRenderTarget(), shaderLocation);
             PANORAMA_SHADER.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
         } catch (IOException exception) {
-            MellowUI.logger("ShaderManager").warn(new TranslatableComponent("error.mellowui.load_shader", shaderLocation).getString(), exception);
+            MellowUI.logger("ShaderManager").warn(MellowUtils.translate("error.mellowui.load_shader", "Failed to load shader: '%s'", shaderLocation), exception);
         } catch (JsonSyntaxException exception) {
-            MellowUI.logger("ShaderManager").warn(new TranslatableComponent("error.mellowui.parse_shader", shaderLocation).getString(), exception);
+            MellowUI.logger("ShaderManager").warn(MellowUtils.translate("error.mellowui.parse_shader", "Failed to parse shader: '%s'", shaderLocation), exception);
         }
     }
 

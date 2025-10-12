@@ -5,11 +5,9 @@ import melonystudios.mellowui.config.type.*;
 import net.minecraft.client.ProgressOption;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.Mth;
 import net.minecraftforge.fml.ModList;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
-import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
 import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
 
 public class MellowConfigEntries {
@@ -26,12 +24,9 @@ public class MellowConfigEntries {
     public static final MutableComponent VIDEO_SETTINGS_STYLE_TOOLTIP = new TranslatableComponent("config.mellowui.video_settings_style.tooltip");
 
     // Separators
-    public static final SeparatorOption MAIN_MENU_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.main_menu"));
-    public static final SeparatorOption INGAME_MENUS_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.ingame_menus"));
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.menu_updates"));
-    public static final SeparatorOption OPTION_MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.option_menu_updates"));
+    public static final SeparatorOption MISCELLANEOUS_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.miscellaneous"));
     public static final SeparatorOption STYLES_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.styles"));
-    public static final SeparatorOption REALMS_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.realms").withStyle(style -> style.withColor(0xE43DC3)));
 
     // Options
     public static final ProgressOption PANORAMA_CAMERA_PITCH = new ProgressOption("config.mellowui.panorama_camera_pitch", -90, 90, 1,
@@ -41,26 +36,6 @@ public class MellowConfigEntries {
             minecraft -> minecraft.font.split(new TranslatableComponent("config.mellowui.panorama_camera_pitch.tooltip"), TOOLTIP_MAX_WIDTH));
     public static final BooleanOption PANORAMA_BOBBING = new BooleanOption("config.mellowui.panorama_bobbing", new TranslatableComponent("config.mellowui.panorama_bobbing.tooltip"),
             options -> CLIENT_CONFIGS.panoramaBobbing.get(), (options, newValue) -> CLIENT_CONFIGS.panoramaBobbing.set(newValue));
-    public static final TextFieldOption MONOCHROME_LOADING_SCREEN_COLOR = new TextFieldOption("config.mellowui.monochrome_loading_screen_color",
-            new TranslatableComponent("config.mellowui.monochrome_loading_screen_color.tooltip"),
-            WIDGET_CONFIGS.monochromeLoadingScreenColor.get().toString(),
-            newValue -> WIDGET_CONFIGS.monochromeLoadingScreenColor.set(Integer.valueOf(newValue)),
-            (text, setter) -> {
-                try {
-                    int newValue = Integer.parseInt(text);
-                    setter.accept(Integer.toString(Mth.clamp(newValue, 0, 0xFFFFFF)));
-                } catch (NumberFormatException ignored) {}
-            });
-    public static final TextFieldOption SPLASH_TEXT_COLOR = new TextFieldOption("config.mellowui.splash_text_color",
-            new TranslatableComponent("config.mellowui.splash_text_color.tooltip"),
-            WIDGET_CONFIGS.splashTextColor.get().toString(),
-            newValue -> WIDGET_CONFIGS.splashTextColor.set(Integer.valueOf(newValue)),
-            (text, setter) -> {
-                try {
-                    int newValue = Integer.parseInt(text);
-                    setter.accept(Integer.toString(Mth.clamp(newValue, 0, 16777215)));
-                } catch (NumberFormatException ignored) {}
-            });
     public static final IterableOption MAIN_MENU_MOD_BUTTON = new IterableOption("config.mellowui.main_menu_mod_button",
             (options, identifier) -> CLIENT_CONFIGS.mainMenuModButton.set(FourStyles.byId(CLIENT_CONFIGS.mainMenuModButton.get().getId() + identifier)),
             (options, option) -> {
@@ -161,6 +136,10 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.splashTextPosition.get(), (options, newValue) -> CLIENT_CONFIGS.splashTextPosition.set(newValue));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslatableComponent("config.mellowui.scrolling_text.tooltip"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));
+    public static final EditListConfigOption<String> CLASSIFIED_AS_CONTAINERS = new EditListConfigOption<>("config.mellowui.classified_as_containers",
+            new TranslatableComponent("config.mellowui.classified_as_containers.tooltip"), CLIENT_CONFIGS.classifiedAsContainers);
+    public static final EditListConfigOption<String> OVERSIZED_IN_GUI = new EditListConfigOption<>("config.mellowui.oversized_in_gui",
+            new TranslatableComponent("config.mellowui.oversized_in_gui.tooltip"), CLIENT_CONFIGS.oversizedInGUI);
     public static final BooleanOption CULL_OVERSIZED_ITEMS = new BooleanOption("config.mellowui.cull_oversized_items", new TranslatableComponent("config.mellowui.cull_oversized_items.tooltip"),
             options -> CLIENT_CONFIGS.cullOversizedItems.get(), (options, newValue) -> CLIENT_CONFIGS.cullOversizedItems.set(newValue));
     public static final BooleanOption BACKGROUND_SHADERS = new BooleanOption("config.mellowui.background_shaders", new TranslatableComponent("config.mellowui.background_shaders.tooltip"),
