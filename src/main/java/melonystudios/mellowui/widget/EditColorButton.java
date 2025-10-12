@@ -1,6 +1,7 @@
 package melonystudios.mellowui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -21,7 +22,7 @@ public class EditColorButton extends EditButton {
         if (this.config instanceof ForgeConfigSpec.IntValue) {
             try {
                 int color = ((ForgeConfigSpec.IntValue) this.config).get();
-                fill(stack, this.x - 5, this.y, this.x - 1, this.y + this.height, color | 0xFF000000);
+                fill(stack, this.x - 5, this.y, this.x - 1, this.y + this.height, color | MathHelper.ceil(this.alpha * 255F) << 24);
             } catch (NumberFormatException ignored) {}
         }
     }

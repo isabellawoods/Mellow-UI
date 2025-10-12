@@ -9,6 +9,7 @@ import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
 import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
 import melonystudios.mellowui.screen.list.stats.MobsStatsList;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.TabButton;
 import melonystudios.mellowui.util.text.TooltipProvider;
 import net.minecraft.client.Minecraft;
@@ -172,7 +173,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
                 this.doneButton.render(stack, mouseX, mouseY, partialTicks);
             }
             int textAlpha = MathHelper.ceil(this.textAlpha * 255) << 24;
-            if (this.textAlpha > 0F) drawCenteredString(stack, this.font, new TranslationTextComponent("menu.mellowui.statistics.too_long").withStyle(TextFormatting.GRAY, TextFormatting.ITALIC),
+            if (this.textAlpha > 0F) drawCenteredString(stack, this.font, new TranslationTextComponent("menu.mellowui.statistics.too_long").withStyle(TextComponents.descriptionStyle().withItalic(true)),
                     this.width / 2, this.height / 2 + 26, 0xFFFFFF | textAlpha);
 
             drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2 - 5, 0xFFFFFF);

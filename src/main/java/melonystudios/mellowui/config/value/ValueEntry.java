@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.popup;
+package melonystudios.mellowui.config.value;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;

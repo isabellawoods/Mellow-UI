@@ -151,6 +151,6 @@ public class MellowConfigs {
     /// Whether the specified item can render outside its slot boundary.
     /// @param item The item to check.
     public static boolean oversizedInGUI(Item item) {
-        return !MellowConfigs.CLIENT_CONFIGS.cullOversizedItems.get() || MellowConfigs.CLIENT_CONFIGS.oversizedInGUI.get().contains(item.getRegistryName().toString());
+        return !CLIENT_CONFIGS.cullOversizedItems.get() || CLIENT_CONFIGS.oversizedInGUI.get().contains(item.getRegistryName().toString());
     }
 }

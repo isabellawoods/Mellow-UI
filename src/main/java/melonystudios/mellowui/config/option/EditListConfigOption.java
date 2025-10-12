@@ -13,15 +13,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EditListConfigOption<T> extends EditConfigOption {
-    private final ForgeConfigSpec.ConfigValue<List<T>> config;
+public class EditListConfigOption extends EditConfigOption {
+    private final ForgeConfigSpec.ConfigValue<List<String>> config;
 
-    public EditListConfigOption(String translation, @Nullable ITextComponent tooltipComponent, ForgeConfigSpec.ConfigValue<List<T>> config) {
+    public EditListConfigOption(String translation, @Nullable ITextComponent tooltipComponent, ForgeConfigSpec.ConfigValue<List<String>> config) {
         super(translation, tooltipComponent, config);
         this.config = config;
     }
 
-    public EditListConfigOption(String translation, ForgeConfigSpec.ConfigValue<List<T>> config) {
+    public EditListConfigOption(String translation, ForgeConfigSpec.ConfigValue<List<String>> config) {
         super(translation, config);
         this.config = config;
     }
@@ -33,6 +33,6 @@ public class EditListConfigOption<T> extends EditConfigOption {
         if (this.tooltipComponent != null) this.setTooltip(minecraft.font.split(this.tooltipComponent, RenderComponents.TOOLTIP_MAX_WIDTH));
 
         return new TooltippedButton(x, y, width, 20, this.getCaption(), this.tooltipComponent,
-                button -> minecraft.setScreen(new EditListConfigScreen<>(minecraft.screen, this.getCaption(), this.config)));
+                button -> minecraft.setScreen(new EditListConfigScreen(minecraft.screen, this.getCaption(), this.config)));
     }
 }

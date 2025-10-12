@@ -13,25 +13,25 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 
-public class EditListConfigScreen<T> extends Screen {
+public class EditListConfigScreen extends Screen {
     private final Screen lastScreen;
     private final ITextComponent configName;
-    private final ForgeConfigSpec.ConfigValue<List<T>> config;
+    private final ForgeConfigSpec.ConfigValue<List<String>> config;
     private ConfigEntriesList list;
 
-    public EditListConfigScreen(Screen lastScreen, ITextComponent configName, ForgeConfigSpec.ConfigValue<List<T>> config) {
+    public EditListConfigScreen(Screen lastScreen, ITextComponent configName, ForgeConfigSpec.ConfigValue<List<String>> config) {
         super(TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, configName));
         this.lastScreen = lastScreen;
         this.configName = configName;
         this.config = config;
     }
 
-    public ForgeConfigSpec.ConfigValue<List<T>> getConfig() {
-        return this.config;
-    }
-
     public ITextComponent getConfigName() {
         return this.configName;
+    }
+
+    public ForgeConfigSpec.ConfigValue<List<String>> getConfig() {
+        return this.config;
     }
 
     @Override

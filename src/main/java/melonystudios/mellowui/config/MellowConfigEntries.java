@@ -140,6 +140,10 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.splashTextPosition.get(), (options, newValue) -> CLIENT_CONFIGS.splashTextPosition.set(newValue));
     public static final BooleanOption SCROLLING_TEXT = new BooleanOption("config.mellowui.scrolling_text", new TranslationTextComponent("config.mellowui.scrolling_text.tooltip"),
             options -> CLIENT_CONFIGS.scrollingText.get(), (options, newValue) -> CLIENT_CONFIGS.scrollingText.set(newValue));
+    public static final EditListConfigOption CLASSIFIED_AS_CONTAINERS = new EditListConfigOption("config.mellowui.classified_as_containers",
+            new TranslationTextComponent("config.mellowui.classified_as_containers.tooltip"), CLIENT_CONFIGS.classifiedAsContainers);
+    public static final EditListConfigOption OVERSIZED_IN_GUI = new EditListConfigOption("config.mellowui.oversized_in_gui",
+            new TranslationTextComponent("config.mellowui.oversized_in_gui.tooltip"), CLIENT_CONFIGS.oversizedInGUI);
     public static final BooleanOption CULL_OVERSIZED_ITEMS = new BooleanOption("config.mellowui.cull_oversized_items", new TranslationTextComponent("config.mellowui.cull_oversized_items.tooltip"),
             options -> CLIENT_CONFIGS.cullOversizedItems.get(), (options, newValue) -> CLIENT_CONFIGS.cullOversizedItems.set(newValue));
     public static final BooleanOption BACKGROUND_SHADERS = new BooleanOption("config.mellowui.background_shaders", new TranslationTextComponent("config.mellowui.background_shaders.tooltip"),
@@ -152,8 +156,4 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.gradientBackground.get(), (options, newValue) -> CLIENT_CONFIGS.gradientBackground.set(newValue));
     public static final BooleanOption LOG_GL_ERRORS = new BooleanOption("config.mellowui.log_gl_errors", new TranslationTextComponent("config.mellowui.log_gl_errors.tooltip"),
             options -> CLIENT_CONFIGS.logGLErrors.get(), (options, newValue) -> CLIENT_CONFIGS.logGLErrors.set(newValue));
-    public static final EditListConfigOption<String> CLASSIFIED_AS_CONTAINERS = new EditListConfigOption<>("config.mellowui.classified_as_containers", new TranslationTextComponent("config.mellowui.classified_as_containers.tooltip"),
-            CLIENT_CONFIGS.classifiedAsContainers);
-    public static final EditListConfigOption<String> OVERSIZED_IN_GUI = new EditListConfigOption<>("config.mellowui.oversized_in_gui", new TranslationTextComponent("config.mellowui.oversized_in_gui.tooltip"),
-            CLIENT_CONFIGS.oversizedInGUI);
 }

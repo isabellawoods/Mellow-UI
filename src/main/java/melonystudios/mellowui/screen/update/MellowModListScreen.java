@@ -165,7 +165,7 @@ public class MellowModListScreen extends Screen {
             sortingConfig.toggle(this.minecraft.options, 1);
             button.setMessage(sortingConfig.getMessage(this.minecraft.options));
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
-        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, new TranslationTextComponent("config.forge.mod_list_sorting.tooltip"), mouseX, mouseY)));
+        }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, ForgeConfigEntries.SORTING_TOOLTIP, mouseX, mouseY)));
 
         // Open mods folder
         this.addButton(new ImageSetButton(this.width / 2 + 105, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,

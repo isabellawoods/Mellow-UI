@@ -118,7 +118,8 @@ public class ShaderManager {
     private static float getUniformValue(String name) {
         switch (name) {
             case "Radius": {
-                if (Panoramas.panorama().blurStrength() != null) return MathHelper.clamp(Panoramas.panorama().blurStrength(), 0, 20);
+                Integer blurStrength = Panoramas.panorama().blurStrength();
+                if (blurStrength != null) return MathHelper.clamp(blurStrength, 0, 20);
                 return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
             }
             default: return 0;

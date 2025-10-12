@@ -1,4 +1,4 @@
-package melonystudios.mellowui.screen.popup;
+package melonystudios.mellowui.config.value;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 

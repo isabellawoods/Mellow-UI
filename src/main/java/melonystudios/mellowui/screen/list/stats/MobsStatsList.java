@@ -96,6 +96,7 @@ public class MobsStatsList extends ExtendedList<MobsStatsList.Entry> {
         public boolean mouseClicked(double mouseX, double mouseY, int item) {
             if (item == 0) {
                 MobsStatsList.this.setSelected(this);
+                MobsStatsList.this.setFocused(this);
                 return true;
             } else {
                 return false;

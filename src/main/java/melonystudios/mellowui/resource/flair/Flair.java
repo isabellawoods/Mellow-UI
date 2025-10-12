@@ -32,7 +32,7 @@ public class Flair {
             if (element.isJsonObject()) {
                 return new Flair(element.getAsJsonObject().get("accent_color").getAsInt());
             } else {
-                throw new JsonParseException(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse mod list flair '%s'", element.toString()));
+                throw new JsonParseException(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", element.toString()));
             }
         }
 

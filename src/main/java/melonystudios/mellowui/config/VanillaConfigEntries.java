@@ -76,7 +76,7 @@ public class VanillaConfigEntries {
             options -> CLIENT_CONFIGS.uiVolume.get(),
             (options, newValue) -> CLIENT_CONFIGS.uiVolume.set(newValue),
             (options, slider) -> {
-                ITextComponent value = (int) (slider.get(options) * 100) == 0 ? DialogTexts.OPTION_OFF : new TranslationTextComponent("config.minecraft.sound_category.percent" ,Integer.toString((int) (slider.get(options) * 100)));
+                ITextComponent value = (int) (slider.get(options) * 100) == 0 ? DialogTexts.OPTION_OFF : new TranslationTextComponent("config.minecraft.sound_category.percent", Integer.toString((int) (slider.get(options) * 100)));
                 return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("config.minecraft.sound_category.ui"), value);
             });
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslationTextComponent("config.minecraft.realms_notifications.tooltip"),

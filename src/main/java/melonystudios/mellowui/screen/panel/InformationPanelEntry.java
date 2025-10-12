@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IReorderingProcessor;
@@ -72,7 +73,7 @@ public class InformationPanelEntry extends PanelEntry {
                 } catch (Exception exception) {
                     if (!WARN_ONCE_MODS.contains(this.mod.getModId())) {
                         WARN_ONCE_MODS.add(this.mod.getModId());
-                        MellowUI.logger("InformationPanelEntry").error(I18n.get("panel.mellowui.mod_information.broken_authors"), exception);
+                        MellowUI.logger("InformationPanelEntry").error(MellowUtils.translate("panel.mellowui.mod_information.broken_authors", "Mod '%s' has a broken \"authors\" field! Please report to Mellow UI about this", this.mod.getModId()), exception);
                     }
                 }
             }

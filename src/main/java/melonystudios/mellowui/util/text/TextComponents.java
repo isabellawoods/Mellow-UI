@@ -33,6 +33,7 @@ public class TextComponents {
                 subtitle);
     }
 
+    /// Makes a {@linkplain Style style} for descriptions, using the {@linkplain WidgetConfigs#descriptionTextColor **Description Text Color**} option.
     public static Style descriptionStyle() {
         return MellowUtils.withColor(WidgetConfigs.WIDGET_CONFIGS.descriptionTextColor.get());
     }

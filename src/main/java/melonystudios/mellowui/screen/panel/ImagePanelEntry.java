@@ -72,7 +72,7 @@ public class ImagePanelEntry extends PanelEntry {
                 InputStream logoFile = resourcePack.getRootResource(fileName);
                 NativeImage logo = NativeImage.read(logoFile);
 
-                return Pair.of(manager.register("modlogo", new DynamicTexture(logo) {
+                return Pair.of(manager.register("logo_" + this.mod.getModId(), new DynamicTexture(logo) {
                     @Override
                     public void upload() {
                         this.bind();

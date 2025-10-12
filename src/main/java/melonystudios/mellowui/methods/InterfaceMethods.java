@@ -44,13 +44,13 @@ public class InterfaceMethods {
     }
 
     public interface PackRepositoryMethods {
-        /// Adds a pack to the list of currently selected resource pack.
+        /// Adds a pack to the list of currently selected resource packs.
         /// @param id The id of the resource pack.
         default boolean addPack(String id) {
             return false;
         }
 
-        /// Removes a pack to the list of currently selected resource pack.
+        /// Removes a pack from the list of currently selected resource packs.
         /// @param id The id of the resource pack.
         default boolean removePack(String id) {
             return false;
@@ -105,9 +105,9 @@ public class InterfaceMethods {
     }
 
     public interface PanoramaRendererMethods {
+        /// @param renderer The panorama to compare.
         /// Whether the provided panorama is different from the panorama currently being rendered.
-        /// @param panoramaRenderer The panorama to compare.
-        default boolean differentPanorama(RenderSkybox panoramaRenderer) {
+        default boolean differentPanorama(RenderSkybox renderer) {
             return false;
         }
 

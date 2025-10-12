@@ -42,8 +42,8 @@ public class MUIPanoramaRendererMixin implements PanoramaRendererMethods {
     private float bob;
 
     @Override
-    public boolean differentPanorama(RenderSkybox panoramaRenderer) {
-        ResourceLocation[] panorama1 = ((CubeMapMethods) ((PanoramaRendererMethods) panoramaRenderer).cubeMap()).getPanoramaTextures();
+    public boolean differentPanorama(RenderSkybox renderer) {
+        ResourceLocation[] panorama1 = ((CubeMapMethods) ((PanoramaRendererMethods) renderer).cubeMap()).getPanoramaTextures();
         ResourceLocation[] panorama2 = ((CubeMapMethods) this.cubeMap).getPanoramaTextures();
         return panorama1 == null || !Arrays.equals(panorama1, panorama2);
     }
@@ -68,6 +68,13 @@ public class MUIPanoramaRendererMixin implements PanoramaRendererMethods {
     }
 
     @Unique
+    private float scrollSpeed() {
+        Float speedOverride = Panoramas.panorama().speedOverride();
+        if (speedOverride != null) return speedOverride;
+        return MellowConfigs.CLIENT_CONFIGS.panoramaScrollSpeed.get().floatValue();
+    }
+
+    @Unique
     private float bobbingStrength() {
         PitchOverrider overrider = Panoramas.panorama().pitchOverride();
         if (overrider instanceof BobbingPitch) return ((BobbingPitch) overrider).bobbingStrength();
@@ -79,13 +86,6 @@ public class MUIPanoramaRendererMixin implements PanoramaRendererMethods {
         PitchOverrider overrider = Panoramas.panorama().pitchOverride();
         if (overrider instanceof ConstantPitch) return ((ConstantPitch) overrider).pitch();
         return MellowConfigs.CLIENT_CONFIGS.panoramaCameraPitch.get();
-    }
-
-    @Unique
-    private float scrollSpeed() {
-        Float speedOverride = Panoramas.panorama().speedOverride();
-        if (speedOverride != null) return speedOverride;
-        return MellowConfigs.CLIENT_CONFIGS.panoramaScrollSpeed.get().floatValue();
     }
 
     @Unique

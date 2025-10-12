@@ -78,12 +78,16 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
             this.modInfo = modInfo;
         }
 
+        public ModInfo getModInformation() {
+            return this.modInfo;
+        }
+
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
-            ITextComponent modName = new TranslationTextComponent("menu.mellowui.mods.name", this.modInfo.getDisplayName());
-            ITextComponent modVersion = new TranslationTextComponent("menu.mellowui.mods.version", MavenVersionStringHelper.artifactVersionToString(this.modInfo.getVersion())).withStyle(
+            ITextComponent modName = new TranslationTextComponent("menu.mellowui.mods.name", this.getModInformation().getDisplayName());
+            ITextComponent modVersion = new TranslationTextComponent("menu.mellowui.mods.version", MavenVersionStringHelper.artifactVersionToString(this.getModInformation().getVersion())).withStyle(
                     style -> style.withColor(Color.fromRgb(0xA0A0A0)));
-            VersionChecker.CheckResult checkResult = VersionChecker.getResult(this.modInfo);
+            VersionChecker.CheckResult checkResult = VersionChecker.getResult(this.getModInformation());
             FontRenderer font = this.parentScreen.getMinecraft().font;
             int rowWidth = MellowModList.this.getRowWidth() - (MellowModList.this.getMaxScroll() > 0 ? 6 : 0);
 
@@ -121,10 +125,6 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
                 return true;
             }
             return super.mouseClicked(mouseX, mouseY, button);
-        }
-
-        public ModInfo getModInformation() {
-            return this.modInfo;
         }
     }
 }

@@ -1,9 +1,11 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.config.value.ValueEntry;
+import melonystudios.mellowui.config.value.ValueType;
 import melonystudios.mellowui.screen.EditListConfigScreen;
 import melonystudios.mellowui.screen.popup.EditValueScreen;
-import melonystudios.mellowui.screen.popup.ValueType;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
@@ -22,16 +24,16 @@ import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
-    private final EditListConfigScreen<?> parentScreen;
+    private final EditListConfigScreen parentScreen;
     private final Minecraft minecraft;
 
-    public ConfigEntriesList(Minecraft minecraft, EditListConfigScreen<?> parentScreen) {
+    public ConfigEntriesList(Minecraft minecraft, EditListConfigScreen parentScreen) {
         super(minecraft, parentScreen.width, parentScreen.height, 32, parentScreen.height - 32, 25);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
 
-        for (Object entry : parentScreen.getConfig().get()) {
-            if (entry instanceof String) this.addEntry(new StringConfigEntry((String) entry));
+        for (String entry : parentScreen.getConfig().get()) {
+            if (entry instanceof String) this.addEntry(new StringConfigEntry(entry));
         }
         this.addEntry(new AddEntry());
     }
@@ -74,7 +76,7 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
         protected void renderString(MatrixStack stack, int x, int y, int width, int height, Alignment alignment, ITextComponent text) {
             int padding = 2;
             int minX = x + padding - 2;
-            int maxX = x + width - padding;
+            int maxX = x + width - padding - 2;
             int maxY = y + height;
             this.renderAlignedScrollingText(stack, this.font, text, alignment, minX, y, maxX, maxY, 0xFFFFFF);
         }
@@ -92,7 +94,7 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
             ITextComponent text = new StringTextComponent(this.entry).withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(ConfigEntriesList.this.getSelected() == this, true)));
             this.renderWidgetText(
                     () -> this.renderString(stack, left, top, width, height, Alignment.LEFT, text),
-                    () -> drawCenteredString(stack, this.font, text, width / 2, top - 8, 0xFFFFFF)
+                    () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)
             );
         }
     }
@@ -105,16 +107,20 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
                             .withItalic(true));
             this.renderWidgetText(
                     () -> this.renderString(stack, left, top, width, height, Alignment.CENTER, text),
-                    () -> drawCenteredString(stack, this.font, text, width / 2, top - 8, 0xFFFFFF)
+                    () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)
             );
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int item) {
             ITextComponent configName = ConfigEntriesList.this.parentScreen.getConfigName();
-            EditValueScreen<String> screen = new EditValueScreen<>(ConfigEntriesList.this.parentScreen, configName, ValueType.STRING, false);
+            ValueEntry<String> entry = new ValueEntry<>("", ValueType.STRING, MellowUI.mellowUI("new_entry"));
+            EditValueScreen<String> screen = new EditValueScreen<>(ConfigEntriesList.this.parentScreen, configName, entry, false);
             screen.title(new TranslationTextComponent("menu.mellowui.add_value.title", configName).withStyle(TextFormatting.BOLD));
-            screen.configSaver(value -> {});
+            screen.configSaver(value -> {
+                ConfigEntriesList.this.parentScreen.getConfig().get().add(value);
+                MellowUI.logger("ConfigEntriesList").debug("tried to save value: {}", value);
+            });
             Minecraft.getInstance().setScreen(screen);
             return super.mouseClicked(mouseX, mouseY, item);
         }

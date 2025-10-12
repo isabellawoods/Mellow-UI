@@ -33,8 +33,8 @@ public class MellowCustomizationScreen extends SettingsScreen {
     // Tabs
     private final List<TabButton> tabs = Lists.newArrayList();
     private OptionsRowList styles;
-    private PanoramaList panoramas;
     private ThemeList themes;
+    private PanoramaList panoramas;
     @Nullable
     private AbstractList<?> activeList = null;
 
@@ -57,14 +57,15 @@ public class MellowCustomizationScreen extends SettingsScreen {
         this.styles.setRenderBackground(false);
         this.styles.setRenderTopAndBottom(false);
 
+        this.themes = new ThemeList(this.minecraft, this);
+        this.themes.setRenderBackground(false);
+        this.themes.setRenderTopAndBottom(false);
+
         this.panoramas = new PanoramaList(this.minecraft, this);
         this.panoramas.setRenderBackground(false);
         this.panoramas.setRenderTopAndBottom(false);
         this.panoramas.setSelected(this.panoramas.children().stream().filter(entry -> entry.location().equals(MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get())).findFirst().orElse(null));
 
-        this.themes = new ThemeList(this.minecraft, this);
-        this.themes.setRenderBackground(false);
-        this.themes.setRenderTopAndBottom(false);
         this.activeList = this.styles;
         this.children.add(this.activeList);
 
@@ -102,6 +103,8 @@ public class MellowCustomizationScreen extends SettingsScreen {
     }
 
     private void selectList(AbstractList<?> list) {
+        this.children.remove(this.styles);
+        this.children.remove(this.themes);
         this.children.remove(this.panoramas);
         if (list != null) {
             this.children.add(0, list);
@@ -131,7 +134,7 @@ public class MellowCustomizationScreen extends SettingsScreen {
 
     @Override
     public void renderDirtBackground(int vOffset) {
-        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, 24, this.width,  this.height, vOffset);
+        if (MellowConfigs.CLIENT_CONFIGS.screenBackgroundStyle.get()) this.components.renderMenuBackground(0, 24, this.width, this.height, vOffset);
         else super.renderDirtBackground(vOffset);
     }
 }
