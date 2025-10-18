@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
@@ -12,6 +13,7 @@ import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.IconButton;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -26,6 +28,7 @@ import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -153,10 +156,11 @@ public class RenderComponents extends AbstractGui {
     /// @param panorama The panorama to replace the current one.
     /// @param fromTitleScreen Whether the replacement came from the title screen.
     public void replacePanorama(RenderSkybox panorama, boolean fromTitleScreen) {
-        if (fromTitleScreen && Minecraft.getInstance().screen instanceof MainMenuScreen) {
+        Screen screen = Minecraft.getInstance().screen;
+        if (fromTitleScreen && screen instanceof MainMenuScreen) {
             int hashCode = panorama.hashCode();
             if (hashCode != -1294886725) { // hash code of the default panorama from the vanilla title screen ~isa 28-9-25
-                MellowUtils.PANORAMAS.put(MellowUI.mellowUI("generated/" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) Minecraft.getInstance().screen).getPanoramaOverlay()));
+                MellowUtils.PANORAMAS.put(MellowUI.generated("id_" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) screen).getPanoramaOverlay()));
             }
         }
         if (((InterfaceMethods.PanoramaRendererMethods) PANORAMA).differentPanorama(panorama)) PANORAMA = panorama;
@@ -348,11 +352,12 @@ public class RenderComponents extends AbstractGui {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
-    /// Renders the **text suggestion** of a {@link TextFieldWidget}.
+    /// Renders the **text suggestion** of a {@link TextFieldWidget}, overriding the color to match the border.
     /// @param textField A nullable text box widget.
-    /// @param suggestion A text component for the text to render, usually the "{@linkplain melonystudios.mellowui.util.MellowUtils#SEARCH_TEXT *Search...*}" suggestion.
+    /// @param suggestion A text component for the text to render, usually the "{@linkplain TextComponents#searchText *Search...*}" suggestion.
     public void renderTextBoxSuggestion(@Nullable TextFieldWidget textField, ITextComponent suggestion) {
         if (textField != null && textField.getValue().isEmpty() && !textField.isFocused()) {
+            if (textField.isHovered()) suggestion = suggestion.copy().withStyle(style -> style.withColor(Color.fromRgb(WidgetConfigs.WIDGET_CONFIGS.textFieldHighlightedSuggestionColor.get())));
             drawString(this.stack, this.minecraft.font, suggestion, textField.x + 4, textField.y + (textField.getHeight() - 8) / 2, 0xFFFFFF);
         }
     }

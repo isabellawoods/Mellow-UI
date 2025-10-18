@@ -53,7 +53,7 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
         if (shader.effect().shaderIdentifier() == -1) {
             ShaderManager.clearPostEffect(this.minecraft);
         } else {
-            ShaderManager.setPostEffect(this.minecraft, shader.effect());
+            ShaderManager.setPostEffect(this.minecraft, shader.effect(), true, true);
         }
 
         NarratorChatListener.INSTANCE.sayNow(new TranslationTextComponent("narrator.select", shader.name).getString());

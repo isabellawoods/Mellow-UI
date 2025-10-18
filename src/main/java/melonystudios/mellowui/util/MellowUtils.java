@@ -56,7 +56,6 @@ public class MellowUtils {
     });
 
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
-    public static final ITextComponent SEARCH_TEXT = new TranslationTextComponent("button.mellowui.search").withStyle(withColor(0xA0A0A0).withItalic(true));
     public static final String PROGRAMMER_ART_ID = "programer_art";
     public static final int DEFAULT_TITLE_HEIGHT = 12;
     public static final int TABBED_TITLE_HEIGHT = 2;
@@ -66,7 +65,15 @@ public class MellowUtils {
         Screen defaultScreen = new MellowModListScreen(lastScreen);
         switch (CLIENT_CONFIGS.modListStyle.get()) {
             case OPTION_2: return defaultScreen;
-            case OPTION_3: return getExternalScreen("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen", "catalogue", defaultScreen);
+            case OPTION_3: {
+                if (!ModList.get().isLoaded("catalogue")) return defaultScreen;
+                try {
+                    Class<?> screen = Class.forName("com.mrcrayfish.catalogue.client.screen.CatalogueModListScreen");
+                    return (Screen) screen.newInstance();
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+                    return defaultScreen;
+                }
+            }
             case OPTION_1: default: return new ModListScreen(lastScreen);
         }
     }

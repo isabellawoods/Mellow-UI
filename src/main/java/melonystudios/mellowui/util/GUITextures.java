@@ -22,6 +22,8 @@ public class GUITextures {
     // Slots
     public static final ResourceLocation SLOT_HIGHLIGHT_BACK = gui("miscellaneous/slot_highlight_back");
     public static final ResourceLocation SLOT_HIGHLIGHT_FRONT = gui("miscellaneous/slot_highlight_front");
+    public static final ResourceLocation STAT_SLOT_HIGHLIGHT_BACK = gui("miscellaneous/stat_slot_highlight_back");
+    public static final ResourceLocation STAT_SLOT_HIGHLIGHT_FRONT = gui("miscellaneous/stat_slot_highlight_front");
 
     // Buttons & Widgets
     public static final ResourceLocation SEPARATOR = gui("widget/separator");

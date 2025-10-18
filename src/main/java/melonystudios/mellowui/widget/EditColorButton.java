@@ -8,12 +8,12 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import javax.annotation.Nullable;
 
 public class EditColorButton extends EditButton {
-    public EditColorButton(int x, int y, int width, int height, ITextComponent translation, ForgeConfigSpec.ConfigValue<?> config, ITextComponent component, IPressable whenPressed) {
-        super(x, y, width, height, translation, config, component, whenPressed);
+    public EditColorButton(int x, int y, int width, int height, ITextComponent configName, ITextComponent buttonText, ForgeConfigSpec.ConfigValue<?> config, IPressable whenPressed) {
+        super(x, y, width, height, configName, buttonText, config, whenPressed);
     }
 
-    public EditColorButton(int x, int y, int width, int height, ITextComponent translation, @Nullable ITextComponent tooltipComponent, ForgeConfigSpec.ConfigValue<?> config, ITextComponent component, IPressable whenPressed) {
-        super(x, y, width, height, translation, tooltipComponent, config, component, whenPressed);
+    public EditColorButton(int x, int y, int width, int height, ITextComponent configName, @Nullable ITextComponent tooltipComponent, ITextComponent buttonText, ForgeConfigSpec.ConfigValue<?> config, IPressable whenPressed) {
+        super(x, y, width, height, configName, tooltipComponent, buttonText, config, whenPressed);
     }
 
     @Override

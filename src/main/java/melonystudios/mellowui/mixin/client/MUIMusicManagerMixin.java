@@ -6,7 +6,6 @@ import melonystudios.mellowui.screen.MusicToast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.*;
 import net.minecraft.util.SoundCategory;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,12 +18,12 @@ import javax.annotation.Nullable;
 @Mixin(MusicTicker.class)
 public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethods {
     @Shadow @Nullable private ISound currentMusic;
-    @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "startPlaying", at = @At("TAIL"))
     public void addMusicToast(BackgroundMusicSelector music, CallbackInfo callback) {
-        if (this.minecraft.getOverlay() != null || this.currentMusic == null) return;
-        if (this.canShowToast()) MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), false, this.minecraft.getToasts());
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft == null || this.currentMusic == null) return;
+        if (this.canShowToast(minecraft)) MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), false, minecraft.getToasts());
     }
 
     @Unique
@@ -34,12 +33,12 @@ public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethod
     }
 
     @Unique
-    private boolean canShowToast() {
-        return this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundHandler.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn();
+    private boolean canShowToast(Minecraft minecraft) {
+        return minecraft != null && this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundHandler.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn(minecraft);
     }
 
     @Unique
-    private boolean musicTurnedOn() {
-        return this.minecraft.options.getSoundSourceVolume(SoundCategory.MASTER) > 0 && this.minecraft.options.getSoundSourceVolume(SoundCategory.MUSIC) > 0;
+    private boolean musicTurnedOn(Minecraft minecraft) {
+        return minecraft.options.getSoundSourceVolume(SoundCategory.MASTER) > 0 && minecraft.options.getSoundSourceVolume(SoundCategory.MUSIC) > 0;
     }
 }

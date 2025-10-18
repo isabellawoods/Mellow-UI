@@ -136,7 +136,7 @@ public class PanoramaList extends ExtendedList<PanoramaList.Entry> {
         }
 
         private String getDescriptionID() {
-            if (this.location.getPath().startsWith("generated/")) return "panorama.mellowui.generated";
+            if (this.location.getNamespace().equals("generated")) return "panorama.mellowui.generated";
             return this.panorama.getDescriptionID();
         }
 

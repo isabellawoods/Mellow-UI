@@ -32,15 +32,15 @@ public abstract class MUIForgeInGameGUIMixin extends IngameGui {
             if (opacity > 255) opacity = 255;
 
             if (opacity > 8) {
-                RenderSystem.pushMatrix();
-                RenderSystem.translatef((float) (width / 2), (float) (height - 68), 0F);
+                stack.pushPose();
+                stack.translate((float) (width / 2), (float) (height - 68), 0F);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (this.animateOverlayMessageColor ? MathHelper.hsvToRgb(hue / 50F, 0.7F, 0.6F) & 0xFFFFFF : 0xFFFFFF);
-                this.drawBackdrop(stack, this.fontrenderer, -4, this.fontrenderer.width(this.overlayMessageString), 16777215 | (opacity << 24));
+                this.drawBackdrop(stack, this.fontrenderer, -4, this.fontrenderer.width(this.overlayMessageString), 0xFFFFFF | (opacity << 24));
                 this.fontrenderer.drawShadow(stack, this.overlayMessageString.getVisualOrderText(), -this.fontrenderer.width(this.overlayMessageString) / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
-                RenderSystem.popMatrix();
+                stack.popPose();
             }
 
             this.minecraft.getProfiler().pop();

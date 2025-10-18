@@ -36,7 +36,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     // Mellow UI
     public static final List<AbstractOption> BACKGROUNDS = Lists.newArrayList(PANORAMA_BOBBING, DEFAULT_BACKGROUND, GRADIENT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS);
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(SPLASH_TEXT_POSITION, REPLACE_REALMS_NOTIFICATIONS, MAIN_MENU_MOD_BUTTON, PAUSE_MENU_MOD_BUTTON);
-    public static final List<AbstractOption> MISCELLANEOUS = Lists.newArrayList(CULL_OVERSIZED_ITEMS, OVERSIZED_IN_GUI, CLASSIFIED_AS_CONTAINERS, LOG_GL_ERRORS);
+    public static final List<AbstractOption> MISCELLANEOUS = Lists.newArrayList(CULL_OVERSIZED_ITEMS, LOG_GL_ERRORS);
     public static final List<AbstractOption> WIDGETS_SMALL = Lists.newArrayList(LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
     public static final List<AbstractOption> WIDGETS_BIG = Lists.newArrayList(BUTTON_TEXT_PADDING, EDIT_BUTTON_TEXT_PADDING, TAB_TEXT_PADDING, MOD_NAME_TEXT_PADDING);
     private OptionsRowList mellowUIList;

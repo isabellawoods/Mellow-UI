@@ -10,9 +10,11 @@ import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
 public class WidgetConfigEntries {
     // Separators
     public static final SeparatorOption WIDGETS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.widgets"));
+    public static final SeparatorOption TEXT_FIELDS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.text_fields"));
     public static final SeparatorOption SPLASHES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.splashes"));
     public static final SeparatorOption UPDATE_AVAILABILITY_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.update_availability"));
     public static final SeparatorOption BACKGROUNDS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.backgrounds"));
+    public static final SeparatorOption MODDED_COLORS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.modded_colors"));
 
     // Widgets
     public static final EditColorConfigOption DEFAULT_WIDGET_TEXT_COLOR = new EditColorConfigOption("config.mellowui.default_widget_text_color",
@@ -30,6 +32,20 @@ public class WidgetConfigEntries {
     public static final EditColorConfigOption HIGHLIGHTED_ICON_BUTTON_COLOR = new EditColorConfigOption("config.mellowui.highlighted_icon_button_color",
             new TranslationTextComponent("config.mellowui.highlighted_icon_button_color.tooltip"), WIDGET_CONFIGS.highlightedIconButtonColor);
 
+    // Text fields
+    public static final EditColorConfigOption TEXT_FIELD_CENTER_COLOR = new EditColorConfigOption("config.mellowui.text_field_center_color",
+            new TranslationTextComponent("config.mellowui.text_field_center_color.tooltip"), WIDGET_CONFIGS.textFieldCenterColor);
+    public static final EditColorConfigOption TEXT_FIELD_DEFAULT_BORDER_COLOR = new EditColorConfigOption("config.mellowui.text_field_default_border_color",
+            new TranslationTextComponent("config.mellowui.text_field_default_border_color.tooltip"), WIDGET_CONFIGS.textFieldDefaultBorderColor);
+    public static final EditColorConfigOption TEXT_FIELD_HIGHLIGHTED_BORDER_COLOR = new EditColorConfigOption("config.mellowui.text_field_highlighted_border_color",
+            new TranslationTextComponent("config.mellowui.text_field_highlighted_border_color.tooltip"), WIDGET_CONFIGS.textFieldHighlightedBorderColor);
+    public static final EditColorConfigOption TEXT_FIELD_SUGGESTION_COLOR = new EditColorConfigOption("config.mellowui.text_field_suggestion_color",
+            new TranslationTextComponent("config.mellowui.text_field_suggestion_color.tooltip"), WIDGET_CONFIGS.textFieldSuggestionColor);
+    public static final EditColorConfigOption TEXT_FIELD_HIGHLIGHTED_SUGGESTION_COLOR = new EditColorConfigOption("config.mellowui.text_field_highlighted_suggestion_color",
+            new TranslationTextComponent("config.mellowui.text_field_highlighted_suggestion_color.tooltip"), WIDGET_CONFIGS.textFieldHighlightedSuggestionColor);
+    public static final EditColorConfigOption TEXT_FIELD_HIGHLIGHT_COLOR = new EditColorConfigOption("config.mellowui.text_field_highlight_color",
+            new TranslationTextComponent("config.mellowui.text_field_highlight_color.tooltip"), WIDGET_CONFIGS.textFieldHighlightColor);
+
     // Splashes
     public static final EditColorConfigOption SPLASH_TEXT_COLOR = new EditColorConfigOption("config.mellowui.splash_text_color",
             new TranslationTextComponent("config.mellowui.splash_text_color.tooltip"), WIDGET_CONFIGS.splashTextColor);
@@ -38,7 +54,7 @@ public class WidgetConfigEntries {
     public static final EditColorConfigOption HIGH_CONTRAST_SPLASH_TEXT_COLOR = new EditColorConfigOption("config.mellowui.high_contrast_splash_text_color",
             new TranslationTextComponent("config.mellowui.high_contrast_splash_text_color.tooltip"), WIDGET_CONFIGS.highContrastSplashTextColor);
 
-    // Update Availability
+    // Update availability
     public static final EditColorConfigOption DEFAULT_UPDATE_AVAILABLE_COLOR = new EditColorConfigOption("config.mellowui.default_update_available_color",
             new TranslationTextComponent("config.mellowui.default_update_available_color.tooltip"), WIDGET_CONFIGS.defaultUpdateAvailableColor);
     public static final EditColorConfigOption HIGH_CONTRAST_UPDATE_AVAILABLE_COLOR = new EditColorConfigOption("config.mellowui.high_contrast_update_available_color",

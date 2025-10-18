@@ -42,6 +42,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
 
     @Inject(method = "renderWindow", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;draw(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/util/text/ITextComponent;FFI)I"), cancellable = true)
     public void renderTabName(MatrixStack stack, int x, int y, CallbackInfo callback) {
+        if (this.selectedTab == null) return;
         callback.cancel();
         this.font.draw(stack, this.selectedTab.getTitle(), (float) (x + 8), (float) (y + 6), 0x404040);
     }

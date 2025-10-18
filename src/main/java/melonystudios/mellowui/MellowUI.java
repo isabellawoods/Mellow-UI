@@ -6,6 +6,7 @@ import melonystudios.mellowui.resource.flair.FlairReloadListener;
 import melonystudios.mellowui.resource.panorama.PanoramaReloadListener;
 import melonystudios.mellowui.screen.MellowUIOptionsScreen;
 import melonystudios.mellowui.sound.MUISounds;
+import melonystudios.mellowui.util.MUICommsProcessor;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -15,11 +16,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,6 +40,7 @@ public class MellowUI {
         ModLoadingContext context = ModLoadingContext.get();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+        eventBus.addListener(this::receiveIMCMessages);
 
         MUISounds.SOUNDS.register(eventBus);
         MinecraftForge.EVENT_BUS.register(this);
@@ -67,6 +71,12 @@ public class MellowUI {
         return new ResourceLocation(MellowUI.MOD_ID, name);
     }
 
+    /// Creates a new resource location under the ***Generated*** namespace.
+    /// @param name The path of this resource location.
+    public static ResourceLocation generated(String name) {
+        return new ResourceLocation("generated", name);
+    }
+
     /// Creates a new resource location under ***Mellow UI***'s namespace.
     /// @param name The path of this resource location.
     /// @return A new resource location, being prefixed with `textures/gui/` and its extension being `.png`.
@@ -84,4 +94,8 @@ public class MellowUI {
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
     private void clientSetup(final FMLClientSetupEvent event) {}
+
+    private void receiveIMCMessages(final InterModProcessEvent event) {
+        InterModComms.getMessages(MOD_ID).forEach(MUICommsProcessor::processMessage);
+    }
 }

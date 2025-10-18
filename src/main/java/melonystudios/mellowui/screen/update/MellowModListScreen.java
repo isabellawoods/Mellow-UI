@@ -14,6 +14,7 @@ import melonystudios.mellowui.screen.panel.*;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import melonystudios.mellowui.widget.ModButton;
 import net.minecraft.client.gui.DialogTexts;
@@ -122,7 +123,7 @@ public class MellowModListScreen extends Screen {
         this.panel.widgets().forEach(this::addButton);
 
         // Search box
-        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 100, 17, 200, 12, MellowUtils.SEARCH_TEXT);
+        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
         this.searchBox.setValue(LAST_SEARCH);
@@ -239,11 +240,9 @@ public class MellowModListScreen extends Screen {
         }
 
         // credits
-        info.getConfigElement("credits").ifPresent(credits -> {
-            this.panel.addEntry(new TextPanelEntry(this.panel, new TranslationTextComponent("menu.mellowui.mods.credits",
-                    new StringTextComponent(credits.toString()).withStyle(withColor(0xFFFFFF).withBold(false)))
-                    .withStyle(withColor(accentColor).withBold(true))));
-        });
+        info.getConfigElement("credits").ifPresent(credits -> this.panel.addEntry(new TextPanelEntry(this.panel, new TranslationTextComponent("menu.mellowui.mods.credits",
+                new StringTextComponent(credits.toString()).withStyle(withColor(0xFFFFFF).withBold(false)))
+                .withStyle(withColor(accentColor).withBold(true)))));
         // license
         this.panel.addEntry(new TextPanelEntry(this.panel, new TranslationTextComponent("menu.mellowui.mods.license",
                 new StringTextComponent(info.getOwningFile().getLicense()).withStyle(withColor(0xFFFFFF).withBold(false)))

@@ -36,6 +36,11 @@ issueTrackerURL="https://github.com/isabellawoods/Mellow-UI/issues" #optional
     # The description text for the mod (multi line!) (#mandatory)
     description="Backports the modernized look of the menus in 1.20.5, while adding more functionality to existing menus."
 
+# A list of properties used by other mods.
+[modproperties.mellowui]
+    # A file name (in the root of the mod JAR) containing a logo for display in Catalogue's mod list screen
+    catalogueImageIcon = "pack.png"
+
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.mellowui]] #optional
     # the modid of the dependency

@@ -21,23 +21,23 @@ import java.util.Optional;
 
 public class EditButton extends Button implements ScrollingText, IBidiTooltip {
     protected final ForgeConfigSpec.ConfigValue<?> config;
-    private final ITextComponent translation;
+    private final ITextComponent configName;
     @Nullable
     private final ITextComponent tooltipComponent;
     private final int realX;
 
-    public EditButton(int x, int y, int width, int height, ITextComponent translation, ForgeConfigSpec.ConfigValue<?> config, ITextComponent component, IPressable whenPressed) {
-        super(x + width / 2 + 5, y, width / 2 - 5, height, component, whenPressed);
+    public EditButton(int x, int y, int width, int height, ITextComponent configName, ITextComponent buttonText, ForgeConfigSpec.ConfigValue<?> config, IPressable whenPressed) {
+        super(x + width / 2 + 5, y, width / 2 - 5, height, buttonText, whenPressed);
         this.config = config;
-        this.translation = translation;
+        this.configName = configName;
         this.tooltipComponent = null;
         this.realX = x;
     }
 
-    public EditButton(int x, int y, int width, int height, ITextComponent translation, @Nullable ITextComponent tooltipComponent, ForgeConfigSpec.ConfigValue<?> config, ITextComponent component, IPressable whenPressed) {
-        super(x + width / 2 + 5, y, width / 2 - 5, height, component, whenPressed);
+    public EditButton(int x, int y, int width, int height, ITextComponent configName, @Nullable ITextComponent tooltipComponent, ITextComponent buttonText, ForgeConfigSpec.ConfigValue<?> config, IPressable whenPressed) {
+        super(x + width / 2 + 5, y, width / 2 - 5, height, buttonText, whenPressed);
         this.config = config;
-        this.translation = translation;
+        this.configName = configName;
         this.tooltipComponent = tooltipComponent;
         this.realX = x;
     }
@@ -56,7 +56,7 @@ public class EditButton extends Button implements ScrollingText, IBidiTooltip {
         Minecraft minecraft = Minecraft.getInstance();
         this.renderWidgetText(
                 () -> this.renderString(stack, minecraft.font, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
-                () -> drawString(stack, minecraft.font, this.translation, this.realX + this.padding(), this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
+                () -> drawString(stack, minecraft.font, this.configName, this.realX + this.padding(), this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
         );
         super.renderButton(stack, mouseX, mouseY, partialTicks);
     }
@@ -67,7 +67,7 @@ public class EditButton extends Button implements ScrollingText, IBidiTooltip {
         int minY = this.y;
         int maxX = this.x - padding - this.colorPadding();
         int maxY = this.y + this.height;
-        this.renderAlignedScrollingText(stack, font, this.translation, Alignment.LEFT, minX, minY, maxX, maxY, color);
+        this.renderAlignedScrollingText(stack, font, this.configName, Alignment.LEFT, minX, minY, maxX, maxY, color);
     }
 
     protected int colorPadding() {

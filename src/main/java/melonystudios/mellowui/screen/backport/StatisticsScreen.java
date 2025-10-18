@@ -248,7 +248,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         if (hovered) {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
-            this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_BACK);
+            this.minecraft.getTextureManager().bind(GUITextures.STAT_SLOT_HIGHLIGHT_BACK);
             blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
             RenderSystem.enableDepthTest();
             RenderSystem.disableBlend();
@@ -259,7 +259,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         if (hovered) {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
-            this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_FRONT);
+            this.minecraft.getTextureManager().bind(GUITextures.STAT_SLOT_HIGHLIGHT_FRONT);
             blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
             RenderSystem.enableDepthTest();
             RenderSystem.disableBlend();

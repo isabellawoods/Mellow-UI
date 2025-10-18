@@ -18,6 +18,8 @@
     "client.MUISubtitleOverlayMixin",
     "forge.MUIConfigGUIHandlerMixin",
     "forge.MUIForgeInGameGUIMixin",
+    "forge.MUILoadingErrorScreenMixin",
+    "forge.MUILoadingErrorScreenMixin$MUILoadingMessageEntryMixin",
     "option.MUIBooleanOptionMixin",
     "screen.MUIBuffetWorldScreenMixin",
     "screen.MUIContainerScreenMixin",

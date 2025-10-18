@@ -23,5 +23,5 @@ Below are some of the new screens added by *Mellow UI*:
 
 | | |
 |-|-|
-| <img src="assets/super_secret_settings_ntsc.png" width=1170/> | *The super secret settings screen, now with a convenient list. The **NTSC** shader is selected, which renders like this for me.* |
-| <img src="assets/mellowui_options.png" width=1170/> | *Mellow UI's options screen. It can be used to customize 90% of the mods's features.* |
+| <img src="assets/super_secret_settings_ntsc.png" width=1170/> | *The super secret settings screen, now with a convenient list. The **NTSC** shader is selected, which renders differently based on your graphics card or something.* |
+| <img src="assets/mellowui_options.png" width=1170/> | *Mellow UI's options screen. It can be used to customize 90% of the mod's features.* |

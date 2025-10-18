@@ -6,12 +6,12 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.shader.PostEffects;
 import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 /// Utility class for handling {@linkplain Panorama panoramas} added by *Mellow UI*.
 public class Panoramas {
@@ -25,6 +25,9 @@ public class Panoramas {
             new ResourceLocation("gui/title/background/panorama_5")
     )).overlay(new ResourceLocation("gui/title/background/panorama_overlay")).build();
 
+    /// Represents an instance of the currently selected panorama.
+    public static Panorama CURRENT_PANORAMA = null;
+
     /// Applies a given panorama to the background.
     /// @param newPanorama The panorama to apply.
     /// @param name The name (resource location) of the panorama, used to set the {@linkplain MellowConfigs#selectedPanorama **Selected Panorama**} option.
@@ -36,13 +39,19 @@ public class Panoramas {
         RenderSkybox defaultPanorama = RenderComponents.PANORAMA;
         RenderSkybox selectedPanorama = newPanorama.panorama();
 
+        // clear the cached panorama instance
+        CURRENT_PANORAMA = null;
+
         if (((InterfaceMethods.PanoramaRendererMethods) defaultPanorama).differentPanorama(selectedPanorama)) {
             RenderComponents.INSTANCE.replacePanorama(selectedPanorama, false);
         }
 
         // setting the shader
-        if (newPanorama.shader() != null) ShaderManager.setPostEffect(Minecraft.getInstance(), newPanorama.shader());
-        else ShaderManager.setPostEffect(Minecraft.getInstance(), PostEffects.MUI_BLUR);
+        if (newPanorama.shader() != null) {
+            ShaderManager.setPostEffect(Minecraft.getInstance(), newPanorama.shader(), false, false);
+        } else {
+            ShaderManager.setPostEffect(Minecraft.getInstance(), ResourceLocation.tryParse(MellowConfigs.CLIENT_CONFIGS.selectedEffect.get()), false, true);
+        }
     }
 
     /// @return The **asset id** of the currently selected panorama.
@@ -53,14 +62,15 @@ public class Panoramas {
 
     /// @return The currently selected panorama.
     public static Panorama panorama() {
-        return MellowUtils.PANORAMAS.getOrDefault(panoramaLocation(), DEFAULT);
+        if (CURRENT_PANORAMA == null) CURRENT_PANORAMA = MellowUtils.PANORAMAS.getOrDefault(panoramaLocation(), DEFAULT);
+        return CURRENT_PANORAMA;
     }
 
     /// Gets a panorama cube map texture from the specified panorama.
     /// @param panorama The panorama.
     /// @param index The index of the texture to pick. Can be any number from `0` to `5`.
     public static ResourceLocation cubeMapTexture(Panorama panorama, int index) {
-        return MellowUI.toTexturePath(panorama.cubeMap().get(index));
+        return MellowUI.toTexturePath(panorama.cubeMap().get(MathHelper.clamp(index, 0, 5)));
     }
 
     /// Gets the panorama overlay texture from the specified panorama.

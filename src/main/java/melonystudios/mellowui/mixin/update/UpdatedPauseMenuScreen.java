@@ -85,10 +85,16 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
                 this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + yOffset, 98, 20, new TranslationTextComponent("button.mellowui.feedback"), button ->
                         this.minecraft.setScreen(new FeedbackScreen(this))));
 
+                // shadow feedback button (so Create's button always shows up)
+                this.addShadowFeedbackButton(this.width / 2 - 102, this.height / 4 + 72 + yOffset);
+
                 // Mods
                 this.addButton(new ModButton(this.width / 2 + 4, this.height / 4 + 72 + yOffset, 98, 20, new TranslationTextComponent("fml.menu.mods"), button ->
                         this.minecraft.setScreen(MellowUtils.modList(this))));
             } else if (buttonStyle == FourStyles.OPTION_3 && !this.minecraft.isDemo()) {
+                // shadow feedback button (so Create's button always shows up)
+                this.addShadowFeedbackButton(this.width / 2 - 102, this.height / 4 + 72 + yOffset);
+
                 // Mods
                 this.addButton(new ModButton(this.width / 2 - 102, this.height / 4 + 72 + yOffset, 204, 20, new TranslationTextComponent("fml.menu.mods"), button ->
                         this.minecraft.setScreen(MellowUtils.modList(this))));
@@ -159,6 +165,12 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             if (!this.minecraft.isLocalServer()) saveAndQuit.setMessage(new TranslationTextComponent("menu.disconnect"));
             if (this.minecraft.level == null) saveAndQuit.active = false;
         }
+    }
+
+    @Unique
+    private void addShadowFeedbackButton(int x, int y) {
+        Button button = this.addButton(new Button(x, y, 1, 1, new TranslationTextComponent("menu.sendFeedback"), button1 -> {}));
+        button.visible = button.active = false;
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)

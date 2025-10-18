@@ -86,9 +86,7 @@ public class WorldTab extends TabContents {
         };
         Widget generateStructuresButton = generateStructuresOption.createButton(minecraft.options, screen.width / 2 + 111, widgetY, 44);
         generateStructuresButton.active = !screen.uiState().isDebug();
-        screen.uiState().addListener(state -> {
-            generateStructuresButton.active = !state.isDebug();
-        });
+        screen.uiState().addListener(state -> generateStructuresButton.active = !state.isDebug());
         this.addWidget(generateStructuresButton);
         widgetY += 24;
 
@@ -102,9 +100,7 @@ public class WorldTab extends TabContents {
         };
         Widget bonusChestButton = bonusChestOption.createButton(minecraft.options, screen.width / 2 + 111, widgetY, 44);
         bonusChestButton.active = !screen.uiState().isHardcore() && !screen.uiState().isDebug();
-        screen.uiState().addListener(state -> {
-            bonusChestButton.active = !state.isHardcore() && !state.isDebug();
-        });
+        screen.uiState().addListener(state -> bonusChestButton.active = !state.isHardcore() && !state.isDebug());
         this.addWidget(bonusChestButton);
 
         super.init(screen);

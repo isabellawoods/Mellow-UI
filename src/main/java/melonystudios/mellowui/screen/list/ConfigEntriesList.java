@@ -1,11 +1,7 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.config.value.ValueEntry;
-import melonystudios.mellowui.config.value.ValueType;
 import melonystudios.mellowui.screen.EditListConfigScreen;
-import melonystudios.mellowui.screen.popup.EditValueScreen;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
@@ -15,7 +11,6 @@ import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -113,15 +108,14 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int item) {
-            ITextComponent configName = ConfigEntriesList.this.parentScreen.getConfigName();
-            ValueEntry<String> entry = new ValueEntry<>("", ValueType.STRING, MellowUI.mellowUI("new_entry"));
-            EditValueScreen<String> screen = new EditValueScreen<>(ConfigEntriesList.this.parentScreen, configName, entry, false);
+            /*ITextComponent configName = ConfigEntriesList.this.parentScreen.getConfigName();
+            EditValueScreen screen = new EditValueScreen(ConfigEntriesList.this.parentScreen, configName, , false);
             screen.title(new TranslationTextComponent("menu.mellowui.add_value.title", configName).withStyle(TextFormatting.BOLD));
             screen.configSaver(value -> {
                 ConfigEntriesList.this.parentScreen.getConfig().get().add(value);
                 MellowUI.logger("ConfigEntriesList").debug("tried to save value: {}", value);
             });
-            Minecraft.getInstance().setScreen(screen);
+            Minecraft.getInstance().setScreen(screen);*/
             return super.mouseClicked(mouseX, mouseY, item);
         }
     }

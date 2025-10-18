@@ -1,13 +1,11 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.config.value.ValueEntries;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.popup.EditValueScreen;
 import melonystudios.mellowui.widget.EditColorButton;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -30,10 +28,8 @@ public class EditColorConfigOption extends EditConfigOption {
         Minecraft minecraft = Minecraft.getInstance();
         if (this.tooltipComponent != null) this.setTooltip(minecraft.font.split(this.tooltipComponent, RenderComponents.TOOLTIP_MAX_WIDTH));
 
-        ResourceLocation id = ResourceLocation.tryParse(this.translation.substring(this.translation.indexOf('.') + 1).replace(".", ":"));
-        EditValueScreen<?> screen = new EditValueScreen<>(minecraft.screen, this.getCaption(), ValueEntries.fromForgeConfig(this.config, id), true);
-        screen.configSaver(value -> {});
-        return new EditColorButton(x, y, width, 20, this.getCaption(), this.tooltipComponent, this.config,
-                new TranslationTextComponent("button.mellowui.edit"), button -> minecraft.setScreen(screen));
+        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, this.config.get(), true);
+        return new EditColorButton(x, y, width, 20, this.getCaption(), this.tooltipComponent, new TranslationTextComponent("button.mellowui.edit"), this.config,
+                button -> minecraft.setScreen(screen));
     }
 }
