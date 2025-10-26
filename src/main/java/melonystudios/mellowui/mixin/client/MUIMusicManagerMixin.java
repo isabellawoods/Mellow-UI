@@ -9,7 +9,6 @@ import net.minecraft.client.sounds.MusicManager;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundSource;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,12 +21,12 @@ import javax.annotation.Nullable;
 @Mixin(MusicManager.class)
 public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethods {
     @Shadow @Nullable private SoundInstance currentMusic;
-    @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "startPlaying", at = @At("TAIL"))
     public void addMusicToast(Music music, CallbackInfo callback) {
-        if (this.minecraft.getOverlay() != null || this.currentMusic == null) return;
-        if (this.canShowToast()) MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), false, this.minecraft.getToasts());
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft == null || this.currentMusic == null) return;
+        if (this.canShowToast(minecraft)) MusicToast.addOrUpdate(this.currentMusic.getSound().getPath(), false, minecraft.getToasts());
     }
 
     @Unique
@@ -37,12 +36,12 @@ public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethod
     }
 
     @Unique
-    private boolean canShowToast() {
-        return this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundManager.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn();
+    private boolean canShowToast(Minecraft minecraft) {
+        return minecraft != null && this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundManager.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn(minecraft);
     }
 
     @Unique
-    private boolean musicTurnedOn() {
-        return this.minecraft.options.getSoundSourceVolume(SoundSource.MASTER) > 0 && this.minecraft.options.getSoundSourceVolume(SoundSource.MUSIC) > 0;
+    private boolean musicTurnedOn(Minecraft minecraft) {
+        return minecraft.options.getSoundSourceVolume(SoundSource.MASTER) > 0 && minecraft.options.getSoundSourceVolume(SoundSource.MUSIC) > 0;
     }
 }

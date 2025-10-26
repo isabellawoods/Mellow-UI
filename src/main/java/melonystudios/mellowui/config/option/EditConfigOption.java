@@ -36,7 +36,7 @@ public class EditConfigOption extends MUIOption implements TooltipAccessor {
         Minecraft minecraft = Minecraft.getInstance();
         if (this.tooltipComponent != null) this.setTooltip(this.tooltipComponent);
 
-        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, false);
+        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, this.config.get(), false);
         return new EditButton(x, y, width, 20, this.getCaption(), this.tooltipComponent, new TranslatableComponent("button.mellowui.edit"), this.config,
                 button -> minecraft.setScreen(screen));
     }

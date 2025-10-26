@@ -22,6 +22,7 @@ public class MellowConfigEntries {
     public static final MutableComponent BELOW_OPTIONS_PM_TOOLTIP = new TranslatableComponent("config.mellowui.pause_menu_mod_button.tooltip", new TranslatableComponent("config.mellowui.pause_menu_mod_button.option_4.tooltip"));
     public static final MutableComponent MOD_LIST_STYLE_TOOLTIP = new TranslatableComponent("config.mellowui.mod_list_style.tooltip");
     public static final MutableComponent VIDEO_SETTINGS_STYLE_TOOLTIP = new TranslatableComponent("config.mellowui.video_settings_style.tooltip");
+    public static final MutableComponent STATISTICS_STYLE_TOOLTIP = new TranslatableComponent("config.mellowui.statistics_style.tooltip");
 
     // Separators
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.menu_updates"));
@@ -119,8 +120,15 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.accessibilitySettingsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.accessibilitySettingsStyle.set(newValue));
     public static final StyleBooleanOption OUT_OF_MEMORY_STYLE = new StyleBooleanOption("config.mellowui.out_of_memory_style", new TranslatableComponent("config.mellowui.out_of_memory_style.tooltip"),
             options -> CLIENT_CONFIGS.outOfMemoryStyle.get(), (options, newValue) -> CLIENT_CONFIGS.outOfMemoryStyle.set(newValue));
-    public static final StyleBooleanOption STATISTICS_STYLE = new StyleBooleanOption("config.mellowui.statistics_style", new TranslatableComponent("config.mellowui.statistics_style.tooltip"),
-            options -> CLIENT_CONFIGS.statisticsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.statisticsStyle.set(newValue));
+    public static final IterableOption STATISTICS_STYLE = new IterableOption("config.mellowui.statistics_style",
+            (options, identifier) -> {
+                CLIENT_CONFIGS.statisticsStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.statisticsStyle.get().getId() + identifier));
+                if (!ModList.get().isLoaded("betterstats") && CLIENT_CONFIGS.statisticsStyle.get() == ThreeStyles.OPTION_3) CLIENT_CONFIGS.statisticsStyle.set(ThreeStyles.OPTION_1);
+            },
+            (options, option) -> {
+                option.setTooltip(STATISTICS_STYLE_TOOLTIP);
+                return new TranslatableComponent("config.mellowui.statistics_style", new TranslatableComponent("config.mellowui.statistics_style." + CLIENT_CONFIGS.statisticsStyle.get().toString()));
+            });
     public static final IterableOption MOD_LIST_STYLE = new IterableOption("config.mellowui.mod_list_style",
             (options, identifier) -> {
                 CLIENT_CONFIGS.modListStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.modListStyle.get().getId() + identifier));

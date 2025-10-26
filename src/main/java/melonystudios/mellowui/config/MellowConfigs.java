@@ -1,6 +1,7 @@
 package melonystudios.mellowui.config;
 
 import com.google.common.collect.Lists;
+import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.type.*;
 import melonystudios.mellowui.resource.panorama.Panorama;
 import net.minecraft.world.item.Item;
@@ -64,7 +65,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue packListStyle;
     public final ForgeConfigSpec.BooleanValue accessibilitySettingsStyle;
     public final ForgeConfigSpec.BooleanValue outOfMemoryStyle;
-    public final ForgeConfigSpec.BooleanValue statisticsStyle;
+    public final ForgeConfigSpec.EnumValue<ThreeStyles> statisticsStyle;
     public final ForgeConfigSpec.BooleanValue screenBackgroundStyle;
     public final ForgeConfigSpec.BooleanValue listBackgroundStyle;
     public final ForgeConfigSpec.BooleanValue replaceRealmsNotifications;
@@ -76,6 +77,7 @@ public class MellowConfigs {
 
     // Dynamic resource configs
     public final ForgeConfigSpec.ConfigValue<String> selectedPanorama;
+    public final ForgeConfigSpec.ConfigValue<String> selectedEffect;
 
     public MellowConfigs(ForgeConfigSpec.Builder builder) {
         builder.push("vanillaOptions");
@@ -85,7 +87,7 @@ public class MellowConfigs {
         this.showMusicToast = builder.comment("Displays a toast whenever a song starts playing.", "The same toast is constantly displayed in the in-game pause menu while a song is playing.").translation("config.minecraft.show_music_toast").define("showMusicToast", false);
         this.highContrastPack = builder.comment("Enhances the contrast of UI elements.").translation("config.minecraft.high_contrast").define("highContrastPack", false);
         this.directionalAudio = builder.comment("Enables the use of HRTF-based directional audio to improve simulation of 3D sound.", "Option 1 = Classic stereo | Option 2 = HRTF-based directional audio").translation("config.minecraft.directional_audio").defineEnum("directionalAudio", TwoStyles.OPTION_1);
-        this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").translation("config.minecraft.onboard_accessiblity").define("onboardAccessibility", true);
+        this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").translation("config.minecraft.onboard_accessibility").define("onboardAccessibility", true);
         this.uiVolume = builder.comment("The volume of the in-game UI elements.").translation("config.minecraft.sound_category.ui").defineInRange("uiVolume", 1F, 0, 1);
         builder.pop();
 
@@ -110,7 +112,7 @@ public class MellowConfigs {
         this.blurryContainers = builder.comment("If the background blur and shaders should be applied on containers like chests, furnaces and your inventory.").translation("config.mellowui.blurry_containers").define("blurryContainers", false);
         this.defaultBackground = builder.comment("Whether to use the default dirt background texture instead of the current, transparent background.").translation("config.mellowui.default_background").define("defaultBackground", false);
         this.gradientBackground = builder.comment("Makes in-game screens use a gray gradient background instead of a regular transparent background.").translation("config.mellowui.gradient_background").define("gradientBackground", false);
-        this.disableBranding = builder.comment("Disables Forge's branding lines. Branding lines are the Forge and MCP versions on the bottom-left corner.").translation("config.mellowui.disable_branding").define("disableBranding", true);
+        this.disableBranding = builder.comment("Disables Forge's branding lines. Branding lines are the Forge and MCP versions in the bottom-left corner.").translation("config.mellowui.disable_branding").define("disableBranding", true);
         builder.pop();
 
         builder.push("styleOptions");
@@ -131,7 +133,7 @@ public class MellowConfigs {
         this.packListStyle = builder.comment("Which style to use for the resource and data packs list.", "True = Mellow UI | False = Vanilla.").translation("config.mellowui.pack_list_style").define("packListMenu", false);
         this.accessibilitySettingsStyle = builder.comment("Which style to use for the accessibility settings menu.").translation("config.mellowui.accessibility_settings_style").define("accessibilitySettingsMenu", true);
         this.outOfMemoryStyle = builder.comment("Which style to use for the out of memory menu.").translation("config.mellowui.out_of_memory_style").define("outOfMemoryMenu", true);
-        this.statisticsStyle = builder.comment("Which style to use for the statistics menu.").translation("config.mellowui.statistics_style").define("statisticsMenu", true);
+        this.statisticsStyle = builder.comment("Which style to use for the statistics menu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Better Statistics Screen").translation("config.mellowui.statistics_style").defineEnum("statisticsMenu", ThreeStyles.OPTION_3);
         this.modListStyle = builder.comment("Which style to use for the mod list.", "Option 1 = Forge | Option 2 = Mellow UI | Option 3 = Catalogue (if available).").translation("config.mellowui.mod_list_style").defineEnum("modListMenu", ThreeStyles.OPTION_3);
         builder.pop();
 
@@ -142,6 +144,7 @@ public class MellowConfigs {
 
         builder.push("dynamicResources");
         this.selectedPanorama = builder.comment("The currently selected panorama. This overrides any panoramas added via resource packs.").define("selectedPanorama", Panorama.DEFAULT_LOCATION.toString());
+        this.selectedEffect = builder.comment("The currently selected post effect. This is overridden by any panoramas that define their own shaders..").define("selectedEffect", MellowUI.mellowUI("blur").toString());
         builder.pop();
     }
 

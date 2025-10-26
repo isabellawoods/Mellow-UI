@@ -343,7 +343,7 @@ public class CreateNewWorldScreen extends Screen {
         if (this.tempDataPackDirectory != null) {
             try (
                     LevelStorageSource.LevelStorageAccess save = this.minecraft.getLevelSource().createAccess(this.uiState.getTargetFolder());
-                    Stream<Path> stream = Files.walk(this.tempDataPackDirectory);
+                    Stream<Path> stream = Files.walk(this.tempDataPackDirectory)
             ) {
                 Path datapacksFolder = save.getLevelPath(LevelResource.DATAPACK_DIR);
                 Files.createDirectories(datapacksFolder);

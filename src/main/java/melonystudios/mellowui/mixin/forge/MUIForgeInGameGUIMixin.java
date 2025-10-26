@@ -37,7 +37,7 @@ public abstract class MUIForgeInGameGUIMixin extends Gui {
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (this.animateOverlayMessageColor ? Mth.hsvToRgb(hue / 50F, 0.7F, 0.6F) & 0xFFFFFF : 0xFFFFFF);
-                this.drawBackdrop(stack, this.font, -4, this.font.width(this.overlayMessageString), 16777215 | (opacity << 24));
+                this.drawBackdrop(stack, this.font, -4, this.font.width(this.overlayMessageString), 0xFFFFFF | (opacity << 24));
                 this.font.drawShadow(stack, this.overlayMessageString.getVisualOrderText(), -this.font.width(this.overlayMessageString) / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
                 stack.popPose();

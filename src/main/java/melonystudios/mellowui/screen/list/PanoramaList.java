@@ -140,7 +140,7 @@ public class PanoramaList extends ObjectSelectionList<PanoramaList.Entry> {
         }
 
         private String getDescriptionID() {
-            if (this.location.getPath().startsWith("generated/")) return "panorama.mellowui.generated";
+            if (this.location.getNamespace().equals("generated")) return "panorama.mellowui.generated";
             return this.panorama.getDescriptionID();
         }
 
@@ -159,7 +159,7 @@ public class PanoramaList extends ObjectSelectionList<PanoramaList.Entry> {
         public Component getNarration() {
             String descriptionID = this.getDescriptionID();
             if (descriptionID.endsWith("generated")) {
-                return new TranslatableComponent("narrator.select", new TranslatableComponent("panorama.mellowui.generated", this.location.getPath().substring(this.location.getPath().indexOf('/') + 1)));
+                return new TranslatableComponent("narrator.select", new TranslatableComponent("panorama.mellowui.generated", this.location.toString().replace("generated:id_", "")));
             } else {
                 return new TranslatableComponent("narrator.select", new TranslatableComponent(descriptionID));
             }

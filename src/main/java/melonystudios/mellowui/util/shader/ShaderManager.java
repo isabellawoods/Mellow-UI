@@ -19,8 +19,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
@@ -30,6 +30,7 @@ import static melonystudios.mellowui.util.shader.PostEffects.*;
 /// *Mellow UI*'s default **shader manager**, for handling the selection and rendering of panoramic or world shaders.
 public class ShaderManager {
     public static PostEffect CURRENT_EFFECT = MUI_BLUR;
+    // todo: make make post effects loaded from resource packs (like panoramas) instead of being hardcoded ~isa 15-10-25
     public static List<PostEffect> EFFECTS = Lists.newArrayList(MUI_BLUR, ANTIALIAS, ART, BITS, BLOBS, BLOBS2, BLUR, BUMPY, COLOR_CONVOLVE, CREEPER, DECONVERGE,
             DESATURATE, ENTITY_OUTLINE, FLIP, FXAA, GREEN, INVERT, LOVE, NOTCH, NTSC, OUTLINE, PENCIL, PHOSPHOR, SCAN_PINCUSHION, SOBEL, SPIDER, WOBBLE);
     @Nullable
@@ -45,17 +46,20 @@ public class ShaderManager {
     /// @param minecraft The *Minecraft* client instance.
     /// @param effectLocation A resource location of a post effect.
     /// @param applyInWorld Whether to apply the shader in-game through the game renderer.
-    public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation, boolean applyInWorld) {
-        setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR), applyInWorld);
+    /// @param saveToDisk Whether to save the post effect to the client config.
+    public static void setPostEffect(Minecraft minecraft, ResourceLocation effectLocation, boolean applyInWorld, boolean saveToDisk) {
+        setPostEffect(minecraft, EFFECTS.stream().filter(effect -> effect.assetID().toString().equals(effectLocation.toString())).findFirst().orElse(MUI_BLUR), applyInWorld, saveToDisk);
     }
 
     /// Sets the currently selected {@link PostEffect}.
     /// @param minecraft The *Minecraft* client instance.
     /// @param effect The post effect to be selected.
     /// @param applyInWorld Whether to apply the shader in-game through the game renderer.
-    public static void setPostEffect(Minecraft minecraft, PostEffect effect, boolean applyInWorld) {
+    /// @param saveToDisk Whether to save the post effect to the client config.
+    public static void setPostEffect(Minecraft minecraft, PostEffect effect, boolean applyInWorld, boolean saveToDisk) {
         CURRENT_EFFECT = effect;
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
+        if (saveToDisk) MellowConfigs.CLIENT_CONFIGS.selectedEffect.set(effect.assetID().toString());
         if (minecraft.level != null && applyInWorld) minecraft.gameRenderer.loadEffect(CURRENT_EFFECT.getPostEffectFile());
     }
 
@@ -63,6 +67,7 @@ public class ShaderManager {
     /// @param minecraft The *Minecraft* client instance.
     public static void clearPostEffect(Minecraft minecraft) {
         CURRENT_EFFECT = MUI_BLUR;
+        MellowConfigs.CLIENT_CONFIGS.selectedEffect.set(MellowUI.mellowUI("blur").toString());
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
         minecraft.gameRenderer.shutdownEffect();
     }
@@ -84,7 +89,7 @@ public class ShaderManager {
         }
     }
 
-    /// Prepares the currently selected panorama {@linkplain PostEffect shader} to be bound to the {@linkplain Minecraft#mainRenderTarget **main render target**}.
+    /// Prepares the currently selected panorama {@linkplain PostEffect shader} to be bound to the **main render target**.
     /// @param partialTicks The partial tick time.
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
     /// @apiNote Fading is **not** fully implemented.
@@ -113,6 +118,7 @@ public class ShaderManager {
     /// Gets the value of a uniform based on its name.
     /// @param name The shader uniform name.
     /// @return {@linkplain MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**} if the uniform is `Radius`, or `0` if not.
+    // todo: eventually make a convenient list to change the values of shader uniforms ~isa 15-10-25
     private static float getUniformValue(String name) {
         switch (name) {
             case "Radius": {

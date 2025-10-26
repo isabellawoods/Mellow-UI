@@ -2,7 +2,7 @@ package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
@@ -29,6 +29,6 @@ public class MUISelectWorldScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/worldselection/SelectWorldScreen;drawCenteredString(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;III)V"))
     public void renderSearchSuggestion(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        RenderComponents.INSTANCE.renderTextBoxSuggestion(this.searchBox, MellowUtils.SEARCH_TEXT);
+        RenderComponents.INSTANCE.renderTextBoxSuggestion(this.searchBox, TextComponents.searchText());
     }
 }

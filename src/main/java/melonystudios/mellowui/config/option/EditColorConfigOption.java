@@ -27,7 +27,7 @@ public class EditColorConfigOption extends EditConfigOption {
         Minecraft minecraft = Minecraft.getInstance();
         if (this.tooltipComponent != null) this.setTooltip(this.tooltipComponent);
 
-        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, true);
+        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, this.config.get(), true);
         return new EditColorButton(x, y, width, 20, this.getCaption(), this.tooltipComponent, new TranslatableComponent("button.mellowui.edit"), this.config,
                 button -> minecraft.setScreen(screen));
     }

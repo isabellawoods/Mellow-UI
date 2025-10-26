@@ -52,7 +52,6 @@ public class MellowUtils {
     });
 
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
-    public static final Component SEARCH_TEXT = new TranslatableComponent("button.mellowui.search").withStyle(withColor(0xA0A0A0).withItalic(true));
     public static final String PROGRAMMER_ART_ID = "programer_art";
     public static final int DEFAULT_TITLE_HEIGHT = 12;
     public static final int TABBED_TITLE_HEIGHT = 2;
@@ -107,8 +106,20 @@ public class MellowUtils {
     }
 
     public static Screen statistics(Screen lastScreen, Minecraft minecraft) {
-        if (CLIENT_CONFIGS.statisticsStyle.get()) return new StatisticsScreen(lastScreen, minecraft.player.getStats());
-        else return new StatsScreen(lastScreen, minecraft.player.getStats());
+        Screen defaultScreen = new StatisticsScreen(lastScreen, minecraft.player.getStats());
+        return switch (CLIENT_CONFIGS.statisticsStyle.get()) {
+            case OPTION_2 -> defaultScreen;
+            case OPTION_3 -> {
+                if (!ModList.get().isLoaded("betterstats")) yield defaultScreen;
+                try {
+                    Class<?> screen = Class.forName("io.github.thecsdev.betterstats.client.gui.screen.BetterStatsScreen");
+                    yield (Screen) screen.getConstructor(Screen.class).newInstance(lastScreen);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ignored) {
+                    yield defaultScreen;
+                }
+            }
+            default -> new StatsScreen(lastScreen, minecraft.player.getStats());
+        };
     }
 
     public static void switchTitleScreenStyle(Minecraft minecraft) {

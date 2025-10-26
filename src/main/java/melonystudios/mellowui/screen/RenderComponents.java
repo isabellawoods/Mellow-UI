@@ -8,6 +8,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.util.GUITextures;
@@ -154,10 +155,11 @@ public class RenderComponents extends GuiComponent {
     /// @param panorama The panorama to replace the current one.
     /// @param fromTitleScreen Whether the replacement came from the title screen.
     public void replacePanorama(PanoramaRenderer panorama, boolean fromTitleScreen) {
-        if (fromTitleScreen && Minecraft.getInstance().screen instanceof TitleScreen) {
+        Screen screen = Minecraft.getInstance().screen;
+        if (fromTitleScreen && screen instanceof TitleScreen) {
             int hashCode = panorama.hashCode();
             if (hashCode != -1294886725) { // hash code of the default panorama from the vanilla title screen ~isa 28-9-25
-                MellowUtils.PANORAMAS.put(MellowUI.mellowUI("generated/" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) Minecraft.getInstance().screen).getPanoramaOverlay()));
+                MellowUtils.PANORAMAS.put(MellowUI.generated("id_" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) screen).getPanoramaOverlay()));
             }
         }
         if (((InterfaceMethods.PanoramaRendererMethods) PANORAMA).differentPanorama(panorama)) PANORAMA = panorama;
@@ -356,11 +358,12 @@ public class RenderComponents extends GuiComponent {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
-    /// Renders the **text suggestion** of an {@link EditBox}.
+    /// Renders the **text suggestion** of an {@link EditBox}, overriding the color to match the border.
     /// @param textField A nullable edit box widget.
-    /// @param suggestion A text component for the text to render, usually the "{@linkplain melonystudios.mellowui.util.MellowUtils#SEARCH_TEXT *Search...*}" suggestion.
+    /// @param suggestion A text component for the text to render, usually the "{@linkplain melonystudios.mellowui.util.text.TextComponents#searchText *Search...*}" suggestion.
     public void renderTextBoxSuggestion(@Nullable EditBox textField, Component suggestion) {
         if (textField != null && textField.getValue().isEmpty() && !textField.isFocused()) {
+            if (textField.isHoveredOrFocused()) suggestion = suggestion.copy().withStyle(style -> style.withColor(WidgetConfigs.WIDGET_CONFIGS.textFieldHighlightedSuggestionColor.get()));
             drawString(this.stack, this.minecraft.font, suggestion, textField.x + 4, textField.y + (textField.getHeight() - 8) / 2, 0xFFFFFF);
         }
     }

@@ -54,7 +54,7 @@ public class PostEffectsList extends ObjectSelectionList<PostEffectsList.Shader>
         if (shader.effect().shaderIdentifier() == -1) {
             ShaderManager.clearPostEffect(this.minecraft);
         } else {
-            ShaderManager.setPostEffect(this.minecraft, shader.effect(), true);
+            ShaderManager.setPostEffect(this.minecraft, shader.effect(), true, true);
         }
 
         NarratorChatListener.INSTANCE.sayNow(new TranslatableComponent("narrator.select", shader.name).getString());

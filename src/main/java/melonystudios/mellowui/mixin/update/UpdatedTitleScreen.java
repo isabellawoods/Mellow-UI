@@ -99,6 +99,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             this.minecraft.setScreen(new MellomedleyTitleScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
             return;
         }
+        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         // Open accessibility onboarding if it hasn't been shown (Mellomedley's main menu opens this by itself).
         if (MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()) {
@@ -107,7 +108,6 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             return;
         }
         LogoRenderer.rerollEasterEgg();
-        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
             callback.cancel();

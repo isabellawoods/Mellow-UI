@@ -44,6 +44,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
 
     @Inject(method = "renderWindow", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;draw(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/network/chat/Component;FFI)I"), cancellable = true)
     public void renderTabName(PoseStack stack, int offsetX, int offsetY, CallbackInfo callback) {
+        if (this.selectedTab == null) return;
         callback.cancel();
         this.font.draw(stack, this.selectedTab.getTitle(), (float) (offsetX + 8), (float) (offsetY + 6), 0x404040);
     }

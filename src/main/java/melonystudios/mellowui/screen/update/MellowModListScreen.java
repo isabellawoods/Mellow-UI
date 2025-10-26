@@ -15,6 +15,7 @@ import melonystudios.mellowui.screen.panel.*;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import melonystudios.mellowui.widget.ModButton;
 import net.minecraft.ChatFormatting;
@@ -122,7 +123,7 @@ public class MellowModListScreen extends Screen {
         this.panel.init();
 
         // Search box
-        this.searchBox = new EditBox(this.font, this.width / 2 - 100, 17, 200, 12, MellowUtils.SEARCH_TEXT);
+        this.searchBox = new EditBox(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
         this.searchBox.setValue(LAST_SEARCH);
@@ -239,11 +240,9 @@ public class MellowModListScreen extends Screen {
         }
 
         // credits
-        info.getConfig().getConfigElement("credits").ifPresent(credits -> {
-            this.panel.addEntry(new TextPanelEntry(this.panel, new TranslatableComponent("menu.mellowui.mods.credits",
-                    new TextComponent(credits.toString()).withStyle(withColor(0xFFFFFF).withBold(false)))
-                    .withStyle(withColor(accentColor).withBold(true))));
-        });
+        info.getConfig().getConfigElement("credits").ifPresent(credits -> this.panel.addEntry(new TextPanelEntry(this.panel, new TranslatableComponent("menu.mellowui.mods.credits",
+                new TextComponent(credits.toString()).withStyle(withColor(0xFFFFFF).withBold(false)))
+                .withStyle(withColor(accentColor).withBold(true)))));
         // license
         this.panel.addEntry(new TextPanelEntry(this.panel, new TranslatableComponent("menu.mellowui.mods.license",
                 new TextComponent(info.getOwningFile().getLicense()).withStyle(withColor(0xFFFFFF).withBold(false)))

@@ -32,7 +32,7 @@ public class EditPermissionHandlerOption extends EditConfigOption {
 
     @NotNull
     private EditValueScreen getEditScreen(Minecraft minecraft) {
-        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, false);
+        EditValueScreen screen = new EditValueScreen(minecraft.screen, this.getCaption(), this.config, this.config.get(), false);
         screen.configSaver(value -> {
             List<String> handlerIDs = Lists.newArrayList();
             PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();

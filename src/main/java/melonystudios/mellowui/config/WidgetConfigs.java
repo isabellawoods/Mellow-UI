@@ -29,6 +29,14 @@ public class WidgetConfigs {
     public final ForgeConfigSpec.IntValue mellomedleySplashTextColor;
     public final ForgeConfigSpec.IntValue highContrastSplashTextColor;
 
+    // Colors for text field widgets
+    public final ForgeConfigSpec.IntValue textFieldCenterColor;
+    public final ForgeConfigSpec.IntValue textFieldDefaultBorderColor;
+    public final ForgeConfigSpec.IntValue textFieldHighlightedBorderColor;
+    public final ForgeConfigSpec.IntValue textFieldSuggestionColor;
+    public final ForgeConfigSpec.IntValue textFieldHighlightedSuggestionColor;
+    public final ForgeConfigSpec.IntValue textFieldHighlightColor;
+
     public final ForgeConfigSpec.IntValue descriptionTextColor;
 
     // Background text colors
@@ -51,12 +59,20 @@ public class WidgetConfigs {
         this.disabledLegacyWidgetTextColor = builder.comment("Text color for a disabled widget with 'Legacy Button Colors' turned on.").translation("config.mellowui.disabled_legacy_widget_text_color").defineInRange("widget.disabledLegacyTextColor", 0xA0A0A0, 0, 0xFFFFFF);
         this.highlightedIconButtonColor = builder.comment("Text color for a highlighted icon button on the title screen.").translation("config.mellowui.default_icon_button_color").defineInRange("widget.highlightedIconButtonColor", 0xFFFFA0, 0, 0xFFFFFF);
 
-        // Splash Texts
+        // Text field widgets
+        this.textFieldCenterColor = builder.comment("Color for the center of a text field.").translation("config.mellowui.text_field_center_color").defineInRange("widget.textFieldCenterColor", 0, 0, 0xFFFFFF);
+        this.textFieldDefaultBorderColor = builder.comment("Color for the border of an unselected text field.").translation("config.mellowui.text_field_default_border_color").defineInRange("widget.textFieldDefaultBorderColor", 0xA0A0A0, 0, 0xFFFFFF);
+        this.textFieldHighlightedBorderColor = builder.comment("Color for the border of a selected/hovered text field.").translation("config.mellowui.text_field_highlighted_border_color").defineInRange("widget.textFieldHighlightedBorderColor", 0xFFFFFF, 0, 0xFFFFFF);
+        this.textFieldSuggestionColor = builder.comment("Text color for the suggestion of a text field.").translation("config.mellowui.text_field_suggestion_color").defineInRange("widget.textFieldSuggestionColor", 0x808080, 0, 0xFFFFFF);
+        this.textFieldHighlightedSuggestionColor = builder.comment("Text color for the highlighted suggestion of a text field.").translation("config.mellowui.text_field_highlighted_suggestion_color").defineInRange("widget.textFieldHighlightedSuggestionColor", 0xE0E0E0, 0, 0xFFFFFF);
+        this.textFieldHighlightColor = builder.comment("Color for the text highlight of a text field.").translation("config.mellowui.text_field_highlight_color").defineInRange("widget.textFieldHighlightColor", 0x90BBFF, 0, 0xFFFFFF);
+
+        // Splash texts
         this.splashTextColor = builder.comment("The color to use for the splash text in the default main menu.").translation("config.mellowui.splash_text_color").defineInRange("splash.defaultTextColor", 0xFFFF00, 0, 0xFFFFFF);
         this.mellomedleySplashTextColor = builder.comment("The color to use for the splash text in the Mellomedley main menu.").translation("config.mellomedley.splash_text_color").defineInRange("splash.mellomedleyTextColor", 0xBDCF73, 0, 0xFFFFFF);
         this.highContrastSplashTextColor = builder.comment("The color to use for the splash text while the high contrast resource pack is enabled.").translation("config.mellowui.high_contrast_splash_text_color").defineInRange("splash.highContrastTextColor", 0x57FFE1, 0, 0xFFFFFF);
 
-        // Mod Update Availability
+        // Mod update availability
         this.defaultUpdateAvailableColor = builder.comment("Text color for the 'Update Available!' button on Mellow UI's mod list screen.").translation("config.mellowui.default_update_available_color").defineInRange("widget.defaultUpdateAvailableColor", 0x41F384, 0, 0xFFFFFF);
         this.highContrastUpdateAvailableColor = builder.comment("Text color for the 'Update Available!' button on Mellow UI's mod list screen.").translation("config.mellowui.high_contrast_update_available_color").defineInRange("widget.highContrastUpdateAvailableColor", 0x57FFE1, 0, 0xFFFFFF);
 

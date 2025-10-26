@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigEntries;
+import melonystudios.mellowui.util.MUICommsProcessor;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Option;
@@ -22,6 +23,7 @@ import static melonystudios.mellowui.config.WidgetConfigEntries.*;
 
 public class ColorOptionsScreen extends OptionsSubScreen {
     public static final List<Option> WIDGETS = Lists.newArrayList(WIDGETS_SEPARATOR, DEFAULT_WIDGET_TEXT_COLOR, HIGHLIGHTED_WIDGET_TEXT_COLOR, DISABLED_WIDGET_TEXT_COLOR, DEFAULT_LEGACY_WIDGET_TEXT_COLOR, HIGHLIGHTED_LEGACY_WIDGET_TEXT_COLOR, DISABLED_LEGACY_WIDGET_TEXT_COLOR, HIGHLIGHTED_ICON_BUTTON_COLOR);
+    public static final List<Option> TEXT_FIELDS = Lists.newArrayList(TEXT_FIELDS_SEPARATOR, TEXT_FIELD_CENTER_COLOR, TEXT_FIELD_DEFAULT_BORDER_COLOR, TEXT_FIELD_HIGHLIGHTED_BORDER_COLOR, TEXT_FIELD_SUGGESTION_COLOR, TEXT_FIELD_HIGHLIGHTED_SUGGESTION_COLOR, TEXT_FIELD_HIGHLIGHT_COLOR);
     public static final List<Option> SPLASHES = Lists.newArrayList(SPLASHES_SEPARATOR, SPLASH_TEXT_COLOR, HIGH_CONTRAST_SPLASH_TEXT_COLOR, MELLO_SPLASH_TEXT_COLOR);
     public static final List<Option> UPDATE_AVAILABILITY = Lists.newArrayList(UPDATE_AVAILABILITY_SEPARATOR, DEFAULT_UPDATE_AVAILABLE_COLOR, HIGH_CONTRAST_UPDATE_AVAILABLE_COLOR);
     public static final List<Option> BACKGROUNDS = Lists.newArrayList(BACKGROUNDS_SEPARATOR, MONOCHROME_LOADING_SCREEN_COLOR);
@@ -37,10 +39,15 @@ public class ColorOptionsScreen extends OptionsSubScreen {
         // List
         this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
         for (Option option : WIDGETS) this.list.addBig(option);
+        for (Option option : TEXT_FIELDS) this.list.addBig(option);
         for (Option option : SPLASHES) this.list.addBig(option);
         for (Option option : UPDATE_AVAILABILITY) this.list.addBig(option);
         for (Option option : BACKGROUNDS) this.list.addBig(option);
         for (Option option : MISCELLANEOUS) this.list.addBig(option);
+        if (!MUICommsProcessor.ENTRIES.isEmpty()) {
+            this.list.addBig(MODDED_COLORS_SEPARATOR);
+            for (Option option : MUICommsProcessor.ENTRIES) this.list.addBig(option);
+        }
         this.addWidget(this.list);
 
         // Done button

@@ -244,7 +244,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
             RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-            RenderSystem.setShaderTexture(0, GUITextures.SLOT_HIGHLIGHT_BACK);
+            RenderSystem.setShaderTexture(0, GUITextures.STAT_SLOT_HIGHLIGHT_BACK);
             RenderSystem.setShaderColor(1, 1, 1, 1);
             blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
             RenderSystem.enableDepthTest();
@@ -255,7 +255,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
             RenderSystem.disableDepthTest();
             RenderSystem.enableBlend();
             RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-            RenderSystem.setShaderTexture(0, GUITextures.SLOT_HIGHLIGHT_FRONT);
+            RenderSystem.setShaderTexture(0, GUITextures.STAT_SLOT_HIGHLIGHT_FRONT);
             RenderSystem.setShaderColor(1, 1, 1, 1);
             blit(stack, x - 2, y - 2, 0, 0, 24, 24, 24, 24);
             RenderSystem.enableDepthTest();

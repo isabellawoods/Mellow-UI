@@ -36,7 +36,10 @@ public class VanillaConfigEntries {
     public static final ProgressOption MENU_BACKGROUND_BLURRINESS = new ProgressOption("config.minecraft.menu_background_blurriness", 0, 20, 1,
             options -> CLIENT_CONFIGS.menuBackgroundBlurriness.get().doubleValue(),
             (options, newValue) -> CLIENT_CONFIGS.menuBackgroundBlurriness.set((int) Math.round(newValue)),
-            (options, slider) -> new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.menu_background_blurriness"), (int) Math.round(slider.get(options))),
+            (options, slider) -> {
+                int value = (int) Math.round(slider.get(options));
+                return new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.menu_background_blurriness"), value != 0 ? value : new TranslatableComponent("options.off"));
+            },
             minecraft -> minecraft.font.split(new TranslatableComponent("config.minecraft.menu_background_blurriness.tooltip"), TOOLTIP_MAX_WIDTH));
     public static final BooleanOption SHOW_MUSIC_TOAST = new MusicToastOption("config.minecraft.show_music_toast", new TranslatableComponent("config.minecraft.show_music_toast.tooltip"),
             options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));

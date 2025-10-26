@@ -19,7 +19,7 @@ void main() {
     float totalAlpha = 0.0;
     float totalSamples = 0.0;
     for (float r = -Radius; r <= Radius; r += 1.0) {
-        vec4 sampleValue = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+        vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
 
 		// Accumulate average alpha
         totalAlpha = totalAlpha + sampleValue.a;
