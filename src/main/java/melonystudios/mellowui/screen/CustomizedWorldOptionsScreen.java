@@ -57,10 +57,10 @@ public class CustomizedWorldOptionsScreen extends Screen {
         int buttonWidth = this.components.fourTabWidth(this.width);
 
         // Tabs
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth * 2, 0, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.basics"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth, 0, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.features"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2, 0, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.dimension_settings"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 + buttonWidth, 0, buttonWidth, 24, new TranslationTextComponent("tab.mellowui.expert_settings"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth * 2, 0, buttonWidth, 24, "basics", new TranslationTextComponent("tab.mellowui.basics"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - buttonWidth, 0, buttonWidth, 24, "features", new TranslationTextComponent("tab.mellowui.features"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
+        this.tabs.add(this.addButton(new TabButton(this.width / 2, 0, buttonWidth, 24, "dimension_settings", new TranslationTextComponent("tab.mellowui.dimension_settings"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 + buttonWidth, 0, buttonWidth, 24, "expert_settings", new TranslationTextComponent("tab.mellowui.expert_settings"), button -> this.tabs.forEach(tab -> tab.setSelected(false)))));
 
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,

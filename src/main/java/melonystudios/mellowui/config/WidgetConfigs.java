@@ -37,10 +37,17 @@ public class WidgetConfigs {
     public final ForgeConfigSpec.IntValue textFieldHighlightedSuggestionColor;
     public final ForgeConfigSpec.IntValue textFieldHighlightColor;
 
+    public final ForgeConfigSpec.IntValue titleTextColor;
     public final ForgeConfigSpec.IntValue descriptionTextColor;
+
+    // Toast colors
+    public final ForgeConfigSpec.IntValue systemToastTitleColor;
+    public final ForgeConfigSpec.IntValue systemToastDescriptionColor;
+    public final ForgeConfigSpec.IntValue musicToastTextColor;
 
     // Background text colors
     public final ForgeConfigSpec.IntValue monochromeLoadingScreenColor;
+    public final ForgeConfigSpec.IntValue warning32BitColor;
 
     public WidgetConfigs(ForgeConfigSpec.Builder builder) {
         builder.push("widget");
@@ -78,8 +85,15 @@ public class WidgetConfigs {
 
         // Backgrounds
         this.monochromeLoadingScreenColor = builder.comment("The color to use for the loading screen when the \"Monochrome Logo\" config is true.").translation("config.mellowui.monochrome_loading_screen_color").defineInRange("background.loadingScreenColor", 0, 0, 0xFFFFFF);
+        this.warning32BitColor = builder.comment("The color to use for the background of the 32-bit deprecation warning on the main menu.").translation("config.mellowui.warning_32bit_color").defineInRange("background.warning32BitColor", 0x200000, 0, 0xFFFFFF);
+
+        // Toasts
+        this.systemToastTitleColor = builder.comment("The color to use for the system toast's title.").translation("config.mellowui.system_toast_title_color").defineInRange("toast.systemToastTitleColor", 0xFCFC00, 0, 0xFFFFFF);
+        this.systemToastDescriptionColor = builder.comment("The color to use for the system toast's title.").translation("config.mellowui.system_toast_description_color").defineInRange("toast.systemToastDescriptionColor", 0xFFFFFF, 0, 0xFFFFFF);
+        this.musicToastTextColor = builder.comment("The color to use for the music toast's text.").translation("config.mellowui.music_toast_text_color").defineInRange("toast.musicToastTextColor", 0xD3D3D3, 0, 0xFFFFFF);
 
         // Miscellaneous
+        this.titleTextColor = builder.comment("Text color for titles on screens modified by Mellow UI.").translation("config.mellowui.title_text_color").defineInRange("miscellaneous.titleTextColor", 0xFFFFFF, 0, 0xFFFFFF);
         this.descriptionTextColor = builder.comment("Text color for descriptions in Mellow UI.").translation("config.mellowui.description_text_color").defineInRange("miscellaneous.descriptionTextColor", 0xAAAAAA, 0, 0xFFFFFF);
         builder.pop();
     }

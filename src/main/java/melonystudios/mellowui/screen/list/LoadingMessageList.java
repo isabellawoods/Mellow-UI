@@ -1,10 +1,11 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.screen.forge.MUILoadingErrorScreen;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.screen.forge.LoadingErrorsScreen;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.Color;
@@ -14,13 +15,18 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingWarning;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message> {
-    private final MUILoadingErrorScreen parentScreen;
+    private static final int ROW_WIDTH = 320;
+    private final LoadingErrorsScreen parentScreen;
 
-    public LoadingMessageList(MUILoadingErrorScreen parentScreen, List<ModLoadingException> loadErrors, List<ModLoadingWarning> loadWarnings) {
-        super(parentScreen.getMinecraft(), parentScreen.width, parentScreen.height, 32, parentScreen.height - 56, 2 * parentScreen.getMinecraft().font.lineHeight + 8);
+    public LoadingMessageList(LoadingErrorsScreen parentScreen, List<ModLoadingException> loadErrors, List<ModLoadingWarning> loadWarnings) {
+        super(parentScreen.getMinecraft(), parentScreen.width, parentScreen.height, 32, parentScreen.height - 56, Math.max(
+                loadErrors.stream().mapToInt(error -> parentScreen.getMinecraft().font.split(new StringTextComponent(error.formatToString()), ROW_WIDTH - 10).size()).max().orElse(0),
+                loadWarnings.stream().mapToInt(warning -> parentScreen.getMinecraft().font.split(new StringTextComponent(warning.formatToString()), ROW_WIDTH - 10).size()).max().orElse(0)) *
+                parentScreen.getMinecraft().font.lineHeight + 11);
         this.parentScreen = parentScreen;
         boolean both = !loadErrors.isEmpty() && !loadWarnings.isEmpty();
 
@@ -34,8 +40,19 @@ public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message>
     }
 
     @Override
+    public void setFocused(@Nullable IGuiEventListener listener) {
+        super.setFocused(listener);
+        this.parentScreen.setFocused(listener);
+    }
+
+    @Override
+    protected boolean isFocused() {
+        return this.parentScreen.getFocused() == this;
+    }
+
+    @Override
     public int getRowWidth() {
-        return 320;
+        return ROW_WIDTH;
     }
 
     @Override
@@ -59,11 +76,11 @@ public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message>
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
             FontRenderer font = Minecraft.getInstance().font;
-            List<IReorderingProcessor> processors = font.split(this.component, LoadingMessageList.this.getRowWidth());
+            List<IReorderingProcessor> lines = font.split(this.component, LoadingMessageList.this.getRowWidth() - 10);
             int y = top + 2;
             int lineHeight = top + (height / 2);
 
-            for (IReorderingProcessor processor : processors) {
+            for (IReorderingProcessor processor : lines) {
                 if (this.header) {
                     int textWidth = font.width(processor);
                     Color color = this.component.getStyle().getColor();
@@ -71,11 +88,11 @@ public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message>
 
                     // left bar
                     fill(stack, left, lineHeight, (left + width / 2) - (textWidth / 2) - 4, lineHeight + 1, separatorColor);
-                    fill(stack, left + 1, lineHeight + 1, (left + width / 2) - (textWidth / 2) - 3, lineHeight + 2, MellowUtils.getShadowColor(color != null ? color.getValue() : 0xFFFFFF, 1));
+                    fill(stack, left + 1, lineHeight + 1, (left + width / 2) - (textWidth / 2) - 3, lineHeight + 2, TextComponents.darkenColor(color != null ? color.getValue() : 0xFFFFFF, 1, 0.25F));
 
                     // right bar
                     fill(stack, (left + width / 2) + (textWidth / 2) + 4, lineHeight, left + width - 5, lineHeight + 1, separatorColor);
-                    fill(stack, (left + width / 2) + (textWidth / 2) + 5, lineHeight + 1, left + width - 4, lineHeight + 2, MellowUtils.getShadowColor(color != null ? color.getValue() : 0xFFFFFF, 1));
+                    fill(stack, (left + width / 2) + (textWidth / 2) + 5, lineHeight + 1, left + width - 4, lineHeight + 2, TextComponents.darkenColor(color != null ? color.getValue() : 0xFFFFFF, 1, 0.25F));
 
                     font.drawShadow(stack, processor, left + width / 2 - (textWidth / 2), y + 5, 0xFFFFFF);
                 } else {
@@ -88,7 +105,6 @@ public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message>
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
-                LoadingMessageList.this.parentScreen.setFocused(this);
                 LoadingMessageList.this.setSelected(this);
                 LoadingMessageList.this.setFocused(this);
                 return true;

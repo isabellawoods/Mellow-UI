@@ -3,8 +3,8 @@ package melonystudios.mellowui.screen.list;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.screen.EditListConfigScreen;
 import melonystudios.mellowui.util.Alignment;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -86,7 +86,7 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
 
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
-            ITextComponent text = new StringTextComponent(this.entry).withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(ConfigEntriesList.this.getSelected() == this, true)));
+            ITextComponent text = new StringTextComponent(this.entry).withStyle(TextComponents.selectableStyle(ConfigEntriesList.this.getSelected() == this, true));
             this.renderWidgetText(
                     () -> this.renderString(stack, left, top, width, height, Alignment.LEFT, text),
                     () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)
@@ -98,8 +98,7 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
             ITextComponent text = new TranslationTextComponent("button.mellowui.add")
-                    .withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(ConfigEntriesList.this.getSelected() == this, true))
-                            .withItalic(true));
+                    .withStyle(TextComponents.selectableStyle(ConfigEntriesList.this.getSelected() == this, true).withItalic(true));
             this.renderWidgetText(
                     () -> this.renderString(stack, left, top, width, height, Alignment.CENTER, text),
                     () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)

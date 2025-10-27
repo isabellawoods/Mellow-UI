@@ -5,8 +5,8 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.Alignment;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -97,6 +97,6 @@ public abstract class MUIWidgetMixin extends AbstractGui implements ScrollingTex
     public void getButtonTextColor(CallbackInfoReturnable<Integer> callback) {
         callback.cancel();
         if (this.packedFGColor != UNSET_FG_COLOR) callback.setReturnValue(this.packedFGColor);
-        callback.setReturnValue(MellowUtils.getSelectableTextColor(this.isHovered(), this.active));
+        callback.setReturnValue(TextComponents.selectableColor(this.isHovered(), this.active));
     }
 }

@@ -3,12 +3,16 @@ package melonystudios.mellowui.mixin.forge;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.screen.forge.LoadingErrorsScreen;
+import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.ErrorScreen;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.ModLoadingException;
+import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.client.gui.screen.LoadingErrorScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,18 +22,33 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.nio.file.Path;
 import java.util.List;
 
 @Mixin(value = LoadingErrorScreen.class, remap = false)
 public class MUILoadingErrorScreenMixin extends ErrorScreen {
+    @Shadow
+    @Final
+    private List<ModLoadingException> modLoadErrors;
+    @Shadow
+    @Final
+    private List<ModLoadingWarning> modLoadWarnings;
+    @Shadow
+    @Final
+    private Path dumpedLocation;
+
     public MUILoadingErrorScreenMixin(ITextComponent title, ITextComponent message) {
         super(title, message);
     }
 
-    @Inject(method = "init", at = @At("HEAD"), remap = true)
+    @Inject(method = "init", at = @At("HEAD"), remap = true, cancellable = true)
     protected void init(CallbackInfo callback) {
         // select the background panorama and shaders
         Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
+        if (!MellowConfigs.CLIENT_CONFIGS.loadingErrorsStyle.get()) return;
+        callback.cancel();
+        this.minecraft.setScreen(new LoadingErrorsScreen(this.modLoadErrors, this.modLoadWarnings, this.dumpedLocation));
+        MellowUtils.LOADING_ERRORS = !this.modLoadErrors.isEmpty();
     }
 
     @Mixin(value = LoadingErrorScreen.LoadingEntryList.LoadingMessageEntry.class, remap = false)

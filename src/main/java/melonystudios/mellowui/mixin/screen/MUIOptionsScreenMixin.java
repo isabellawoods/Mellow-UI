@@ -22,9 +22,10 @@ public class MUIOptionsScreenMixin extends Screen {
         super(title);
     }
 
-    @Inject(method = "init", at = @At("TAIL"))
+    @Inject(method = "init", at = @At("TAIL"), cancellable = true)
     protected void init(CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.optionsStyle.get() && this.minecraft != null) {
+            callback.cancel();
             this.minecraft.setScreen(new MUIOptionsScreen(this.lastScreen, this.minecraft.options));
         }
     }

@@ -8,15 +8,15 @@ import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
-import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import melonystudios.mellowui.widget.ImageSetModButton;
 import melonystudios.mellowui.widget.ModButton;
-import net.minecraft.client.audio.SimpleSound;
+import melonystudios.mellowui.widget.text.PlainTextButton;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.*;
@@ -25,7 +25,6 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.SharedConstants;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.DynamicRegistries;
@@ -44,8 +43,6 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final boolean fading;
     private long fadeInStart;
-    private int copyrightWidth;
-    private int copyrightX;
     @Nullable
     private String splash;
     private boolean keepLogoThroughFade;
@@ -88,14 +85,12 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             return;
         }
         LogoRenderer.rerollEasterEgg();
-        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         // Demo-dependent options
         if (this.minecraft.isDemo()) this.demoMenu();
         else this.defaultMenu();
 
-        this.copyrightWidth = this.font.width(new TranslationTextComponent("menu.minecraft.credits"));
-        this.copyrightX = this.width - this.copyrightWidth - 2;
+        int copyrightWidth = this.font.width(new TranslationTextComponent("menu.minecraft.credits"));
         if (this.splash == null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) this.splash = this.minecraft.getSplashManager().getSplash();
 
         // Options
@@ -145,6 +140,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
                     this.components.renderTooltip(this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
         }
+
+        // Copyright text
+        this.addButton(new PlainTextButton(this.width - copyrightWidth - 2, this.height - 10, copyrightWidth, 10,
+                new TranslationTextComponent("menu.minecraft.credits"), button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this)), this.font));
 
         // Switch Style
         this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 20, 8));
@@ -246,8 +245,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
         LogoRenderer.renderMellomedleyLogo(stack, 10, 16, 210, 75, buttonAlpha, this.keepLogoThroughFade);
 
         if ((textAlpha & 0xFC000000) != 0) {
-            boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 11 && mouseY < this.height;
-            int textColor = MellowUtils.getSelectableTextColor(false, true);
+            int textColor = TextComponents.selectableColor(false, true);
 
             // Forge's beta warning
             this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
@@ -263,27 +261,9 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             ITextComponent vanillaVersion = new TranslationTextComponent(this.minecraft.isDemo() ? "menu.mellomedley.version.vanilla_demo" : "menu.mellomedley.version.vanilla", SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion());
             drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 2, this.height - 30, textColor | textAlpha);
             drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 2, this.height - 20, textColor | textAlpha);
-            drawString(stack, this.font, new TranslationTextComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, MellowUtils.getSelectableTextColor(copyrightTextHovered, true) | textAlpha);
-            if (copyrightTextHovered) {
-                fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, MellowUtils.getSelectableTextColor(true, true) | textAlpha);
-                fill(stack, this.copyrightX + 1, this.height - 1, this.copyrightX + this.copyrightWidth + 1, this.height, MellowUtils.getSelectableTextShadowColor(true, true) | textAlpha);
-            }
 
             for (Widget widget : this.buttons) widget.setAlpha(buttonAlpha);
             super.render(stack, mouseX, mouseY, partialTicks);
-        }
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return true;
-        } else {
-            if (mouseX > (double) this.copyrightX && mouseX < (double) (this.copyrightX + this.copyrightWidth) && mouseY > (double) (this.height - 10) && mouseY < (double) this.height) {
-                this.minecraft.setScreen(new AttributionsScreen(this));
-                this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-            }
-            return false;
         }
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IReorderingProcessor;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static melonystudios.mellowui.util.MellowUtils.withColor;
+import static melonystudios.mellowui.util.text.TextComponents.withColor;
 
 /// Represents a **panel entry** that renders basic information, like mod id and authors, of a mod.
 public class InformationPanelEntry extends PanelEntry {
@@ -73,7 +73,7 @@ public class InformationPanelEntry extends PanelEntry {
                 } catch (Exception exception) {
                     if (!WARN_ONCE_MODS.contains(this.mod.getModId())) {
                         WARN_ONCE_MODS.add(this.mod.getModId());
-                        MellowUI.logger("InformationPanelEntry").error(MellowUtils.translate("panel.mellowui.mod_information.broken_authors", "Mod '%s' has a broken \"authors\" field! Please report to Mellow UI about this", this.mod.getModId()), exception);
+                        MellowUI.logger("InformationPanelEntry").error(TextComponents.translate("panel.mellowui.mod_information.broken_authors", "Mod '%s' has a broken \"authors\" field! Please report to Mellow UI about this", this.mod.getModId()), exception);
                     }
                 }
             }

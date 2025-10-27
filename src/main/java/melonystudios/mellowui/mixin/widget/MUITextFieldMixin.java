@@ -3,9 +3,10 @@ package melonystudios.mellowui.mixin.widget;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.IScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.IReorderingProcessor;
@@ -24,11 +25,12 @@ import java.util.function.BiFunction;
 
 @OnlyIn(Dist.CLIENT)
 @Mixin(TextFieldWidget.class)
-public abstract class MUITextFieldMixin extends Widget {
+public abstract class MUITextFieldMixin extends Widget implements IScreen {
     @Shadow public abstract boolean isVisible();
     @Shadow public abstract int getInnerWidth();
     @Shadow protected abstract int getMaxLength();
     @Shadow protected abstract boolean isBordered();
+    @Shadow protected abstract boolean isEditable();
     @Shadow protected abstract void renderHighlight(int startX, int startY, int endX, int endY);
     @Shadow private BiFunction<String, Integer, IReorderingProcessor> formatter;
     @Shadow private String value;
@@ -40,7 +42,6 @@ public abstract class MUITextFieldMixin extends Widget {
     @Shadow private int displayPos;
     @Shadow private int highlightPos;
     @Shadow private int frame;
-    @Shadow private boolean isEditable;
 
     public MUITextFieldMixin(int x, int y, int width, int height, ITextComponent message) {
         super(x, y, width, height, message);
@@ -60,12 +61,12 @@ public abstract class MUITextFieldMixin extends Widget {
             fill(stack, this.x + 1, this.y + 1, this.x + this.width - 1, this.y + this.height - 1, configs.textFieldCenterColor.get() | alpha << 24);
         }
 
-        int textColor = this.isEditable ? this.textColor : this.textColorUneditable;
+        int textColor = this.isEditable() ? this.textColor : this.textColorUneditable;
         int j = this.cursorPos - this.displayPos;
         int length = this.highlightPos - this.displayPos;
         String displayedText = font.plainSubstrByWidth(this.value.substring(this.displayPos), this.getInnerWidth());
         boolean longerThanWidget = j >= 0 && j <= displayedText.length();
-        boolean shouldBlink = this.isFocused() && this.frame / 6 % 2 == 0 && longerThanWidget;
+        boolean shouldBlink = this.isFocused() && this.isEditable() && this.frame / 6 % 2 == 0 && longerThanWidget;
         int textX = this.bordered ? this.x + 4 : this.x;
         int textY = this.bordered ? this.y + (this.height - 8) / 2 : this.y;
         int newX = textX;
@@ -98,7 +99,7 @@ public abstract class MUITextFieldMixin extends Widget {
             int selectedColor = configs.textFieldHighlightedBorderColor.get();
             if (tooLong) {
                 fill(stack, cursorX, textY - 1, cursorX + 1, textY + 9, selectedColor | alpha << 24);
-                fill(stack, cursorX + 1, textY, cursorX + 2, textY + 10, MellowUtils.getShadowColor(selectedColor, 1));
+                fill(stack, cursorX + 1, textY, cursorX + 2, textY + 10, TextComponents.darkenColor(selectedColor, 1, 0.25F));
             } else {
                 font.drawShadow(stack, new TranslationTextComponent("text_field.cursor"), (float) cursorX, (float) textY, selectedColor);
             }

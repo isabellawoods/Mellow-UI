@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Random;
 
-public class LogoRenderer {
+public class LogoRenderer extends AbstractGui {
     public static final ResourceLocation MINECRAFT_LOGO = MellowUI.gui("title/minecraft");
     public static final ResourceLocation MINCERAFT_LOGO = MellowUI.gui("title/minceraft");
     public static final ResourceLocation EDITION_SUBTITLE = MellowUI.gui("title/edition");
@@ -34,13 +34,13 @@ public class LogoRenderer {
         // Logo
         int logoX = screenWidth / 2 - 128;
         minecraft.getTextureManager().bind(SHOW_EASTER_EGG ? MINCERAFT_LOGO : MINECRAFT_LOGO);
-        AbstractGui.blit(stack, logoX, height, 0, 0, 256, 44, 256, 64);
+        blit(stack, logoX, height, 0, 0, 256, 44, 256, 64);
 
         // Edition
         int editionX = screenWidth / 2 - 64;
         int editionY = height + 44 - 7;
         minecraft.getTextureManager().bind(EDITION_SUBTITLE);
-        AbstractGui.blit(stack, editionX, editionY, 0, 0, 128, 14, 128, 16);
+        blit(stack, editionX, editionY, 0, 0, 128, 14, 128, 16);
         RenderSystem.color4f(1, 1, 1, 1);
     }
 
@@ -69,7 +69,7 @@ public class LogoRenderer {
         // Edition
         int editionY = height + 37;
         minecraft.getTextureManager().bind(OLD_EDITION_SUBTITLE);
-        AbstractGui.blit(stack, logoX + 88, editionY, 0, 0, 98, 14, 128, 16);
+        blit(stack, logoX + 88, editionY, 0, 0, 98, 14, 128, 16);
         RenderSystem.color4f(1, 1, 1, 1);
     }
 
@@ -94,7 +94,7 @@ public class LogoRenderer {
         // Edition
         int editionY = height + 37;
         minecraft.getTextureManager().bind(OLD_EDITION_SUBTITLE);
-        AbstractGui.blit(stack, logoX + 88, editionY, 0, 0, 98, 14, 128, 16);
+        blit(stack, logoX + 88, editionY, 0, 0, 98, 14, 128, 16);
         RenderSystem.color4f(1, 1, 1, 1);
     }
 
@@ -102,7 +102,7 @@ public class LogoRenderer {
         RenderSystem.enableBlend();
         RenderSystem.color4f(1, 1, 1, keepLogoThroughFade ? 1 : transparency);
         Minecraft.getInstance().getTextureManager().bind(GUITextures.MELLOMEDLEY_LOGO);
-        AbstractGui.blit(stack, x, y, 0, 0, width, height, width, height);
+        blit(stack, x, y, 0, 0, width, height, width, height);
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
     }

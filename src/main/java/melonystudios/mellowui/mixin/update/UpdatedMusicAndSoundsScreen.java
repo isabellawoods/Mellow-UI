@@ -6,6 +6,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.config.option.SoundCategoryOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
@@ -69,7 +70,7 @@ public class UpdatedMusicAndSoundsScreen extends SettingsScreen {
             callback.cancel();
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+            drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
             super.render(stack, mouseX, mouseY, partialTicks);
             List<IReorderingProcessor> processors = tooltipAt(this.list, mouseX, mouseY);
             if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);

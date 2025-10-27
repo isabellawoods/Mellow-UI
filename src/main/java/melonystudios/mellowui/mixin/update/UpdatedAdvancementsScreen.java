@@ -1,6 +1,7 @@
 package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.advancements.AdvancementTabGui;
 import net.minecraft.client.gui.advancements.AdvancementsScreen;
@@ -36,7 +37,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void renderScreenName(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        drawCenteredString(stack, this.font, new TranslationTextComponent("gui.advancements"), this.width / 2, 16, 0xFFFFFF);
+        drawCenteredString(stack, this.font, new TranslationTextComponent("gui.advancements").withStyle(TextComponents.titleStyle()), this.width / 2, 16, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

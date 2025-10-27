@@ -55,8 +55,10 @@ public class MellowConfigs {
     // Screen Toggles
     public final ForgeConfigSpec.EnumValue<ThreeStyles> titleStyle;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> modListStyle;
+    public final ForgeConfigSpec.BooleanValue loadingErrorsStyle;
     public final ForgeConfigSpec.BooleanValue pauseStyle;
     public final ForgeConfigSpec.BooleanValue createNewWorldStyle;
+    public final ForgeConfigSpec.BooleanValue worldLoadingStyle;
     public final ForgeConfigSpec.BooleanValue optionsStyle;
     public final ForgeConfigSpec.BooleanValue skinCustomizationStyle;
     public final ForgeConfigSpec.BooleanValue musicAndSoundsStyle;
@@ -72,7 +74,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue listBackgroundStyle;
     public final ForgeConfigSpec.BooleanValue replaceRealmsNotifications;
     public final ForgeConfigSpec.BooleanValue splashTextPosition;
-    public final ForgeConfigSpec.EnumValue<FourStyles> logoStyle;
+    public final ForgeConfigSpec.EnumValue<LogoStyles> logoStyle;
 
     // Forge Configs
     public final ForgeConfigSpec.EnumValue<ModListSorting> modListSorting;
@@ -122,10 +124,11 @@ public class MellowConfigs {
         builder.push("styleOptions");
         this.screenBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").translation("config.mellowui.screen_background_style").define("screenBackground", true);
         this.listBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").translation("config.mellowui.list_background_style").define("listBackground", true);
-        this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the pre-1.16 logo, the current logo (1.16), the new logo (1.20+), and the Mellomedley logo.", "Option 1 = Pre-1.16 | Option 2 = 1.19 | Option 3 = 1.20+ | Option 4 = Mellomedley.").translation("config.mellowui.logo_style").defineEnum("logo", FourStyles.OPTION_3);
+        this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the pre-1.16 logo, the current logo (1.16), the new logo (1.20+), and the Mellomedley logo.", "Allowed values: PRE_ONE_SIXTEEN, ONE_SIXTEEN, ONE_TWENTY, MELLOMEDLEY").translation("config.mellowui.logo_style").defineEnum("logo", LogoStyles.ONE_TWENTY);
         this.titleStyle = builder.comment("Which style to use for the main menu / title screen.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").translation("config.mellowui.title_style").defineEnum("mainMenu", ThreeStyles.OPTION_1);
         this.pauseStyle = builder.comment("Which style to use for the pause menu.").translation("config.mellowui.pause_style").define("pauseMenu", true);
         this.createNewWorldStyle = builder.comment("Which style to use for the create new world menu.").translation("config.mellowui.create_new_world_style").define("createNewWorldMenu", false);
+        this.worldLoadingStyle = builder.comment("Which style to use for the world loading menu (the one with the chunk map).").translation("config.mellowui.world_loading_style").define("worldLoadingMenu", true);
         this.optionsStyle = builder.comment("Which style to use for the options' menu.").translation("config.mellowui.options_style").define("optionsMenu", true);
         this.skinCustomizationStyle = builder.comment("Which style to use for the skin customization menu.").translation("config.mellowui.skin_customization_style").define("skinCustomizationMenu", true);
         this.musicAndSoundsStyle = builder.comment("Which style to use for the music & sounds menu.").translation("config.mellowui.music_and_sounds_style").define("musicAndSoundsMenu", true);
@@ -138,6 +141,7 @@ public class MellowConfigs {
         this.outOfMemoryStyle = builder.comment("Which style to use for the out of memory menu.").translation("config.mellowui.out_of_memory_style").define("outOfMemoryMenu", true);
         this.statisticsStyle = builder.comment("Which style to use for the statistics menu.").translation("config.mellowui.statistics_style").define("statisticsMenu", true);
         this.modListStyle = builder.comment("Which style to use for the mod list.", "Option 1 = Forge | Option 2 = Mellow UI | Option 3 = Catalogue (if available).").translation("config.mellowui.mod_list_style").defineEnum("modListMenu", ThreeStyles.OPTION_3);
+        this.loadingErrorsStyle = builder.comment("Which style to use for Forge's loading warnings/errors menu.").translation("config.mellowui.loading_errors_style").define("loadingErrorsMenu", true);
         builder.pop();
 
         builder.push("mellomedleyOptions");

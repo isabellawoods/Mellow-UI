@@ -2,17 +2,18 @@ package melonystudios.mellowui.screen.backport;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class AttributionsScreen extends Screen {
+public class CreditsAndAttributionsScreen extends Screen {
     private final Screen lastScreen;
 
-    public AttributionsScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("menu.mellowui.credits_and_attribution.title"));
+    public CreditsAndAttributionsScreen(Screen lastScreen) {
+        super(new TranslationTextComponent("menu.mellowui.credits_and_attribution.title").withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
     }
 

@@ -7,7 +7,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.PackLoadingManager;
@@ -22,7 +22,6 @@ import net.minecraft.resources.ResourcePackList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.io.File;
@@ -73,8 +72,8 @@ public class MUIPackSelectionScreen extends Screen {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.packList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, 8, 0xFFFFFF);
-        drawCenteredString(stack, this.font, new TranslationTextComponent("pack.dropInfo").withStyle(TextFormatting.GRAY), this.width / 2, 20, 0xFFFFFF);
+        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 8, 0xFFFFFF);
+        drawCenteredString(stack, this.font, new TranslationTextComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), this.width / 2, 20, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
@@ -102,7 +101,7 @@ public class MUIPackSelectionScreen extends Screen {
             return packLocation;
         } catch (FileNotFoundException ignored) {
         } catch (Exception exception) {
-            MellowUI.LOGGER.warn(MellowUtils.translate("error.mellowui.pack_icon", "Failed to load icon from pack '%s'", pack.getId()), exception);
+            MellowUI.LOGGER.warn(TextComponents.translate("error.mellowui.pack_icon", "Failed to load icon from pack '%s'", pack.getId()), exception);
         }
 
         return GUITextures.DEFAULT_PACK_ICON;

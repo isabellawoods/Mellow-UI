@@ -3,26 +3,25 @@ package melonystudios.mellowui.screen.backport;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.text2speech.Narrator;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
+import melonystudios.mellowui.widget.text.FocusableTextWidget;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.LanguageScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class AccessibilityOnboardingScreen extends Screen {
+    private static final ITextComponent TITLE = new TranslationTextComponent("menu.minecraft.accessibility_onboarding.title").withStyle(TextComponents.titleStyle());
     private static final ITextComponent ONBOARDING_NARRATOR_MESSAGE = new TranslationTextComponent("menu.minecraft.accessibility_onboarding.narrator");
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final Runnable onClose;
@@ -30,10 +29,10 @@ public class AccessibilityOnboardingScreen extends Screen {
     private boolean hasNarrated;
     private float timer;
     @Nullable
-    private TextFieldWidget textWidget;
+    private FocusableTextWidget textWidget;
 
     public AccessibilityOnboardingScreen(Runnable onClose) {
-        super(new TranslationTextComponent("menu.minecraft.accessibility_onboarding.title"));
+        super(TITLE);
         this.onClose = onClose;
         this.narratorAvailable = NarratorChatListener.INSTANCE.isActive();
     }
@@ -55,20 +54,15 @@ public class AccessibilityOnboardingScreen extends Screen {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (this.textWidget != null) this.textWidget.tick();
-    }
-
-    @Override
     protected void init() {
-        this.textWidget = new TextFieldWidget(this.minecraft.font, this.width / 2 - 186, 100, 372, 35, new TranslationTextComponent("menu.minecraft.accessibility_onboarding.text_box"));
-        this.textWidget.setEditable(false);
-        this.textWidget.setCanLoseFocus(true);
-        this.addWidget(this.textWidget);
+        this.textWidget = this.addButton(new FocusableTextWidget(this.width, this.title, this.font));
+        this.textWidget.containWithin(this.width);
+        this.textWidget.x = this.width / 2 - 186;
+        this.textWidget.y = 100;
 
         // Narrator
         Button narrator = (Button) AbstractOption.NARRATOR.createButton(this.minecraft.options, this.width / 2 - 75, 147, 150);
+        narrator.active = this.narratorAvailable;
         this.addButton(narrator);
 
         // Accessibility Settings
@@ -85,59 +79,23 @@ public class AccessibilityOnboardingScreen extends Screen {
         this.addButton(new Button(this.width / 2 - 75, this.height - 25, 150, 20, new TranslationTextComponent("button.mellowui.continue"),
                 button  -> this.onClose()));
 
-        this.setInitialFocus(narrator);
+        if (this.narratorAvailable) this.setInitialFocus(narrator);
+    }
+
+    @Override
+    public void renderBackground(MatrixStack stack) {
+        this.components.renderPanorama(0, this.width, this.height, 1);
+        this.components.renderBlurredBackground(this.minecraft.getDeltaFrameTime(), true);
+        if (!MellowConfigs.CLIENT_CONFIGS.defaultBackground.get()) this.renderDirtBackground(0);
+        else this.components.renderTiledBackground(GUITextures.OVERSPIN_PROTECTION_BACKGROUND, 255, 0, 0, this.width, this.height, 0);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.handleInitialNarrationDelay();
-        this.components.renderPanorama(0, this.width, this.height, 1);
-        this.components.renderBlurredBackground(partialTicks, true);
-        this.renderDirtBackground(0);
-        this.components.renderTiledBackground(GUITextures.ACCESSIBILITY_ONBOARDING_BACKGROUND, 255, 0, 0, this.width, this.height, 0);
-        this.renderLogo(stack);
-
-        if (this.textWidget != null) this.textWidget.render(stack, mouseX, mouseY, partialTicks);
-
-        // todo: replace this with a multiline text widget when I add that ~isa 10-6-25
-        List<IReorderingProcessor> processors = this.font.split(new TranslationTextComponent("menu.minecraft.accessibility_onboarding.text_box"), 368);
-        int line = 0;
-        for (IReorderingProcessor processor : processors) {
-            int textWidth = this.font.width(processor);
-            this.font.drawShadow(stack, processor, this.width / 2 - (textWidth / 2), 102 + line, 0xFFFFFF);
-            line += this.font.lineHeight + 2;
-        }
-
+        this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-    }
-
-    private void renderLogo(MatrixStack stack) {
-        switch (MellowConfigs.CLIENT_CONFIGS.titleStyle.get()) {
-            case OPTION_1: {
-                LogoRenderer.render116Logo(stack, this, this.width, 1, 30, true);
-                break;
-            }
-            case OPTION_3: {
-                LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
-                break;
-            }
-            case OPTION_2: {
-                switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
-                    case OPTION_1: // Pre 1.16
-                        LogoRenderer.renderPre116Logo(stack, this, this.width, 1, 30, true);
-                        break;
-                    case OPTION_2: // 1.16
-                        LogoRenderer.render116Logo(stack, this, this.width, 1, 30, true);
-                        break;
-                    case OPTION_3: // 1.20 and above
-                        LogoRenderer.renderUpdatedLogo(stack, this.width, 1, true);
-                        break;
-                    case OPTION_4: // Mellomedley's logo
-                        LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, 1, true);
-                        break;
-                }
-            }
-        }
+        this.handleInitialNarrationDelay();
+        this.components.renderLogo(this, this.width, this.height, 1, true);
     }
 
     private void handleInitialNarrationDelay() {

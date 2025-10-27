@@ -4,11 +4,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.backport.MultiLineLabel;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
+import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
@@ -24,7 +26,11 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderSkybox;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ColorHelper;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -43,8 +49,10 @@ import net.minecraftforge.versions.forge.ForgeVersion;
 import javax.annotation.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
+import static melonystudios.mellowui.util.MellowUtils.defaultBackground;
 
 /// The global ***Render Components*** used by *Mellow UI*.
 /// Contains almost every rendering method used more than once throughout the codebase.
@@ -185,7 +193,7 @@ public class RenderComponents extends AbstractGui {
     /// @param height The height of the background.
     /// @param vOffset The vertical offset of the background texture.
     public void renderMenuBackground(int x, int y, int width, int height, float vOffset) {
-        ResourceLocation backgroundTexture = this.minecraft.level == null ? (CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION :
+        ResourceLocation backgroundTexture = this.minecraft.level == null ? (defaultBackground() ? BACKGROUND_LOCATION :
                 GUITextures.MENU_BACKGROUND) : GUITextures.INWORLD_MENU_BACKGROUND;
         this.renderTiledBackground(backgroundTexture, x, y, width, height, vOffset);
     }
@@ -198,7 +206,7 @@ public class RenderComponents extends AbstractGui {
     /// @param height The height of the background.
     /// @param vOffset The vertical offset of the background texture.
     public void renderTiledBackground(ResourceLocation backgroundTexture, int x, int y, int width, int height, float vOffset) {
-        this.renderTiledBackground(backgroundTexture, CLIENT_CONFIGS.defaultBackground.get() ? OLD_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS, x, y, width, height, vOffset);
+        this.renderTiledBackground(backgroundTexture, defaultBackground() ? OLD_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS, x, y, width, height, vOffset);
     }
 
     /// Renders a **tiled background** onto the screen.
@@ -225,9 +233,9 @@ public class RenderComponents extends AbstractGui {
     /// @param width The width of the background.
     /// @param height The height of the background.
     public void renderTabHeaderBackground(int x, int y, int width, int height) {
-        ResourceLocation backgroundTexture = this.minecraft.level == null ? (CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION :
+        ResourceLocation backgroundTexture = this.minecraft.level == null ? (defaultBackground() ? BACKGROUND_LOCATION :
                 GUITextures.TAB_HEADER_BACKGROUND) : GUITextures.TAB_HEADER_BACKGROUND;
-        this.renderTabHeaderBackground(backgroundTexture, x, y, width, height, CLIENT_CONFIGS.defaultBackground.get() ? OLD_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS);
+        this.renderTabHeaderBackground(backgroundTexture, x, y, width, height, defaultBackground() ? OLD_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS);
     }
 
     /// Renders the **tab header background** onto the screen.
@@ -254,9 +262,9 @@ public class RenderComponents extends AbstractGui {
     /// @param vOffset The vertical offset of the background texture.
     /// @param scrollAmount The amount scrolled on the list, added with the vertical offset.
     public void renderListBackground(int x, int y, int width, int height, int uOffset, int vOffset, double scrollAmount) {
-        ResourceLocation backgroundTexture = this.minecraft.level == null ? (CLIENT_CONFIGS.defaultBackground.get() ? BACKGROUND_LOCATION :
+        ResourceLocation backgroundTexture = this.minecraft.level == null ? (defaultBackground() ? BACKGROUND_LOCATION :
                 GUITextures.MENU_LIST_BACKGROUND) : GUITextures.INWORLD_MENU_LIST_BACKGROUND;
-        this.renderListBackground(backgroundTexture, x, y, width, height, uOffset, vOffset, CLIENT_CONFIGS.defaultBackground.get() ? OLD_LIST_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS, scrollAmount);
+        this.renderListBackground(backgroundTexture, x, y, width, height, uOffset, vOffset, defaultBackground() ? OLD_LIST_BACKGROUND_BRIGHTNESS : DEFAULT_BACKGROUND_BRIGHTNESS, scrollAmount);
     }
 
     /// Renders the **list background** onto the screen.
@@ -291,6 +299,27 @@ public class RenderComponents extends AbstractGui {
         RenderSystem.disableBlend();
     }
 
+    public void renderCenteredLabelBackground(MatrixStack stack, ITextComponent component, int width, int x, int y, int lineHeight, int maxWidth, int maxLines, int color) {
+        List<MultiLineLabel.TextAndWidth> entries = this.minecraft.font.split(component, maxWidth).stream().limit(maxLines).map(line -> new MultiLineLabel.TextAndWidth(line, this.minecraft.font.width(line))).collect(Collectors.toList());
+        int maxLineWidth = entries.stream().mapToInt(MultiLineLabel.TextAndWidth::width).max().orElse(0);
+        if (maxLineWidth > 0) {
+            fill(stack, width - maxLineWidth / 2 - lineHeight, x - lineHeight, width + maxLineWidth / 2 + lineHeight, x + entries.size() * y + lineHeight, color);
+        }
+    }
+
+    /// Renders an **outline rectangle** on the screen with the specified color.
+    /// @param x The x-coordinate of the top-left corner of the rectangle.
+    /// @param y The y-coordinate of the top-left corner of the rectangle.
+    /// @param width The width of the blitted portion.
+    /// @param height The height of the rectangle.
+    /// @param color The color of the outline.
+    public void renderOutline(int x, int y, int width, int height, int color) {
+        fill(this.stack, x, y, x + width, y + 1, color);
+        fill(this.stack, x, y + height - 1, x + width, y + height, color);
+        fill(this.stack, x, y + 1, x + 1, y + height - 1, color);
+        fill(this.stack, x + width - 1, y + 1, x + width, y + height - 1, color);
+    }
+
     /// Renders the **list separators** on the top and bottom of the screen.
     /// @param list An {@linkplain OptionsRowList options list} to grab the separator positions.
     /// @param width The width of the separator, usually the screen width.
@@ -303,8 +332,8 @@ public class RenderComponents extends AbstractGui {
     /// Renders horizontal **list separators** on the top and bottom of the screen.
     /// @param width The width of the separator, usually the screen width.
     /// @param x The starting x-position of the separators.
-    /// @param minY The y-position of the bottom separator
-    /// @param maxY The y-position of the top separator
+    /// @param minY The y-position of the bottom separator.
+    /// @param maxY The y-position of the top separator.
     /// @param tabs The number of tabs at the top of the screen.
     /// @param tabWidth The width of the tabs.
     /// @apiNote The `tabs` parameter is **not** fully functional.
@@ -315,15 +344,55 @@ public class RenderComponents extends AbstractGui {
         int headerOneEnd = tabs == 4 ? width / 2 - tabWidth * 2 : width / 2 - tabWidth / 2 - tabWidth;
         int headerTwoStart = tabs == 4 ? width / 2 + tabWidth * 2 : width / 2 + tabWidth / 2 + tabWidth;
 
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
-        blit(this.stack, x, maxY, 0, 0, headerOneEnd, 2, 32, 2);
-        blit(this.stack, headerTwoStart, maxY, 0, 0, width, 2, 32, 2);
+        if (MellowUtils.LOADING_ERRORS) { // only use these when Forge errors out, as sometimes the mod's assets can't load ~isa 27-10-25
+            this.renderGradientListSeparators(x, width, minY, maxY, 0);
+        } else {
+            // Header
+            this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
+            blit(this.stack, x, maxY, 0, 0, headerOneEnd, 2, 32, 2);
+            blit(this.stack, headerTwoStart, maxY, 0, 0, width, 2, 32, 2);
 
-        // Footer
-        this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
-        blit(this.stack, x, minY, 0, 0, x + width, 2, 32, 2);
+            // Footer
+            this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
+            blit(this.stack, x, minY, 0, 0, x + width, 2, 32, 2);
+        }
 
         RenderSystem.disableBlend();
+    }
+
+    /// Renders horizontal **list separators** on the top and bottom of the screen. This the pre-1.20.5 version, so renders as a fading black gradient.
+    /// @param minX The x-position of where to start drawing.
+    /// @param maxX The x-position of where to finish drawing.
+    /// @param maxY The y-position of the bottom separator.
+    /// @param minY The y-position of the top separator.
+    /// @param color The color to use for the separators. Defaults to `0` (black).
+    public void renderGradientListSeparators(int minX, int maxX, int minY, int maxY, int color) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuilder();
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableDepthTest();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
+        RenderSystem.disableAlphaTest();
+        RenderSystem.shadeModel(7425);
+        RenderSystem.disableTexture();
+
+        int red = ColorHelper.PackedColor.red(color);
+        int green = ColorHelper.PackedColor.green(color);
+        int blue = ColorHelper.PackedColor.blue(color);
+
+        builder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        builder.vertex(minX, maxY + 4, 0).uv(0, 1).color(red, green, blue, 0).endVertex();
+        builder.vertex(maxX, maxY + 4, 0).uv(1, 1).color(red, green, blue, 0).endVertex();
+        builder.vertex(maxX, maxY, 0).uv(1, 0).color(red, green, blue, 255).endVertex();
+        builder.vertex(minX, maxY, 0).uv(0, 0).color(red, green, blue, 255).endVertex();
+        builder.vertex(minX, minY, 0).uv(0, 1).color(red, green, blue, 255).endVertex();
+        builder.vertex(maxX, minY, 0).uv(1, 1).color(red, green, blue, 255).endVertex();
+        builder.vertex(maxX, minY - 4, 0).uv(1, 0).color(red, green, blue, 0).endVertex();
+        builder.vertex(minX, minY - 4, 0).uv(0, 0).color(red, green, blue, 0).endVertex();
+        tessellator.end();
+        RenderSystem.shadeModel(7424);
+        RenderSystem.enableTexture();
     }
 
     /// Renders vertical **list separators** on the right and left sides of the screen, choosing the texture based on the {@linkplain MellowConfigs#defaultBackground **Default Background**} option.
@@ -378,6 +447,29 @@ public class RenderComponents extends AbstractGui {
                     width / 2, textHeight, textColor | alpha);
             drawCenteredString(this.stack, this.minecraft.font, new TranslationTextComponent("forge.update.beta.2"), width / 2, textHeight + 10, textColor | alpha);
             ForgeHooksClient.forgeStatusLine = new TranslationTextComponent("forge.update.newversion", ForgeVersion.getTarget()).getString();
+        }
+    }
+
+    /// Renders a **logo** based on the current main menu and logo style.
+    /// @param screen The screen to render in.
+    /// @param width The width of the screen.
+    /// @param height The height of the screen.
+    /// @param transparency The transparency of the logo, usually ranging from `0` to `1`.
+    /// @param keepLogoThroughFade Whether to keep the logo visible during the fading animation.
+    public void renderLogo(Screen screen, int width, int height, float transparency, boolean keepLogoThroughFade) {
+        RenderSystem.enableBlend();
+        switch (CLIENT_CONFIGS.titleStyle.get()) {
+            case OPTION_1: {
+                LogoRenderer.render116Logo(this.stack, screen, width, transparency, 30, keepLogoThroughFade);
+                break;
+            }
+            case OPTION_3: {
+                LogoRenderer.renderMellomedleyLogo(this.stack, width / 2 - 129, 10, 258, 100, transparency, keepLogoThroughFade);
+                break;
+            }
+            case OPTION_2: {
+                CLIENT_CONFIGS.logoStyle.get().renderLogo(this.stack, screen, true, width / 2, 30, width, height, transparency, keepLogoThroughFade);
+            }
         }
     }
 

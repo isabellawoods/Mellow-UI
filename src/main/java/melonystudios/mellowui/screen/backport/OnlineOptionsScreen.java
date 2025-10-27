@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
@@ -21,7 +22,7 @@ public class OnlineOptionsScreen extends SettingsScreen {
     private OptionsRowList list;
 
     public OnlineOptionsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("menu.mellowui.online_options.title"));
+        super(lastScreen, options, new TranslationTextComponent("menu.mellowui.online_options.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override

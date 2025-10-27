@@ -2,10 +2,10 @@ package melonystudios.mellowui.screen.popup;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.DialogTexts;
+import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -33,8 +33,8 @@ public class EditValueScreen extends Screen {
     public TextFieldWidget entryWidget;
 
     public EditValueScreen(Screen lastScreen, ITextComponent configName, ForgeConfigSpec.ConfigValue<?> entry, Object savedValue, boolean displayColor) {
-        super(StringTextComponent.EMPTY);
-        this.title = new TranslationTextComponent("menu.mellowui.edit_value.title", configName).withStyle(TextFormatting.BOLD);
+        super(NarratorChatListener.NO_TITLE);
+        this.title = new TranslationTextComponent("menu.mellowui.edit_value.title", configName).withStyle(TextComponents.titleStyle().withBold(true));
         this.lastScreen = lastScreen;
         this.configName = configName;
         this.entry = entry;
@@ -84,13 +84,15 @@ public class EditValueScreen extends Screen {
             BooleanOption option = new BooleanOption(((TranslationTextComponent) this.configName).getKey(),
                     options -> value.get(),
                     (options, newValue) -> value.set(!value.get()));
-            option.createButton(this.minecraft.options, this.width / 2 - 125, this.height / 2 - 10, 250);
+            this.addButton(option.createButton(this.minecraft.options, this.width / 2 - 125, this.height / 2 - 10, 250));
         } else if (this.entry instanceof ForgeConfigSpec.IntValue) {
             this.entryWidget = new TextFieldWidget(this.font, this.width / 2 - 125, this.height / 2 - 10, 250, 20, this.configName);
-            this.entryWidget.setValue("#" + Integer.toHexString(((ForgeConfigSpec.IntValue) this.entry).get()));
+            if (this.displayColor) this.entryWidget.setValue("#" + Integer.toHexString(((ForgeConfigSpec.IntValue) this.entry).get()));
+            else this.entryWidget.setValue(Integer.toString(((ForgeConfigSpec.IntValue) this.entry).get()));
         } else if (this.entry instanceof ForgeConfigSpec.LongValue) {
             this.entryWidget = new TextFieldWidget(this.font, this.width / 2 - 125, this.height / 2 - 10, 250, 20, this.configName);
-            this.entryWidget.setValue("#" + Long.toHexString(((ForgeConfigSpec.LongValue) this.entry).get()));
+            if (this.displayColor) this.entryWidget.setValue("#" + Long.toHexString(((ForgeConfigSpec.LongValue) this.entry).get()));
+            else this.entryWidget.setValue(Long.toString(((ForgeConfigSpec.LongValue) this.entry).get()));
         } else if (this.entry instanceof ForgeConfigSpec.DoubleValue) {
             this.entryWidget = new TextFieldWidget(this.font, this.width / 2 - 125, this.height / 2 - 10, 250, 20, this.configName);
             this.entryWidget.setValue(Double.toString(((ForgeConfigSpec.DoubleValue) this.entry).get()));
@@ -177,6 +179,7 @@ public class EditValueScreen extends Screen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
+        boolean showHexMessage = this.entry instanceof ForgeConfigSpec.IntValue || this.entry instanceof ForgeConfigSpec.LongValue;
 
         if (this.displayColor && this.entry instanceof ForgeConfigSpec.IntValue && this.entryWidget != null) {
             int color = (Integer) this.entry.get();
@@ -185,13 +188,13 @@ public class EditValueScreen extends Screen {
             } catch (NumberFormatException ignored) {}
 
             IFormattableTextComponent component = new TranslationTextComponent("menu.mellowui.edit_value.title",
-                    this.configName.copy().withStyle(MellowUtils.withColor(color))).withStyle(TextFormatting.BOLD);
+                    this.configName.copy().withStyle(TextComponents.withColor(color))).withStyle(TextComponents.titleStyle().withBold(true));
             drawCenteredString(stack, this.font, component, this.width / 2, this.height / 2 - 40, 0xFFFFFF);
         } else {
-            drawCenteredString(stack, this.font, this.getTitle(), this.width / 2, this.height / 2 - 40, 0xFFFFFF);
+            drawCenteredString(stack, this.font, this.getTitle(), this.width / 2, this.height / 2 - (showHexMessage ? 40 : 30), 0xFFFFFF);
         }
 
-        drawCenteredString(stack, this.font, new TranslationTextComponent("menu.mellowui.edit_value.accepts_hex").withStyle(TextComponents.descriptionStyle()),
+        if (showHexMessage) drawCenteredString(stack, this.font, new TranslationTextComponent("menu.mellowui.edit_value.accepts_hex").withStyle(TextComponents.descriptionStyle()),
                 this.width / 2, this.height / 2 - 27, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
@@ -201,7 +204,7 @@ public class EditValueScreen extends Screen {
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
         } else if (hasControlDown() && keyCode == GLFW.GLFW_KEY_Z) { // ctrl + z to reset config value
-            this.revertEdit(this.entry);
+            this.revertEdit.accept(this.entry);
             this.minecraft.getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
             return true;
         } else if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) { // enter to save config

@@ -6,6 +6,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
 import net.minecraft.util.ResourceLocation;
@@ -217,7 +218,7 @@ public class Panorama {
 
                 return Panorama.builder(cubeMap).overlay(overlay).overrideSpeed(speedOverride).overridePitch(pitchOverride).applyShader(shader).blurStrength(blurStrength).build();
             } else {
-                throw new JsonParseException(MellowUtils.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", element.toString()));
+                throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", element.toString()));
             }
         }
 
@@ -230,8 +231,8 @@ public class Panorama {
                 for (ResourceLocation location : panorama.cubeMap()) cubeMap.add(location.toString());
                 object.add("cube_map", cubeMap);
             } else {
-                if (cubeMapTextures > 6) throw new JsonSyntaxException(MellowUtils.translate("logger.mellowui.panorama.cube_map.too_many", "Panorama has more than 6 cube map textures"));
-                else throw new JsonSyntaxException(MellowUtils.translate("logger.mellowui.panorama.cube_map.too_few", "Panorama has less than 6 cube map textures"));
+                if (cubeMapTextures > 6) throw new JsonSyntaxException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_many", "Panorama has more than 6 cube map textures"));
+                else throw new JsonSyntaxException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_few", "Panorama has less than 6 cube map textures"));
             }
 
             if (!panorama.overlayTexture().equals(GUITextures.PANORAMA_OVERLAY)) {

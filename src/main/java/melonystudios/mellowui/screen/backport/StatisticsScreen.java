@@ -65,7 +65,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
     private float textAlpha = 0;
 
     public StatisticsScreen(Screen lastScreen, StatisticsManager manager) {
-        super(new TranslationTextComponent("gui.stats"));
+        super(new TranslationTextComponent("gui.stats").withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
@@ -134,14 +134,14 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         this.tabs.clear();
 
         // General
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslationTextComponent("stat.generalButton"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, "general", new TranslationTextComponent("stat.generalButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.general);
         })));
 
         // Items
         TabButton itemsTab;
-        this.tabs.add(itemsTab = this.addButton(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslationTextComponent("stat.itemsButton"), button -> {
+        this.tabs.add(itemsTab = this.addButton(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, "items", new TranslationTextComponent("stat.itemsButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.items);
         }, (button, stack, mouseX, mouseY) -> {
@@ -151,7 +151,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
 
         // Mobs
         TabButton mobsTab;
-        this.tabs.add(mobsTab = this.addButton(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslationTextComponent("stat.mobsButton"), button -> {
+        this.tabs.add(mobsTab = this.addButton(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, "mobs", new TranslationTextComponent("stat.mobsButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mobs);
         }, (button, stack, mouseX, mouseY) -> {
@@ -196,10 +196,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
 
             if (this.getActiveList() instanceof TooltipProvider) {
                 TooltipProvider provider = (TooltipProvider) this.getActiveList();
-                if (provider.tooltipData() != null) {
-                    provider.renderTooltip(stack, this);
-                    provider.setTooltipData(null);
-                }
+                if (provider.tooltipData() != null) provider.renderTooltip(stack, this);
             }
         }
     }

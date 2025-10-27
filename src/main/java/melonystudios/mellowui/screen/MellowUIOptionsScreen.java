@@ -122,19 +122,19 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         if (highContrast != null && MellowUtils.highContrastUnavailable()) highContrast.active = false;
 
         // Tabs
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth * 2, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.mellow_ui"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth * 2, 10, tabWidth, 24, "mellow_ui", new TranslationTextComponent("tab.mellowui.mellow_ui"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mellowUIList);
         })));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.mellomedley"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth, 10, tabWidth, 24, "mellomedley", new TranslationTextComponent("tab.mellowui.mellomedley"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mellomedleyList);
         })));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.vanilla"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2, 10, tabWidth, 24, "vanilla", new TranslationTextComponent("tab.mellowui.vanilla"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.vanillaList);
         })));
-        this.tabs.add(this.addButton(new TabButton(this.width / 2 + tabWidth, 10, tabWidth, 24, new TranslationTextComponent("tab.mellowui.forge"), button -> {
+        this.tabs.add(this.addButton(new TabButton(this.width / 2 + tabWidth, 10, tabWidth, 24, "forge", new TranslationTextComponent("tab.mellowui.forge"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.forgeList);
         })));

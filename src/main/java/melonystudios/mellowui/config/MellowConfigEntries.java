@@ -87,7 +87,7 @@ public class MellowConfigEntries {
     public static final StyleBooleanOption LIST_BACKGROUND_STYLE = new StyleBooleanOption("config.mellowui.list_background_style", new TranslationTextComponent("config.mellowui.list_background_style.tooltip"),
             options -> CLIENT_CONFIGS.listBackgroundStyle.get(), (options, newValue) -> CLIENT_CONFIGS.listBackgroundStyle.set(newValue));
     public static final IteratableOption LOGO_STYLE = new TooltippedIterableOption("config.mellowui.logo_style", new TranslationTextComponent("config.mellowui.logo_style.tooltip"),
-            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(FourStyles.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
+            (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(LogoStyles.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
             (options, option) -> new TranslationTextComponent("config.mellowui.logo_style." + CLIENT_CONFIGS.logoStyle.get().toString(), new TranslationTextComponent("config.mellowui.logo_style")));
     public static final IteratableOption TITLE_STYLE = new TooltippedIterableOption("config.mellowui.title_style", new TranslationTextComponent("config.mellowui.title_style.tooltip"),
             (options, identifier) -> CLIENT_CONFIGS.titleStyle.set(ThreeStyles.byId(CLIENT_CONFIGS.titleStyle.get().getId() + identifier)),
@@ -96,6 +96,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.pauseStyle.get(), (options, newValue) -> CLIENT_CONFIGS.pauseStyle.set(newValue));
     public static final StyleBooleanOption CREATE_NEW_WORLD_STYLE = new StyleBooleanOption("config.mellowui.create_new_world_style", new TranslationTextComponent("config.mellowui.create_new_world_style.tooltip"),
             options -> CLIENT_CONFIGS.createNewWorldStyle.get(), (options, newValue) -> CLIENT_CONFIGS.createNewWorldStyle.set(newValue));
+    public static final StyleBooleanOption WORLD_LOADING_STYLE = new StyleBooleanOption("config.mellowui.world_loading_style", new TranslationTextComponent("config.mellowui.world_loading_style.tooltip"),
+            options -> CLIENT_CONFIGS.worldLoadingStyle.get(), (options, newValue) -> CLIENT_CONFIGS.worldLoadingStyle.set(newValue));
     public static final StyleBooleanOption OPTIONS_STYLE = new StyleBooleanOption("config.mellowui.options_style", new TranslationTextComponent("config.mellowui.options_style.tooltip"),
             options -> CLIENT_CONFIGS.optionsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.optionsStyle.set(newValue));
     public static final StyleBooleanOption SKIN_CUSTOMIZATION_STYLE = new StyleBooleanOption("config.mellowui.skin_customization_style", new TranslationTextComponent("config.mellowui.skin_customization_style.tooltip"),
@@ -134,6 +136,8 @@ public class MellowConfigEntries {
                 option.setTooltip(Minecraft.getInstance().font.split(MOD_LIST_STYLE_TOOLTIP, TOOLTIP_MAX_WIDTH));
                 return new TranslationTextComponent("config.mellowui.mod_list_style", new TranslationTextComponent("config.mellowui.mod_list_style." + CLIENT_CONFIGS.modListStyle.get().toString()));
             });
+    public static final StyleBooleanOption LOADING_ERRORS_STYLE = new StyleBooleanOption("config.mellowui.loading_errors_style", new TranslationTextComponent("config.mellowui.loading_errors_style.tooltip"),
+            options -> CLIENT_CONFIGS.loadingErrorsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.loadingErrorsStyle.set(newValue));
     public static final BooleanOption REPLACE_REALMS_NOTIFICATIONS = new BooleanOption("config.mellowui.replace_realms_notifications", new TranslationTextComponent("config.mellowui.replace_realms_notifications.tooltip"),
             options -> CLIENT_CONFIGS.replaceRealmsNotifications.get(), (options, newValue) -> CLIENT_CONFIGS.replaceRealmsNotifications.set(newValue));
     public static final StyleBooleanOption SPLASH_TEXT_POSITION = new StyleBooleanOption("config.mellowui.splash_text_position", new TranslationTextComponent("config.mellowui.splash_text_position.tooltip"),

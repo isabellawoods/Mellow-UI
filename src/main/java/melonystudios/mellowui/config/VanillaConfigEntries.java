@@ -42,7 +42,8 @@ public class VanillaConfigEntries {
             (options, newValue) -> CLIENT_CONFIGS.menuBackgroundBlurriness.set((int) Math.round(newValue)),
             (options, slider) -> {
                 slider.setTooltip(Minecraft.getInstance().font.split(new TranslationTextComponent("config.minecraft.menu_background_blurriness.tooltip"), TOOLTIP_MAX_WIDTH));
-                return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("config.minecraft.menu_background_blurriness"), (int) Math.round(slider.get(options)));
+                int value = (int) Math.round(slider.get(options));
+                return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("config.minecraft.menu_background_blurriness"), value != 0 ? value : new TranslationTextComponent("options.off"));
             });
     public static final BooleanOption SHOW_MUSIC_TOAST = new MusicToastOption("config.minecraft.show_music_toast", new TranslationTextComponent("config.minecraft.show_music_toast.tooltip"),
             options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));

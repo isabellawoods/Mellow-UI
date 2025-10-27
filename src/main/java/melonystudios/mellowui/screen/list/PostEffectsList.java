@@ -3,9 +3,9 @@ package melonystudios.mellowui.screen.list;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.PostEffect;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.chat.NarratorChatListener;
@@ -97,8 +97,8 @@ public class PostEffectsList extends ExtendedList<PostEffectsList.Shader> {
             this.y = top;
             this.width = width;
             this.height = height;
-            int color = MellowUtils.getSelectableTextColor(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders);
-            drawString(stack, this.parentScreen.getMinecraft().font, new TranslationTextComponent("post_effect.dot", this.name()), left + 5, top + 2, color);
+            drawString(stack, this.parentScreen.getMinecraft().font, new TranslationTextComponent("post_effect.dot", this.name())
+                    .withStyle(TextComponents.selectableStyle(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders)), left + 5, top + 2, 0xFFFFFF);
         }
 
         @Override

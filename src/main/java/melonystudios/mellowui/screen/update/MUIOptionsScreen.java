@@ -7,10 +7,11 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.screen.backport.OnlineOptionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
@@ -39,7 +40,7 @@ public class MUIOptionsScreen extends SettingsScreen {
     private Difficulty currentDifficulty;
 
     public MUIOptionsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("options.title"));
+        super(lastScreen, options, new TranslationTextComponent("options.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override
@@ -126,7 +127,7 @@ public class MUIOptionsScreen extends SettingsScreen {
 
         // Credits & Attribution
         this.addButton(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslationTextComponent("button.mellowui.credits_and_attribution"),
-                button -> this.minecraft.setScreen(new AttributionsScreen(this))));
+                button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this))));
 
         // Done button
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,

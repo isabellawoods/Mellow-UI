@@ -24,7 +24,7 @@ public class ForgeClientOptionsScreen extends SettingsScreen {
     private OptionsRowList list;
 
     public ForgeClientOptionsScreen(Screen screen, GameSettings options) {
-        super(screen, options, TextComponents.buildScreenSubtitle("forge", "Forge", new TranslationTextComponent("menu.forge.client_options.title")));
+        super(screen, options, TextComponents.buildScreenSubtitle("forge", "Forge", new TranslationTextComponent("menu.forge.client_options.title").withStyle(TextComponents.titleStyle())));
     }
 
     @Override

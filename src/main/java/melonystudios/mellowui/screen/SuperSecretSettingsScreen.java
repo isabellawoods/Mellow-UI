@@ -6,6 +6,7 @@ import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.list.PostEffectsList;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.DialogTexts;
@@ -27,7 +28,7 @@ public class SuperSecretSettingsScreen extends Screen {
     private Button doneButton;
 
     public SuperSecretSettingsScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("menu.mellowui.super_secret_settings.title"));
+        super(new TranslationTextComponent("menu.mellowui.super_secret_settings.title").withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
     }
 
@@ -64,8 +65,8 @@ public class SuperSecretSettingsScreen extends Screen {
         Optional<PostEffectsList.Shader> shader = list.getMouseOver(mouseX, mouseY);
         if (shader.isPresent()) {
             boolean canSelectShader = Panoramas.panorama().shader() == null;
-            IFormattableTextComponent component = shader.get().name().copy().withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(list.getSelected() == shader.get(), canSelectShader)));
-            component.append("\n").append(new TranslationTextComponent(((TranslationTextComponent) shader.get().name()).getKey() + ".tooltip").withStyle(TextFormatting.GRAY));
+            IFormattableTextComponent component = shader.get().name().copy().withStyle(TextComponents.selectableStyle(list.getSelected() == shader.get(), canSelectShader));
+            component.append("\n").append(new TranslationTextComponent(((TranslationTextComponent) shader.get().name()).getKey() + ".tooltip").withStyle(TextComponents.descriptionStyle()));
             component.append("\n").append(new StringTextComponent(shader.get().effect().assetID().toString()).withStyle(TextFormatting.DARK_GRAY));
             component.append(new TranslationTextComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(TextFormatting.DARK_GRAY));
             if (!canSelectShader) component.append("\n").append(new TranslationTextComponent("post_effect.locked"));

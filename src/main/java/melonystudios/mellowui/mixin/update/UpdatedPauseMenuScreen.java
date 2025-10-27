@@ -9,6 +9,7 @@ import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.FeedbackScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetModButton;
 import melonystudios.mellowui.widget.ModButton;
 import net.minecraft.client.audio.ISound;
@@ -179,9 +180,9 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             callback.cancel();
             if (this.showPauseMenu) {
                 this.renderBackground(stack);
-                drawCenteredString(stack, this.font, this.title, this.width / 2, 56 + MellowUtils.PAUSE_MENU_Y_OFFSET, 0xFFFFFF);
+                drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 56 + MellowUtils.PAUSE_MENU_Y_OFFSET, 0xFFFFFF);
             } else {
-                drawCenteredString(stack, this.font, this.title, this.width / 2, 10, 0xFFFFFF);
+                drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 10, 0xFFFFFF);
             }
 
             super.render(stack, mouseX, mouseY, partialTicks);

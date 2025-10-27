@@ -2,7 +2,6 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -52,14 +51,13 @@ public class ThemeList extends ExtendedList<ThemeList.Entry> {
         super.renderList(stack, x, y, mouseX, mouseY, partialTicks);
         stack.pushPose();
         stack.scale(1.5F, 1.5F, 1.5F);
-        drawCenteredString(stack, this.minecraft.font, new TranslationTextComponent("menu.mellowui.customization.theme.title")
-                        .withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(true, true)).withBold(true)),
+        drawCenteredString(stack, this.minecraft.font, new TranslationTextComponent("menu.mellowui.customization.theme.title").withStyle(TextComponents.selectableStyle(true, true).withBold(true)),
                 this.width / 3, this.height / 3 - 15, 0xFFFFFF);
         stack.popPose();
 
-        List<IReorderingProcessor> processors = this.minecraft.font.split(new TranslationTextComponent("menu.mellowui.customization.theme.desc").withStyle(TextComponents.descriptionStyle()), this.width - 50);
+        List<IReorderingProcessor> lines = this.minecraft.font.split(new TranslationTextComponent("menu.mellowui.customization.theme.desc").withStyle(TextComponents.descriptionStyle()), this.width - 50);
         int yOffset = this.height / 2;
-        for (IReorderingProcessor processor : processors) {
+        for (IReorderingProcessor processor : lines) {
             this.minecraft.font.drawShadow(stack, processor, this.width / 2 - this.minecraft.font.width(processor) / 2, yOffset, 0xFFFFFF);
             yOffset += this.minecraft.font.lineHeight + 1;
         }

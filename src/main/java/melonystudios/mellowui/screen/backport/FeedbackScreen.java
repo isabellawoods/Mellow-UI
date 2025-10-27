@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen.backport;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -12,7 +13,7 @@ public class FeedbackScreen extends Screen {
     private final Screen lastScreen;
 
     public FeedbackScreen(Screen lastScreen) {
-        super(new TranslationTextComponent("menu.mellowui.feedback.title"));
+        super(new TranslationTextComponent("menu.mellowui.feedback.title").withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
     }
 

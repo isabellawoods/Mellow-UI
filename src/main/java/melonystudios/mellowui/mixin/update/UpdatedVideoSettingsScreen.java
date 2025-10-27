@@ -6,6 +6,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.FullscreenResolutionOption;
 import net.minecraft.client.GameSettings;
@@ -74,7 +75,7 @@ public class UpdatedVideoSettingsScreen extends SettingsScreen {
         callback.cancel();
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
         List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
         if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);

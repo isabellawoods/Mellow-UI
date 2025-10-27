@@ -10,7 +10,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.resource.panorama.Panoramas;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -62,7 +62,9 @@ public class ShaderManager {
     public static void setPostEffect(Minecraft minecraft, PostEffect effect, boolean applyInWorld, boolean saveToDisk) {
         CURRENT_EFFECT = effect;
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
-        if (saveToDisk) MellowConfigs.CLIENT_CONFIGS.selectedEffect.set(effect.assetID().toString());
+        if (saveToDisk && MellowConfigs.CLIENT_CONFIGS.selectedEffect != null && !MellowConfigs.CLIENT_CONFIGS.selectedEffect.get().equals(effect.assetID().toString())) {
+            MellowConfigs.CLIENT_CONFIGS.selectedEffect.set(effect.assetID().toString());
+        }
         if (minecraft.level != null && applyInWorld) minecraft.gameRenderer.loadEffect(CURRENT_EFFECT.getPostEffectFile());
     }
 
@@ -86,9 +88,9 @@ public class ShaderManager {
             PANORAMA_SHADER = new ShaderGroup(minecraft.getTextureManager(), resourceManager, minecraft.getMainRenderTarget(), shaderLocation);
             PANORAMA_SHADER.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
         } catch (IOException exception) {
-            MellowUI.logger("ShaderManager").warn(MellowUtils.translate("error.mellowui.load_shader", "Failed to load shader: '%s'", shaderLocation), exception);
+            MellowUI.logger("ShaderManager").warn(TextComponents.translate("error.mellowui.load_shader", "Failed to load shader: '%s'", shaderLocation), exception);
         } catch (JsonSyntaxException exception) {
-            MellowUI.logger("ShaderManager").warn(MellowUtils.translate("error.mellowui.parse_shader", "Failed to parse shader: '%s'", shaderLocation), exception);
+            MellowUI.logger("ShaderManager").warn(TextComponents.translate("error.mellowui.parse_shader", "Failed to parse shader: '%s'", shaderLocation), exception);
         }
     }
 

@@ -1,11 +1,12 @@
 package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.screen.PackScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.list.ResourcePackList;
 import net.minecraft.util.text.ITextComponent;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,9 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PackScreen.class)
 public abstract class MUIPackSelectionScreenMixin extends Screen {
-    @Shadow
-    @Final
-    private static ITextComponent DRAG_AND_DROP;
     @Shadow
     private ResourcePackList availablePackList;
     @Shadow
@@ -32,8 +30,8 @@ public abstract class MUIPackSelectionScreenMixin extends Screen {
         this.renderBackground(stack);
         this.availablePackList.render(stack, mouseX, mouseY, partialTicks);
         this.selectedPackList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, 8, 0xFFFFFF);
-        drawCenteredString(stack, this.font, DRAG_AND_DROP, this.width / 2, 20, 0xFFFFFF);
+        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 8, 0xFFFFFF);
+        drawCenteredString(stack, this.font, new TranslationTextComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), this.width / 2, 20, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 }

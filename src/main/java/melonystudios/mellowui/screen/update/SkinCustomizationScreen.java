@@ -6,6 +6,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.option.ModelPartBooleanOption;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;
@@ -27,7 +28,7 @@ public class SkinCustomizationScreen extends SettingsScreen {
     private OptionsRowList list;
 
     public SkinCustomizationScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, new TranslationTextComponent("options.skinCustomisation.title"));
+        super(lastScreen, options, new TranslationTextComponent("options.skinCustomisation.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override
