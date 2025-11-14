@@ -1,7 +1,7 @@
 package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.gui.screen.CreateBuffetWorldScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.ITextComponent;

@@ -6,14 +6,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.screen.tab.*;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.tab.Tab;
+import melonystudios.mellowui.element.tab.TabManager;
+import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.text.TooltipDisplayData;
+import melonystudios.mellowui.element.widget.HardcoreSetButton;
+import melonystudios.mellowui.element.widget.TabButton;
+import melonystudios.mellowui.element.widget.TooltippedTextField;
 import melonystudios.mellowui.sound.MUISounds;
-import melonystudios.mellowui.util.text.TextComponents;
-import melonystudios.mellowui.util.text.TooltipDisplayData;
-import melonystudios.mellowui.widget.HardcoreSetButton;
-import melonystudios.mellowui.widget.TabButton;
-import melonystudios.mellowui.widget.TooltippedTextField;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -527,7 +528,7 @@ public class CreateNewWorldScreen extends Screen {
         @Override
         public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
             super.render(stack, mouseX, mouseY, partialTicks);
-            if (this.nameEdit != null) drawString(stack, this.minecraft.font, new TranslationTextComponent("selectWorld.enterName"), this.nameEdit.x, 56, 0xFFFFFF);
+            if (this.nameEdit != null) this.components.drawString(new TranslationTextComponent("selectWorld.enterName"), true, this.nameEdit.x, 56, 0xFFFFFF);
         }
     }
 
@@ -621,9 +622,9 @@ public class CreateNewWorldScreen extends Screen {
         public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
             super.render(stack, mouseX, mouseY, partialTicks);
             this.components.renderTextBoxSuggestion(this.seedEdit, new TranslationTextComponent("selectWorld.seedInfo").withStyle(TextFormatting.DARK_GRAY));
-            drawString(stack, this.minecraft.font, new TranslationTextComponent("selectWorld.enterSeed"), CreateNewWorldScreen.this.width / 2 - 155, 84, 0xFFFFFF);
-            drawString(stack, this.minecraft.font, new TranslationTextComponent("selectWorld.mapFeatures"), CreateNewWorldScreen.this.width / 2 - 155, 135, 0xFFFFFF);
-            drawString(stack, this.minecraft.font, new TranslationTextComponent("selectWorld.bonusItems"), CreateNewWorldScreen.this.width / 2 - 155, 159, 0xFFFFFF);
+            this.components.drawString(new TranslationTextComponent("selectWorld.enterSeed"), true, CreateNewWorldScreen.this.width / 2 - 155, 84, 0xFFFFFF);
+            this.components.drawString(new TranslationTextComponent("selectWorld.mapFeatures"), true, CreateNewWorldScreen.this.width / 2 - 155, 135, 0xFFFFFF);
+            this.components.drawString(new TranslationTextComponent("selectWorld.bonusItems"), true, CreateNewWorldScreen.this.width / 2 - 155, 159, 0xFFFFFF);
         }
     }
 

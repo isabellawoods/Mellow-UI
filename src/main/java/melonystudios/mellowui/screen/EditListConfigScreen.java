@@ -2,9 +2,9 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.list.ConfigEntriesList;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;

@@ -2,7 +2,7 @@ package melonystudios.mellowui.resource.flair;
 
 import com.google.gson.*;
 import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.util.ResourceLocation;
 
 import java.lang.reflect.Type;

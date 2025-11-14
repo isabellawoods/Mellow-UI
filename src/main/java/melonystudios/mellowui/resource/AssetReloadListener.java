@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.profiler.EmptyProfiler;
 import net.minecraft.profiler.IProfiler;

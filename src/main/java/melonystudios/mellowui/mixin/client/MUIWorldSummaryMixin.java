@@ -1,6 +1,6 @@
 package melonystudios.mellowui.mixin.client;
 
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.storage.WorldSummary;

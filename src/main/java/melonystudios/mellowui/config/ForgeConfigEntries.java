@@ -9,7 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
-import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
+import static melonystudios.mellowui.element.RenderComponents.TOOLTIP_MAX_WIDTH;
 import static net.minecraftforge.common.ForgeConfig.*;
 
 public class ForgeConfigEntries {

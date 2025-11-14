@@ -1,7 +1,7 @@
 package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.advancements.AdvancementTabGui;
 import net.minecraft.client.gui.advancements.AdvancementsScreen;

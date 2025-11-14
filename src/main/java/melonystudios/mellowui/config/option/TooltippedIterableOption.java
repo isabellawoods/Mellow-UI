@@ -1,6 +1,6 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;

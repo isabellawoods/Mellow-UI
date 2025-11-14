@@ -1,6 +1,6 @@
 package melonystudios.mellowui.mixin.option;
 
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.settings.BooleanOption;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

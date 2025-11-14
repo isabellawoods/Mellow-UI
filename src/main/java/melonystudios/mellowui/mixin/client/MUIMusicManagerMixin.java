@@ -1,8 +1,8 @@
 package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.toast.MusicToast;
 import melonystudios.mellowui.methods.InterfaceMethods;
-import melonystudios.mellowui.screen.MusicToast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.*;
 import net.minecraft.util.SoundCategory;
@@ -17,7 +17,9 @@ import javax.annotation.Nullable;
 
 @Mixin(MusicTicker.class)
 public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethods {
-    @Shadow @Nullable private ISound currentMusic;
+    @Shadow
+    @Nullable
+    private ISound currentMusic;
 
     @Inject(method = "startPlaying", at = @At("TAIL"))
     public void addMusicToast(BackgroundMusicSelector music, CallbackInfo callback) {

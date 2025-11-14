@@ -3,7 +3,7 @@ package melonystudios.mellowui.mixin.screen.list;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.sound.MUISounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;

@@ -2,7 +2,7 @@ package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
 import net.minecraft.client.gui.screen.Screen;

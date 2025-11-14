@@ -2,8 +2,8 @@ package melonystudios.mellowui.screen.forge;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.gui.DialogTexts;

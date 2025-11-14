@@ -1,5 +1,6 @@
 package melonystudios.mellowui.backport;
 
+import melonystudios.mellowui.element.text.MultiLineLabel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

@@ -3,27 +3,27 @@ package melonystudios.mellowui.mixin.update;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.realmsclient.client.RealmsClient;
 import com.mojang.realmsclient.exception.RealmsServiceException;
-import melonystudios.mellowui.backport.MultiLineLabel;
+import melonystudios.mellowui.backport.TitleScreen32BitWarning;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.config.type.FourStyles;
 import melonystudios.mellowui.config.type.ThreeStyles;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.MultiLineLabel;
+import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.ImageSetModButton;
+import melonystudios.mellowui.element.widget.ModButton;
+import melonystudios.mellowui.element.widget.text.PlainTextButton;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
-import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
-import melonystudios.mellowui.screen.MellomedleyTitleScreen;
-import melonystudios.mellowui.backport.TitleScreen32BitWarning;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.text.TextComponents;
-import melonystudios.mellowui.widget.ImageSetModButton;
-import melonystudios.mellowui.widget.ModButton;
-import melonystudios.mellowui.widget.text.PlainTextButton;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.widget.Widget;
@@ -240,7 +240,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
                 // 32-bit deprecation warning
                 if (this.warning32Bit != null) {
-                    this.components.renderCenteredLabelBackground(stack, new TranslationTextComponent("menu.minecraft.32bit_deprecation"), this.warning32Bit.x(), this.warning32Bit.y(), 9, 2, 350, 2, WidgetConfigs.WIDGET_CONFIGS.warning32BitColor.get() | 85 << 24);
+                    this.components.renderCenteredLabelBackground(new TranslationTextComponent("menu.minecraft.32bit_deprecation"), this.warning32Bit.x(), this.warning32Bit.y(), 9, 2, 350, 2, WidgetConfigs.WIDGET_CONFIGS.warning32BitColor.get() | 85 << 24);
                     this.warning32Bit.label().renderCentered(stack, this.warning32Bit.x(), this.warning32Bit.y(), 9, textColor | textAlpha);
                 }
 

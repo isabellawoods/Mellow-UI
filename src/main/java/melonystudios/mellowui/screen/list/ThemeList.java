@@ -1,8 +1,8 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.list.ExtendedList;

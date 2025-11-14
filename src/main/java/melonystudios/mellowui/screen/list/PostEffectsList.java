@@ -1,11 +1,11 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.util.shader.PostEffect;
 import melonystudios.mellowui.util.shader.ShaderManager;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.chat.NarratorChatListener;

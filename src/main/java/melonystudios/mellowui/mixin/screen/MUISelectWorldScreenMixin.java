@@ -1,8 +1,8 @@
 package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;

@@ -2,13 +2,13 @@ package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.methods.InterfaceMethods.*;
 import melonystudios.mellowui.resource.panorama.BobbingPitch;
 import melonystudios.mellowui.resource.panorama.ConstantPitch;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.resource.panorama.PitchOverrider;
-import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
@@ -28,18 +28,11 @@ import java.util.List;
 
 @Mixin(RenderSkybox.class)
 public class MUIPanoramaRendererMixin implements PanoramaRendererMethods {
-    @Shadow
-    @Final
-    private Minecraft minecraft;
-    @Shadow
-    @Final
-    private RenderSkyboxCube cubeMap;
-    @Shadow
-    private float time;
-    @Unique
-    private float spin;
-    @Unique
-    private float bob;
+    @Shadow @Final private Minecraft minecraft;
+    @Shadow @Final private RenderSkyboxCube cubeMap;
+    @Shadow private float time;
+    @Unique private float spin;
+    @Unique private float bob;
 
     @Override
     public boolean differentPanorama(RenderSkybox renderer) {

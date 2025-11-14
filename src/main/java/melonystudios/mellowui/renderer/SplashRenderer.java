@@ -1,7 +1,7 @@
 package melonystudios.mellowui.renderer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.Util;

@@ -3,7 +3,7 @@
   "promos": {
     "1.18.2-latest": "4.6.0",
     "1.18.2-recommended": "4.6.0",
-    "1.16.5-latest": "4.7.0",
+    "1.16.5-latest": "5.0.0-beta1",
     "1.16.5-recommended": "4.7.0"
   },
   "1.18.2": {
@@ -13,6 +13,7 @@
     "2.4.3.1": "Initial Release of the 1.18 version"
   },
   "1.16.5": {
+    "5.0.0-beta1": "Moved Classes to \"element\" Folder & Start of GUI Atlas",
     "4.7.0": "Code Refactors, Vanilla Backports & Customization Screen Searching",
     "4.6.0": "Config Overhauls, Blur Fix & IMC Integration",
     "4.5.0": "Custom Panoramas, Flairs, Vanilla Backports & Config Updates",

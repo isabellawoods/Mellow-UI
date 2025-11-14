@@ -2,8 +2,8 @@ package melonystudios.mellowui.screen.forge;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.list.LoadingMessageList;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;

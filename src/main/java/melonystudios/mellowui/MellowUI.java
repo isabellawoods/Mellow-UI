@@ -6,11 +6,13 @@ import melonystudios.mellowui.resource.flair.FlairReloadListener;
 import melonystudios.mellowui.resource.panorama.PanoramaReloadListener;
 import melonystudios.mellowui.screen.MellowUIOptionsScreen;
 import melonystudios.mellowui.sound.MUISounds;
+import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -37,6 +39,7 @@ public class MellowUI {
         ModLoadingContext context = ModLoadingContext.get();
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
+        eventBus.addListener(this::registerGUISpriteUploader);
 
         MUISounds.SOUNDS.register(eventBus);
         MinecraftForge.EVENT_BUS.register(this);
@@ -90,4 +93,8 @@ public class MellowUI {
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
     private void clientSetup(final FMLClientSetupEvent event) {}
+
+    private void registerGUISpriteUploader(ColorHandlerEvent.Block event) {
+        GUITextures.registerGUISpriteUploader();
+    }
 }

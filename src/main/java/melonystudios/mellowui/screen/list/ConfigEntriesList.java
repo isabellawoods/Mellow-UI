@@ -1,10 +1,10 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.text.ScrollingText;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.EditListConfigScreen;
 import melonystudios.mellowui.util.Alignment;
-import melonystudios.mellowui.util.text.ScrollingText;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;

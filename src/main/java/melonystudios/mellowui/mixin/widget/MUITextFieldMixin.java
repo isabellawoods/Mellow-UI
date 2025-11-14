@@ -2,8 +2,8 @@ package melonystudios.mellowui.mixin.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.WidgetConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.IScreen;
