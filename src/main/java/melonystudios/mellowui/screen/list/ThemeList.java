@@ -57,8 +57,8 @@ public class ThemeList extends ExtendedList<ThemeList.Entry> {
 
         List<IReorderingProcessor> lines = this.minecraft.font.split(new TranslationTextComponent("menu.mellowui.customization.theme.desc").withStyle(TextComponents.descriptionStyle()), this.width - 50);
         int yOffset = this.height / 2;
-        for (IReorderingProcessor processor : lines) {
-            this.minecraft.font.drawShadow(stack, processor, this.width / 2 - this.minecraft.font.width(processor) / 2, yOffset, 0xFFFFFF);
+        for (IReorderingProcessor line : lines) {
+            this.minecraft.font.drawShadow(stack, line, this.width / 2 - this.minecraft.font.width(line) / 2, yOffset, 0xFFFFFF);
             yOffset += this.minecraft.font.lineHeight + 1;
         }
     }

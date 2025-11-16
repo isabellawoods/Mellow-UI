@@ -80,9 +80,9 @@ public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message>
             int y = top + 2;
             int lineHeight = top + (height / 2);
 
-            for (IReorderingProcessor processor : lines) {
+            for (IReorderingProcessor line : lines) {
                 if (this.header) {
-                    int textWidth = font.width(processor);
+                    int textWidth = font.width(line);
                     Color color = this.component.getStyle().getColor();
                     int separatorColor = color != null ? 0xFF000000 + color.getValue() : 0xFFFFFFFF;
 
@@ -94,9 +94,9 @@ public class LoadingMessageList extends ExtendedList<LoadingMessageList.Message>
                     fill(stack, (left + width / 2) + (textWidth / 2) + 4, lineHeight, left + width - 5, lineHeight + 1, separatorColor);
                     fill(stack, (left + width / 2) + (textWidth / 2) + 5, lineHeight + 1, left + width - 4, lineHeight + 2, TextComponents.darkenColor(color != null ? color.getValue() : 0xFFFFFF, 1, 0.25F));
 
-                    font.drawShadow(stack, processor, left + width / 2 - (textWidth / 2), y + 5, 0xFFFFFF);
+                    font.drawShadow(stack, line, left + width / 2 - (textWidth / 2), y + 5, 0xFFFFFF);
                 } else {
-                    font.drawShadow(stack, processor, left + 5, y, 0xFFFFFF);
+                    font.drawShadow(stack, line, left + 5, y, 0xFFFFFF);
                     y += font.lineHeight + 1;
                 }
             }

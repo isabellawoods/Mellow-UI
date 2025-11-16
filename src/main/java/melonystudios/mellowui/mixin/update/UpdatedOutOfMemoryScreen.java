@@ -57,8 +57,8 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
 
         List<IReorderingProcessor> lines = this.font.split(new TranslationTextComponent("menu.mellowui.out_of_memory.message"), this.width - 35);
         int yOffset = 80;
-        for (IReorderingProcessor processor : lines) {
-            this.components.drawString(processor, true, 25, yOffset, 0xFFFFFF);
+        for (IReorderingProcessor line : lines) {
+            this.components.drawString(line, true, 25, yOffset, 0xFFFFFF);
             yOffset += this.font.lineHeight + 1;
         }
 
