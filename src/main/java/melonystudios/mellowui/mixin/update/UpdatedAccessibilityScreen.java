@@ -6,6 +6,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
@@ -97,7 +98,7 @@ public abstract class UpdatedAccessibilityScreen extends OptionsSubScreen {
         if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.accessibility_settings.title"), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+            drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.accessibility_settings.title").withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
             for (Widget widget : this.renderables) widget.render(stack, mouseX, mouseY, partialTicks);
             List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
             if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);

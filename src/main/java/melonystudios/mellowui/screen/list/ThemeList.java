@@ -2,7 +2,6 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -55,15 +54,14 @@ public class ThemeList extends ObjectSelectionList<ThemeList.Entry> {
         super.renderList(stack, x, y, mouseX, mouseY, partialTicks);
         stack.pushPose();
         stack.scale(1.5F, 1.5F, 1.5F);
-        drawCenteredString(stack, this.minecraft.font, new TranslatableComponent("menu.mellowui.customization.theme.title")
-                        .withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(true, true)).withBold(true)),
+        drawCenteredString(stack, this.minecraft.font, new TranslatableComponent("menu.mellowui.customization.theme.title").withStyle(TextComponents.selectableStyle(true, true).withBold(true)),
                 this.width / 3, this.height / 3 - 15, 0xFFFFFF);
         stack.popPose();
 
-        List<FormattedCharSequence> processors = this.minecraft.font.split(new TranslatableComponent("menu.mellowui.customization.theme.desc").withStyle(TextComponents.descriptionStyle()), this.width - 50);
+        List<FormattedCharSequence> lines = this.minecraft.font.split(new TranslatableComponent("menu.mellowui.customization.theme.desc").withStyle(TextComponents.descriptionStyle()), this.width - 50);
         int yOffset = this.height / 2;
-        for (FormattedCharSequence processor : processors) {
-            this.minecraft.font.drawShadow(stack, processor, this.width / 2 - this.minecraft.font.width(processor) / 2, yOffset, 0xFFFFFF);
+        for (FormattedCharSequence line : lines) {
+            this.minecraft.font.drawShadow(stack, line, this.width / 2 - this.minecraft.font.width(line) / 2, yOffset, 0xFFFFFF);
             yOffset += this.minecraft.font.lineHeight + 1;
         }
     }

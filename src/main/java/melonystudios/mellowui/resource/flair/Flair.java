@@ -3,7 +3,7 @@ package melonystudios.mellowui.resource.flair;
 import com.google.gson.*;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.update.MellowModListScreen;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.Type;
@@ -23,7 +23,7 @@ public record Flair(int accentColor) {
             if (element.isJsonObject()) {
                 return new Flair(element.getAsJsonObject().get("accent_color").getAsInt());
             } else {
-                throw new JsonParseException(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", element.toString()));
+                throw new JsonParseException(TextComponents.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", element.toString()));
             }
         }
 

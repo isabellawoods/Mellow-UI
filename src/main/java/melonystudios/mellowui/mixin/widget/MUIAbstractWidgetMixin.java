@@ -5,8 +5,8 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.util.Alignment;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -81,6 +81,6 @@ public abstract class MUIAbstractWidgetMixin extends GuiComponent implements Scr
     public void getButtonTextColor(CallbackInfoReturnable<Integer> callback) {
         callback.cancel();
         if (this.packedFGColor != UNSET_FG_COLOR) callback.setReturnValue(this.packedFGColor);
-        callback.setReturnValue(MellowUtils.getSelectableTextColor(this.isHoveredOrFocused(), this.active));
+        callback.setReturnValue(TextComponents.selectableColor(this.isHoveredOrFocused(), this.active));
     }
 }

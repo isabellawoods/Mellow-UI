@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -47,12 +47,12 @@ public abstract class AssetReloadListener extends SimplePreparableReloadListener
                 JsonElement element = GsonHelper.fromJson(this.gson, reader, JsonElement.class);
                 if (element != null) {
                     JsonElement element1 = entries.put(entryLocation, element);
-                    if (element1 != null) throw new IllegalArgumentException(MellowUtils.translate("logger.mellowui.asset_reloader.duplicate", "Ignored duplicate asset file with ID '%s'", entryLocation));
+                    if (element1 != null) throw new IllegalArgumentException(TextComponents.translate("logger.mellowui.asset_reloader.duplicate", "Ignored duplicate asset file with ID '%s'", entryLocation));
                 } else {
-                    LOGGER.error(MellowUtils.translate("logger.mellowui.asset_reloader.loading", "Couldn't load asset file '%s' from '%s' as it's null or empty", entryLocation, fileLocation));
+                    LOGGER.error(TextComponents.translate("logger.mellowui.asset_reloader.loading", "Couldn't load asset file '%s' from '%s' as it's null or empty", entryLocation, fileLocation));
                 }
             } catch (IllegalArgumentException | IOException | JsonParseException exception) {
-                LOGGER.error(MellowUtils.translate("logger.mellowui.asset_reloader.parsing", "Couldn't parse asset file '%s' from '%s'", entryLocation, fileLocation), exception);
+                LOGGER.error(TextComponents.translate("logger.mellowui.asset_reloader.parsing", "Couldn't parse asset file '%s' from '%s'", entryLocation, fileLocation), exception);
             }
         }
 

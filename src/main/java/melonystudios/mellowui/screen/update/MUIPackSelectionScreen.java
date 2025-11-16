@@ -9,6 +9,7 @@ import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -73,8 +74,8 @@ public class MUIPackSelectionScreen extends Screen {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.packList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, 8, 0xFFFFFF);
-        drawCenteredString(stack, this.font, new TranslatableComponent("pack.dropInfo").withStyle(ChatFormatting.GRAY), this.width / 2, 20, 0xFFFFFF);
+        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 8, 0xFFFFFF);
+        drawCenteredString(stack, this.font, new TranslatableComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), this.width / 2, 20, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

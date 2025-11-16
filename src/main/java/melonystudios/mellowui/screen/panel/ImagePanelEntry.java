@@ -7,7 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.update.MellowModListScreen;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -63,7 +63,7 @@ public class ImagePanelEntry extends PanelEntry {
             TextureManager manager = this.panel.getMinecraft().getTextureManager();
             PathResourcePack resourcePack = ResourcePackLoader.getPackFor(this.mod.getModId())
                     .orElse(ResourcePackLoader.getPackFor("forge")
-                            .orElseThrow(() -> new RuntimeException(MellowUtils.translate("error.mellowui.cannot_find_forge", "Failed to find Forge, WHAT!"))));
+                            .orElseThrow(() -> new RuntimeException(TextComponents.translate("error.mellowui.cannot_find_forge", "Failed to find Forge, WHAT!"))));
 
             if (this.mod.getModId().equals("minecraft")) {
                 return Pair.of(LogoRenderer.MINECRAFT_LOGO, new Size2i(1024, 256));

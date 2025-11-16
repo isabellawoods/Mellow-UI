@@ -3,9 +3,8 @@ package melonystudios.mellowui.screen.popup;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.option.BooleanOption;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
-import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -33,8 +32,8 @@ public class EditValueScreen extends Screen {
     private EditBox entryWidget;
 
     public EditValueScreen(Screen lastScreen, Component configName, ForgeConfigSpec.ConfigValue<?> entry, Object savedValue, boolean displayColor) {
-        super(TextComponent.EMPTY);
-        this.title = new TranslatableComponent("menu.mellowui.edit_value.title", configName).withStyle(ChatFormatting.BOLD);
+        super(NarratorChatListener.NO_TITLE);
+        this.title = new TranslatableComponent("menu.mellowui.edit_value.title", configName).withStyle(TextComponents.titleStyle().withBold(true));
         this.lastScreen = lastScreen;
         this.configName = configName;
         this.entry = entry;
@@ -86,10 +85,12 @@ public class EditValueScreen extends Screen {
             this.addRenderableWidget(option.createButton(this.minecraft.options, this.width / 2 - 125, this.height / 2 - 10, 250));
         } else if (this.entry instanceof ForgeConfigSpec.IntValue value) {
             this.entryWidget = new EditBox(this.font, this.width / 2 - 125, this.height / 2 - 10, 250, 20, this.configName);
-            this.entryWidget.setValue("#" + Integer.toHexString(value.get()));
+            if (this.displayColor) this.entryWidget.setValue("#" + Integer.toHexString(value.get()));
+            else this.entryWidget.setValue(Integer.toString(value.get()));
         } else if (this.entry instanceof ForgeConfigSpec.LongValue value) {
             this.entryWidget = new EditBox(this.font, this.width / 2 - 125, this.height / 2 - 10, 250, 20, this.configName);
-            this.entryWidget.setValue("#" + Long.toHexString(value.get()));
+            if (this.displayColor) this.entryWidget.setValue("#" + Long.toHexString(value.get()));
+            else this.entryWidget.setValue(Long.toString(value.get()));
         } else if (this.entry instanceof ForgeConfigSpec.DoubleValue value) {
             this.entryWidget = new EditBox(this.font, this.width / 2 - 125, this.height / 2 - 10, 250, 20, this.configName);
             this.entryWidget.setValue(Double.toString(value.get()));
@@ -176,6 +177,7 @@ public class EditValueScreen extends Screen {
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
+        boolean showHexMessage = this.entry instanceof ForgeConfigSpec.IntValue || this.entry instanceof ForgeConfigSpec.LongValue;
 
         if (this.displayColor && this.entry instanceof ForgeConfigSpec.IntValue && this.entryWidget != null) {
             int color = (int) this.entry.get();
@@ -184,13 +186,13 @@ public class EditValueScreen extends Screen {
             } catch (NumberFormatException ignored) {}
 
             MutableComponent component = new TranslatableComponent("menu.mellowui.edit_value.title",
-                    this.configName.copy().withStyle(MellowUtils.withColor(color))).withStyle(ChatFormatting.BOLD);
+                    this.configName.copy().withStyle(TextComponents.withColor(color))).withStyle(TextComponents.titleStyle().withBold(true));
             drawCenteredString(stack, this.font, component, this.width / 2, this.height / 2 - 40, 0xFFFFFF);
         } else {
-            drawCenteredString(stack, this.font, this.getTitle(), this.width / 2, this.height / 2 - 40, 0xFFFFFF);
+            drawCenteredString(stack, this.font, this.getTitle(), this.width / 2, this.height / 2 - (showHexMessage ? 40 : 30), 0xFFFFFF);
         }
 
-        drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.edit_value.accepts_hex").withStyle(TextComponents.descriptionStyle()),
+        if (showHexMessage) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.edit_value.accepts_hex").withStyle(TextComponents.descriptionStyle()),
                 this.width / 2, this.height / 2 - 27, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }

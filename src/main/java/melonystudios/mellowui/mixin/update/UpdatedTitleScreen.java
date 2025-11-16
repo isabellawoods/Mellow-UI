@@ -1,6 +1,5 @@
 package melonystudios.mellowui.mixin.update;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen;
 import melonystudios.mellowui.config.MellowConfigs;
@@ -14,29 +13,24 @@ import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
-import melonystudios.mellowui.screen.update.TitleScreenWarning32Bit;
+import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
+import melonystudios.mellowui.screen.update.TitleScreen32BitWarning;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.widget.ImageSetModButton;
 import melonystudios.mellowui.widget.ModButton;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.multiplayer.SafetyScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.renderer.PanoramaRenderer;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.internal.BrandingControl;
@@ -63,10 +57,8 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
     @Shadow protected abstract boolean realmsNotificationsEnabled();
     @Shadow protected abstract void realmsButtonClicked();
     @Shadow protected abstract boolean hasRealmsSubscription();
-    @Unique @Nullable private TitleScreenWarning32Bit warning32Bit;
+    @Unique @Nullable private TitleScreen32BitWarning warning32Bit;
     @Unique public boolean keepLogoThroughFade;
-    @Unique private int copyrightWidth;
-    @Unique private int copyrightX;
 
     public UpdatedTitleScreen(Component title) {
         super(title);
@@ -95,11 +87,11 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void init(CallbackInfo callback) {
         // Go to Mellomedley's main menu if set.
+        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_3) {
             this.minecraft.setScreen(new MellomedleyTitleScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
             return;
         }
-        Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
 
         // Open accessibility onboarding if it hasn't been shown (Mellomedley's main menu opens this by itself).
         if (MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()) {
@@ -113,8 +105,8 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             callback.cancel();
             if (this.splash == null && !MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) this.splash = this.minecraft.getSplashManager().getSplash();
 
-            this.copyrightWidth = this.font.width(new TranslatableComponent("menu.minecraft.credits"));
-            this.copyrightX = this.width - this.copyrightWidth - 2;
+            int copyrightWidth = this.font.width(new TranslatableComponent("menu.minecraft.credits"));
+            int copyrightX = this.width - copyrightWidth - 2;
             FourStyles buttonStyle = MellowConfigs.CLIENT_CONFIGS.mainMenuModButton.get();
             int buttonsPos = buttonStyle == FourStyles.OPTION_4 && !this.minecraft.isDemo() ? this.height / 4 + 30 : this.height / 4 + 48;
             int heightOffset = this.minecraft.isDemo() ? -24 : (buttonStyle == FourStyles.OPTION_4 ? 24 : 0);
@@ -161,6 +153,10 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                     this.components.renderTooltip(this, button, new TranslatableComponent("options.accessibility.title"), mouseX, mouseY),
                     new TranslatableComponent("narrator.button.accessibility")));
 
+            // Copyright text
+            this.addRenderableWidget(new PlainTextButton(copyrightX, this.height - 10, copyrightWidth, 10,
+                    new TranslatableComponent("menu.minecraft.credits"), button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this)), this.font));
+
             // Realms availability
             this.minecraft.setConnectedToRealms(false);
             if (this.minecraft.options.realmsNotifications && this.realmsNotificationsScreen == null) {
@@ -171,7 +167,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
             if (!this.minecraft.is64Bit()) {
                 CompletableFuture<Boolean> subscriptionFuture = this.warning32Bit != null ? this.warning32Bit.realmsSubscriptionFuture() : CompletableFuture.supplyAsync(this::hasRealmsSubscription, Util.backgroundExecutor());
-                this.warning32Bit = new TitleScreenWarning32Bit(MultiLineLabel.create(this.font, new TranslatableComponent("title.32bit.deprecation"), 350, 2), this.width / 2, buttonsPos - 36, subscriptionFuture);
+                this.warning32Bit = new TitleScreen32BitWarning(MultiLineLabel.create(this.font, new TranslatableComponent("title.32bit.deprecation"), 350, 2), this.width / 2, buttonsPos - 36, subscriptionFuture);
             }
         }
 
@@ -182,6 +178,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         this.addRenderableWidget(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 20, 21));
     }
 
+    /// Adds Singleplayer and Multiplayer buttons on Main Menu for players who have bought the game.
     @Inject(method = "createNormalMenuOptions", at = @At("HEAD"), cancellable = true)
     private void createNormalMenuOptions(int y, int rowHeight, CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
@@ -226,24 +223,9 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             float buttonAlpha = this.fading ? Mth.clamp(overlayTransparency - 1, 0, 1) : 1;
             int textAlpha = Mth.ceil(buttonAlpha * 255) << 24;
 
-            RenderSystem.enableBlend();
-            switch (MellowConfigs.CLIENT_CONFIGS.logoStyle.get()) {
-                case OPTION_1: // Pre-1.16
-                    LogoRenderer.renderPre116Logo(stack, this, this.width, buttonAlpha, 30, this.keepsLogoThroughFade());
-                    break;
-                case OPTION_2: // 1.16
-                    LogoRenderer.render116Logo(stack, this, this.width, buttonAlpha, 30, this.keepsLogoThroughFade());
-                    break;
-                case OPTION_3: // 1.20 and above
-                    LogoRenderer.renderUpdatedLogo(stack, this.width, buttonAlpha, this.keepsLogoThroughFade());
-                    break;
-                case OPTION_4: // Mellomedley's logo
-                    LogoRenderer.renderMellomedleyLogo(stack, this.width / 2 - 129, 10, 258, 100, buttonAlpha, this.keepsLogoThroughFade());
-                    break;
-            }
+            this.components.renderLogo(this, this.width, this.height, buttonAlpha, this.keepsLogoThroughFade());
 
             if ((textAlpha & 0xFC000000) != 0) {
-                boolean copyrightTextHovered = mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 10 && mouseY < this.height;
                 int textColor = MellowUtils.getSelectableTextColor(false, true);
 
                 // 32-bit deprecation warning
@@ -279,12 +261,6 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                     drawString(stack, this.font, branding, 2, this.height - 10, textColor | textAlpha);
                 }
 
-                drawString(stack, this.font, new TranslatableComponent("menu.minecraft.credits"), this.copyrightX, this.height - 10, MellowUtils.getSelectableTextColor(copyrightTextHovered, true) | textAlpha);
-                if (copyrightTextHovered) {
-                    fill(stack, this.copyrightX, this.height - 2, this.copyrightX + this.copyrightWidth, this.height - 1, MellowUtils.getSelectableTextColor(true, true) | textAlpha);
-                    fill(stack, this.copyrightX + 1, this.height - 1, this.copyrightX + this.copyrightWidth + 1, this.height, MellowUtils.getSelectableTextShadowColor(true, true) | textAlpha);
-                }
-
                 for (GuiEventListener listener : this.children()) {
                     if (listener instanceof AbstractWidget) ((AbstractWidget) listener).setAlpha(buttonAlpha);
                 }
@@ -297,19 +273,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callback) {
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_2) {
-            callback.cancel();
-            if (super.mouseClicked(mouseX, mouseY, button)) {
-                callback.setReturnValue(true);
-            } else if (this.realmsNotificationsEnabled() && this.realmsNotificationsScreen.mouseClicked(mouseX, mouseY, button)) {
-                callback.setReturnValue(true);
-            } else {
-                if (mouseX > this.copyrightX && mouseX < this.copyrightX + this.copyrightWidth && mouseY > this.height - 10 && mouseY < this.height) {
-                    this.minecraft.setScreen(new AttributionsScreen(this));
-                    this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-                }
-
-                callback.setReturnValue(false);
-            }
+            callback.setReturnValue(super.mouseClicked(mouseX, mouseY, button) || (this.realmsNotificationsEnabled() && this.realmsNotificationsScreen.mouseClicked(mouseX, mouseY, button)));
         }
     }
 }

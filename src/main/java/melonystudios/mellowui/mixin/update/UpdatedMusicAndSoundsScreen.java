@@ -6,6 +6,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.config.option.SoundSourceOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
@@ -69,7 +70,7 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
             callback.cancel();
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+            drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
             super.render(stack, mouseX, mouseY, partialTicks);
             List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
             if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);

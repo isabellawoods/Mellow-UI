@@ -6,8 +6,8 @@ import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.update.MellowModListScreen;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -104,7 +104,7 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
 
             // Mod name
             int padding = WidgetConfigs.WIDGET_CONFIGS.modNameTextPadding.get() - 2;
-            int color = MellowUtils.getSelectableTextColor(MellowModList.this.getSelected() == this, true);
+            int color = TextComponents.selectableColor(MellowModList.this.getSelected() == this, true);
             this.renderWidgetText(
                     () -> this.renderAlignedScrollingText(stack, font, modName, Alignment.CENTER, left + padding, top, left + rowWidth - padding - 4, top + height - 8, color),
                     () -> drawCenteredString(stack, font, modName, left + rowWidth / 2, top + 4, color)

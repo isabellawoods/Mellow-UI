@@ -14,6 +14,7 @@ public class WidgetConfigEntries {
     public static final SeparatorOption SPLASHES_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.splashes"));
     public static final SeparatorOption UPDATE_AVAILABILITY_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.update_availability"));
     public static final SeparatorOption BACKGROUNDS_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.backgrounds"));
+    public static final SeparatorOption TOASTS_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.toasts"));
     public static final SeparatorOption MODDED_COLORS_SEPARATOR = new SeparatorOption(new TranslatableComponent("separator.mellowui.modded_colors"));
 
     // Widgets
@@ -63,8 +64,20 @@ public class WidgetConfigEntries {
     // Backgrounds
     public static final EditColorConfigOption MONOCHROME_LOADING_SCREEN_COLOR = new EditColorConfigOption("config.mellowui.monochrome_loading_screen_color",
             new TranslatableComponent("config.mellowui.monochrome_loading_screen_color.tooltip"), WIDGET_CONFIGS.monochromeLoadingScreenColor);
+    public static final EditColorConfigOption WARNING_32BIT_COLOR = new EditColorConfigOption("config.mellowui.warning_32bit_color",
+            new TranslatableComponent("config.mellowui.warning_32bit_color.tooltip"), WIDGET_CONFIGS.warning32BitColor);
+
+    // Toasts
+    public static final EditColorConfigOption SYSTEM_TOAST_TITLE_COLOR = new EditColorConfigOption("config.mellowui.system_toast_title_color",
+            new TranslatableComponent("config.mellowui.system_toast_title_color.tooltip"), WIDGET_CONFIGS.systemToastTitleColor);
+    public static final EditColorConfigOption SYSTEM_TOAST_DESCRIPTION_COLOR = new EditColorConfigOption("config.mellowui.system_toast_description_color",
+            new TranslatableComponent("config.mellowui.system_toast_description_color.tooltip"), WIDGET_CONFIGS.systemToastDescriptionColor);
+    public static final EditColorConfigOption MUSIC_TOAST_TEXT_COLOR = new EditColorConfigOption("config.mellowui.music_toast_text_color",
+            new TranslatableComponent("config.mellowui.music_toast_text_color.tooltip"), WIDGET_CONFIGS.musicToastTextColor);
 
     // Miscellaneous
+    public static final EditColorConfigOption TITLE_TEXT_COLOR = new EditColorConfigOption("config.mellowui.title_text_color",
+            new TranslatableComponent("config.mellowui.title_text_color.tooltip"), WIDGET_CONFIGS.titleTextColor);
     public static final EditColorConfigOption DESCRIPTION_TEXT_COLOR = new EditColorConfigOption("config.mellowui.description_text_color",
             new TranslatableComponent("config.mellowui.description_text_color.tooltip"), WIDGET_CONFIGS.descriptionTextColor);
 

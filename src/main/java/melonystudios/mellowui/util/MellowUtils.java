@@ -19,9 +19,7 @@ import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.gui.screens.achievement.StatsScreen;
 import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -158,43 +156,5 @@ public class MellowUtils {
 
     public static boolean highContrastUnavailable() {
         return !Minecraft.getInstance().getResourcePackRepository().getAvailableIds().contains(GUITextures.MUI_HIGH_CONTRAST.toString());
-    }
-
-    public static String translate(String key, String fallback, Object... args) {
-        if (I18n.exists(key)) return I18n.get(key, args);
-        else return String.format(fallback, args);
-    }
-
-    public static Style withColor(int color) {
-        return Style.EMPTY.withColor(color);
-    }
-
-    public static int getSplashTextColor(int defaultSplashColor) {
-        return highContrastEnabled() ? WIDGET_CONFIGS.highContrastSplashTextColor.get() : defaultSplashColor;
-    }
-
-    public static int getSelectableTextColor(boolean selected, boolean active) {
-        if (CLIENT_CONFIGS.legacyButtonColors.get() || Minecraft.getInstance().getResourcePackRepository().getSelectedIds().contains(PROGRAMMER_ART_ID)) {
-            return !active ? WIDGET_CONFIGS.disabledLegacyWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedLegacyWidgetTextColor.get() : WIDGET_CONFIGS.defaultLegacyWidgetTextColor.get());
-        } else {
-            return !active ? WIDGET_CONFIGS.disabledWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedWidgetTextColor.get() : WIDGET_CONFIGS.defaultWidgetTextColor.get());
-        }
-    }
-
-    public static int getSelectableTextShadowColor(boolean selected, boolean active) {
-        int color;
-        if (CLIENT_CONFIGS.legacyButtonColors.get() || Minecraft.getInstance().getResourcePackRepository().getSelectedIds().contains(PROGRAMMER_ART_ID)) {
-            color = !active ? WIDGET_CONFIGS.disabledLegacyWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedLegacyWidgetTextColor.get() : WIDGET_CONFIGS.defaultLegacyWidgetTextColor.get());
-        } else {
-            color = !active ? WIDGET_CONFIGS.disabledWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedWidgetTextColor.get() : WIDGET_CONFIGS.defaultWidgetTextColor.get());
-        }
-        return getShadowColor(color, 1);
-    }
-
-    public static int getShadowColor(int color, float alpha) {
-        float red = red(color) * 0.25F;
-        float green = green(color) * 0.25F;
-        float blue = blue(color) * 0.25F;
-        return color((int) (alpha * 255), (int) red, (int) green, (int) blue);
     }
 }

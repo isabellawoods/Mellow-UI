@@ -63,7 +63,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     private float textAlpha = 0;
 
     public StatisticsScreen(Screen lastScreen, StatsCounter manager) {
-        super(new TranslatableComponent("gui.stats"));
+        super(new TranslatableComponent("gui.stats").withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
         this.manager = manager;
         this.createdAt = System.currentTimeMillis();
@@ -192,10 +192,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
             }
             this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
 
-            if (this.getActiveList() instanceof TooltipProvider provider && provider.tooltipData() != null) {
-                provider.renderTooltip(stack, this);
-                provider.setTooltipData(null);
-            }
+            if (this.getActiveList() instanceof TooltipProvider provider && provider.tooltipData() != null) provider.renderTooltip(stack, this);
         }
     }
 

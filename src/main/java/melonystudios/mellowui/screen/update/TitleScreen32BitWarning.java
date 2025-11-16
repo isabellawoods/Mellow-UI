@@ -7,5 +7,5 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.concurrent.CompletableFuture;
 
 @OnlyIn(Dist.CLIENT)
-public record TitleScreenWarning32Bit(MultiLineLabel label, int x, int y, CompletableFuture<Boolean> realmsSubscriptionFuture) {
+public record TitleScreen32BitWarning(MultiLineLabel label, int x, int y, CompletableFuture<Boolean> realmsSubscriptionFuture) {
 }

@@ -43,7 +43,7 @@ public class GUITextures {
     public static final ResourceLocation INWORLD_MENU_LIST_BACKGROUND = gui("background/inworld_menu_list");
     public static final ResourceLocation TAB_HEADER_BACKGROUND = gui("background/tab_header");
     public static final ResourceLocation OUT_OF_MEMORY_BACKGROUND = gui("background/out_of_memory");
-    public static final ResourceLocation ACCESSIBILITY_ONBOARDING_BACKGROUND = gui("background/accessibility_onboarding");
+    public static final ResourceLocation OVERSPIN_PROTECTION_BACKGROUND = gui("background/overspin_protection");
     public static final ResourceLocation TITLE_SCREEN_ICONS_BACKGROUND = gui("background/title_screen_icons_background");
     public static final ResourceLocation ALJANSTONE_BACKGROUND = new ResourceLocation("backmath", "textures/block/aljanstone.png");
     // #C0101010 to #D0101010 (Alpha 192 to 208)

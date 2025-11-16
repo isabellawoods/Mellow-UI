@@ -70,7 +70,7 @@ public class WorldCreationUIState {
     }
 
     public void addListener(Consumer<WorldCreationUIState> listener) {
-        this.listeners.add(listener);
+        if (!this.listeners.contains(listener)) this.listeners.add(listener);
     }
 
     public void onChanged() {

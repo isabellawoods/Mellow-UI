@@ -3,8 +3,8 @@ package melonystudios.mellowui.screen.list;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.screen.EditListConfigScreen;
 import melonystudios.mellowui.util.Alignment;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.ScrollingText;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -86,7 +86,7 @@ public class ConfigEntriesList extends ObjectSelectionList<ConfigEntriesList.Ent
 
         @Override
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
-            Component text = new TextComponent(this.entry).withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(ConfigEntriesList.this.getSelected() == this, true)));
+            Component text = new TextComponent(this.entry).withStyle(TextComponents.selectableStyle(ConfigEntriesList.this.getSelected() == this, true));
             this.renderWidgetText(
                     () -> this.renderString(stack, left, top, width, height, Alignment.LEFT, text),
                     () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)
@@ -104,8 +104,7 @@ public class ConfigEntriesList extends ObjectSelectionList<ConfigEntriesList.Ent
         @Override
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
             Component text = new TranslatableComponent("button.mellowui.add")
-                    .withStyle(MellowUtils.withColor(MellowUtils.getSelectableTextColor(ConfigEntriesList.this.getSelected() == this, true))
-                            .withItalic(true));
+                    .withStyle(TextComponents.selectableStyle(ConfigEntriesList.this.getSelected() == this, true).withItalic(true));
             this.renderWidgetText(
                     () -> this.renderString(stack, left, top, width, height, Alignment.CENTER, text),
                     () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)

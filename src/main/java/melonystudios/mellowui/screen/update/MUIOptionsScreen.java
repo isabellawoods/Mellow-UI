@@ -7,7 +7,7 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.widget.ImageSetButton;
@@ -124,7 +124,7 @@ public class MUIOptionsScreen extends OptionsSubScreen {
 
         // Credits & Attribution
         this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("button.mellowui.credits_and_attribution"),
-                button -> this.minecraft.setScreen(new AttributionsScreen(this))));
+                button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this))));
 
         // Done button
         this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,

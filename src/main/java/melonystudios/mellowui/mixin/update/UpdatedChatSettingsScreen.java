@@ -3,6 +3,7 @@ package melonystudios.mellowui.mixin.update;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -55,7 +56,7 @@ public class UpdatedChatSettingsScreen extends OptionsSubScreen {
         if (MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) {
             this.renderBackground(stack);
             this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.chat_settings.title"), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+            drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.chat_settings.title").withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
             for (GuiEventListener listener : this.children()) {
                 if (listener instanceof AbstractWidget) ((AbstractWidget) listener).render(stack, mouseX, mouseY, partialTicks);
             }

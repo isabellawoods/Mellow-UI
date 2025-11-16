@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.resource.AssetReloadListener;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -30,11 +31,11 @@ public class FlairReloadListener extends AssetReloadListener {
             try {
                 if (element.isJsonObject()) flairs.put(location, GSON.fromJson(element, Flair.class));
             } catch (Exception exception) {
-                LOGGER.error(MellowUtils.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", location), exception);
+                LOGGER.error(TextComponents.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", location), exception);
             }
         });
         MellowUtils.FLAIRS.clear();
         MellowUtils.FLAIRS.putAll(flairs.build());
-        LOGGER.info(MellowUtils.translate("logger.mellowui.flair.loaded", "Loaded %s flair(s)", flairs.build().size()));
+        LOGGER.info(TextComponents.translate("logger.mellowui.flair.loaded", "Loaded %s flair(s)", flairs.build().size()));
     }
 }

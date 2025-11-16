@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
@@ -26,7 +27,7 @@ public class MUIControlsScreen extends OptionsSubScreen {
     private OptionsList list;
 
     public MUIControlsScreen(Screen lastScreen, Options options) {
-        super(lastScreen, options, new TranslatableComponent("controls.title"));
+        super(lastScreen, options, new TranslatableComponent("controls.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -38,7 +39,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     public void renderScreenName(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        drawCenteredString(stack, this.font, new TranslatableComponent("gui.advancements"), this.width / 2, 16, 0xFFFFFF);
+        drawCenteredString(stack, this.font, new TranslatableComponent("gui.advancements").withStyle(TextComponents.titleStyle()), this.width / 2, 16, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

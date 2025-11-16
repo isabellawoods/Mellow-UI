@@ -46,7 +46,7 @@ public class ForgeOptionsScreen extends OptionsSubScreen {
         this.list.render(stack, mouseX, mouseY, partialTicks);
         drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
-        if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);
+        List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
+        if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

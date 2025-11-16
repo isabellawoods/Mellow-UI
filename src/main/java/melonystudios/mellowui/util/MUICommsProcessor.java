@@ -7,17 +7,26 @@ import melonystudios.mellowui.config.option.EditConfigOption;
 import net.minecraft.client.Option;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 
 import java.util.List;
 
 /// *Mellow UI*'s {@linkplain InterModComms **Inter-Mod Communications**} message handler. These can be one of the following:
 /// - {@link #addToColorList(String) `mellowui:add_to_color_list/<translation>`}: Adds any *Forge* config to *Mellow UI*'s color options screen.
+@Mod.EventBusSubscriber(modid = MellowUI.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MUICommsProcessor {
     /// Adds any *Forge* config to *Mellow UI*'s {@linkplain melonystudios.mellowui.screen.ColorOptionsScreen color options screen}.
     /// @apiNote Use the {@link #addToColorList(String)} method.
     public static final String ADD_TO_COLOR_LIST = MellowUI.mellowUI("add_to_color_list").toString();
     public static final List<Option> ENTRIES = Lists.newArrayList();
+
+    @SubscribeEvent
+    public static void receiveIMCMessages(final InterModProcessEvent event) {
+        InterModComms.getMessages(MellowUI.MOD_ID).forEach(MUICommsProcessor::processMessage);
+    }
 
     /// Processes a message send by another mod.
     /// @param message The message being sent.

@@ -25,6 +25,7 @@ public interface TooltipProvider {
     default void renderTooltip(PoseStack stack, Screen screen) {
         TooltipDisplayData data = this.tooltipData();
         screen.renderTooltip(stack, data.tooltipLines(), data.x(), data.y());
+        this.setTooltipData(null);
     }
 
     /// Converts a list of {@linkplain net.minecraft.network.chat.Component text components} into an immutable list of

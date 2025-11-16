@@ -10,7 +10,7 @@ import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
-import melonystudios.mellowui.screen.backport.AttributionsScreen;
+import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.widget.ImageSetButton;
@@ -290,7 +290,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             return true;
         } else {
             if (mouseX > (double) this.copyrightX && mouseX < (double) (this.copyrightX + this.copyrightWidth) && mouseY > (double) (this.height - 10) && mouseY < (double) this.height) {
-                this.minecraft.setScreen(new AttributionsScreen(this));
+                this.minecraft.setScreen(new CreditsAndAttributionsScreen(this));
                 this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
             }
             return false;
