@@ -1,27 +1,28 @@
 package melonystudios.mellowui.config.option;
 
+import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.element.toast.MusicToast;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MusicTicker;
-import net.minecraft.client.settings.BooleanOption;
+import net.minecraft.client.settings.IteratableOption;
 import net.minecraft.util.text.ITextComponent;
 
-import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
+import java.util.function.BiFunction;
 
-public class MusicToastOption extends BooleanOption {
-    public MusicToastOption(String translation, @Nullable ITextComponent tooltipComponent, Predicate<GameSettings> getter, BiConsumer<GameSettings, Boolean> setter) {
-        super(translation, tooltipComponent, getter, setter);
+public class MusicToastOption extends TooltippedIterableOption {
+    public MusicToastOption(String translation, ITextComponent tooltipComponent, BiConsumer<GameSettings, Integer> setter, BiFunction<GameSettings, IteratableOption, ITextComponent> optionTooltip) {
+        super(translation, tooltipComponent, setter, optionTooltip);
     }
 
     @Override
-    public void toggle(GameSettings options) {
-        super.toggle(options);
-        if (this.get(options)) {
+    public void toggle(GameSettings options, int identifier) {
+        super.toggle(options, identifier);
+        if (MellowConfigs.CLIENT_CONFIGS.musicToast.get() == ThreeStyles.OPTION_3) {
             Minecraft minecraft = Minecraft.getInstance();
             MusicTicker manager = minecraft.getMusicManager();
             ISound currentMusic = ((InterfaceMethods.MusicManagerMethods) manager).mui$getNowPlaying();

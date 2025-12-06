@@ -55,19 +55,19 @@ public class EditButton extends Button implements ScrollingText, IBidiTooltip {
     public void renderButton(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         this.renderWidgetText(
-                () -> this.renderString(stack, minecraft.font, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
+                () -> this.renderString(minecraft.font, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
                 () -> drawString(stack, minecraft.font, this.configName, this.realX + this.padding(), this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
         );
         super.renderButton(stack, mouseX, mouseY, partialTicks);
     }
 
-    public void renderString(MatrixStack stack, FontRenderer font, int color) {
+    public void renderString(FontRenderer font, int color) {
         int padding = this.padding();
         int minX = this.realX + padding;
         int minY = this.y;
         int maxX = this.x - padding - this.colorPadding();
         int maxY = this.y + this.height;
-        this.renderAlignedScrollingText(stack, font, this.configName, Alignment.LEFT, minX, minY, maxX, maxY, color);
+        this.renderAlignedScrollingText(font, this.configName, Alignment.LEFT, minX, minY, maxX, maxY, color);
     }
 
     protected int colorPadding() {

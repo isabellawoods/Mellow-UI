@@ -1,0 +1,11 @@
+{
+  "cube_map": [
+    "blue_skies:gui/panorama/everdawn/moonlit_reservoir/panorama_0",
+    "blue_skies:gui/panorama/everdawn/moonlit_reservoir/panorama_1",
+    "blue_skies:gui/panorama/everdawn/moonlit_reservoir/panorama_2",
+    "blue_skies:gui/panorama/everdawn/moonlit_reservoir/panorama_3",
+    "blue_skies:gui/panorama/everdawn/moonlit_reservoir/panorama_4",
+    "blue_skies:gui/panorama/everdawn/moonlit_reservoir/panorama_5"
+  ],
+  "overlay": "blue_skies:gui/panorama/panorama_overlay_empty"
+}

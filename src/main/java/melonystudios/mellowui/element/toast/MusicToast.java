@@ -2,6 +2,7 @@ package melonystudios.mellowui.element.toast;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.ColorLerper;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
@@ -11,13 +12,13 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.gui.toasts.IToast;
 import net.minecraft.client.gui.toasts.ToastGui;
+import net.minecraft.util.ColorHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.Nonnull;
 
@@ -25,9 +26,11 @@ import javax.annotation.Nonnull;
 public class MusicToast implements IToast {
     private ResourceLocation musicLocation;
     private boolean fromPauseMenu;
-    private long animationTicks = 1;
     private long timeSinceLastChanged;
     private boolean hasChanged;
+    private static int musicNoteColorTick;
+    private static long lastMusicNoteColorChange;
+    private static int musicNoteColor = -1;
 
     public MusicToast(ResourceLocation musicLocation, boolean fromPauseMenu) {
         this.musicLocation = musicLocation;
@@ -41,30 +44,22 @@ public class MusicToast implements IToast {
             this.timeSinceLastChanged = timeSinceLastChanged;
             this.hasChanged = false;
         }
-        this.animationTicks += 1;
+        Minecraft minecraft = Minecraft.getInstance();
         int width = this.width();
         int height = this.height();
-
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.getOverlay() != null) return Visibility.HIDE;
-        minecraft.getTextureManager().bind(GUITextures.NOW_PLAYING_TOAST);
-        RenderSystem.color4f(1, 1, 1, 1);
+        this.tickMusicNoteColor();
 
         // Background
-        AbstractGui.blit(stack, 0, 0, 0, 0, width / 2, 32, width, 32);
-        AbstractGui.blit(stack, width / 2, 0, width - width / 2F, 0, width / 2, 32, width, 32);
+        GuiUtils.drawContinuousTexturedBox(stack, GUITextures.NOW_PLAYING_TOAST, 0, 0, 0, 0, width, height, 160, 32, 4, 0);
 
         // Music Notes
-        float hue = this.animationTicks < 0 ? -this.animationTicks : this.animationTicks;
-        float[] noteColor = hsvToRgb(hue / 50F, 0.7F, 0.6F);
-        RenderSystem.color4f(noteColor[0], noteColor[1], noteColor[2], 1);
-        int yOffset = (int) Util.getMillis() / 100 * 16;
-        minecraft.getTextureManager().bind(GUITextures.MUSIC_NOTES); // swap for "bind animated texture" in GUITextures
-        AbstractGui.blit(stack, 8, 8, 0, yOffset, 16, 16, 16, 128);
-//        TextureAtlasSprite sprite = GUITextures.getSprite(GUITextures.MUSIC_NOTES);
-//        minecraft.getTextureManager().bind(GUITextures.GUI_SPRITES_ATLAS);
-//        AbstractGui.blit(stack, 8, 8, 0, 16, 16, sprite);
-//        AbstractGui.blit(stack, 8, 8, 0, 0, 16, 16, 256, 32);
+        float red = ColorHelper.PackedColor.red(musicNoteColor) / 255F;
+        float green = ColorHelper.PackedColor.green(musicNoteColor) / 255F;
+        float blue = ColorHelper.PackedColor.blue(musicNoteColor) / 255F;
+
+        RenderSystem.color4f(red, green, blue, 1);
+        minecraft.getTextureManager().bind(GUITextures.GUI_SPRITES_ATLAS);
+        AbstractGui.blit(stack, 8, 8, 0, 16, 16, GUITextures.getSprite(GUITextures.MUSIC_NOTES));
         RenderSystem.color4f(1, 1, 1, 1);
 
         // Text
@@ -74,6 +69,15 @@ public class MusicToast implements IToast {
             return minecraft.screen instanceof IngameMenuScreen ? Visibility.SHOW : Visibility.HIDE;
         }
         return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? IToast.Visibility.SHOW : IToast.Visibility.HIDE;
+    }
+
+    private void tickMusicNoteColor() {
+        long millis = System.currentTimeMillis();
+        if (millis > lastMusicNoteColorChange + 25L) {
+            musicNoteColorTick++;
+            lastMusicNoteColorChange = millis;
+            musicNoteColor = ColorLerper.getLerpedColor(ColorLerper.Type.MUSIC_NOTE, musicNoteColorTick);
+        }
     }
 
     public static void add(ResourceLocation musicLocation, boolean fromPauseMenu, ToastGui toast) {
@@ -102,54 +106,8 @@ public class MusicToast implements IToast {
                 .withStyle(TextComponents.withColor(WidgetConfigs.WIDGET_CONFIGS.musicToastTextColor.get()));
     }
 
-    public static float[] hsvToRgb(float hue, float saturation, float value) {
-        int i = (int) (hue * 6) % 6;
-        float f = hue * 6 - (float) i;
-        float f1 = value * (1 - saturation);
-        float f2 = value * (1 - f * saturation);
-        float f3 = value * (1 - (1 - f) * saturation);
-        float red1;
-        float green1;
-        float blue1;
-        switch (i) {
-            case 0:
-                red1 = value;
-                green1 = f3;
-                blue1 = f1;
-                break;
-            case 1:
-                red1 = f2;
-                green1 = value;
-                blue1 = f1;
-                break;
-            case 2:
-                red1 = f1;
-                green1 = value;
-                blue1 = f3;
-                break;
-            case 3:
-                red1 = f1;
-                green1 = f2;
-                blue1 = value;
-                break;
-            case 4:
-                red1 = f3;
-                green1 = f1;
-                blue1 = value;
-                break;
-            case 5:
-                red1 = value;
-                green1 = f1;
-                blue1 = f2;
-                break;
-            default: throw new IllegalArgumentException(TextComponents.translate("error.mellowui.hsv_conversion", "Something went wrong while converting from HSV to RGB. Inputs were %s, %s, %s, and output was %s", hue, saturation, value, i));
-        }
-
-        return new float[] {MathHelper.clamp(red1, 0, 1), MathHelper.clamp(green1, 0, 1), MathHelper.clamp(blue1, 0, 1)};
-    }
-
     @Override
     public int width() {
-        return 38 + Minecraft.getInstance().font.width(this.getMusicName());
+        return 37 + Minecraft.getInstance().font.width(this.getMusicName());
     }
 }

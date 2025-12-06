@@ -35,11 +35,11 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     private final RenderComponents components = RenderComponents.INSTANCE;
 
     // Mellow UI
-    public static final List<AbstractOption> BACKGROUNDS = Lists.newArrayList(PANORAMA_BOBBING, DEFAULT_BACKGROUND, GRADIENT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS);
+    public static final List<AbstractOption> BACKGROUNDS = Lists.newArrayList(PANORAMA_BOBBING, DEFAULT_BACKGROUND, GRADIENT_BACKGROUND, BACKGROUND_SHADERS, BLURRY_CONTAINERS, FADING_BLUR);
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(SPLASH_TEXT_POSITION, REPLACE_REALMS_NOTIFICATIONS, MAIN_MENU_MOD_BUTTON, PAUSE_MENU_MOD_BUTTON);
     public static final List<AbstractOption> MISCELLANEOUS = Lists.newArrayList(CULL_OVERSIZED_ITEMS, LOG_GL_ERRORS);
     public static final List<AbstractOption> WIDGETS_SMALL = Lists.newArrayList(LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
-    public static final List<AbstractOption> WIDGETS_BIG = Lists.newArrayList(BUTTON_TEXT_PADDING, EDIT_BUTTON_TEXT_PADDING, TAB_TEXT_PADDING, MOD_NAME_TEXT_PADDING);
+    public static final List<AbstractOption> WIDGETS_BIG = Lists.newArrayList(BUTTON_TEXT_PADDING, EDIT_BUTTON_TEXT_PADDING, TAB_TEXT_PADDING, STRING_WIDGET_TEXT_PADDING, MOD_NAME_TEXT_PADDING);
     private OptionsRowList mellowUIList;
 
     // Mellomedley
@@ -48,7 +48,8 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
     // Vanilla
     public static final List<AbstractOption> ACCESSIBILITY = Lists.newArrayList(HIGH_CONTRAST, MENU_BACKGROUND_BLURRINESS, MONOCHROME_LOADING_SCREEN, PANORAMA_SCROLL_SPEED, HIDE_SPLASH_TEXTS);
-    public static final List<AbstractOption> MUSIC_AND_SOUNDS = Lists.newArrayList(UI_VOLUME, DIRECTIONAL_AUDIO, SHOW_MUSIC_TOAST);
+    public static final List<AbstractOption> MUSIC_AND_SOUNDS = Lists.newArrayList(UI_VOLUME, DIRECTIONAL_AUDIO, MUSIC_TOAST);
+    public static final List<AbstractOption> MOUSE_SETTINGS = Lists.newArrayList(ALLOW_CURSOR_CHANGES);
     private OptionsRowList vanillaList;
 
     // Forge
@@ -99,6 +100,8 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.vanillaList.addBig(MUSIC_AND_SOUNDS_SEPARATOR);
         this.vanillaList.addBig(SOUND_DEVICE);
         this.vanillaList.addSmall(MUSIC_AND_SOUNDS.toArray(new AbstractOption[0]));
+        this.vanillaList.addBig(MOUSE_SETTINGS_SEPARATOR);
+        this.vanillaList.addSmall(MOUSE_SETTINGS.toArray(new AbstractOption[0]));
         this.vanillaList.setRenderTopAndBottom(false);
         this.vanillaList.setRenderBackground(false);
 

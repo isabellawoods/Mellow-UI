@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class UpdatedAdvancementsScreen extends Screen {
     @Shadow
     private AdvancementTabGui selectedTab;
+    @Shadow
+    private boolean isScrolling;
 
     public UpdatedAdvancementsScreen(ITextComponent title) {
         super(title);
@@ -46,5 +48,11 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
         if (this.selectedTab == null) return;
         callback.cancel();
         this.font.draw(stack, this.selectedTab.getTitle(), (float) (x + 8), (float) (y + 6), 0x404040);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.isScrolling = false;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 }

@@ -3,6 +3,7 @@ package melonystudios.mellowui.mixin.update;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.FourStyles;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.toast.MusicToast;
@@ -57,7 +58,9 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
 
             MusicTicker manager = this.minecraft.getMusicManager();
             ISound currentMusic = ((InterfaceMethods.MusicManagerMethods) manager).mui$getNowPlaying();
-            if (currentMusic != null) MusicToast.addOrUpdate(currentMusic.getSound().getPath(), true, this.minecraft.getToasts());
+            if (MellowConfigs.CLIENT_CONFIGS.musicToast.get() != ThreeStyles.OPTION_1 && currentMusic != null) {
+                MusicToast.addOrUpdate(currentMusic.getSound().getPath(), true, this.minecraft.getToasts());
+            }
 
             // Back to Game
             this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 24 + yOffset, 204, 20, new TranslationTextComponent("menu.returnToGame"), button -> {

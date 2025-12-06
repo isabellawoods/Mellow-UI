@@ -2,6 +2,8 @@ package melonystudios.mellowui.element.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.WidgetTextureSet;
 import melonystudios.mellowui.element.text.ScrollingText;
 import melonystudios.mellowui.util.Alignment;
@@ -54,7 +56,7 @@ public class ImageSetButton extends Button implements ScrollingText {
 
         // Text
         if (this.renderText) this.renderWidgetText(
-                () -> this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
+                () -> this.renderScrollingString(minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
                 () ->  drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
         );
 
@@ -75,13 +77,14 @@ public class ImageSetButton extends Button implements ScrollingText {
         }
 
         this.renderBg(stack, minecraft, mouseX, mouseY);
+        if (this.isHovered && this.active) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
         else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
     }
 
-    public void renderScrollingString(MatrixStack stack, FontRenderer font, int width, int color) {
+    public void renderScrollingString(FontRenderer font, int width, int color) {
         int minX = this.x + width;
         int maxX = this.x + this.width - width;
-        this.renderAlignedScrollingText(stack, font, this.getMessage(), Alignment.CENTER, minX, this.y, maxX, this.y + this.height, color);
+        this.renderAlignedScrollingText(font, this.getMessage(), Alignment.CENTER, minX, this.y, maxX, this.y + this.height, color);
     }
 }

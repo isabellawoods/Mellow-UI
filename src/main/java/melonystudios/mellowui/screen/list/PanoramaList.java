@@ -2,7 +2,9 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.resource.panorama.Panorama;
 import melonystudios.mellowui.resource.panorama.Panoramas;
@@ -167,6 +169,9 @@ public class PanoramaList extends ExtendedList<PanoramaList.Entry> {
                 PanoramaList.this.minecraft.font.drawShadow(stack, processor, left + 85, yOffset, 0xFFFFFF);
                 yOffset += 10;
             }
+
+            // Cursor
+            if (this.isMouseOver(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         private IFormattableTextComponent makePanoramaTooltip() {

@@ -168,14 +168,14 @@ public class MellowModListScreen extends Screen {
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, ForgeConfigEntries.SORTING_TOOLTIP, mouseX, mouseY)));
 
+        // Done button
+        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
+                button -> this.minecraft.setScreen(this.lastScreen)));
+
         // Open mods folder
         this.addButton(new ImageSetButton(this.width / 2 + 105, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
-
-        // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
 
         if (this.selectedMod != null) this.modList.centerScrollOn(this.selectedMod);
         this.updateCache();

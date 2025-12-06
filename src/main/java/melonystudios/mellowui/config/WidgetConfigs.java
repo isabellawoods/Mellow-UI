@@ -12,6 +12,7 @@ public class WidgetConfigs {
     public final ForgeConfigSpec.IntValue buttonTextPadding;
     public final ForgeConfigSpec.IntValue editButtonTextPadding;
     public final ForgeConfigSpec.IntValue tabTextPadding;
+    public final ForgeConfigSpec.IntValue stringWidgetTextPadding;
     public final ForgeConfigSpec.IntValue modNameTextPadding;
 
     // Colors for text in various locations
@@ -54,6 +55,7 @@ public class WidgetConfigs {
         this.buttonTextPadding = builder.comment("Border padding for a button with scrolling text. Defaults to 2mpx.", "Effectively capped at 'buttonWidth / 2 - 1'.").translation("config.mellowui.button_text_padding").defineInRange("buttonTextPadding", 2, 0, Integer.MAX_VALUE);
         this.editButtonTextPadding = builder.comment("Border padding for an edit button with scrolling text. Defaults to 2mpx.", "Effectively capped at 'buttonWidth / 2 - 1'.").translation("config.mellowui.edit_button_text_padding").defineInRange("editButtonTextPadding", 2, 0, Integer.MAX_VALUE);
         this.tabTextPadding = builder.comment("Border padding for a tab with scrolling text. Defaults to 2mpx.", "Effectively capped at 'tabWidth / 2 - 1'.").translation("config.mellowui.tab_text_padding").defineInRange("tabTextPadding", 2, 0, Integer.MAX_VALUE);
+        this.stringWidgetTextPadding = builder.comment("Border padding for a string widget with scrolling text. Defaults to 2mpx.", "Effectively capped at 'widgetWidth / 2 - 1'.").translation("config.mellowui.string_widget_text_padding").defineInRange("stringWidgetTextPadding", 2, 0, Integer.MAX_VALUE);
         this.modNameTextPadding = builder.comment("Border padding for a mod list entry's name. Defaults to 2mpx.", "Effectively capped at 'entryWidth / 2 - 1'.").translation("config.mellowui.mod_name_text_padding").defineInRange("modNameTextPadding", 2, 0, Integer.MAX_VALUE);
 
         builder.pop().push("color");
@@ -80,7 +82,7 @@ public class WidgetConfigs {
         this.highContrastSplashTextColor = builder.comment("The color to use for the splash text while the high contrast resource pack is enabled.").translation("config.mellowui.high_contrast_splash_text_color").defineInRange("splash.highContrastTextColor", 0x57FFE1, 0, 0xFFFFFF);
 
         // Mod Update Availability
-        this.defaultUpdateAvailableColor = builder.comment("Text color for the 'Update Available!' button on Mellow UI's mod list screen.").translation("config.mellowui.default_update_available_color").defineInRange("widget.defaultUpdateAvailableColor", 0x41F384, 0, 0xFFFFFF);
+        this.defaultUpdateAvailableColor = builder.comment("Text color for the 'Update Available!' button on Mellow UI's mod list screen.").translation("config.mellowui.default_update_available_color").defineInRange("widget.defaultUpdateAvailableColor", 0x57FFE1, 0, 0xFFFFFF);
         this.highContrastUpdateAvailableColor = builder.comment("Text color for the 'Update Available!' button on Mellow UI's mod list screen.").translation("config.mellowui.high_contrast_update_available_color").defineInRange("widget.highContrastUpdateAvailableColor", 0x57FFE1, 0, 0xFFFFFF);
 
         // Backgrounds

@@ -2,6 +2,7 @@ package melonystudios.mellowui.mixin.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.sound.MUISounds;
@@ -18,9 +19,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
@@ -30,6 +33,7 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
     @Shadow private boolean renderBackground;
     @Shadow private boolean renderTopAndBottom;
     @Shadow private boolean renderHeader;
+    @Shadow private boolean scrolling;
     @Shadow protected int width;
     @Shadow protected int height;
     @Shadow protected int x0;
@@ -45,6 +49,7 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
     @Shadow protected abstract void renderHeader(MatrixStack stack, int x, int y, Tessellator tessellator);
     @Shadow protected abstract void renderList(MatrixStack stack, int x, int y, int mouseX, int mouseY, float partialTicks);
     @Shadow protected abstract void renderDecorations(MatrixStack stack, int mouseX, int mouseY);
+    @Shadow protected abstract void updateScrollingState(double mouseX, double mouseY, int button);
 
     @Inject(method = "setSelected", at = @At("HEAD"))
     public void setSelected(E entry, CallbackInfo callback) {
@@ -108,6 +113,19 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
             RenderSystem.enableTexture();
             RenderSystem.shadeModel(7424);
             RenderSystem.enableAlphaTest();
+
+            // Cursor
+            if (this.scrolling && maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) components.requestCursor(CursorTypes.RESIZE_NS);
         }
+    }
+
+    @Unique
+    private boolean isWithinScrollerArea(int mouseX, int mouseY) {
+        return mouseX >= this.getScrollbarPosition() && mouseY >= this.y0 && mouseX < this.getScrollbarPosition() + 6 && mouseY < this.y1;
+    }
+
+    @Inject(method = "mouseReleased", at = @At("HEAD"))
+    public void updateScrollState(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> callback) {
+        this.updateScrollingState(mouseX, mouseY, 1);
     }
 }

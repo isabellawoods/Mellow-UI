@@ -25,7 +25,7 @@ public interface TooltipProvider {
     /// @param screen The screen this tooltip is being rendered in.
     default void renderTooltip(MatrixStack stack, Screen screen) {
         TooltipDisplayData data = this.tooltipData();
-        screen.renderTooltip(stack, data.tooltipLines(), data.x(), data.y());
+        if (data != null) screen.renderTooltip(stack, data.tooltipLines(), data.x(), data.y());
         this.setTooltipData(null);
     }
 

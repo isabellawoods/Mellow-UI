@@ -1,6 +1,7 @@
 package melonystudios.mellowui.config;
 
 import melonystudios.mellowui.config.option.*;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
@@ -23,10 +24,14 @@ public class VanillaConfigEntries {
     // Tooltips
     private static final ITextComponent CLASSIC_STEREO_TOOLTIP = new TranslationTextComponent("config.minecraft.directional_audio.off_tooltip");
     private static final ITextComponent HRTF_BASED_AUDIO_TOOLTIP = new TranslationTextComponent("config.minecraft.directional_audio.on_tooltip");
+    private static final ITextComponent NEVER_TOOLTIP = new TranslationTextComponent("config.minecraft.music_toast.option_1.tooltip");
+    private static final ITextComponent PAUSE_MENU_TOOLTIP = new TranslationTextComponent("config.minecraft.music_toast.option_2.tooltip");
+    private static final ITextComponent PAUSE_MENU_AND_TOAST_TOOLTIP = new TranslationTextComponent("config.minecraft.music_toast.option_3.tooltip");
 
     // Separators
     public static final SeparatorOption ACCESSIBILITY_SEPARATOR = new SeparatorOption(new TranslationTextComponent("menu.minecraft.accessibility_settings.title"));
     public static final SeparatorOption MUSIC_AND_SOUNDS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("options.sounds.title"));
+    public static final SeparatorOption MOUSE_SETTINGS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("options.mouse_settings.title"));
 
     // Backported options
     public static final BooleanOption MONOCHROME_LOADING_SCREEN = new BooleanOption("config.minecraft.monochrome_loading_screen", new TranslationTextComponent("config.minecraft.monochrome_loading_screen.tooltip"),
@@ -45,8 +50,21 @@ public class VanillaConfigEntries {
                 int value = (int) Math.round(slider.get(options));
                 return new TranslationTextComponent("options.generic_value", new TranslationTextComponent("config.minecraft.menu_background_blurriness"), value != 0 ? value : new TranslationTextComponent("options.off"));
             });
-    public static final BooleanOption SHOW_MUSIC_TOAST = new MusicToastOption("config.minecraft.show_music_toast", new TranslationTextComponent("config.minecraft.show_music_toast.tooltip"),
-            options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));
+    public static final IteratableOption MUSIC_TOAST = new MusicToastOption("config.minecraft.music_toast", new TranslationTextComponent("config.minecraft.music_toast.tooltip"),
+            (options, identifier) -> CLIENT_CONFIGS.musicToast.set(ThreeStyles.byId(CLIENT_CONFIGS.musicToast.get().getId() + identifier)),
+            (options, option) -> {
+                switch (CLIENT_CONFIGS.musicToast.get()) {
+                    case OPTION_1:
+                        option.setTooltip(Minecraft.getInstance().font.split(NEVER_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        break;
+                    case OPTION_2:
+                        option.setTooltip(Minecraft.getInstance().font.split(PAUSE_MENU_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                        break;
+                    case OPTION_3:
+                        option.setTooltip(Minecraft.getInstance().font.split(PAUSE_MENU_AND_TOAST_TOOLTIP, TOOLTIP_MAX_WIDTH));
+                }
+                return new TranslationTextComponent("config.minecraft.music_toast", new TranslationTextComponent("config.minecraft.music_toast." + CLIENT_CONFIGS.musicToast.get().toString()));
+            });
     public static final HighContrastOption HIGH_CONTRAST = new HighContrastOption("config.minecraft.high_contrast", new TranslationTextComponent("config.minecraft.high_contrast.tooltip"),
             options -> CLIENT_CONFIGS.highContrastPack.get(), (options, newValue) -> {
         ResourcePackList packRepository = Minecraft.getInstance().getResourcePackRepository();
@@ -82,6 +100,8 @@ public class VanillaConfigEntries {
             });
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslationTextComponent("config.minecraft.realms_notifications.tooltip"),
             options -> options.realmsNotifications, (options, newValue) -> options.realmsNotifications = newValue);
+    public static final BooleanOption ALLOW_CURSOR_CHANGES = new BooleanOption("config.minecraft.allow_cursor_changes", new TranslationTextComponent("config.minecraft.allow_cursor_changes.tooltip"),
+            options -> CLIENT_CONFIGS.allowCursorChanges.get(), (options, newValue) -> CLIENT_CONFIGS.allowCursorChanges.set(newValue));
     public static final BooleanOption ONBOARD_ACCESSIBILITY = new BooleanOption("config.minecraft.onboard_accessibility", new TranslationTextComponent("config.minecraft.onboard_accessibility.tooltip"),
             options -> CLIENT_CONFIGS.onboardAccessibility.get(), (options, newValue) -> CLIENT_CONFIGS.onboardAccessibility.set(newValue));
 

@@ -3,19 +3,19 @@ package melonystudios.mellowui.mixin.screen.list;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.text.TooltipDisplayData;
+import melonystudios.mellowui.element.widget.text.StringWidget;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.WorldSelectionList;
 import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SharedConstants;
 import net.minecraft.util.text.*;
@@ -32,23 +32,26 @@ import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.Objects;
 
+import static melonystudios.mellowui.element.RenderComponents.TOOLTIP_MAX_WIDTH;
+
 @Mixin(WorldSelectionList.Entry.class)
 public abstract class MUIWorldListEntryMixin extends ExtendedList.AbstractListEntry<WorldSelectionList.Entry> {
+    @Unique public final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow @Final private WorldSummary summary;
     @Shadow @Final private Minecraft minecraft;
     @Shadow @Final private WorldSelectionScreen screen;
     @Shadow @Final private ResourceLocation iconLocation;
     @Shadow @Final @Nullable private DynamicTexture icon;
+    @Unique private StringWidget worldNameText;
+    @Unique private StringWidget playSummaryText;
+    @Unique private StringWidget infoSummaryText;
 
     @SuppressWarnings("deprecation")
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks, CallbackInfo callback) {
         callback.cancel();
-        int maxWidth = width - 32 - 3;
+        this.createTextWidgets(width, mouseX, mouseY);
 
-        this.minecraft.font.drawShadow(stack, this.worldName(this.minecraft.font, maxWidth, index), (float) (left + 32 + 3), (float) (top + 1), TextComponents.selectableColor(Objects.equals(this.list == null || this.list.getSelected() == null ? 0 : this.list.getSelected().hashCode(), this.hashCode()), true));
-        this.minecraft.font.drawShadow(stack, this.playSummary(this.minecraft.font, maxWidth), (float) (left + 32 + 3), (float) (top + 9 + 3), 0x808080);
-        this.minecraft.font.drawShadow(stack, this.infoSummary(this.minecraft.font, maxWidth), (float) (left + 32 + 3), (float) (top + 9 + 9 + 3), 0x808080);
         RenderSystem.color4f(1, 1, 1, 1);
         this.minecraft.getTextureManager().bind(this.icon != null ? this.iconLocation : GUITextures.MISSING_WORLD_ICON);
         RenderSystem.enableBlend();
@@ -66,10 +69,12 @@ public abstract class MUIWorldListEntryMixin extends ExtendedList.AbstractListEn
             boolean iconHovered = mousePos < 32;
             int vOffset = iconHovered ? 32 : 0;
 
+            if (iconHovered) this.components.requestCursor(CursorTypes.POINTING_HAND);
+
             if (this.summary.isLocked()) {
                 AbstractGui.blit(stack, left, top, 96, (float) vOffset, 32, 32, 256, 256);
                 if (iconHovered) {
-                    this.screen.setToolTip(this.minecraft.font.split(new TranslationTextComponent("selectWorld.locked").withStyle(TextFormatting.RED), RenderComponents.TOOLTIP_MAX_WIDTH));
+                    this.screen.setToolTip(this.minecraft.font.split(new TranslationTextComponent("selectWorld.locked").withStyle(TextFormatting.RED), TOOLTIP_MAX_WIDTH));
                 }
             } else if (this.summary.markVersionInList()) {
                 AbstractGui.blit(stack, left, top, 32, (float) vOffset, 32, 32, 256, 256);
@@ -88,29 +93,46 @@ public abstract class MUIWorldListEntryMixin extends ExtendedList.AbstractListEn
                 AbstractGui.blit(stack, left, top, 0, (float) vOffset, 32, 32, 256, 256);
             }
         }
+        int textX = left + 32 + 3;
+
+        this.worldNameText.x = textX;
+        this.worldNameText.y = top + 1;
+        this.worldNameText.render(stack, mouseX, mouseY, partialTicks);
+        this.playSummaryText.x = textX;
+        this.playSummaryText.y = top + 9 + 3;
+        this.playSummaryText.render(stack, mouseX, mouseY, partialTicks);
+        this.infoSummaryText.x = textX;
+        this.infoSummaryText.y = top + 9 + 9 + 3;
+        this.infoSummaryText.render(stack, mouseX, mouseY, partialTicks);
     }
 
     @Unique
-    private IReorderingProcessor clipText(FontRenderer font, ITextComponent message, int width) {
-        ITextProperties clippedText = this.minecraft.font.substrByWidth(message, width - font.width(TextComponents.ELLIPSIS));
-        return LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(clippedText, TextComponents.ELLIPSIS));
-    }
+    @SuppressWarnings("deprecation")
+    private void createTextWidgets(int width, int mouseX, int mouseY) {
+        int maxWidth = width - 32 - 3;
 
-    @Unique
-    private IReorderingProcessor worldName(FontRenderer font, int width, int index) {
-        ITextComponent name = this.summary.getLevelName().isEmpty() ? new StringTextComponent(I18n.get("selectWorld.world") + " " + index) : new StringTextComponent(this.summary.getLevelName());
-        return font.width(name) > width ? this.clipText(font, name, width) : name.getVisualOrderText();
-    }
+        ITextComponent worldName = new StringTextComponent(this.summary.getLevelName());
+        this.worldNameText = new StringWidget(worldName, this.minecraft.font).setColor(TextComponents.selectableColor(
+                Objects.equals(this.list == null || this.list.getSelected() == null ? 0 :
+                        this.list.getSelected().hashCode(), this.hashCode()), true)
+        );
+        this.worldNameText.setMaxWidth(maxWidth);
+        if (this.minecraft.font.width(worldName) > maxWidth) {
+            this.worldNameText.setTooltipData(new TooltipDisplayData(worldName, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+        }
 
-    @Unique
-    private IReorderingProcessor playSummary(FontRenderer font, int width) {
-        ITextComponent summary = new TranslationTextComponent("selectWorld.world_info", this.summary.getLevelId(), MellowUtils.WORLD_DATE_FORMAT.format(new Date(this.summary.getLastPlayed())));
-        return font.width(summary) > width ? this.clipText(font, summary, width) : summary.getVisualOrderText();
-    }
+        ITextComponent playSummary = new TranslationTextComponent("selectWorld.world_info", this.summary.getLevelId(), MellowUtils.WORLD_DATE_FORMAT.format(new Date(this.summary.getLastPlayed())));
+        this.playSummaryText = new StringWidget(playSummary, this.minecraft.font).setColor(0x808080);
+        this.playSummaryText.setMaxWidth(maxWidth);
+        if (this.minecraft.font.width(playSummary) > maxWidth) {
+            this.playSummaryText.setTooltipData(new TooltipDisplayData(playSummary, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+        }
 
-    @Unique
-    private IReorderingProcessor infoSummary(FontRenderer font, int width) {
-        ITextComponent summary = this.summary.getInfo();
-        return font.width(summary) > width ? this.clipText(font, summary, width) : summary.getVisualOrderText();
+        ITextComponent infoSummary = this.summary.getInfo();
+        this.infoSummaryText = new StringWidget(infoSummary, this.minecraft.font).setColor(0x808080);
+        this.infoSummaryText.setMaxWidth(maxWidth);
+        if (this.minecraft.font.width(infoSummary) > maxWidth) {
+            this.infoSummaryText.setTooltipData(new TooltipDisplayData(infoSummary, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+        }
     }
 }

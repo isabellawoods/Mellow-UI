@@ -86,6 +86,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.screenBackgroundStyle.get(), (options, newValue) -> CLIENT_CONFIGS.screenBackgroundStyle.set(newValue));
     public static final StyleBooleanOption LIST_BACKGROUND_STYLE = new StyleBooleanOption("config.mellowui.list_background_style", new TranslationTextComponent("config.mellowui.list_background_style.tooltip"),
             options -> CLIENT_CONFIGS.listBackgroundStyle.get(), (options, newValue) -> CLIENT_CONFIGS.listBackgroundStyle.set(newValue));
+    public static final StyleBooleanOption PANEL_BACKGROUND_STYLE = new StyleBooleanOption("config.mellowui.panel_background_style", new TranslationTextComponent("config.mellowui.panel_background_style.tooltip"),
+            options -> CLIENT_CONFIGS.panelBackgroundStyle.get(), (options, newValue) -> CLIENT_CONFIGS.panelBackgroundStyle.set(newValue));
     public static final IteratableOption LOGO_STYLE = new TooltippedIterableOption("config.mellowui.logo_style", new TranslationTextComponent("config.mellowui.logo_style.tooltip"),
             (options, identifier) -> CLIENT_CONFIGS.logoStyle.set(LogoStyles.byId(CLIENT_CONFIGS.logoStyle.get().getId() + identifier)),
             (options, option) -> new TranslationTextComponent("config.mellowui.logo_style." + CLIENT_CONFIGS.logoStyle.get().toString(), new TranslationTextComponent("config.mellowui.logo_style")));
@@ -138,6 +140,8 @@ public class MellowConfigEntries {
             });
     public static final StyleBooleanOption LOADING_ERRORS_STYLE = new StyleBooleanOption("config.mellowui.loading_errors_style", new TranslationTextComponent("config.mellowui.loading_errors_style.tooltip"),
             options -> CLIENT_CONFIGS.loadingErrorsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.loadingErrorsStyle.set(newValue));
+    public static final StyleBooleanOption UPDATE_AVAILABLE_ICON_STYLE = new StyleBooleanOption("config.mellowui.update_available_icon_style", new TranslationTextComponent("config.mellowui.update_available_icon_style.tooltip"),
+            options -> CLIENT_CONFIGS.updateAvailableIconStyle.get(), (options, newValue) -> CLIENT_CONFIGS.updateAvailableIconStyle.set(newValue));
     public static final BooleanOption REPLACE_REALMS_NOTIFICATIONS = new BooleanOption("config.mellowui.replace_realms_notifications", new TranslationTextComponent("config.mellowui.replace_realms_notifications.tooltip"),
             options -> CLIENT_CONFIGS.replaceRealmsNotifications.get(), (options, newValue) -> CLIENT_CONFIGS.replaceRealmsNotifications.set(newValue));
     public static final StyleBooleanOption SPLASH_TEXT_POSITION = new StyleBooleanOption("config.mellowui.splash_text_position", new TranslationTextComponent("config.mellowui.splash_text_position.tooltip"),
@@ -154,6 +158,8 @@ public class MellowConfigEntries {
             options -> CLIENT_CONFIGS.backgroundShaders.get(), (options, newValue) -> CLIENT_CONFIGS.backgroundShaders.set(newValue));
     public static final BooleanOption BLURRY_CONTAINERS = new BooleanOption("config.mellowui.blurry_containers", new TranslationTextComponent("config.mellowui.blurry_containers.tooltip"),
             options -> CLIENT_CONFIGS.blurryContainers.get(), (options, newValue) -> CLIENT_CONFIGS.blurryContainers.set(newValue));
+    public static final BooleanOption FADING_BLUR = new BooleanOption("config.mellowui.fading_blur", new TranslationTextComponent("config.mellowui.fading_blur.tooltip"),
+            options -> CLIENT_CONFIGS.fadingBlur.get(), (options, newValue) -> CLIENT_CONFIGS.fadingBlur.set(newValue));
     public static final BooleanOption DEFAULT_BACKGROUND = new BooleanOption("config.mellowui.default_background", new TranslationTextComponent("config.mellowui.default_background.tooltip"),
             options -> CLIENT_CONFIGS.defaultBackground.get(), (options, newValue) -> CLIENT_CONFIGS.defaultBackground.set(newValue));
     public static final BooleanOption GRADIENT_BACKGROUND = new BooleanOption("config.mellowui.gradient_background", new TranslationTextComponent("config.mellowui.gradient_background.tooltip"),

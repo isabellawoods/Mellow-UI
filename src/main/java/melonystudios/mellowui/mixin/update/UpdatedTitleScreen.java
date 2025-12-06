@@ -230,7 +230,8 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
             float overlayTransparency = this.fading ? (float) (Util.getMillis() - this.fadeInStart) / 1000 : 1;
             this.components.renderPanorama(partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1);
-            this.components.renderBackgroundShaders(partialTicks);
+            if (MellowConfigs.CLIENT_CONFIGS.fadingBlur.get()) this.components.renderBlurredBackground(partialTicks, false);
+            else this.components.renderBackgroundShaders(partialTicks);
             float buttonAlpha = this.fading ? MathHelper.clamp(overlayTransparency - 1, 0, 1) : 1;
             int textAlpha = MathHelper.ceil(buttonAlpha * 255) << 24;
             this.components.renderLogo(this, this.width, this.height, buttonAlpha, this.keepsLogoThroughFade());
@@ -276,6 +277,12 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 if (this.realmsNotificationsEnabled() && buttonAlpha >= 1) this.realmsNotificationsScreen.render(stack, mouseX, mouseY, partialTicks);
             }
         }
+    }
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I"))
+    public void renderBackgroundShaders(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+        if (MellowConfigs.CLIENT_CONFIGS.fadingBlur.get()) this.components.renderBlurredBackground(partialTicks, false);
+        else this.components.renderBackgroundShaders(partialTicks);
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)

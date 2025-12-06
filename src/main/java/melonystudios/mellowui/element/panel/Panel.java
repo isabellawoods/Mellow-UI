@@ -3,6 +3,7 @@ package melonystudios.mellowui.element.panel;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FocusableGui;
@@ -120,6 +121,9 @@ public class Panel extends FocusableGui implements IRenderable {
             tessellator.end();
             RenderSystem.disableBlend();
         }
+
+        // Cursor
+        if (this.scrolling && maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) components.requestCursor(CursorTypes.RESIZE_NS);
     }
 
     protected <T extends Widget> T addWidget(T widget) {
@@ -191,6 +195,10 @@ public class Panel extends FocusableGui implements IRenderable {
 
     protected int getScrollbarPosition() {
         return this.width - this.x / 2 - 1;
+    }
+
+    private boolean isWithinScrollerArea(int mouseX, int mouseY) {
+        return mouseX >= this.getScrollbarPosition() && mouseY >= this.y && mouseX < this.getScrollbarPosition() + 6 && mouseY < this.y + this.height;
     }
 
     @Override

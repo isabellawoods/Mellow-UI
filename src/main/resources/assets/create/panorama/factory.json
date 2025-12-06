@@ -1,0 +1,10 @@
+{
+  "cube_map": [
+    "create:gui/title/background/panorama_0",
+    "create:gui/title/background/panorama_1",
+    "create:gui/title/background/panorama_2",
+    "create:gui/title/background/panorama_3",
+    "create:gui/title/background/panorama_4",
+    "create:gui/title/background/panorama_5"
+  ]
+}

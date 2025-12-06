@@ -11,10 +11,46 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /// Utility class for handling {@linkplain Panorama panoramas} added by *Mellow UI*.
 public class Panoramas {
+    /// A list of all screens that have their own panorama defined.
+    public static final List<String> MENUS_WITH_DEFINED_PANORAMAS = Lists.newArrayList(
+            "com.simibubi.create.foundation.gui.mainMenu.CreateMainMenuScreen",
+            "melonystudios.variants.screen.options.VSConfigCategoriesScreen",
+            "melonystudios.variants.screen.options.VSWorldGenerationConfigScreen",
+            "melonystudios.variants.screen.options.VSEntityConfigScreen",
+            "melonystudios.variants.screen.options.RVConfigCategoriesScreen",
+            "melonystudios.variants.screen.options.RVWorldGenerationConfigScreen",
+            "melonystudios.variants.screen.options.RVEntityConfigScreen",
+            "melonystudios.variants.screen.options.RVEnchantmentConfigScreen",
+            "melonystudios.variants.screen.options.RVConsumeBehaviorConfigScreen"
+    );
+
+    /// Maps the class name of screens with defined panoramas with their {@linkplain RenderSkybox panorama renderers}.
+    public static final Map<String, RenderSkybox> MENU_TO_PANORAMAS = Util.make(new HashMap<>(), map -> {
+        // Create
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(0), getRenderer(new ResourceLocation("create", "factory")));
+        RenderSkybox revariedPanorama = getRenderer(new ResourceLocation("variants", "default_panorama"));
+        // Revaried (under VS prefix from pre-8.0.10-II)
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(1), revariedPanorama);
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(2), revariedPanorama);
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(3), revariedPanorama);
+        // Revaried (under RV prefix)
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(4), revariedPanorama);
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(5), revariedPanorama);
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(6), revariedPanorama);
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(7), revariedPanorama);
+        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(8), revariedPanorama);
+    });
+
     /// Represents an instance of the `mellowui:default` panorama.
     public static final Panorama DEFAULT = Panorama.builder(Lists.newArrayList(
             new ResourceLocation("gui/title/background/panorama_0"),
@@ -27,6 +63,8 @@ public class Panoramas {
 
     /// Represents an instance of the currently selected panorama.
     public static Panorama CURRENT_PANORAMA = null;
+    private static String lastScreenWithPanorama = "";
+    private static float panoramaAlpha = 0;
 
     /// Applies a given panorama to the background.
     /// @param newPanorama The panorama to apply.
@@ -51,6 +89,32 @@ public class Panoramas {
             ShaderManager.setPostEffect(Minecraft.getInstance(), newPanorama.shader(), false, false);
         } else {
             ShaderManager.setPostEffect(Minecraft.getInstance(), ResourceLocation.tryParse(MellowConfigs.CLIENT_CONFIGS.selectedEffect.get()), false, true);
+        }
+    }
+
+    /// Renders the currently selected panorama on the background, and another panorama on top if the
+    /// {@linkplain #MENUS_WITH_DEFINED_PANORAMAS current screen has one}. This is rendered **before** the overlay and shaders.
+    ///
+    /// The second panorama is overlaid on top and faded in/out when opening/closing the screen.
+    /// @param partialTicks The partial tick time.
+    public static void renderSituationalPanorama(float partialTicks) {
+        Minecraft minecraft = Minecraft.getInstance();
+        String screenName = minecraft.screen != null ? minecraft.screen.getClass().getName() : "";
+
+        if (panoramaAlpha != 1) RenderComponents.PANORAMA.render(partialTicks, 1);
+        boolean shouldFadeIn = MENUS_WITH_DEFINED_PANORAMAS.contains(screenName);
+
+        if (shouldFadeIn) {
+            panoramaAlpha = MathHelper.clamp(panoramaAlpha + 0.02F, 0, 1);
+            lastScreenWithPanorama = screenName;
+        } else {
+            panoramaAlpha = MathHelper.clamp(panoramaAlpha - 0.02F, 0, 1);
+        }
+
+        if (shouldFadeIn || panoramaAlpha > 0) {
+            RenderSkybox panorama = MENU_TO_PANORAMAS.get(lastScreenWithPanorama);
+            // don't try rendering the panorama if it doesn't exist
+            if (panorama != null && panorama.hashCode() != panorama().hashCode()) panorama.render(partialTicks, panoramaAlpha);
         }
     }
 
@@ -87,5 +151,14 @@ public class Panoramas {
         ResourceLocation[] textures = ((InterfaceMethods.CubeMapMethods) cubeMap).getPanoramaTextures();
         assert textures != null;
         return Panorama.builder(Lists.newArrayList(textures)).overlay(overlay).build();
+    }
+
+    /// Gets the panorama renderer of a given panorama based on its id, or `null` if it doesn't exist..
+    /// @param panoramaID The id of the panorama.
+    @Nullable
+    private static RenderSkybox getRenderer(ResourceLocation panoramaID) {
+        Panorama panorama = MellowUtils.PANORAMAS.get(panoramaID);
+        if (panorama != null) return panorama.panorama();
+        return null;
     }
 }

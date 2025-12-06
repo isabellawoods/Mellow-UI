@@ -23,12 +23,13 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue monochromeLoadingScreen;
     public final ForgeConfigSpec.DoubleValue panoramaScrollSpeed;
     public final ForgeConfigSpec.BooleanValue hideSplashTexts;
-    public final ForgeConfigSpec.BooleanValue showMusicToast;
+    public final ForgeConfigSpec.EnumValue<ThreeStyles> musicToast;
     public final ForgeConfigSpec.BooleanValue highContrastPack;
     public final ForgeConfigSpec.IntValue menuBackgroundBlurriness;
     public final ForgeConfigSpec.EnumValue<TwoStyles> directionalAudio;
     public final ForgeConfigSpec.ConfigValue<String> soundDevice;
     public final ForgeConfigSpec.BooleanValue onboardAccessibility;
+    public final ForgeConfigSpec.BooleanValue allowCursorChanges;
     public final ForgeConfigSpec.DoubleValue uiVolume;
 
     // Mellow UI Configs
@@ -44,6 +45,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue backgroundShaders;
     public final ForgeConfigSpec.BooleanValue logGLErrors;
     public final ForgeConfigSpec.BooleanValue blurryContainers;
+    public final ForgeConfigSpec.BooleanValue fadingBlur;
     public final ForgeConfigSpec.BooleanValue defaultBackground;
     public final ForgeConfigSpec.BooleanValue gradientBackground;
     public final ForgeConfigSpec.BooleanValue disableBranding;
@@ -70,8 +72,10 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue accessibilitySettingsStyle;
     public final ForgeConfigSpec.BooleanValue outOfMemoryStyle;
     public final ForgeConfigSpec.BooleanValue statisticsStyle;
+    public final ForgeConfigSpec.BooleanValue updateAvailableIconStyle;
     public final ForgeConfigSpec.BooleanValue screenBackgroundStyle;
     public final ForgeConfigSpec.BooleanValue listBackgroundStyle;
+    public final ForgeConfigSpec.BooleanValue panelBackgroundStyle;
     public final ForgeConfigSpec.BooleanValue replaceRealmsNotifications;
     public final ForgeConfigSpec.BooleanValue splashTextPosition;
     public final ForgeConfigSpec.EnumValue<LogoStyles> logoStyle;
@@ -89,11 +93,12 @@ public class MellowConfigs {
         this.panoramaScrollSpeed = builder.comment("Changes the scrolling speed of the panoramic background.").translation("config.minecraft.panorama_scroll_speed").defineInRange("panoramaScrollSpeed", 1F, 0, 1);
         this.menuBackgroundBlurriness = builder.comment("Changes the blurriness of menu backgrounds.", "Setting this to 20 will result in the same blurring effect as in the pre-1.13 panorama.").translation("config.minecraft.menu_background_blurriness").defineInRange("menuBackgroundBlurriness", 5, 0, 20);
         this.hideSplashTexts = builder.comment("Hides the yellow splash text in the main menu.").translation("config.minecraft.hide_splash_texts").define("hideSplashTexts", false);
-        this.showMusicToast = builder.comment("Displays a toast whenever a song starts playing.", "The same toast is constantly displayed in the in-game pause menu while a song is playing.").translation("config.minecraft.show_music_toast").define("showMusicToast", false);
+        this.musicToast = builder.comment("Displays a toast whenever a song starts playing.", "The same toast can be constantly displayed in the in-game pause menu while a song is playing.").translation("config.minecraft.music_toast").defineEnum("musicToast", ThreeStyles.OPTION_1);
         this.highContrastPack = builder.comment("Enhances the contrast of UI elements.").translation("config.minecraft.high_contrast").define("highContrastPack", false);
         this.directionalAudio = builder.comment("Enables the use of HRTF-based directional audio to improve simulation of 3D sound.", "Option 1 = Classic stereo | Option 2 = HRTF-based directional audio").translation("config.minecraft.directional_audio").defineEnum("directionalAudio", TwoStyles.OPTION_1);
         this.soundDevice = builder.comment("Which device Minecraft should output audio from.").translation("config.minecraft.sound_device").define("soundDevice", "");
         this.onboardAccessibility = builder.comment("Whether to show the accessibility onboarding menu upon loading the game for the first time.").translation("config.minecraft.onboard_accessibility").define("onboardAccessibility", true);
+        this.allowCursorChanges = builder.comment("Allows the mouse cursor to change shape when over certain UI elements.").translation("config.minecraft.allow_cursor_changes").define("allowCursorChanges", true);
         this.uiVolume = builder.comment("The volume of the in-game UI elements.").translation("config.minecraft.sound_category.ui").defineInRange("uiVolume", 1F, 0, 1);
         builder.pop();
 
@@ -116,6 +121,7 @@ public class MellowConfigs {
         this.backgroundShaders = builder.comment("Whether shaders, like super secret settings and the blur, should render on the panorama.", "This may fix rendering issues with menus added by other mods.").translation("config.mellowui.background_shaders").define("backgroundShaders", true);
         this.logGLErrors = builder.comment("Whether to log OpenGL error messages, in order to not spam the logs.", "Useful if playing with Fabulous! graphics.").translation("config.mellowui.log_gl_errors").define("logGLErrors", false);
         this.blurryContainers = builder.comment("If the background blur and shaders should be applied on containers like chests, furnaces and your inventory.").translation("config.mellowui.blurry_containers").define("blurryContainers", false);
+        this.fadingBlur = builder.comment("If the background blur should fade in/out instead of being static.").translation("config.mellowui.fading_blur").define("fadingBlur", false);
         this.defaultBackground = builder.comment("Whether to use the default dirt background texture instead of the current, transparent background.").translation("config.mellowui.default_background").define("defaultBackground", false);
         this.gradientBackground = builder.comment("Makes in-game screens use a gray gradient background instead of a regular transparent background.").translation("config.mellowui.gradient_background").define("gradientBackground", false);
         this.disableBranding = builder.comment("Disables Forge's branding lines. Branding lines are the Forge and MCP versions in the bottom-left corner.").translation("config.mellowui.disable_branding").define("disableBranding", true);
@@ -123,7 +129,8 @@ public class MellowConfigs {
 
         builder.push("styleOptions");
         this.screenBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").translation("config.mellowui.screen_background_style").define("screenBackground", true);
-        this.listBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").translation("config.mellowui.list_background_style").define("listBackground", true);
+        this.listBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu).").translation("config.mellowui.list_background_style").define("listBackground", true);
+        this.panelBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all panels added by Forge. Only used on Forge's mod list menu.").translation("config.mellowui.panel_background_style").define("panelBackground", true);
         this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the pre-1.16 logo, the current logo (1.16), the new logo (1.20+), and the Mellomedley logo.", "Allowed values: PRE_ONE_SIXTEEN, ONE_SIXTEEN, ONE_TWENTY, MELLOMEDLEY").translation("config.mellowui.logo_style").defineEnum("logo", LogoStyles.ONE_TWENTY);
         this.titleStyle = builder.comment("Which style to use for the main menu / title screen.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").translation("config.mellowui.title_style").defineEnum("mainMenu", ThreeStyles.OPTION_1);
         this.pauseStyle = builder.comment("Which style to use for the pause menu.").translation("config.mellowui.pause_style").define("pauseMenu", true);
@@ -142,6 +149,7 @@ public class MellowConfigs {
         this.statisticsStyle = builder.comment("Which style to use for the statistics menu.").translation("config.mellowui.statistics_style").define("statisticsMenu", true);
         this.modListStyle = builder.comment("Which style to use for the mod list.", "Option 1 = Forge | Option 2 = Mellow UI | Option 3 = Catalogue (if available).").translation("config.mellowui.mod_list_style").defineEnum("modListMenu", ThreeStyles.OPTION_3);
         this.loadingErrorsStyle = builder.comment("Which style to use for Forge's loading warnings/errors menu.").translation("config.mellowui.loading_errors_style").define("loadingErrorsMenu", true);
+        this.updateAvailableIconStyle = builder.comment("Which style to use for the \"Update Available!\" icon in mod buttons and list entries.", "True = Realms Diamond | False = Forge Emerald.").translation("config.mellowui.update_available_icon_style").define("updateAvailableIcon", true);
         builder.pop();
 
         builder.push("mellomedleyOptions");

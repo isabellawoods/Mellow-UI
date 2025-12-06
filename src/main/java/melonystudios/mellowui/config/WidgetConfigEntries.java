@@ -88,6 +88,8 @@ public class WidgetConfigEntries {
             new TranslationTextComponent("config.mellowui.edit_button_text_padding.tooltip"), WIDGET_CONFIGS.editButtonTextPadding);
     public static final EditConfigOption TAB_TEXT_PADDING = new EditConfigOption("config.mellowui.tab_text_padding",
             new TranslationTextComponent("config.mellowui.tab_text_padding.tooltip"), WIDGET_CONFIGS.tabTextPadding);
+    public static final EditConfigOption STRING_WIDGET_TEXT_PADDING = new EditConfigOption("config.mellowui.string_widget_text_padding",
+            new TranslationTextComponent("config.mellowui.string_widget_text_padding.tooltip"), WIDGET_CONFIGS.stringWidgetTextPadding);
     public static final EditConfigOption MOD_NAME_TEXT_PADDING = new EditConfigOption("config.mellowui.mod_name_text_padding",
             new TranslationTextComponent("config.mellowui.mod_name_text_padding.tooltip"), WIDGET_CONFIGS.modNameTextPadding);
 }

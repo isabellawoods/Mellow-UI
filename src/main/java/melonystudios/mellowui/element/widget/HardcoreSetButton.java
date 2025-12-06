@@ -2,6 +2,8 @@ package melonystudios.mellowui.element.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -41,7 +43,7 @@ public class HardcoreSetButton extends ImageSetButton {
 
         // Text
         if (this.renderText) this.renderWidgetText(
-                () -> this.renderScrollingString(stack, minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
+                () -> this.renderScrollingString(minecraft.font, 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24),
                 () ->  drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, this.getFGColor() | MathHelper.ceil(this.alpha * 255F) << 24)
         );
 
@@ -62,6 +64,7 @@ public class HardcoreSetButton extends ImageSetButton {
         }
 
         this.renderBg(stack, minecraft, mouseX, mouseY);
+        if (this.isHovered && this.active) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
         else if (this.isHovered()) this.renderToolTip(stack, mouseX, mouseY);
     }

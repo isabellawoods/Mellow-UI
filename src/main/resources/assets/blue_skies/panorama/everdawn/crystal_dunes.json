@@ -1,0 +1,11 @@
+{
+  "cube_map": [
+    "blue_skies:gui/panorama/everdawn/crystal_dunes/panorama_0",
+    "blue_skies:gui/panorama/everdawn/crystal_dunes/panorama_1",
+    "blue_skies:gui/panorama/everdawn/crystal_dunes/panorama_2",
+    "blue_skies:gui/panorama/everdawn/crystal_dunes/panorama_3",
+    "blue_skies:gui/panorama/everdawn/crystal_dunes/panorama_4",
+    "blue_skies:gui/panorama/everdawn/crystal_dunes/panorama_5"
+  ],
+  "overlay": "blue_skies:gui/panorama/panorama_overlay_empty"
+}

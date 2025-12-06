@@ -26,10 +26,12 @@ import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ColorHelper;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
@@ -65,6 +67,7 @@ public class RenderComponents extends VanillaRenderComponents {
     public static final int DEFAULT_BACKGROUND_BRIGHTNESS = 255;
     public static final int OLD_BACKGROUND_BRIGHTNESS = 64;
     public static final int OLD_LIST_BACKGROUND_BRIGHTNESS = 32;
+    public static final int OLD_PANEL_BACKGROUND_BRIGHTNESS = 32;
     public static final int DEFAULT_TEXTURE_WIDTH = 32;
     private final ScissorStack scissorStack = new ScissorStack();
 
@@ -99,7 +102,8 @@ public class RenderComponents extends VanillaRenderComponents {
     }
 
     /// Returns `true` whether the specified {@link Screen} classifies as a container.
-    /// This includes any screens in the {@linkplain MellowConfigs#classifiedAsContainers **Classified as Containers**} option, and some of the vanilla screens
+    /// This includes any screens in the {@linkplain MellowConfigs#classifiedAsContainers **Classified as Containers**} option, and some of the vanilla screens.
+    /// @param screen The screen currently open.
     public boolean classifiesAsContainer(Screen screen) {
         boolean vanillaScreens = screen instanceof ContainerScreen || screen instanceof CommandBlockScreen || screen instanceof EditStructureScreen || screen instanceof JigsawScreen ||
                 screen instanceof EditSignScreen || screen instanceof EditBookScreen || screen instanceof LecternScreen;
@@ -117,7 +121,6 @@ public class RenderComponents extends VanillaRenderComponents {
     /// Renders the currently selected {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} onto the panorama.
     /// @param partialTicks The partial tick time.
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
-    /// @apiNote Fading is **not** fully implemented.
     public void renderBlurredBackground(float partialTicks, Boolean fadeIn) {
         if (!CLIENT_CONFIGS.backgroundShaders.get()) return;
         RenderSystem.disableDepthTest();
@@ -132,7 +135,7 @@ public class RenderComponents extends VanillaRenderComponents {
     /// @param height The height of the screen.
     /// @param transparency The transparency of the overlay texture, from `0` to `1`.
     public void renderPanorama(float partialTicks, int width, int height, float transparency) {
-        PANORAMA.render(partialTicks, 1);
+        Panoramas.renderSituationalPanorama(partialTicks);
         this.setColor(1, 1, 1, MathHelper.ceil(MathHelper.clamp(transparency, 0, 1)));
         this.renderBackgroundTexture(Panoramas.overlayTexture(Panoramas.panorama()), width, height);
     }
@@ -408,6 +411,71 @@ public class RenderComponents extends VanillaRenderComponents {
     /// @return The width of three {@link melonystudios.mellowui.element.widget.TabButton TabButtons} based on the screen width.
     public int threeTabWidth(int width) {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
+    }
+
+    /// Renders the **\"Update Available!\"** icon at a *widget's position*. This is dependent on the {@linkplain MellowConfigs#updateAvailableIconStyle **Update Available Icon**} style option.
+    /// @param x The x-position of the widget.
+    /// @param y The y-position of the widget.
+    /// @param width The width of the widget.
+    /// @param height The height of the widget.
+    /// @param alpha The transparency of the icon. Should be a value between `0` and `1`.
+    /// @param renderOnCorner Whether to render the icon on the corner of the button.
+    /// @param checkStatus *(optional)* The Version Checker status of the Forge Emerald.
+    public void renderUpdateAvailableIcon(int x, int y, int width, int height, float alpha, boolean renderOnCorner, @Nullable VersionChecker.Status checkStatus) {
+        if (CLIENT_CONFIGS.updateAvailableIconStyle.get()) {
+            if (renderOnCorner) this.renderRealmsDiamond(x + width - 5, y - 4, alpha);
+            else this.renderRealmsDiamond(x + width - (height / 2 + 4), y + (height / 2 - 4), alpha);
+        } else if (checkStatus != null) {
+            if (renderOnCorner) this.renderForgeEmerald(x + width - 5, y - 4, alpha, checkStatus);
+            else this.renderForgeEmerald(x + width - (height / 2 + 4), y + (height / 2 - 4), alpha, checkStatus);
+        }
+    }
+
+    /// Renders the **"Update Available!"** icon at the specified position.
+    /// @param x The x-position of the icon.
+    /// @param y The y-position of the icon.
+    /// @param alpha The transparency of the icon. Should be a value between `0` to `1`.
+    /// @param checkStatus *(optional)* The {@linkplain VersionChecker.Status Version Checker status} associated with the Forge Emerald.
+    public void renderUpdateAvailableIcon(int x, int y, float alpha, @Nullable VersionChecker.Status checkStatus) {
+        if (CLIENT_CONFIGS.updateAvailableIconStyle.get()) this.renderRealmsDiamond(x, y, alpha);
+        else if (checkStatus != null) this.renderForgeEmerald(x, y, alpha, checkStatus);
+    }
+
+    /// Renders a **Realms Diamond** at the specified position. This is the updated, animated version of it from 1.20.5.
+    /// @param x The x-position of the icon.
+    /// @param y The y-position of the icon.
+    /// @param alpha The transparency of the icon. Should be a value between `0` to `1`.
+    public void renderRealmsDiamond(int x, int y, float alpha) {
+        TextureAtlasSprite sprite = GUITextures.getSprite(GUITextures.UPDATE_AVAILABLE);
+        this.minecraft.getTextureManager().bind(GUITextures.GUI_SPRITES_ATLAS);
+        this.setColor(1, 1, 1, alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        blit(this.stack, x, y, this.getBlitOffset(), 8, 8, sprite);
+
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableBlend();
+        this.setColor(1, 1, 1, 1);
+    }
+
+    /// Renders a **Forge Emerald** at the specified position. Its animation is dependent on the Version Checker status associated with it.
+    /// @param x The x-position of the icon.
+    /// @param y The y-position of the icon.
+    /// @param alpha The transparency of the icon. Should be a value between `0` to `1`.
+    /// @param checkStatus The {@linkplain VersionChecker.Status Version Checker status} associated with this icon.
+    public void renderForgeEmerald(int x, int y, float alpha, VersionChecker.Status checkStatus) {
+        this.minecraft.getTextureManager().bind(GUITextures.VERSION_CHECKER_ICONS);
+        this.setColor(1, 1, 1, alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        blit(this.stack, x, y, checkStatus.getSheetOffset() * 8,
+                (checkStatus.isAnimated() && ((Util.getMillis() / 800 & 1) == 1)) ? 8 : 0,
+                8, 8, 64, 16
+        );
+
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableBlend();
+        this.setColor(1, 1, 1, 1);
     }
 
     /// Renders the **text suggestion** of a {@link TextFieldWidget}, overriding the color to match the border.

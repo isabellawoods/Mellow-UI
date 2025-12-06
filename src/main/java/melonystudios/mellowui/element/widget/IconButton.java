@@ -2,7 +2,9 @@ package melonystudios.mellowui.element.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.WidgetTextureSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
@@ -63,6 +65,9 @@ public class IconButton extends Button {
         int color = this.isFocused() || this.isHovered() ? WidgetConfigs.WIDGET_CONFIGS.highlightedIconButtonColor.get() : WidgetConfigs.WIDGET_CONFIGS.defaultWidgetTextColor.get();
         int alpha = MathHelper.ceil(this.textAlpha * 255) << 24;
         if (this.textAlpha > 0) drawString(stack, minecraft.font, this.getMessage(), this.x - minecraft.font.width(this.getMessage()) - 2, this.y + 2, color | alpha);
+
+        // Cursor
+        if (this.isHovered && this.active) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
 
         // Tooltip
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);

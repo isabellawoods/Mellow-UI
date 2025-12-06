@@ -2,7 +2,10 @@ package melonystudios.mellowui.element;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.backport.cursor.CursorType;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.util.Alignment;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -12,12 +15,16 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
+
 /// The vanilla ***Render Components***. Contains methods from `AbstractGui` that were updated and/or backported from `GuiGraphics`.
 @OnlyIn(Dist.CLIENT)
 @SuppressWarnings("deprecation")
 public class VanillaRenderComponents extends AbstractGui {
     /// The default instance of vanilla's ***Render Components***.
     public static final VanillaRenderComponents INSTANCE = new VanillaRenderComponents(Minecraft.getInstance());
+    private static CursorType currentCursor = CursorTypes.DEFAULT;
+    private static CursorType pendingCursor = CursorTypes.DEFAULT;
     protected final Minecraft minecraft;
     protected final FontRenderer font;
     protected final MatrixStack stack;
@@ -68,6 +75,22 @@ public class VanillaRenderComponents extends AbstractGui {
         float green = ColorHelper.PackedColor.green(color);
         float blue = ColorHelper.PackedColor.blue(color);
         this.setColor(red, green, blue, alpha);
+    }
+
+    /// Requests a certain cursor to be used when hovering over this widget.
+    /// @param cursor One of {@linkplain CursorTypes these} cursor types.
+    public void requestCursor(CursorType cursor) {
+        pendingCursor = cursor;
+    }
+
+    /// Applies the selected cursor to the on-screen mouse cursor.
+    /// @param window *Minecraft*'s main window, provided by the **game renderer**.
+    public void applyCursor(MainWindow window) {
+        CursorType cursor = CLIENT_CONFIGS.allowCursorChanges.get() ? pendingCursor : CursorTypes.DEFAULT;
+        if (currentCursor != cursor) {
+            currentCursor = cursor;
+            cursor.select(window);
+        }
     }
 
     /// Draws a **string** at the specified coordinates using the given text and color.

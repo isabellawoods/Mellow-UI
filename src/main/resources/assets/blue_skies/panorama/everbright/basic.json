@@ -1,0 +1,11 @@
+{
+  "cube_map": [
+    "blue_skies:gui/panorama/everbright/basic/panorama_0",
+    "blue_skies:gui/panorama/everbright/basic/panorama_1",
+    "blue_skies:gui/panorama/everbright/basic/panorama_2",
+    "blue_skies:gui/panorama/everbright/basic/panorama_3",
+    "blue_skies:gui/panorama/everbright/basic/panorama_4",
+    "blue_skies:gui/panorama/everbright/basic/panorama_5"
+  ],
+  "overlay": "blue_skies:gui/panorama/panorama_overlay"
+}

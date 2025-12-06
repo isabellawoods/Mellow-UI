@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import melonystudios.mellowui.screen.update.MUILoadingTerrainScreen;
+import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
@@ -63,5 +64,12 @@ public abstract class MUIMinecraftMixin {
             SkullTileEntity.setSessionService(sessionService);
             PlayerProfileCache.setUsesAuthentication(false);
         }
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/IProfiler;popPush(Ljava/lang/String;)V", ordinal = 0))
+    public void tickGUIAtlas(CallbackInfo callback) {
+        try {
+            if (this.level == null) GUITextures.getSprite(GUITextures.UPDATE_AVAILABLE).atlas().tick();
+        } catch (Exception ignored) {}
     }
 }
