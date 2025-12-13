@@ -7,6 +7,7 @@ import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +23,7 @@ public class Panorama {
     public static final ResourceLocation DEFAULT_LOCATION = MellowUI.mellowUI("default");
     private final List<ResourceLocation> cubeMap;
     private final ResourceLocation overlay;
+    private final List<String> usedIn;
     private final Float speedOverride;
     private final PitchOverrider pitchOverride;
     @Nullable
@@ -34,13 +36,15 @@ public class Panorama {
     /// A **panorama** is a set of textures and properties that are rendered on the background of nearly all screens.
     /// @param cubeMap A list of **exactly six** {@linkplain ResourceLocation resource locations} for each side of the cube.
     /// @param overlay A resource location of the {@linkplain GUITextures#PANORAMA_OVERLAY panorama overlay} texture.
+    /// @param usedIn A list of screen class paths that this panorama renders in. Panoramas fade in/out when switching screens.
     /// @param speedOverride A float that overrides the speed the panorama spins at.
     /// @param pitchOverride A {@linkplain PitchOverrider **pitch overrider**} that defines the pitch of fhe panoramic camera.
-    /// @param shader A *nullable** resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
+    /// @param shader A *nullable* resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
     /// @param blurStrength An integer overriding the strength of the {@linkplain melonystudios.mellowui.config.MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**}.
-    private Panorama(List<ResourceLocation> cubeMap, ResourceLocation overlay, Float speedOverride, PitchOverrider pitchOverride, @Nullable ResourceLocation shader, Integer blurStrength) {
+    private Panorama(List<ResourceLocation> cubeMap, ResourceLocation overlay, List<String> usedIn, Float speedOverride, PitchOverrider pitchOverride, @Nullable ResourceLocation shader, Integer blurStrength) {
         this.cubeMap = cubeMap;
         this.overlay = overlay;
+        this.usedIn = usedIn;
         this.speedOverride = speedOverride;
         this.pitchOverride = pitchOverride;
         this.shader = shader;
@@ -59,6 +63,10 @@ public class Panorama {
 
     public ResourceLocation overlayTexture() {
         return this.overlay;
+    }
+
+    public List<String> usedIn() {
+        return this.usedIn;
     }
 
     public Float speedOverride() {
@@ -114,6 +122,7 @@ public class Panorama {
     public static class Builder {
         private final List<ResourceLocation> cubeMap;
         private ResourceLocation overlay = new ResourceLocation("gui/title/background/panorama_overlay");
+        private final List<String> usedIn = Lists.newArrayList();
         private Float speedOverride = null;
         private PitchOverrider pitchOverride = null;
         @Nullable
@@ -133,6 +142,26 @@ public class Panorama {
             return this;
         }
 
+        /// Makes the provided screen class use this panorama when rendering its background.
+        /// @param screens A list of screen class paths.
+        public Builder usedIn(List<String> screens) {
+            this.usedIn.addAll(screens);
+            return this;
+        }
+
+        /// Makes the provided screen class use this panorama when rendering its background.
+        /// @param classPath The path of the screen class, like {@link net.minecraft.client.gui.screen.OptionsScreen}.
+        public Builder usedIn(String classPath) {
+            this.usedIn.add(classPath);
+            return this;
+        }
+
+        /// Makes the provided screen class use this panorama when rendering its background.
+        /// @param screen A class that extends {@link Screen}.
+        public Builder usedIn(Class<? extends Screen> screen) {
+            return this.usedIn(screen.getName());
+        }
+
         /// Overrides the speed of this panorama.
         /// @param speed A float that overrides the speed the panorama spins at.
         public Builder overrideSpeed(Float speed) {
@@ -148,7 +177,7 @@ public class Panorama {
         }
 
         /// Defines a shader to render on this panorama.
-        /// @param shader A *nullable** resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
+        /// @param shader A *nullable* resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
         public Builder applyShader(ResourceLocation shader) {
             this.shader = shader;
             return this;
@@ -163,7 +192,7 @@ public class Panorama {
 
         /// Creates a new {@linkplain Panorama panorama}.
         public Panorama build() {
-            return new Panorama(this.cubeMap, this.overlay, this.speedOverride, this.pitchOverride, this.shader, this.blurStrength);
+            return new Panorama(this.cubeMap, this.overlay, this.usedIn, this.speedOverride, this.pitchOverride, this.shader, this.blurStrength);
         }
     }
 
@@ -188,6 +217,15 @@ public class Panorama {
                 ResourceLocation overlay = new ResourceLocation("gui/title/background/panorama_overlay");
                 if (object.has("overlay") && object.get("overlay").isJsonPrimitive() && object.get("overlay").getAsJsonPrimitive().isString()) {
                     overlay = new ResourceLocation(object.get("overlay").getAsString());
+                }
+
+                // Used in (screens)
+                List<String> usedIn = Lists.newArrayList();
+                if (object.has("used_in") && object.get("used_in").isJsonArray()) {
+                    JsonArray array = object.get("used_in").getAsJsonArray();
+                    for (JsonElement element1 : array) {
+                        if (element1.getAsJsonPrimitive().isString()) usedIn.add(element1.getAsString());
+                    }
                 }
 
                 // Speed override
@@ -216,7 +254,13 @@ public class Panorama {
                     blurStrength = object.get("blur_strength").getAsInt();
                 }
 
-                return Panorama.builder(cubeMap).overlay(overlay).overrideSpeed(speedOverride).overridePitch(pitchOverride).applyShader(shader).blurStrength(blurStrength).build();
+                Panorama panorama = Panorama.builder(cubeMap).overlay(overlay).usedIn(usedIn).overrideSpeed(speedOverride).overridePitch(pitchOverride).applyShader(shader).blurStrength(blurStrength).build();
+                if (!usedIn.isEmpty()) {
+                    Panoramas.MENUS_WITH_DEFINED_PANORAMAS.addAll(usedIn);
+                    for (String classPath : usedIn) Panoramas.MENU_TO_PANORAMAS.put(classPath, panorama.panorama());
+                }
+
+                return panorama;
             } else {
                 throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", element.toString()));
             }
@@ -237,6 +281,11 @@ public class Panorama {
 
             if (!panorama.overlayTexture().equals(GUITextures.PANORAMA_OVERLAY)) {
                 object.addProperty("overlay", panorama.overlayTexture().toString());
+            }
+            if (!panorama.usedIn().isEmpty()) {
+                JsonArray usedIn = new JsonArray();
+                for (String classPath : panorama.usedIn()) usedIn.add(classPath);
+                object.add("used_in", usedIn);
             }
             if (panorama.speedOverride() != null) object.addProperty("speed_override", panorama.speedOverride());
             if (panorama.pitchOverride() != null) object.add("pitch_override", panorama.pitchOverride().save());

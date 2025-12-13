@@ -27,6 +27,8 @@ public class PanoramaReloadListener extends AssetReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> entries, IResourceManager manager, IProfiler profiler) {
         ImmutableMap.Builder<ResourceLocation, Panorama> panoramas = ImmutableMap.builder();
+        Panoramas.MENU_TO_PANORAMAS.clear();
+        Panoramas.MENUS_WITH_DEFINED_PANORAMAS.clear();
 
         entries.forEach((location, element) -> {
             try {

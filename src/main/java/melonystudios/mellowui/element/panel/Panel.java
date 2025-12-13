@@ -123,7 +123,7 @@ public class Panel extends FocusableGui implements IRenderable {
         }
 
         // Cursor
-        if (this.scrolling && maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) components.requestCursor(CursorTypes.RESIZE_NS);
+        if (maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) this.components.requestCursor(this.scrolling ? CursorTypes.RESIZE_NS : CursorTypes.POINTING_HAND);
     }
 
     protected <T extends Widget> T addWidget(T widget) {

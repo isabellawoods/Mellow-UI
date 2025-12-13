@@ -6,5 +6,8 @@
     "create:gui/title/background/panorama_3",
     "create:gui/title/background/panorama_4",
     "create:gui/title/background/panorama_5"
+  ],
+  "used_in": [
+    "com.simibubi.create.foundation.gui.mainMenu.CreateMainMenuScreen"
   ]
 }

@@ -9,7 +9,7 @@
   "loading_stage.forge.none": "None",
   "loading_stage.forge.done": "Done",
 
-  "error.mellowui.cannot_find_forge": "Failed to find Forge, WHAT!",
+  "error.mellowui.cannot_find_forge": "Failed to find Forge... how?",
   "error.mellowui.broken_config_screen": "There was a critical issue trying to load the config screen for '%s'",
   "error.mellowui.pack_icon": "Failed to load icon from pack '%s'",
   "error.mellowui.load_shader": "Failed to load shader: '%s'",

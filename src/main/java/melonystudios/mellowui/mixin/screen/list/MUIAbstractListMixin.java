@@ -115,7 +115,7 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
             RenderSystem.enableAlphaTest();
 
             // Cursor
-            if (this.scrolling && maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) components.requestCursor(CursorTypes.RESIZE_NS);
+            if (maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) components.requestCursor(this.scrolling ? CursorTypes.RESIZE_NS : CursorTypes.POINTING_HAND);
         }
     }
 

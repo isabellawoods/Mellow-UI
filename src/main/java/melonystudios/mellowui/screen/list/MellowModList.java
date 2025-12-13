@@ -71,6 +71,11 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
         this.parentScreen.loadMods(this::addEntry, mod -> new Mod(this.parentScreen, mod));
     }
 
+    @Nullable
+    public Mod byModInfo(ModInfo info) {
+        return this.children().stream().filter(entry -> entry.modInfo == info).findFirst().orElse(null);
+    }
+
     public class Mod extends ExtendedList.AbstractListEntry<MellowModList.Mod> implements ScrollingText {
         private final MellowModListScreen parentScreen;
         private final ModInfo modInfo;

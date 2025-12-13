@@ -61,7 +61,7 @@ public class MellowModListScreen extends Screen {
 
     // Sorting
     private ModListSorting sortingMethod = MellowConfigs.CLIENT_CONFIGS.modListSorting.get();
-    private static String LAST_SEARCH = "";
+    private String lastSearch = "";
     private boolean sorted = false;
 
     // Mod data
@@ -84,7 +84,7 @@ public class MellowModListScreen extends Screen {
     @Override
     public void tick() {
         this.searchBox.tick();
-        if (!this.searchBox.getValue().equals(LAST_SEARCH)) {
+        if (!this.searchBox.getValue().equals(this.lastSearch)) {
             this.reloadMods();
             this.sorted = false;
         }
@@ -126,7 +126,7 @@ public class MellowModListScreen extends Screen {
         this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
-        this.searchBox.setValue(LAST_SEARCH);
+        this.searchBox.setValue(this.lastSearch);
         this.searchBox.setResponder(value -> this.modList.setScrollAmount(!value.isEmpty() ? 0 : this.modList.getScrollAmount()));
         this.addWidget(this.searchBox);
 
@@ -177,7 +177,10 @@ public class MellowModListScreen extends Screen {
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
-        if (this.selectedMod != null) this.modList.centerScrollOn(this.selectedMod);
+        if (this.selectedMod != null) {
+            MellowModList.Mod entry = this.modList.byModInfo(this.selectedMod.getModInformation());
+            if (entry != null) this.modList.centerScrollOn(entry);
+        }
         this.updateCache();
     }
 
@@ -301,7 +304,7 @@ public class MellowModListScreen extends Screen {
 
     private void reloadMods() {
         this.mods = this.unsortedMods.stream().filter(mod -> StringUtils.toLowerCase(mod.getDisplayName()).contains(StringUtils.toLowerCase(this.searchBox.getValue()))).collect(Collectors.toList());
-        LAST_SEARCH = this.searchBox.getValue();
+        this.lastSearch = this.searchBox.getValue();
     }
 
     private void resortMods(ModListSorting method) {
