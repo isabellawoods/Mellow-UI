@@ -6,6 +6,7 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.option.ModelPartBooleanOption;
 import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
@@ -26,7 +27,7 @@ public class MUISkinCustomizationScreen extends OptionsSubScreen {
     private OptionsList list;
 
     public MUISkinCustomizationScreen(Screen lastScreen, Options options) {
-        super(lastScreen, options, new TranslatableComponent("options.skinCustomisation.title"));
+        super(lastScreen, options, new TranslatableComponent("options.skinCustomisation.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override

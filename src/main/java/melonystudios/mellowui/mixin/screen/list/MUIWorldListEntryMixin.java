@@ -82,7 +82,7 @@ public abstract class MUIWorldListEntryMixin extends ObjectSelectionList.Entry<W
             if (this.summary.isLocked()) {
                 GuiComponent.blit(stack, left, top, 96, (float) vOffset, 32, 32, 256, 256);
                 if (iconHovered) {
-                    this.screen.setToolTip(this.minecraft.font.split(new TranslatableComponent("selectWorld.locked").withStyle(ChatFormatting.RED), 175));
+                    this.screen.setToolTip(this.minecraft.font.split(new TranslatableComponent("selectWorld.locked").withStyle(ChatFormatting.RED), RenderComponents.TOOLTIP_MAX_WIDTH));
                 }
             } else if (this.summary.requiresManualConversion()) {
                 GuiComponent.blit(stack, left, top, 96, (float) vOffset, 32, 32, 256, 256);

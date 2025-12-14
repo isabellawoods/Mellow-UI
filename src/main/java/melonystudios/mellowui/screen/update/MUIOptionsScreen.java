@@ -10,6 +10,7 @@ import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
@@ -37,7 +38,7 @@ public class MUIOptionsScreen extends OptionsSubScreen {
     private Difficulty currentDifficulty;
 
     public MUIOptionsScreen(Screen lastScreen, Options options) {
-        super(lastScreen, options, new TranslatableComponent("options.title"));
+        super(lastScreen, options, new TranslatableComponent("options.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override

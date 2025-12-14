@@ -17,8 +17,10 @@ import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.screen.update.TitleScreen32BitWarning;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetModButton;
 import melonystudios.mellowui.widget.ModButton;
+import melonystudios.mellowui.widget.text.MUIPlainTextButton;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.*;
@@ -154,7 +156,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                     new TranslatableComponent("narrator.button.accessibility")));
 
             // Copyright text
-            this.addRenderableWidget(new PlainTextButton(copyrightX, this.height - 10, copyrightWidth, 10,
+            this.addRenderableWidget(new MUIPlainTextButton(copyrightX, this.height - 10, copyrightWidth, 10,
                     new TranslatableComponent("menu.minecraft.credits"), button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this)), this.font));
 
             // Realms availability
@@ -226,7 +228,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
             this.components.renderLogo(this, this.width, this.height, buttonAlpha, this.keepsLogoThroughFade());
 
             if ((textAlpha & 0xFC000000) != 0) {
-                int textColor = MellowUtils.getSelectableTextColor(false, true);
+                int textColor = TextComponents.selectableColor(false, true);
 
                 // 32-bit deprecation warning
                 if (this.warning32Bit != null) {
@@ -262,7 +264,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 }
 
                 for (GuiEventListener listener : this.children()) {
-                    if (listener instanceof AbstractWidget) ((AbstractWidget) listener).setAlpha(buttonAlpha);
+                    if (listener instanceof AbstractWidget widget) widget.setAlpha(buttonAlpha);
                 }
                 super.render(stack, mouseX, mouseY, partialTicks);
                 if (this.realmsNotificationsEnabled() && buttonAlpha >= 1) this.realmsNotificationsScreen.render(stack, mouseX, mouseY, partialTicks);

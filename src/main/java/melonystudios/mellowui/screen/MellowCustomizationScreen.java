@@ -11,10 +11,7 @@ import melonystudios.mellowui.widget.TabButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -27,8 +24,10 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowCustomizationScreen extends OptionsSubScreen {
-    public static final List<Option> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, PAUSE_STYLE, OPTIONS_STYLE, ONLINE_OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE);
+    public static final List<Option> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, WORLD_LOADING_STYLE, PAUSE_STYLE, OPTIONS_STYLE, ONLINE_OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE, LOADING_ERRORS_STYLE);
     private final RenderComponents components = RenderComponents.INSTANCE;
+    private EditBox searchBox;
+    public String search = "";
 
     // Tabs
     private final List<TabButton> tabs = Lists.newArrayList();
@@ -46,6 +45,11 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
     public void resize(Minecraft minecraft, int width, int height) {
         super.resize(minecraft, width, height);
         this.tabs.get(0).setSelected(true);
+    }
+
+    @Override
+    public void tick() {
+        this.searchBox.tick();
     }
 
     @Override
@@ -76,25 +80,37 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
         if (createNewWorldStyle != null) createNewWorldStyle.active = false;
 
         // Styles
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.styles"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, "styles", new TranslatableComponent("tab.mellowui.styles"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.styles);
         })));
 
         // Themes
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.themes"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, "themes", new TranslatableComponent("tab.mellowui.themes"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.themes);
         })));
 
         // Panoramas
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.panoramas"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, "panoramas", new TranslatableComponent("tab.mellowui.panoramas"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.panoramas.refreshList(this.search);
             this.selectList(this.panoramas);
         })));
 
+        // Search box
+        this.searchBox = new EditBox(this.font, this.width / 2 - 155, this.height - 25, 150, 20, TextComponents.searchText());
+        this.searchBox.setFocus(false);
+        this.searchBox.setCanLoseFocus(true);
+        this.searchBox.setValue(this.search);
+        this.searchBox.setResponder(value -> {
+            this.search = value.trim();
+            this.panoramas.refreshList(value);
+        });
+        this.addWidget(this.searchBox);
+
         // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
+        this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 25, 150, 20, CommonComponents.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
         this.tabs.get(0).setSelected(true);
@@ -126,6 +142,8 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
             this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
         }
 
+        this.searchBox.render(stack, mouseX, mouseY, partialTicks);
+        this.components.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
         super.render(stack, mouseX, mouseY, partialTicks);
         if (this.activeList instanceof OptionsList list) {
             List<FormattedCharSequence> processors = tooltipAt(list, mouseX, mouseY);

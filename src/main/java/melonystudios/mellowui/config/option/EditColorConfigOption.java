@@ -1,7 +1,6 @@
 package melonystudios.mellowui.config.option;
 
 import melonystudios.mellowui.screen.popup.EditValueScreen;
-import melonystudios.mellowui.widget.EditButton;
 import melonystudios.mellowui.widget.EditColorButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;

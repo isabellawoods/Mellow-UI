@@ -46,7 +46,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static melonystudios.mellowui.util.MellowUtils.withColor;
+import static melonystudios.mellowui.util.text.TextComponents.withColor;
 
 public class MellowModListScreen extends Screen {
     private final RenderComponents components = RenderComponents.INSTANCE;
@@ -76,7 +76,7 @@ public class MellowModListScreen extends Screen {
     private Button updateAvailableButton;
 
     public MellowModListScreen(Screen lastScreen) {
-        super(new TranslatableComponent("menu.mellowui.mods.title", ModList.get().size()));
+        super(new TranslatableComponent("menu.mellowui.mods.title", ModList.get().size()).withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
         this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = this.mods;
@@ -117,7 +117,7 @@ public class MellowModListScreen extends Screen {
         this.addWidget(this.modList);
 
         // Mod information panel
-        this.panel = new Panel(this.modList.getRight() + 2, 34, (this.modList.getRight() / 2) + (this.width / 4) * 3, this.height - 66, this, new TranslatableComponent("panel.mellowui.mod_information"));
+        this.panel = new Panel(this.modList.getRight() + 2, 34, (this.modList.getRight() / 2) + (this.width / 4) * 3, this.height - 66, this, new TranslatableComponent("panel.mellowui.mod_information").withStyle(TextComponents.titleStyle()));
         this.addWidget(this.panel);
         this.selectMod(this.selectedMod);
         this.panel.init();
@@ -197,9 +197,9 @@ public class MellowModListScreen extends Screen {
         this.searchBox.render(stack, mouseX, mouseY, partialTicks);
         this.components.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
         drawCenteredString(stack, this.font, this.title, this.width / 2, 6, 0xFFFFFF);
-        drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.mods.links"), (this.modList.getRight() / 2) + rightSeparatorX, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.mods.links").withStyle(TextComponents.titleStyle()), (this.modList.getRight() / 2) + rightSeparatorX, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         if (this.selectedMod == null) {
-            drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.mods.no_mod_selected").withStyle(ChatFormatting.GRAY), this.width / 2, this.height / 2 - 5, 0xFFFFFF);
+            drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.mods.no_mod_selected").withStyle(TextComponents.descriptionStyle()), this.width / 2, this.height / 2 - 5, 0xFFFFFF);
         }
         super.render(stack, mouseX, mouseY, partialTicks);
     }
@@ -346,7 +346,7 @@ public class MellowModListScreen extends Screen {
         try {
             ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         } catch (final Exception exception) {
-            MellowUI.LOGGER.error(MellowUtils.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
+            MellowUI.LOGGER.error(TextComponents.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
         }
     }
 

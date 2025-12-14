@@ -3,8 +3,8 @@ package melonystudios.mellowui.mixin.widget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.widget.TickingWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -25,7 +25,7 @@ import java.util.function.BiFunction;
 
 @OnlyIn(Dist.CLIENT)
 @Mixin(EditBox.class)
-public abstract class MUIEditBoxMixin extends AbstractWidget {
+public abstract class MUIEditBoxMixin extends AbstractWidget implements TickingWidget {
     @Shadow public abstract boolean isVisible();
     @Shadow public abstract int getInnerWidth();
     @Shadow protected abstract int getMaxLength();

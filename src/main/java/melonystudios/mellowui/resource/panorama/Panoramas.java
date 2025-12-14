@@ -33,7 +33,7 @@ public class Panoramas {
     /// @param name The name (resource location) of the panorama, used to set the {@linkplain MellowConfigs#selectedPanorama **Selected Panorama**} option.
     public static void selectPanorama(Panorama newPanorama, String name) {
         // saving the selected panorama
-        MellowConfigs.CLIENT_CONFIGS.selectedPanorama.set(name);
+        if (!MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get().equals(name)) MellowConfigs.CLIENT_CONFIGS.selectedPanorama.set(name);
 
         // setting the panorama
         PanoramaRenderer defaultPanorama = RenderComponents.PANORAMA;

@@ -98,8 +98,8 @@ public class PostEffectsList extends ObjectSelectionList<PostEffectsList.Shader>
             this.y = top;
             this.width = width;
             this.height = height;
-            int color = TextComponents.selectableColor(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders);
-            drawString(stack, this.parentScreen.getMinecraft().font, new TranslatableComponent("post_effect.dot", this.name()), left + 5, top + 2, color);
+            drawString(stack, this.parentScreen.getMinecraft().font, new TranslatableComponent("post_effect.dot", this.name())
+                    .withStyle(TextComponents.selectableStyle(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders)), left + 5, top + 2, 0xFFFFFF);
         }
 
         @Override

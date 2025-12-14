@@ -3,13 +3,14 @@ package melonystudios.mellowui.widget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 public class SeparatorWidget extends AbstractWidget {
     public SeparatorWidget(int x, int y, int width, int height, Component text) {
@@ -20,7 +21,7 @@ public class SeparatorWidget extends AbstractWidget {
     public void renderButton(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         this.renderBg(stack, minecraft, mouseX, mouseY);
-        int textColor = this.getFGColor();
+        int color = this.getFGColor();
         int height = this.y + (this.height / 2);
         int textWidth = minecraft.font.width(this.getMessage());
         RenderSystem.enableBlend();
@@ -33,13 +34,14 @@ public class SeparatorWidget extends AbstractWidget {
         RenderSystem.disableBlend();
 
         // Lines
-        fill(stack, this.x + 2, height, (this.x + this.width / 2) - (textWidth / 2) - 4, height + 1, 0xFF000000 + textColor);
-        fill(stack, this.x + 3, height + 1, (this.x + this.width / 2) - (textWidth / 2) - 3, height + 2, MellowUtils.getShadowColor(textColor, this.alpha));
+        int textColor = color | Mth.ceil(this.alpha * 255F) << 24;
+        fill(stack, this.x + 2, height, (this.x + this.width / 2) - (textWidth / 2) - 4, height + 1, textColor);
+        fill(stack, this.x + 3, height + 1, (this.x + this.width / 2) - (textWidth / 2) - 3, height + 2, TextComponents.darkenColor(color, this.alpha, 0.25F));
 
-        fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 4, height, this.x + this.width - 2, height + 1, 0xFF000000 + textColor);
-        fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 5, height + 1, this.x + this.width - 1, height + 2, MellowUtils.getShadowColor(textColor, this.alpha));
+        fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 4, height, this.x + this.width - 2, height + 1, textColor);
+        fill(stack, (this.x + this.width / 2) + (textWidth / 2) + 5, height + 1, this.x + this.width - 1, height + 2, TextComponents.darkenColor(color, this.alpha, 0.25F));
 
-        drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, textColor);
+        drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, color);
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 

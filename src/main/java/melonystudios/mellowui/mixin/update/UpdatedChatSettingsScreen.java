@@ -58,10 +58,10 @@ public class UpdatedChatSettingsScreen extends OptionsSubScreen {
             this.list.render(stack, mouseX, mouseY, partialTicks);
             drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.chat_settings.title").withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
             for (GuiEventListener listener : this.children()) {
-                if (listener instanceof AbstractWidget) ((AbstractWidget) listener).render(stack, mouseX, mouseY, partialTicks);
+                if (listener instanceof AbstractWidget widget) widget.render(stack, mouseX, mouseY, partialTicks);
             }
-            List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
-            if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);
+            List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
+            if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
         } else {
             super.render(stack, mouseX, mouseY, partialTicks);
         }

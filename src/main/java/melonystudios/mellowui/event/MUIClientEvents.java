@@ -22,7 +22,7 @@ import java.nio.file.Path;
 
 @Mod.EventBusSubscriber(modid = MellowUI.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MUIClientEvents {
-    // Copied from teamtwilight/twilightforest.
+    /// @author **TeamTwilight/twilightforest**. Copied and adapted from [TFClientSetup](https://github.com/TeamTwilight/twilightforest/blob/1.16.x/src/main/java/twilightforest/client/TFClientSetup.java#L91).
     @SubscribeEvent
     public static void addHighContrastPack(AddPackFindersEvent event) {
         try {

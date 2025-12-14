@@ -37,8 +37,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
-import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
-import static net.minecraft.util.FastColor.ARGB32.*;
 
 public class MellowUtils {
     // Resource pack entries
@@ -48,9 +46,9 @@ public class MellowUtils {
         map.put(MellowUI.mellowUI("constant"), ConstantPitch.DEFAULT::fromJSON);
         map.put(MellowUI.mellowUI("bobbing"), BobbingPitch.DEFAULT::fromJSON);
     });
+    public static boolean LOADING_ERRORS = false;
 
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
-    public static final String PROGRAMMER_ART_ID = "programer_art";
     public static final int DEFAULT_TITLE_HEIGHT = 12;
     public static final int TABBED_TITLE_HEIGHT = 2;
     public static final int PAUSE_MENU_Y_OFFSET = -16;
@@ -149,11 +147,19 @@ public class MellowUtils {
         return fallbackScreen;
     }
 
+    /// @return Whether the {@linkplain MellowConfigs#defaultBackground **Default Background**} option is on,
+    /// or if mod loading broke enough to load *Mellow UI*'s mixins, but not to the point the assets literally can't load.
+    public static boolean defaultBackground() {
+        return CLIENT_CONFIGS.defaultBackground.get() || LOADING_ERRORS;
+    }
+
+    /// @return Whether the "*High Contrast*" (either `mellowui:high_contrast` or `melonylib:high_contrast`) resource pack is enabled.
     public static boolean highContrastEnabled() {
         Collection<String> selectedPacks = Minecraft.getInstance().getResourcePackRepository().getSelectedIds();
         return selectedPacks.contains(GUITextures.MUI_HIGH_CONTRAST.toString()) || selectedPacks.contains(GUITextures.LIBRARY_HIGH_CONTRAST.toString());
     }
 
+    /// @return `true` whenever *Mellow UI*'s "*High Contrast*" resource pack is unavailable for some reason.
     public static boolean highContrastUnavailable() {
         return !Minecraft.getInstance().getResourcePackRepository().getAvailableIds().contains(GUITextures.MUI_HIGH_CONTRAST.toString());
     }

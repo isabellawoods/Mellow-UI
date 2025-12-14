@@ -132,14 +132,14 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         this.tabs.clear();
 
         // General
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("stat.generalButton"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, "general", new TranslatableComponent("stat.generalButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.general);
         })));
 
         // Items
         TabButton itemsTab;
-        this.tabs.add(itemsTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("stat.itemsButton"), button -> {
+        this.tabs.add(itemsTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, "items", new TranslatableComponent("stat.itemsButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.items);
         }, (button, stack, mouseX, mouseY) -> {
@@ -149,7 +149,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
 
         // Mobs
         TabButton mobsTab;
-        this.tabs.add(mobsTab = this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("stat.mobsButton"), button -> {
+        this.tabs.add(mobsTab = this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, "mobs", new TranslatableComponent("stat.mobsButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mobs);
         }, (button, stack, mouseX, mouseY) -> {

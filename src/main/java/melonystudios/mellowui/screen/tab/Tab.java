@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /// Represents the contents of a single tab.
-public abstract class Tab implements Widget, TickingWidget, TooltipProvider {
+public abstract class Tab implements Widget, TooltipProvider {
     protected final RenderComponents components = RenderComponents.INSTANCE;
     protected final Minecraft minecraft = Minecraft.getInstance();
     public final List<AbstractWidget> widgets = new ArrayList<>();

@@ -99,9 +99,7 @@ public interface MUIMultiLineLabel {
             private List<TextAndWidth> getSplitMessage() {
                 Language language = Language.getInstance();
 
-                if (this.cachedTextAndWidth != null && language == this.splitWithLanguage) {
-                    return this.cachedTextAndWidth;
-                } else {
+                if (this.cachedTextAndWidth == null || language != this.splitWithLanguage) {
                     this.splitWithLanguage = language;
                     List<FormattedCharSequence> list = new ArrayList<>();
 
@@ -112,11 +110,10 @@ public interface MUIMultiLineLabel {
                     this.cachedTextAndWidth = new ArrayList<>();
 
                     for (FormattedCharSequence line : list.subList(0, Math.min(list.size(), maxRows))) {
-                        this.cachedTextAndWidth.add(new MUIMultiLineLabel.TextAndWidth(line, font.width(line)));
+                        this.cachedTextAndWidth.add(new TextAndWidth(line, font.width(line)));
                     }
-
-                    return this.cachedTextAndWidth;
                 }
+                return this.cachedTextAndWidth;
             }
 
             @Override

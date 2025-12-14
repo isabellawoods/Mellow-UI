@@ -8,10 +8,8 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.text.TextComponents;
 import melonystudios.mellowui.widget.ImageSetButton;
-import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -103,7 +101,7 @@ public class MUIPackSelectionScreen extends Screen {
             return packLocation;
         } catch (FileNotFoundException ignored) {
         } catch (Exception exception) {
-            MellowUI.LOGGER.warn(MellowUtils.translate("error.mellowui.pack_icon", "Failed to load icon from pack '%s'", pack.getId()), exception);
+            MellowUI.LOGGER.warn(TextComponents.translate("error.mellowui.pack_icon", "Failed to load icon from pack '%s'", pack.getId()), exception);
         }
 
         return GUITextures.DEFAULT_PACK_ICON;

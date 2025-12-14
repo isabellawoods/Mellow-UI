@@ -2,9 +2,10 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -65,7 +66,7 @@ public class MusicToast implements Toast {
         RenderSystem.setShaderColor(1, 1, 1, 1);
 
         // Text
-        GuiComponent.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xD3D3D3);
+        GuiComponent.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xFFFFFF);
 
         if (this.fromPauseMenu && ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null) {
             return minecraft.screen instanceof PauseScreen ? Visibility.SHOW : Visibility.HIDE;
@@ -95,7 +96,8 @@ public class MusicToast implements Toast {
                 .replace("/", ".")
                 .replace("sounds.", "")
                 .replace("music.", "")
-                .replace(".ogg", ""));
+                .replace(".ogg", ""))
+                .withStyle(TextComponents.withColor(WidgetConfigs.WIDGET_CONFIGS.musicToastTextColor.get()));
     }
 
     public static float[] hsvToRgb(float hue, float saturation, float value) {
@@ -138,7 +140,7 @@ public class MusicToast implements Toast {
                 green1 = f1;
                 blue1 = f2;
                 break;
-            default: throw new IllegalArgumentException(MellowUtils.translate("error.mellowui.hsv_conversion", "Something went wrong while converting from HSV to RGB. Inputs were %s, %s, %s, and output was %s", hue, saturation, value, i));
+            default: throw new IllegalArgumentException(TextComponents.translate("error.mellowui.hsv_conversion", "Something went wrong while converting from HSV to RGB. Inputs were %s, %s, %s, and output was %s", hue, saturation, value, i));
         }
 
         return new float[] {Mth.clamp(red1, 0, 1), Mth.clamp(green1, 0, 1), Mth.clamp(blue1, 0, 1)};

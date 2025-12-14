@@ -121,19 +121,19 @@ public class MellowUIOptionsScreen extends OptionsSubScreen {
         if (highContrast != null && MellowUtils.highContrastUnavailable()) highContrast.active = false;
 
         // Tabs
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth * 2, 10, tabWidth, 24, new TranslatableComponent("tab.mellowui.mellow_ui"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth * 2, 10, tabWidth, 24, "mellow_ui", new TranslatableComponent("tab.mellowui.mellow_ui"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mellowUIList);
         })));
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth, 10, tabWidth, 24, new TranslatableComponent("tab.mellowui.mellomedley"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth, 10, tabWidth, 24, "mellomedley", new TranslatableComponent("tab.mellowui.mellomedley"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.mellomedleyList);
         })));
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2, 10, tabWidth, 24, new TranslatableComponent("tab.mellowui.vanilla"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2, 10, tabWidth, 24, "vanilla", new TranslatableComponent("tab.mellowui.vanilla"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.vanillaList);
         })));
-        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth, 10, tabWidth, 24, new TranslatableComponent("tab.mellowui.forge"), button -> {
+        this.tabs.add(this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth, 10, tabWidth, 24, "forge", new TranslatableComponent("tab.mellowui.forge"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
             this.selectList(this.forgeList);
         })));

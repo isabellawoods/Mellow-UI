@@ -16,13 +16,20 @@ import net.minecraft.util.Mth;
 
 public class TabButton extends Button implements ScrollingText {
     private boolean selected;
+    private final String name;
 
-    public TabButton(int x, int y, int width, int height, Component text, OnPress onPress) {
+    public TabButton(int x, int y, int width, int height, String name, Component text, OnPress onPress) {
         super(x, y, width, height, text, onPress);
+        this.name = name;
     }
 
-    public TabButton(int x, int y, int width, int height, Component title, OnPress onPress, OnTooltip tooltip) {
+    public TabButton(int x, int y, int width, int height, String name, Component title, OnPress onPress, OnTooltip tooltip) {
         super(x, y, width, height, title, onPress, tooltip);
+        this.name = name;
+    }
+
+    public String tabName() {
+        return this.name;
     }
 
     public boolean selected() {

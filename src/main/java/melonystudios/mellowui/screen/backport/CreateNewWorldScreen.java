@@ -1,7 +1,7 @@
 package melonystudios.mellowui.screen.backport;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -10,32 +10,35 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.option.BooleanOption;
+import melonystudios.mellowui.config.option.IterableOption;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.screen.tab.GameTab;
-import melonystudios.mellowui.screen.tab.MoreTab;
-import melonystudios.mellowui.screen.tab.TabContents;
-import melonystudios.mellowui.screen.tab.WorldTab;
-import melonystudios.mellowui.widget.TabButton;
+import melonystudios.mellowui.screen.tab.Tab;
+import melonystudios.mellowui.screen.tab.TabManager;
+import melonystudios.mellowui.sound.MUISounds;
+import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.util.text.TooltipDisplayData;
+import melonystudios.mellowui.widget.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.client.gui.screens.worldselection.EditGameRulesScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldPreset;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.packs.PackType;
@@ -70,19 +73,19 @@ import java.util.stream.Stream;
 
 public class CreateNewWorldScreen extends Screen {
     private final RenderComponents components = RenderComponents.INSTANCE;
-    private final Map<TabButton, TabContents> tabs = Maps.newHashMap();
+    @Nullable
+    private final Screen lastScreen;
     @Nullable
     private Path tempDataPackDirectory;
     @Nullable
     private PackRepository tempDataPackRepository;
-    private boolean recreated;
     protected DataPackConfig dataPacks;
-    public TabContents selectedTab;
-    @Nullable
-    private final Screen lastScreen;
+
+    // Widgets
+    private final TabManager manager = new TabManager(this::addRenderableWidget, this::removeWidget);
+    private final List<TabButton> tabs = Lists.newArrayList();
     private final WorldCreationUIState uiState;
     public Button createWorldButton;
-    private String identifier = "game";
 
     public static void openFresh(Minecraft minecraft, @Nullable Screen lastScreen) {
         queueLoadScreen(minecraft, new TranslatableComponent("createWorld.preparing"));
@@ -97,9 +100,8 @@ public class CreateNewWorldScreen extends Screen {
         minecraft.setScreen(new CreateNewWorldScreen(minecraft, lastScreen, settings, generatorSettings, DataPackConfig.DEFAULT, registries, ForgeHooksClient.getDefaultWorldPreset(), OptionalLong.empty()));
     }
 
-    public static CreateNewWorldScreen createFromExisting(Minecraft minecraft, @Nullable Screen lastScreen, LevelSettings settings, WorldGenSettings  generatorSettings, DataPackConfig dataPacks, RegistryAccess.Frozen registries, @Nullable Path tempDataPackDirectory) {
+    public static CreateNewWorldScreen createFromExisting(Minecraft minecraft, @Nullable Screen lastScreen, LevelSettings settings, WorldGenSettings generatorSettings, DataPackConfig dataPacks, RegistryAccess.Frozen registries, @Nullable Path tempDataPackDirectory) {
         CreateNewWorldScreen worldCreationScreen = new CreateNewWorldScreen(minecraft, lastScreen, settings, generatorSettings, dataPacks, registries, WorldPreset.of(generatorSettings), OptionalLong.of(generatorSettings.seed()));
-        worldCreationScreen.recreated = true;
         worldCreationScreen.uiState.setName(settings.levelName());
         worldCreationScreen.uiState.setAllowCommands(settings.allowCommands());
         worldCreationScreen.uiState.setDifficulty(settings.difficulty());
@@ -125,7 +127,7 @@ public class CreateNewWorldScreen extends Screen {
     }
 
     private CreateNewWorldScreen(Minecraft minecraft, @Nullable Screen lastScreen, LevelSettings settings, WorldGenSettings generatorSettings, DataPackConfig dataPacks, RegistryAccess.Frozen registries, Optional<WorldPreset> preset, OptionalLong seed) {
-        super(new TranslatableComponent("selectWorld.create"));
+        super(new TranslatableComponent("selectWorld.create").withStyle(TextComponents.titleStyle()));
         this.lastScreen = lastScreen;
         this.dataPacks = dataPacks;
         this.uiState = new WorldCreationUIState(minecraft.getLevelSource().getBaseDir(), settings, generatorSettings, registries, preset, seed);
@@ -136,20 +138,14 @@ public class CreateNewWorldScreen extends Screen {
     }
 
     @Override
-    @Nonnull
-    public <T extends GuiEventListener & Widget & NarratableEntry> T addRenderableWidget(T widget) {
-        return super.addRenderableWidget(widget);
-    }
-
-    @Override
     public void resize(Minecraft minecraft, int width, int height) {
         super.resize(minecraft, width, height);
-        this.tabs.keySet().stream().findFirst().ifPresent(tab -> tab.setSelected(true));
+        this.tabs.get(0).setSelected(true);
     }
 
     @Override
     public void tick() {
-        this.tabs.forEach((tab, contents) -> contents.tick());
+        if (this.manager.getCurrentTab() != null) this.manager.getCurrentTab().tickingWidgets.forEach(TickingWidget::tick);
     }
 
     @Override
@@ -176,47 +172,60 @@ public class CreateNewWorldScreen extends Screen {
 
     private void addTabs() {
         int tabWidth = this.components.threeTabWidth(this.width);
-        this.tabs.clear();
+        GameTab game = new GameTab();
+        WorldTab world = new WorldTab();
+        MoreTab more = new MoreTab();
 
         // Game tab
-        GameTab game = new GameTab();
-        if (this.selectedTab == null) this.selectedTab = game;
-        TabButton gameTab;
-        this.tabs.put(gameTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.game"), button -> {
-            this.tabs.forEach((tab, contents) -> tab.setSelected(false));
-            this.setSelectedTab(game.identifier);
-        })), game);
-        game.openTab(this.identifier, this, gameTab);
+        TabButton gameTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, "game", new TranslatableComponent("tab.mellowui.game"), button -> {
+            this.tabs.forEach(tab -> tab.setSelected(false));
+            this.manager.openTab(game);
+        }));
 
         // World tab
-        WorldTab world = new WorldTab();
-        TabButton worldTab;
-        this.tabs.put(worldTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.world"), button -> {
-            this.tabs.forEach((tab, contents) -> tab.setSelected(false));
-            this.setSelectedTab(world.identifier);
-        })), world);
-        world.openTab(this.identifier, this, worldTab);
+        TabButton worldTab = this.addRenderableWidget(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, "world", new TranslatableComponent("tab.mellowui.world"), button -> {
+            this.tabs.forEach(tab -> tab.setSelected(false));
+            this.manager.openTab(world);
+        }));
 
         // More tab
-        MoreTab more = new MoreTab();
-        TabButton moreTab;
-        this.tabs.put(moreTab = this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, new TranslatableComponent("tab.mellowui.more"), button -> {
-            this.tabs.forEach((tab, contents) -> tab.setSelected(false));
-            this.setSelectedTab(more.identifier);
-        })), more);
-        more.openTab(this.identifier, this, moreTab);
+        TabButton moreTab  = this.addRenderableWidget(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, "more", new TranslatableComponent("tab.mellowui.more"), button -> {
+            this.tabs.forEach(tab -> tab.setSelected(false));
+            this.manager.openTab(more);
+        }));
 
-        // MellowUI.LOGGER.debug("all children: {}", this.children);
-    }
-
-    private void setSelectedTab(String identifier) {
-        if (!this.identifier.equals(identifier)) {
-            if (this.selectedTab != null) this.selectedTab.widgets.clear();
-            this.tabs.clear();
-            this.clearWidgets();
-            this.identifier = identifier;
-            this.init();
+        if (!this.tabs.isEmpty()) {
+            this.tabs.stream().filter(TabButton::selected).findFirst().ifPresent(tab -> {
+                switch (tab.tabName()) {
+                    case "world": {
+                        this.manager.openTab(world);
+                        worldTab.setSelected(true);
+                        break;
+                    }
+                    case "more": {
+                        this.manager.openTab(more);
+                        moreTab.setSelected(true);
+                        break;
+                    }
+                    case "game": default: {
+                        this.manager.openTab(game);
+                        gameTab.setSelected(true);
+                        break;
+                    }
+                }
+                this.tabs.clear();
+                this.tabs.add(gameTab);
+                this.tabs.add(worldTab);
+                this.tabs.add(moreTab);
+            });
+        } else {
+            this.tabs.add(gameTab);
+            this.tabs.add(worldTab);
+            this.tabs.add(moreTab);
+            this.manager.openTab(game);
+            this.tabs.get(0).setSelected(true);
         }
+        // MellowUI.LOGGER.debug("all children: {}", this.children);
     }
 
     private static void queueLoadScreen(Minecraft minecraft, Component title) {
@@ -281,7 +290,11 @@ public class CreateNewWorldScreen extends Screen {
         this.components.renderTabHeaderBackground(0, 0, this.width, 24);
         this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
         super.render(stack, mouseX, mouseY, partialTicks);
-        if (this.selectedTab != null) this.selectedTab.render(stack, mouseX, mouseY, partialTicks);
+        if (this.manager.getCurrentTab() != null) {
+            this.manager.getCurrentTab().render(stack, mouseX, mouseY, partialTicks);
+            TooltipDisplayData tooltipData = this.manager.getCurrentTab().tooltipData();
+            if (tooltipData != null) this.manager.getCurrentTab().renderTooltip(stack, this);
+        }
     }
 
     @Override
@@ -423,6 +436,230 @@ public class CreateNewWorldScreen extends Screen {
     public static class DatapackException extends RuntimeException {
         public DatapackException(Throwable throwable) {
             super(throwable);
+        }
+    }
+
+    class GameTab extends Tab {
+        private TooltippedTextField nameEdit;
+
+        @Override
+        public void init() {
+            int widgetY = 68;
+
+            // World name
+            this.nameEdit = new TooltippedTextField(this.minecraft.font, CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210, 20, new TranslatableComponent("selectWorld.enterName"), TextComponent.EMPTY);
+            this.nameEdit.setValue(CreateNewWorldScreen.this.uiState().getName());
+            this.nameEdit.setResponder(CreateNewWorldScreen.this.uiState()::setName);
+            this.nameEdit.setTooltip(new TranslatableComponent("menu.mellowui.create_new_world.target_folder", new TextComponent(CreateNewWorldScreen.this.uiState().getTargetFolder()).withStyle(ChatFormatting.ITALIC)));
+            CreateNewWorldScreen.this.uiState().addListener(state -> {
+                this.nameEdit.setTooltip(new TranslatableComponent("menu.mellowui.create_new_world.target_folder", new TextComponent(state.getTargetFolder()).withStyle(ChatFormatting.ITALIC)));
+                CreateNewWorldScreen.this.createWorldButton.active = !state.getName().isEmpty();
+            });
+            this.addWidget(this.nameEdit);
+            CreateNewWorldScreen.this.setInitialFocus(this.nameEdit);
+            widgetY += 28;
+
+            // Game Mode
+            IterableOption gameModeOption = new IterableOption("selectWorld.gameMode",
+                    (options, index) -> CreateNewWorldScreen.this.uiState().setGameMode(this.cycleGameMode(CreateNewWorldScreen.this.uiState())),
+                    (options, button) -> new TranslatableComponent("options.generic_value", new TranslatableComponent("selectWorld.gameMode"),
+                            CreateNewWorldScreen.this.uiState().getGameMode().displayName()));
+            AbstractWidget gameModeButton = gameModeOption.createButton(this.minecraft.options, CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210);
+            ((MUIOptionButton) gameModeButton).getOption().setTooltip(CreateNewWorldScreen.this.uiState().getGameMode().getInfo());
+            CreateNewWorldScreen.this.uiState().addListener(state -> ((MUIOptionButton) gameModeButton).getOption().setTooltip(state.getGameMode().getInfo()));
+            this.addWidget(gameModeButton);
+            widgetY += 28;
+
+            // Difficulty
+            IterableOption difficultyOption = new IterableOption("options.difficulty",
+                    (options, index) -> CreateNewWorldScreen.this.uiState().setDifficulty(this.cycleDifficulty(CreateNewWorldScreen.this.uiState())),
+                    (options, button) -> new TranslatableComponent("options.generic_value", new TranslatableComponent("options.difficulty"),
+                            CreateNewWorldScreen.this.uiState().getDifficulty().getDisplayName()));
+            AbstractWidget difficultyButton = difficultyOption.createButton(this.minecraft.options, CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210);
+            ((MUIOptionButton) difficultyButton).getOption().setTooltip(this.getDifficultyDescription(CreateNewWorldScreen.this.uiState().getDifficulty().getKey()));
+            CreateNewWorldScreen.this.uiState().addListener(state -> {
+                difficultyButton.active = !state.isHardcore();
+                ((MUIOptionButton) difficultyButton).getOption().setTooltip(this.getDifficultyDescription(state.getDifficulty().getKey()));
+            });
+            this.addWidget(difficultyButton);
+
+            // Hardcore
+            HardcoreSetButton hardcoreButton = new HardcoreSetButton(CreateNewWorldScreen.this.width / 2 + 114, widgetY, 20, 20,
+                    button -> CreateNewWorldScreen.this.uiState().setHardcore(!CreateNewWorldScreen.this.uiState().isHardcore()), (button, stack, mouseX, mouseY) ->
+                    this.components.renderTooltip(CreateNewWorldScreen.this, button, new TranslatableComponent("config.minecraft.difficulty.hardcore.tooltip",
+                            new TranslatableComponent("config.minecraft.difficulty.hardcore.title").withStyle(TextComponents.withColor(0xFF0000).withBold(true))), mouseX, mouseY),
+                    new TranslatableComponent("options.difficulty.hardcore")).setSelected(CreateNewWorldScreen.this.uiState().isHardcore());
+            CreateNewWorldScreen.this.uiState().addListener(state -> {
+                SoundManager manager = this.minecraft.getSoundManager();
+                if ((state.isHardcore() && !hardcoreButton.selected()) || (!state.isHardcore() && hardcoreButton.selected())) {
+                    manager.play(SimpleSoundInstance.forUI(MUISounds.HARDCORE_TOGGLE.get(), 1));
+                }
+                if (state.isHardcore() && !hardcoreButton.selected()) manager.play(SimpleSoundInstance.forUI(MUISounds.HARDCORE_TURN_ON.get(), 1));
+                if (!state.isHardcore() && hardcoreButton.selected()) manager.play(SimpleSoundInstance.forUI(MUISounds.HARDCORE_TURN_OFF.get(), 1));
+
+                hardcoreButton.setSelected(state.isHardcore());
+            });
+            this.addWidget(hardcoreButton);
+            widgetY += 28;
+
+            // Allow Commands (Allow Cheats, in 1.16)
+            BooleanOption allowCommandsOption = new BooleanOption("selectWorld.allowCommands", new TranslatableComponent("selectWorld.allowCommands.info"),
+                    options -> CreateNewWorldScreen.this.uiState().allowsCommands(),
+                    (options, newValue) -> CreateNewWorldScreen.this.uiState().setAllowCommands(newValue));
+            AbstractWidget allowCommandsButton = allowCommandsOption.createButton(this.minecraft.options, CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210);
+            CreateNewWorldScreen.this.uiState().addListener(state -> allowCommandsButton.active = !state.isDebug() && !state.isHardcore());
+            this.addWidget(allowCommandsButton);
+
+            // MellowUI.LOGGER.debug("all widgets: {}", this.widgets);
+            super.init();
+        }
+
+        private WorldCreationUIState.SelectedGameMode cycleGameMode(WorldCreationUIState uiState) {
+            return switch (uiState.getGameMode()) {
+                case SURVIVAL -> WorldCreationUIState.SelectedGameMode.CREATIVE;
+                case CREATIVE -> WorldCreationUIState.SelectedGameMode.ADVENTURE;
+                case ADVENTURE -> hasAltDown() ? WorldCreationUIState.SelectedGameMode.SPECTATOR : WorldCreationUIState.SelectedGameMode.SURVIVAL;
+                default -> WorldCreationUIState.SelectedGameMode.SURVIVAL;
+            };
+        }
+
+        private Difficulty cycleDifficulty(WorldCreationUIState uiState) {
+            return switch (uiState.getDifficulty()) {
+                case PEACEFUL -> Difficulty.EASY;
+                case NORMAL -> Difficulty.HARD;
+                case HARD -> Difficulty.PEACEFUL;
+                default -> Difficulty.NORMAL;
+            };
+        }
+
+        private Component getDifficultyDescription(String difficultyKey) {
+            return new TranslatableComponent("config.minecraft.difficulty." + difficultyKey + ".tooltip");
+        }
+
+        @Override
+        public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+            super.render(stack, mouseX, mouseY, partialTicks);
+            if (this.nameEdit != null) drawString(stack, Minecraft.getInstance().font, new TranslatableComponent("selectWorld.enterName"), this.nameEdit.x, 56, 0xFFFFFF);
+        }
+    }
+
+    class WorldTab extends Tab {
+        private EditBox seedEdit;
+
+        @Override
+        public void init() {
+            int widgetY = 56;
+            Minecraft minecraft = Minecraft.getInstance();
+
+            // World Type
+            IterableOption worldTypeOption = new IterableOption("selectWorld.mapType",
+                    (options, index) -> {}, /*screen.uiState().setWorldType(this.cycleWorldType(screen.uiState()))*/
+                    (options, button) -> new TranslatableComponent("selectWorld.mapType").append(" ").append(CreateNewWorldScreen.this.uiState().getWorldType().describePreset()));
+            AbstractWidget worldTypeButton = worldTypeOption.createButton(minecraft.options, CreateNewWorldScreen.this.width / 2 - 155, widgetY, 150);
+            ((MUIOptionButton) worldTypeButton).getOption().setTooltip(CreateNewWorldScreen.this.uiState().getWorldType().isAmplified() ? new TranslatableComponent("generator.amplified.info") : null);
+            CreateNewWorldScreen.this.uiState().addListener(state -> {
+                ((MUIOptionButton) worldTypeButton).getOption().setTooltip(state.getWorldType().isAmplified() ? new TranslatableComponent("generator.amplified.info") : null);
+                worldTypeButton.active = CreateNewWorldScreen.this.uiState().getWorldType().preset() != null;
+            });
+            this.addWidget(worldTypeButton);
+
+            // Customize world type (will have to rewrite presets for this to work)
+            Button customizeTypeButton = new Button(CreateNewWorldScreen.this.width / 2 + 5, widgetY, 150, 20, new TranslatableComponent("selectWorld.customizeType"),
+                    button -> this.openPresetEditor(CreateNewWorldScreen.this.uiState()));
+            CreateNewWorldScreen.this.uiState().addListener(state -> customizeTypeButton.active = !state.isDebug() && state.getPresetEditor() != null);
+            this.addWidget(customizeTypeButton);
+            widgetY += 42;
+
+            // Seed for the world generator
+            this.seedEdit = new EditBox(minecraft.font, CreateNewWorldScreen.this.width / 2 - 159, widgetY, 310, 20, new TranslatableComponent("selectWorld.seedInfo")) {
+                @Nonnull
+                protected MutableComponent createNarrationMessage() {
+                    return super.createNarrationMessage().append(". ").append(new TranslatableComponent("selectWorld.seedInfo"));
+                }
+            };
+            this.seedEdit.setValue(CreateNewWorldScreen.this.uiState().getSeed());
+            this.seedEdit.setResponder(CreateNewWorldScreen.this.uiState()::setSeed);
+            this.addWidget(this.seedEdit);
+            widgetY += 33;
+
+            // Generate structures
+            BooleanOption generateStructuresOption = new BooleanOption("options.on", new TranslatableComponent("selectWorld.mapFeatures.info"),
+                    options -> CreateNewWorldScreen.this.uiState().generatesStructures(),
+                    (options, newValue) -> CreateNewWorldScreen.this.uiState().setGenerateStructures(newValue)) {
+                @Nonnull
+                public Component getMessage(Options options) {
+                    return this.get(options) ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF;
+                }
+            };
+            AbstractWidget generateStructuresButton = generateStructuresOption.createButton(minecraft.options, CreateNewWorldScreen.this.width / 2 + 111, widgetY, 44);
+            generateStructuresButton.active = !CreateNewWorldScreen.this.uiState().isDebug();
+            CreateNewWorldScreen.this.uiState().addListener(state -> generateStructuresButton.active = !state.isDebug());
+            this.addWidget(generateStructuresButton);
+            widgetY += 24;
+
+            BooleanOption bonusChestOption = new BooleanOption("options.off",
+                    options -> CreateNewWorldScreen.this.uiState().hasBonusChest(),
+                    (options, newValue) -> CreateNewWorldScreen.this.uiState().setBonusChest(newValue)) {
+                @Nonnull
+                public Component getMessage(Options options) {
+                    return this.get(options) ? CommonComponents.OPTION_ON : CommonComponents.OPTION_OFF;
+                }
+            };
+            AbstractWidget bonusChestButton = bonusChestOption.createButton(minecraft.options, CreateNewWorldScreen.this.width / 2 + 111, widgetY, 44);
+            bonusChestButton.active = !CreateNewWorldScreen.this.uiState().isHardcore() && !CreateNewWorldScreen.this.uiState().isDebug();
+            CreateNewWorldScreen.this.uiState().addListener(state -> bonusChestButton.active = !state.isHardcore() && !state.isDebug());
+            this.addWidget(bonusChestButton);
+
+            super.init();
+        }
+
+        private void openPresetEditor(WorldCreationUIState uiState) {
+            WorldPreset.PresetEditor presetScreen = uiState.getPresetEditor();
+            if (presetScreen != null) {
+                // this isn't going to work unless I rewrite the whole class, great... ~isa 14-7-25
+                //this.minecraft.setScreen(presetScreen.createEditScreen(CreateNewWorldScreen.this, uiState.getGeneratorSettings()));
+            }
+        }
+
+        /*private WorldCreationUIState.WorldTypeEntry cycleWorldType(WorldCreationUIState uiState) {
+            int presetCount = Screen.hasAltDown() ? uiState.getAlternatePresetList().size() : uiState.getNormalPresetList().size();
+            ++PRESET_INDEX;
+            if (PRESET_INDEX > presetCount) PRESET_INDEX = 0;
+            return Screen.hasAltDown() ? uiState.getAlternatePresetList().get(PRESET_INDEX) : uiState.getNormalPresetList().get(PRESET_INDEX);
+        }*/
+
+        @Override
+        public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+            super.render(stack, mouseX, mouseY, partialTicks);
+            this.components.renderTextBoxSuggestion(this.seedEdit, new TranslatableComponent("selectWorld.seedInfo").withStyle(ChatFormatting.DARK_GRAY));
+            drawString(stack, this.minecraft.font, new TranslatableComponent("selectWorld.enterSeed"), CreateNewWorldScreen.this.width / 2 - 155, 84, 0xFFFFFF);
+            drawString(stack, this.minecraft.font, new TranslatableComponent("selectWorld.mapFeatures"), CreateNewWorldScreen.this.width / 2 - 155, 135, 0xFFFFFF);
+            drawString(stack, this.minecraft.font, new TranslatableComponent("selectWorld.bonusItems"), CreateNewWorldScreen.this.width / 2 - 155, 159, 0xFFFFFF);
+        }
+    }
+
+    class MoreTab extends Tab {
+        @Override
+        public void init() {
+            int widgetY = 56;
+
+            // Game Rules
+            this.addWidget(new Button(CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210, 20, new TranslatableComponent("selectWorld.gameRules"),
+                    button -> this.minecraft.setScreen(new EditGameRulesScreen(CreateNewWorldScreen.this.uiState().getGameRules().copy(), updatedRules -> {
+                        this.minecraft.setScreen(CreateNewWorldScreen.this);
+                        updatedRules.ifPresent(CreateNewWorldScreen.this.uiState()::setGameRules);
+                    }))));
+            widgetY += 28;
+
+            // Import Settings (Experiments, in newer versions)
+            this.addWidget(new Button(CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210, 20, new TranslatableComponent("selectWorld.import_worldgen_settings"), button -> {})).active = false;
+            widgetY += 28;
+
+            // Data Packs
+            this.addWidget(new Button(CreateNewWorldScreen.this.width / 2 - 105, widgetY, 210, 20, new TranslatableComponent("selectWorld.dataPacks"),
+                    button -> CreateNewWorldScreen.this.openDataPacksSelectionScreen()));
+
+            super.init();
         }
     }
 }

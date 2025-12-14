@@ -75,6 +75,4 @@ public class MellowUI {
     private void commonSetup(final FMLCommonSetupEvent event) {}
 
     private void clientSetup(final FMLClientSetupEvent event) {}
-
-
 }

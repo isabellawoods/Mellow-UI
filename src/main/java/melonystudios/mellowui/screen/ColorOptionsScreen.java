@@ -26,8 +26,9 @@ public class ColorOptionsScreen extends OptionsSubScreen {
     public static final List<Option> TEXT_FIELDS = Lists.newArrayList(TEXT_FIELDS_SEPARATOR, TEXT_FIELD_CENTER_COLOR, TEXT_FIELD_DEFAULT_BORDER_COLOR, TEXT_FIELD_HIGHLIGHTED_BORDER_COLOR, TEXT_FIELD_SUGGESTION_COLOR, TEXT_FIELD_HIGHLIGHTED_SUGGESTION_COLOR, TEXT_FIELD_HIGHLIGHT_COLOR);
     public static final List<Option> SPLASHES = Lists.newArrayList(SPLASHES_SEPARATOR, SPLASH_TEXT_COLOR, HIGH_CONTRAST_SPLASH_TEXT_COLOR, MELLO_SPLASH_TEXT_COLOR);
     public static final List<Option> UPDATE_AVAILABILITY = Lists.newArrayList(UPDATE_AVAILABILITY_SEPARATOR, DEFAULT_UPDATE_AVAILABLE_COLOR, HIGH_CONTRAST_UPDATE_AVAILABLE_COLOR);
-    public static final List<Option> BACKGROUNDS = Lists.newArrayList(BACKGROUNDS_SEPARATOR, MONOCHROME_LOADING_SCREEN_COLOR);
-    public static final List<Option> MISCELLANEOUS = Lists.newArrayList(MellowConfigEntries.MISCELLANEOUS_SEPARATOR, DESCRIPTION_TEXT_COLOR);
+    public static final List<Option> BACKGROUNDS = Lists.newArrayList(BACKGROUNDS_SEPARATOR, MONOCHROME_LOADING_SCREEN_COLOR, WARNING_32BIT_COLOR);
+    public static final List<Option> TOASTS = Lists.newArrayList(TOASTS_SEPARATOR, SYSTEM_TOAST_TITLE_COLOR, SYSTEM_TOAST_DESCRIPTION_COLOR, MUSIC_TOAST_TEXT_COLOR);
+    public static final List<Option> MISCELLANEOUS = Lists.newArrayList(MellowConfigEntries.MISCELLANEOUS_SEPARATOR, TITLE_TEXT_COLOR, DESCRIPTION_TEXT_COLOR);
     private OptionsList list;
 
     public ColorOptionsScreen(Screen lastScreen, Options options) {
@@ -43,6 +44,7 @@ public class ColorOptionsScreen extends OptionsSubScreen {
         for (Option option : SPLASHES) this.list.addBig(option);
         for (Option option : UPDATE_AVAILABILITY) this.list.addBig(option);
         for (Option option : BACKGROUNDS) this.list.addBig(option);
+        for (Option option : TOASTS) this.list.addBig(option);
         for (Option option : MISCELLANEOUS) this.list.addBig(option);
         if (!MUICommsProcessor.ENTRIES.isEmpty()) {
             this.list.addBig(MODDED_COLORS_SEPARATOR);

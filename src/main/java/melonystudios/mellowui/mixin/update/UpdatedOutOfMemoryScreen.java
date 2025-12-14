@@ -2,9 +2,7 @@ package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.components.Button;
@@ -37,7 +35,7 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
         callback.cancel();
 
         this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslatableComponent("gui.toTitle"),
-                button -> this.minecraft.setScreen(MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_3 ? new MellomedleyTitleScreen() : new TitleScreen())));
+                button -> this.minecraft.setScreen(new TitleScreen())));
         this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 25, 150, 20, new TranslatableComponent("menu.quit"),
                 button -> this.minecraft.stop()));
     }
