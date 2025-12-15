@@ -510,7 +510,7 @@ public class RenderComponents extends VanillaRenderComponents {
         int x = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.x : mouseX;
         int y = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.y : mouseY;
         if (this.containsPointInScissor(mouseX, mouseY) || widget.isFocused()) {
-            screen.renderTooltip(this.stack, this.font.split(tooltipText, TOOLTIP_MAX_WIDTH), x, y);
+            screen.renderTooltip(this.stack, this.minecraft.font.split(tooltipText, TOOLTIP_MAX_WIDTH), x, y);
         }
     }
 
