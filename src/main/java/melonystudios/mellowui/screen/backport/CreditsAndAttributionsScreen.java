@@ -1,8 +1,8 @@
 package melonystudios.mellowui.screen.backport;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.WinScreen;

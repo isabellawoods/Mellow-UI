@@ -35,8 +35,6 @@
   "logger.mellowui.library.failed": "Failed to open OpenAL device",
   "logger.mellowui.library.reset": "Failed to reset device: %s",
   "logger.mellowui.library.unsupported": "OpenAL 1.1 is not supported",
-  "logger.mellowui.library.initialized": "OpenAL initialized on %s",
-  "logger.mellowui.library.initialized.unknown": "OpenAL initialized on unknown device",
   "logger.mellowui.library.error_device": "Invalid device",
   "logger.mellowui.library.error_context": "Invalid context",
   "logger.mellowui.library.error_enum": "Illegal enum",

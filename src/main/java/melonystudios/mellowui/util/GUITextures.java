@@ -1,10 +1,15 @@
 package melonystudios.mellowui.util;
 
-import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.element.WidgetTextureSet;
+import melonystudios.mellowui.resource.gui.GUITextureManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
 import static melonystudios.mellowui.MellowUI.gui;
+import static melonystudios.mellowui.MellowUI.mellowUI;
 
 public class GUITextures {
     // Texture Sets
@@ -17,6 +22,10 @@ public class GUITextures {
     public static final WidgetTextureSet BREAST_SETTINGS_SET = new WidgetTextureSet(gui("widget/icon/breast_settings"), gui("widget/icon/breast_settings_highlighted"), gui("widget/icon/breast_settings_disabled"));
     public static final WidgetTextureSet ACCESSIBILITY_SET = new WidgetTextureSet(gui("widget/icon/accessibility"), gui("widget/icon/accessibility_highlighted"));
     public static final WidgetTextureSet LANGUAGE_SET = new WidgetTextureSet(gui("widget/icon/language"), gui("widget/icon/language_highlighted"));
+
+    // Atlases
+    public static final ResourceLocation GUI_SPRITES_ATLAS = mellowUI("textures/atlas/gui.png");
+    private static GUITextureManager GUI_SPRITES;
 
     // Slots
     public static final ResourceLocation SLOT_HIGHLIGHT_BACK = gui("miscellaneous/slot_highlight_back");
@@ -85,6 +94,27 @@ public class GUITextures {
 
     // Other locations (not really textures, but I'll put these here anyway)
     // by default points to a copy of the vanilla "blur" shader (because I don't know how to port the updated blur shader, however this works fine)
-    public static final ResourceLocation MUI_HIGH_CONTRAST = MellowUI.mellowUI("high_contrast");
+    public static final ResourceLocation MUI_HIGH_CONTRAST = mellowUI("high_contrast");
     public static final ResourceLocation LIBRARY_HIGH_CONTRAST = new ResourceLocation("melonylib", "high_contrast"); // adding this for compatibility with my older mods
+
+    public static void registerGUITextureManager() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.getResourceManager() instanceof ReloadableResourceManager manager) {
+            GUI_SPRITES = new GUITextureManager(minecraft.getTextureManager());
+            registerGUISprites(GUI_SPRITES);
+            manager.registerReloadListener(GUI_SPRITES);
+        }
+    }
+
+    private static void registerGUISprites(GUITextureManager manager) {
+        // Toasts
+        manager.registerSprite(MUSIC_NOTES);
+        manager.registerSprite(mellowUI("toast/now_playing"));
+    }
+
+    /// Gets a texture from the **GUI sprites atlas**.
+    /// @param location The texture to get.
+    public static TextureAtlasSprite getSprite(ResourceLocation location) {
+        return GUI_SPRITES.getSprite(location);
+    }
 }

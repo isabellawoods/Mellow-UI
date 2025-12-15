@@ -1,7 +1,7 @@
 package melonystudios.mellowui.config.option;
 
 import melonystudios.mellowui.methods.InterfaceMethods;
-import melonystudios.mellowui.screen.MusicToast;
+import melonystudios.mellowui.element.toast.MusicToast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.resources.sounds.SoundInstance;

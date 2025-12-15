@@ -1,6 +1,6 @@
 package melonystudios.mellowui.mixin.option;
 
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.CycleOption;
 import net.minecraft.client.Options;
 import net.minecraft.network.chat.Component;

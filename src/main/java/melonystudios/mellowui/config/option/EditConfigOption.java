@@ -1,7 +1,7 @@
 package melonystudios.mellowui.config.option;
 
+import melonystudios.mellowui.element.widget.EditButton;
 import melonystudios.mellowui.screen.popup.EditValueScreen;
-import melonystudios.mellowui.widget.EditButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;

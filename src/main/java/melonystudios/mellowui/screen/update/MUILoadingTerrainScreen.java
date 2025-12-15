@@ -2,7 +2,7 @@ package melonystudios.mellowui.screen.update;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.util.CompatUtils;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.shader.ShaderManager;

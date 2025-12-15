@@ -2,8 +2,8 @@ package melonystudios.mellowui.screen.popup;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.option.BooleanOption;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;

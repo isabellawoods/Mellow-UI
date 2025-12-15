@@ -2,13 +2,13 @@ package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.methods.InterfaceMethods.*;
 import melonystudios.mellowui.resource.panorama.BobbingPitch;
 import melonystudios.mellowui.resource.panorama.ConstantPitch;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.resource.panorama.PitchOverrider;
-import melonystudios.mellowui.screen.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.CubeMap;
 import net.minecraft.client.renderer.PanoramaRenderer;

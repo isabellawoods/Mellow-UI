@@ -1,7 +1,7 @@
 package melonystudios.mellowui.config.option;
 
+import melonystudios.mellowui.element.widget.TooltippedButton;
 import melonystudios.mellowui.screen.EditListConfigScreen;
-import melonystudios.mellowui.widget.TooltippedButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;

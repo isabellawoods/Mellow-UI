@@ -2,11 +2,12 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.list.PostEffectsList;
 import melonystudios.mellowui.util.MellowUtils;
 import melonystudios.mellowui.util.shader.ShaderManager;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;

@@ -20,8 +20,6 @@ import java.nio.IntBuffer;
 public abstract class MUILibraryMixin {
     @Shadow
     private long currentDevice;
-    @Shadow
-    public abstract String getCurrentDeviceName();
 
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo callback) {
@@ -32,9 +30,6 @@ public abstract class MUILibraryMixin {
             throw new IllegalStateException(I18n.get("logger.mellowui.library.unsupported"));
         } else {
             // Enabling HRTF audio
-            String currentDeviceName = this.getCurrentDeviceName().replace("OpenAL Soft on ", "");
-            String translation = "logger.mellowui.library.initialized" + (currentDeviceName.isEmpty() ? ".unknown" : "");
-            MellowUI.logger("Library").info(I18n.get(translation, currentDeviceName));
             this.setHRTF(capabilities.ALC_SOFT_HRTF && MellowConfigs.CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
         }
     }

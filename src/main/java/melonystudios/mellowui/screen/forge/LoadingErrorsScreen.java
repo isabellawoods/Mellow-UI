@@ -2,8 +2,8 @@ package melonystudios.mellowui.screen.forge;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.list.LoadingMessageList;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;

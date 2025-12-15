@@ -8,16 +8,16 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.config.option.IterableOption;
 import melonystudios.mellowui.config.type.ModListSorting;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.panel.*;
+import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.ImageSetButton;
+import melonystudios.mellowui.element.widget.ModButton;
 import melonystudios.mellowui.resource.flair.Flairs;
-import melonystudios.mellowui.screen.RenderComponents;
 import melonystudios.mellowui.screen.list.MellowModList;
-import melonystudios.mellowui.screen.panel.*;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.text.TextComponents;
-import melonystudios.mellowui.widget.ImageSetButton;
-import melonystudios.mellowui.widget.ModButton;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
@@ -46,7 +46,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static melonystudios.mellowui.util.text.TextComponents.withColor;
+import static melonystudios.mellowui.element.text.TextComponents.withColor;
 
 public class MellowModListScreen extends Screen {
     private final RenderComponents components = RenderComponents.INSTANCE;
@@ -346,7 +346,7 @@ public class MellowModListScreen extends Screen {
         try {
             ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         } catch (final Exception exception) {
-            MellowUI.LOGGER.error(TextComponents.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
+            MellowUI.logger("MellowModListScreen").error(TextComponents.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
         }
     }
 

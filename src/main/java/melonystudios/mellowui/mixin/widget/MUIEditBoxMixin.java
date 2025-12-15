@@ -2,9 +2,9 @@ package melonystudios.mellowui.mixin.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.WidgetConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.util.text.TextComponents;
-import melonystudios.mellowui.widget.TickingWidget;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.TickingWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;

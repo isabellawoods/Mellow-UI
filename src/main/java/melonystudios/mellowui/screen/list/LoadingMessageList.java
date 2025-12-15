@@ -1,8 +1,8 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.forge.LoadingErrorsScreen;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

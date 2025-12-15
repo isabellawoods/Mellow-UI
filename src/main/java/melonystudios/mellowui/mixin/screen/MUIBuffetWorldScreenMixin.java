@@ -1,7 +1,7 @@
 package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.gui.screens.CreateBuffetWorldScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

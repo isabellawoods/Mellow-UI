@@ -1,7 +1,7 @@
 package melonystudios.mellowui.config.option;
 
 import com.google.common.collect.Lists;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.gui.components.TooltipAccessor;

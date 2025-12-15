@@ -5,6 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.ImageSetButton;
+import melonystudios.mellowui.element.widget.ImageSetModButton;
+import melonystudios.mellowui.element.widget.ModButton;
+import melonystudios.mellowui.element.widget.text.MUIPlainTextButton;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
@@ -12,11 +18,6 @@ import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.text.TextComponents;
-import melonystudios.mellowui.widget.ImageSetButton;
-import melonystudios.mellowui.widget.ImageSetModButton;
-import melonystudios.mellowui.widget.ModButton;
-import melonystudios.mellowui.widget.text.MUIPlainTextButton;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -200,7 +201,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
                 }
             } catch (IOException exception) {
                 SystemToast.onWorldAccessFailure(this.minecraft, "Demo_World");
-                MellowUI.LOGGER.warn("Failed to access demo world", exception);
+                MellowUI.logger("MellomedleyTitleScreen").warn("Failed to access demo world", exception);
             }
         }));
         resetDemoButton.active = demoWorldPresent;
@@ -211,7 +212,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             return demoWorldSource.getSummary() != null;
         } catch (IOException exception) {
             SystemToast.onWorldAccessFailure(this.minecraft, "Demo_World");
-            MellowUI.LOGGER.warn("Failed to read demo world data", exception);
+            MellowUI.logger("MellomedleyTitleScreen").warn("Failed to read demo world data", exception);
             return false;
         }
     }
@@ -222,7 +223,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
                 demoWorldSource.deleteLevel();
             } catch (IOException exception) {
                 SystemToast.onWorldDeleteFailure(this.minecraft, "Demo_World");
-                MellowUI.LOGGER.warn("Failed to delete demo world", exception);
+                MellowUI.logger("MellomedleyTitleScreen").warn("Failed to delete demo world", exception);
             }
         }
 

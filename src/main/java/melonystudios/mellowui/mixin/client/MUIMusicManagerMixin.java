@@ -1,8 +1,8 @@
 package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.toast.MusicToast;
 import melonystudios.mellowui.methods.InterfaceMethods;
-import melonystudios.mellowui.screen.MusicToast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.MusicManager;
@@ -20,7 +20,9 @@ import javax.annotation.Nullable;
 
 @Mixin(MusicManager.class)
 public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethods {
-    @Shadow @Nullable private SoundInstance currentMusic;
+    @Shadow
+    @Nullable
+    private SoundInstance currentMusic;
 
     @Inject(method = "startPlaying", at = @At("TAIL"))
     public void addMusicToast(Music music, CallbackInfo callback) {

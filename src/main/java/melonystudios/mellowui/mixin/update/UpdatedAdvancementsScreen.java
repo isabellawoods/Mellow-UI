@@ -1,7 +1,7 @@
 package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.mellowui.util.text.TextComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;

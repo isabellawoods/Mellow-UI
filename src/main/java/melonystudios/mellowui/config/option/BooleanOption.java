@@ -1,6 +1,6 @@
 package melonystudios.mellowui.config.option;
 
-import melonystudios.mellowui.widget.MUIOptionButton;
+import melonystudios.mellowui.element.widget.MUIOptionButton;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.TooltipAccessor;

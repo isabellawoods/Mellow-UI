@@ -1,8 +1,8 @@
 package melonystudios.mellowui.mixin.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.widget.text.FocusableTextWidget;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.widget.text.FocusableTextWidget;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

@@ -10,7 +10,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
-import static melonystudios.mellowui.screen.RenderComponents.TOOLTIP_MAX_WIDTH;
+import static melonystudios.mellowui.element.RenderComponents.TOOLTIP_MAX_WIDTH;
 import static net.minecraftforge.common.ForgeConfig.*;
 
 public class ForgeConfigEntries {

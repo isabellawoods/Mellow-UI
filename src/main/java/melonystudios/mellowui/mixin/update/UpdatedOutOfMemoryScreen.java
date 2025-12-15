@@ -2,9 +2,9 @@ package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
-import melonystudios.mellowui.screen.RenderComponents;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.text.TextComponents;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.OutOfMemoryScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -51,14 +51,14 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
 
         stack.pushPose();
         stack.scale(2, 2, 2);
-        this.font.drawShadow(stack, new TranslatableComponent("menu.mellowui.out_of_memory.sad_face").withStyle(TextComponents.titleStyle().withBold(true)), 12, 10, 0xFFFFFF);
-        this.font.drawShadow(stack, new TranslatableComponent("menu.mellowui.out_of_memory.title").withStyle(TextComponents.titleStyle().withBold(true)), 12, 25, 0xFFFFFF);
+        this.components.drawString(new TranslatableComponent("menu.mellowui.out_of_memory.sad_face").withStyle(TextComponents.titleStyle().withBold(true)), true, 12, 10, 0xFFFFFF);
+        this.components.drawString(new TranslatableComponent("menu.mellowui.out_of_memory.title").withStyle(TextComponents.titleStyle().withBold(true)), true, 12, 25, 0xFFFFFF);
         stack.popPose();
 
         List<FormattedCharSequence> lines = this.font.split(new TranslatableComponent("menu.mellowui.out_of_memory.message"), this.width - 35);
         int yOffset = 80;
         for (FormattedCharSequence line : lines) {
-            this.font.drawShadow(stack, line, 25, yOffset, 0xFFFFFF);
+            this.components.drawString(line, true, 25, yOffset, 0xFFFFFF);
             yOffset += this.font.lineHeight + 1;
         }
 

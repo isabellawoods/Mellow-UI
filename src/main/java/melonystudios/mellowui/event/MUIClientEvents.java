@@ -43,6 +43,7 @@ public class MUIClientEvents {
 
     @SubscribeEvent
     public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+        GUITextures.registerGUITextureManager();
         event.registerReloadListener(new FlairReloadListener());
         event.registerReloadListener(new PanoramaReloadListener());
     }

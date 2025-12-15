@@ -12,13 +12,13 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.option.BooleanOption;
 import melonystudios.mellowui.config.option.IterableOption;
-import melonystudios.mellowui.screen.RenderComponents;
-import melonystudios.mellowui.screen.tab.Tab;
-import melonystudios.mellowui.screen.tab.TabManager;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.tab.Tab;
+import melonystudios.mellowui.element.tab.TabManager;
+import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.text.TooltipDisplayData;
+import melonystudios.mellowui.element.widget.*;
 import melonystudios.mellowui.sound.MUISounds;
-import melonystudios.mellowui.util.text.TextComponents;
-import melonystudios.mellowui.util.text.TooltipDisplayData;
-import melonystudios.mellowui.widget.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -539,7 +539,7 @@ public class CreateNewWorldScreen extends Screen {
         @Override
         public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
             super.render(stack, mouseX, mouseY, partialTicks);
-            if (this.nameEdit != null) drawString(stack, Minecraft.getInstance().font, new TranslatableComponent("selectWorld.enterName"), this.nameEdit.x, 56, 0xFFFFFF);
+            if (this.nameEdit != null) this.components.drawString(new TranslatableComponent("selectWorld.enterName"), true, this.nameEdit.x, 56, 0xFFFFFF);
         }
     }
 
@@ -632,9 +632,9 @@ public class CreateNewWorldScreen extends Screen {
         public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
             super.render(stack, mouseX, mouseY, partialTicks);
             this.components.renderTextBoxSuggestion(this.seedEdit, new TranslatableComponent("selectWorld.seedInfo").withStyle(ChatFormatting.DARK_GRAY));
-            drawString(stack, this.minecraft.font, new TranslatableComponent("selectWorld.enterSeed"), CreateNewWorldScreen.this.width / 2 - 155, 84, 0xFFFFFF);
-            drawString(stack, this.minecraft.font, new TranslatableComponent("selectWorld.mapFeatures"), CreateNewWorldScreen.this.width / 2 - 155, 135, 0xFFFFFF);
-            drawString(stack, this.minecraft.font, new TranslatableComponent("selectWorld.bonusItems"), CreateNewWorldScreen.this.width / 2 - 155, 159, 0xFFFFFF);
+            this.components.drawString(new TranslatableComponent("selectWorld.enterSeed"), true, CreateNewWorldScreen.this.width / 2 - 155, 84, 0xFFFFFF);
+            this.components.drawString(new TranslatableComponent("selectWorld.mapFeatures"), true, CreateNewWorldScreen.this.width / 2 - 155, 135, 0xFFFFFF);
+            this.components.drawString(new TranslatableComponent("selectWorld.bonusItems"), true, CreateNewWorldScreen.this.width / 2 - 155, 159, 0xFFFFFF);
         }
     }
 
