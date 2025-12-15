@@ -1,5 +1,7 @@
 package melonystudios.mellowui.mixin.client;
 
+import melonystudios.mellowui.backport.cursor.CursorTypes;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.util.shader.ShaderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -32,5 +34,12 @@ public class MUIGameRendererMixin {
     @Inject(method = "onResourceManagerReload", at = @At("HEAD"))
     public void reloadPanoramaShader(ResourceManager resourceManager, CallbackInfo callback) {
         ShaderManager.reloadPanoramaShaders(resourceManager, this.minecraft);
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    public void applyCursorShape(float partialTicks, long nanoTime, boolean renderLevel, CallbackInfo callback) {
+        RenderComponents.INSTANCE.applyCursor(this.minecraft.getWindow());
+        RenderComponents.INSTANCE.requestCursor(CursorTypes.DEFAULT);
+        if (this.minecraft.level != null && this.minecraft.screen == null) ShaderManager.fadeBackgroundBlurriness(false);
     }
 }

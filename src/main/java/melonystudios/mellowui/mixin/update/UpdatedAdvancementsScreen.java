@@ -25,6 +25,8 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
     @Shadow
     @Nullable
     private AdvancementTab selectedTab;
+    @Shadow
+    private boolean isScrolling;
 
     public UpdatedAdvancementsScreen(Component title) {
         super(title);
@@ -48,5 +50,11 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
         if (this.selectedTab == null) return;
         callback.cancel();
         this.font.draw(stack, this.selectedTab.getTitle(), (float) (offsetX + 8), (float) (offsetY + 6), 0x404040);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.isScrolling = false;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 }

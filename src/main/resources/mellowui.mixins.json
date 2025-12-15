@@ -18,9 +18,14 @@
     "client.MUISimpleSoundInstanceMixin",
     "client.MUISubtitleOverlayMixin",
     "forge.MUIConfigGUIHandlerMixin",
+    "forge.MUIExtendedButtonMixin",
     "forge.MUIForgeInGameGUIMixin",
     "forge.MUILoadingErrorScreenMixin",
     "forge.MUILoadingErrorScreenMixin$MUILoadingMessageEntryMixin",
+    "forge.MUIModListScreenMixin",
+    "forge.MUIModListScreenMixin$MUIModEntryMixin",
+    "forge.MUINotificationModUpdateScreenMixin",
+    "forge.MUIScrollPanelMixin",
     "option.MUICycleOptionMixin",
     "screen.MUIAbstractContainerScreenMixin",
     "screen.MUIBuffetWorldScreenMixin",
@@ -54,9 +59,12 @@
     "update.UpdatedPauseMenuScreen",
     "update.UpdatedTitleScreen",
     "update.UpdatedVideoSettingsScreen",
+    "widget.MUIAbstractSliderButtonMixin",
     "widget.MUIAbstractWidgetMixin",
     "widget.MUIEditBoxMixin",
-    "widget.MUIImageButtonMixin"
+    "widget.MUIImageButtonMixin",
+    "widget.MUILockIconButtonMixin",
+    "widget.MUIVolumeSliderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

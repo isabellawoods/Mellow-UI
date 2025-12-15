@@ -239,7 +239,8 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
         int textAlpha = Mth.ceil(buttonAlpha * 255) << 24;
         // Background
         this.components.renderPanorama(partialTicks, this.width, this.height, this.fading ? overlayTransparency : 1);
-        this.components.renderBackgroundShaders(partialTicks);
+        if (MellowConfigs.CLIENT_CONFIGS.fadingBlur.get()) this.components.renderBlurredBackground(partialTicks, false);
+        else this.components.renderBackgroundShaders(partialTicks);
 
         // Background Gradient
         RenderSystem.enableBlend();

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TooltipDisplayData;
 import melonystudios.mellowui.element.text.TooltipProvider;
@@ -48,6 +49,8 @@ public class ItemsStatsList extends ObjectSelectionList<ItemsStatsList.Entry> im
     @Nullable
     protected StatType<?> sortColumn;
     protected int sortOrder;
+    private int mouseX;
+    private int mouseY;
 
     public ItemsStatsList(StatisticsScreen parentScreen, Minecraft minecraft, int width, int height, int y0, int y1, int entryWidth) {
         super(minecraft, width, height, y0, y1, entryWidth);
@@ -112,7 +115,9 @@ public class ItemsStatsList extends ObjectSelectionList<ItemsStatsList.Entry> im
         if (!this.minecraft.mouseHandler.isLeftPressed()) this.headerPressed = -1;
 
         for (int i = 0; i < this.iconOffsets.length; ++i) {
-            this.parentScreen.blitSlotIcon(stack, x + StatisticsScreen.getColumnX(i) - 18, y + 1, 0, this.headerPressed == i ? 0 : 18);
+            boolean iconHovered = this.mouseX >= x + StatisticsScreen.getColumnX(i) - 18 && this.mouseY >= (y + 1) && this.mouseX < (x + StatisticsScreen.getColumnX(i)) && this.mouseY < (y + 19);
+            boolean columnPressed = StatisticsScreen.getColumnX(this.getColumnIndex(this.sortColumn)) == StatisticsScreen.getColumnX(i);
+            this.parentScreen.blitSlotIcon(stack, x + StatisticsScreen.getColumnX(i) - 18, y + 1, 0, this.headerPressed == i || columnPressed || iconHovered ? 0 : 18);
         }
 
         if (this.sortColumn != null) {
@@ -160,6 +165,7 @@ public class ItemsStatsList extends ObjectSelectionList<ItemsStatsList.Entry> im
     }
 
     private int getColumnIndex(StatType<?> type) {
+        if (type == null) return -1;
         int blockIndex = this.blockColumns.indexOf(type);
         if (blockIndex >= 0) {
             return blockIndex;
@@ -171,6 +177,8 @@ public class ItemsStatsList extends ObjectSelectionList<ItemsStatsList.Entry> im
 
     @Override
     protected void renderDecorations(PoseStack stack, int mouseX, int mouseY) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
         if (mouseY >= this.y0 && mouseY <= this.y1) {
             Entry entry = this.getEntryAtPosition(mouseX, mouseY);
             Component text = null;
@@ -186,7 +194,11 @@ public class ItemsStatsList extends ObjectSelectionList<ItemsStatsList.Entry> im
                 }
             }
 
-            if (text != null) this.setTooltipData(new TooltipDisplayData(text, RenderComponents.TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+            boolean iconHoveredY = mouseY >= this.y0 + 5 - this.getScrollAmount() && mouseY < this.y0 + 23 - this.getScrollAmount();
+            if (text != null && iconHoveredY) {
+                this.setTooltipData(new TooltipDisplayData(text, RenderComponents.TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+                RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
+            }
         }
     }
 

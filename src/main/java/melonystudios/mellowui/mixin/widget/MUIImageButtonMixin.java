@@ -2,6 +2,8 @@ package melonystudios.mellowui.mixin.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
+import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.network.chat.Component;
@@ -18,6 +20,7 @@ public class MUIImageButtonMixin extends Button {
 
     @Inject(method = "renderButton", at = @At("HEAD"))
     public void renderButton(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
+        if (this.isHovered && this.active) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         RenderSystem.setShaderColor(1, 1, 1, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

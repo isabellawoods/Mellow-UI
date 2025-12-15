@@ -3,28 +3,26 @@ package melonystudios.mellowui.mixin.screen.list;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.text.TooltipDisplayData;
+import melonystudios.mellowui.element.widget.text.StringWidget;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.storage.LevelSummary;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,31 +36,31 @@ import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.Objects;
 
+import static melonystudios.mellowui.element.RenderComponents.TOOLTIP_MAX_WIDTH;
+
 @Mixin(WorldSelectionList.WorldListEntry.class)
 public abstract class MUIWorldListEntryMixin extends ObjectSelectionList.Entry<WorldSelectionList.WorldListEntry> {
+    @Unique public final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow @Final LevelSummary summary;
     @Shadow @Final private Minecraft minecraft;
     @Shadow @Final private SelectWorldScreen screen;
     @Shadow @Final private ResourceLocation iconLocation;
     @Shadow @Final @Nullable private DynamicTexture icon;
-    @Shadow(remap = false) protected abstract void renderExperimentalWarning(PoseStack stack, int mouseX, int mouseY, int top, int left);
+    @Unique private StringWidget worldNameText;
+    @Unique private StringWidget playSummaryText;
+    @Unique private StringWidget infoSummaryText;
 
-    @SuppressWarnings("deprecation")
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks, CallbackInfo callback) {
         callback.cancel();
-        int maxWidth = width - 32 - 3;
+        this.createTextWidgets(width, mouseX, mouseY);
 
-        this.minecraft.font.drawShadow(stack, this.worldName(this.minecraft.font, maxWidth, index), (float) (left + 32 + 3), (float) (top + 1), TextComponents.selectableColor(Objects.equals(this.list == null || this.list.getSelected() == null ? 0 : this.list.getSelected().hashCode(), this.hashCode()), true));
-        this.minecraft.font.drawShadow(stack, this.playSummary(this.minecraft.font, maxWidth), (float) (left + 32 + 3), (float) (top + 9 + 3), 0x808080);
-        this.minecraft.font.drawShadow(stack, this.infoSummary(this.minecraft.font, maxWidth), (float) (left + 32 + 3), (float) (top + 9 + 9 + 3), 0x808080);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.setShaderTexture(0, this.icon != null ? this.iconLocation : GUITextures.MISSING_WORLD_ICON);
         RenderSystem.enableBlend();
         GuiComponent.blit(stack, left, top, 0, 0, 32, 32, 32, 32);
         RenderSystem.disableBlend();
-        this.renderExperimentalWarning(stack, mouseX, mouseY, top, left);
 
         if (this.minecraft.options.touchscreen || isMouseOver) {
             RenderSystem.enableBlend();
@@ -79,15 +77,17 @@ public abstract class MUIWorldListEntryMixin extends ObjectSelectionList.Entry<W
             boolean iconHovered = mousePos < 32;
             int vOffset = iconHovered ? 32 : 0;
 
+            if (iconHovered) this.components.requestCursor(CursorTypes.POINTING_HAND);
+
             if (this.summary.isLocked()) {
                 GuiComponent.blit(stack, left, top, 96, (float) vOffset, 32, 32, 256, 256);
                 if (iconHovered) {
-                    this.screen.setToolTip(this.minecraft.font.split(new TranslatableComponent("selectWorld.locked").withStyle(ChatFormatting.RED), RenderComponents.TOOLTIP_MAX_WIDTH));
+                    this.screen.setToolTip(this.minecraft.font.split(new TranslatableComponent("selectWorld.locked").withStyle(ChatFormatting.RED), TOOLTIP_MAX_WIDTH));
                 }
             } else if (this.summary.requiresManualConversion()) {
                 GuiComponent.blit(stack, left, top, 96, (float) vOffset, 32, 32, 256, 256);
                 if (iconHovered) {
-                    this.screen.setToolTip(this.minecraft.font.split(new TranslatableComponent("selectWorld.conversion.tooltip").withStyle(ChatFormatting.RED), RenderComponents.TOOLTIP_MAX_WIDTH));
+                    this.screen.setToolTip(this.minecraft.font.split(new TranslatableComponent("selectWorld.conversion.tooltip").withStyle(ChatFormatting.RED), TOOLTIP_MAX_WIDTH));
                 }
             } else if (this.summary.markVersionInList()) {
                 GuiComponent.blit(stack, left, top, 32, (float) vOffset, 32, 32, 256, 256);
@@ -106,29 +106,46 @@ public abstract class MUIWorldListEntryMixin extends ObjectSelectionList.Entry<W
                 GuiComponent.blit(stack, left, top, 0, (float) vOffset, 32, 32, 256, 256);
             }
         }
+        int textX = left + 32 + 3;
+
+        this.worldNameText.x = textX;
+        this.worldNameText.y = top + 1;
+        this.worldNameText.render(stack, mouseX, mouseY, partialTicks);
+        this.playSummaryText.x = textX;
+        this.playSummaryText.y = top + 9 + 3;
+        this.playSummaryText.render(stack, mouseX, mouseY, partialTicks);
+        this.infoSummaryText.x = textX;
+        this.infoSummaryText.y = top + 9 + 9 + 3;
+        this.infoSummaryText.render(stack, mouseX, mouseY, partialTicks);
     }
 
     @Unique
-    private FormattedCharSequence clipText(Font font, Component message, int width) {
-        FormattedText clippedText = this.minecraft.font.substrByWidth(message, width - font.width(TextComponents.ELLIPSIS));
-        return Language.getInstance().getVisualOrder(FormattedText.composite(clippedText, TextComponents.ELLIPSIS));
-    }
+    @SuppressWarnings("deprecation")
+    private void createTextWidgets(int width, int mouseX, int mouseY) {
+        int maxWidth = width - 32 - 3;
 
-    @Unique
-    private FormattedCharSequence worldName(Font font, int width, int index) {
-        Component name = this.summary.getLevelName().isEmpty() ? new TextComponent(I18n.get("selectWorld.world") + " " + index) : new TextComponent(this.summary.getLevelName());
-        return font.width(name) > width ? this.clipText(font, name, width) : name.getVisualOrderText();
-    }
+        Component worldName = new TextComponent(this.summary.getLevelName());
+        this.worldNameText = new StringWidget(worldName, this.minecraft.font).setColor(TextComponents.selectableColor(
+                Objects.equals(this.list == null || this.list.getSelected() == null ? 0 :
+                        this.list.getSelected().hashCode(), this.hashCode()), true)
+        );
+        this.worldNameText.setMaxWidth(maxWidth);
+        if (this.minecraft.font.width(worldName) > maxWidth) {
+            this.worldNameText.setTooltipData(new TooltipDisplayData(worldName, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+        }
 
-    @Unique
-    private FormattedCharSequence playSummary(Font font, int width) {
-        Component summary = new TranslatableComponent("selectWorld.world_info", this.summary.getLevelId(), MellowUtils.WORLD_DATE_FORMAT.format(new Date(this.summary.getLastPlayed())));
-        return font.width(summary) > width ? this.clipText(font, summary, width) : summary.getVisualOrderText();
-    }
+        Component playSummary = new TranslatableComponent("selectWorld.world_info", this.summary.getLevelId(), MellowUtils.WORLD_DATE_FORMAT.format(new Date(this.summary.getLastPlayed())));
+        this.playSummaryText = new StringWidget(playSummary, this.minecraft.font).setColor(0x808080);
+        this.playSummaryText.setMaxWidth(maxWidth);
+        if (this.minecraft.font.width(playSummary) > maxWidth) {
+            this.playSummaryText.setTooltipData(new TooltipDisplayData(playSummary, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+        }
 
-    @Unique
-    private FormattedCharSequence infoSummary(Font font, int width) {
-        Component summary = this.summary.getInfo();
-        return font.width(summary) > width ? this.clipText(font, summary, width) : summary.getVisualOrderText();
+        Component infoSummary = this.summary.getInfo();
+        this.infoSummaryText = new StringWidget(infoSummary, this.minecraft.font).setColor(0x808080);
+        this.infoSummaryText.setMaxWidth(maxWidth);
+        if (this.minecraft.font.width(infoSummary) > maxWidth) {
+            this.infoSummaryText.setTooltipData(new TooltipDisplayData(infoSummary, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
+        }
     }
 }

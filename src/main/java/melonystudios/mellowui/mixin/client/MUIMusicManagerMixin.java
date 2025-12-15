@@ -1,6 +1,7 @@
 package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.element.toast.MusicToast;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.Minecraft;
@@ -39,7 +40,7 @@ public class MUIMusicManagerMixin implements InterfaceMethods.MusicManagerMethod
 
     @Unique
     private boolean canShowToast(Minecraft minecraft) {
-        return minecraft != null && this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundManager.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.showMusicToast.get() && this.musicTurnedOn(minecraft);
+        return minecraft != null && this.currentMusic != null && this.currentMusic.getSound() != null && this.currentMusic.getSound() != SoundManager.EMPTY_SOUND && MellowConfigs.CLIENT_CONFIGS.musicToast.get() == ThreeStyles.OPTION_3 && this.musicTurnedOn(minecraft);
     }
 
     @Unique

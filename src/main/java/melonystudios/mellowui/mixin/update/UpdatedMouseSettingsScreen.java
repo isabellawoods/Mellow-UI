@@ -1,7 +1,9 @@
 package melonystudios.mellowui.mixin.update;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Option;
@@ -21,7 +23,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Mixin(value = MouseSettingsScreen.class, priority = 900)
 public class UpdatedMouseSettingsScreen extends OptionsSubScreen {
@@ -40,7 +44,11 @@ public class UpdatedMouseSettingsScreen extends OptionsSubScreen {
         if (!MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) return;
         callback.cancel();
         this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.list.addSmall(OPTIONS);
+        if (InputConstants.isRawMouseInputSupported()) {
+            this.list.addSmall(Stream.concat(Arrays.stream(OPTIONS), Stream.of(VanillaConfigEntries.ALLOW_CURSOR_CHANGES, Option.RAW_MOUSE_INPUT)).toArray(Option[]::new));
+        } else {
+            this.list.addSmall(Stream.concat(Arrays.stream(OPTIONS), Stream.of(VanillaConfigEntries.ALLOW_CURSOR_CHANGES)).toArray(Option[]::new));
+        }
         this.addWidget(this.list);
 
         // Done button

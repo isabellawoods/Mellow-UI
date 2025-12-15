@@ -44,7 +44,7 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
             this.list.addSmall(this.makeSoundSliders().toArray(new Option[0]));
             this.list.addBig(Option.AUDIO_DEVICE);
             this.list.addSmall(VanillaConfigEntries.CLOSED_CAPTIONS, VanillaConfigEntries.DIRECTIONAL_AUDIO);
-            this.list.addSmall(VanillaConfigEntries.SHOW_MUSIC_TOAST, null);
+            this.list.addSmall(VanillaConfigEntries.MUSIC_TOAST, null);
             this.addWidget(this.list);
 
             // Done button

@@ -36,7 +36,7 @@ public class Panorama {
     /// @param overlay A resource location of the {@linkplain GUITextures#PANORAMA_OVERLAY panorama overlay} texture.
     /// @param speedOverride A float that overrides the speed the panorama spins at.
     /// @param pitchOverride A {@linkplain PitchOverrider **pitch overrider**} that defines the pitch of fhe panoramic camera.
-    /// @param shader A *nullable** resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
+    /// @param shader A *nullable* resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
     /// @param blurStrength An integer overriding the strength of the {@linkplain melonystudios.mellowui.config.MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**}.
     private Panorama(List<ResourceLocation> cubeMap, ResourceLocation overlay, Float speedOverride, PitchOverrider pitchOverride, @Nullable ResourceLocation shader, Integer blurStrength) {
         this.cubeMap = cubeMap;
@@ -148,7 +148,7 @@ public class Panorama {
         }
 
         /// Defines a shader to render on this panorama.
-        /// @param shader A *nullable** resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
+        /// @param shader A *nullable* resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
         public Builder applyShader(ResourceLocation shader) {
             this.shader = shader;
             return this;

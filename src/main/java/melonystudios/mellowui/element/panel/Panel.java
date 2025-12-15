@@ -3,6 +3,7 @@ package melonystudios.mellowui.element.panel;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -56,7 +57,7 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
         this.height = height;
         this.parentScreen = parentScreen;
         this.title = title;
-        this.barLeft = this.width - this.x / 2 - 1;
+        this.barLeft = this.getScrollbarPosition();
     }
 
     /// Renders the contents of this panel.
@@ -97,7 +98,7 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
             RenderSystem.enableBlend();
             RenderSystem.disableTexture();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            int scrollX0 = this.barLeft; // checkerzon e checkerzinho ~sophie 27-9-25
+            int scrollX0 = this.getScrollbarPosition(); // checkerzon e checkerzinho ~sophie 27-9-25
             int scrollX1 = scrollX0 + this.barWidth;
             int scrollY0 = this.y;
             int i1 = (int) ((float) ((y1 - scrollY0) * (y1 - scrollY0)) / (float) this.getContentHeight());
@@ -121,6 +122,9 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
             tessellator.end();
             RenderSystem.disableBlend();
         }
+
+        // Cursor
+        if (maxScroll > 0 && this.isWithinScrollerArea(mouseX, mouseY)) this.components.requestCursor(this.scrolling ? CursorTypes.RESIZE_NS : CursorTypes.POINTING_HAND);
     }
 
     protected <T extends GuiEventListener & Widget & NarratableEntry> T addRenderableWidget(T widget) {
@@ -194,6 +198,14 @@ public class Panel extends AbstractContainerEventHandler implements Widget, Narr
 
     public int getScrollAmount() {
         return 20;
+    }
+
+    protected int getScrollbarPosition() {
+        return this.width - this.x / 2 - 1;
+    }
+
+    private boolean isWithinScrollerArea(int mouseX, int mouseY) {
+        return mouseX >= this.getScrollbarPosition() && mouseY >= this.y && mouseX < this.getScrollbarPosition() + 6 && mouseY < this.y + this.height;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class ShaderManager {
             DESATURATE, ENTITY_OUTLINE, FLIP, FXAA, GREEN, INVERT, LOVE, NOTCH, NTSC, OUTLINE, PENCIL, PHOSPHOR, SCAN_PINCUSHION, SOBEL, SPIDER, WOBBLE);
     @Nullable
     public static PostChain PANORAMA_SHADER;
-    public static float BLUR_PROGRESS = 0;
+    public static float blurProgress = 0;
 
     /// @return `true` whether a custom {@link PostEffect} is loaded.
     public static boolean customShaderLoaded() {
@@ -94,15 +94,16 @@ public class ShaderManager {
     /// Prepares the currently selected panorama {@linkplain PostEffect shader} to be bound to the **main render target**.
     /// @param partialTicks The partial tick time.
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
-    /// @apiNote Fading is **not** fully implemented.
     public static void preparePanoramaShaders(float partialTicks, Boolean fadeIn) {
         if (PANORAMA_SHADER == null) return;
         if (CURRENT_EFFECT.shaderIdentifier() == -1 && MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get() <= 0) return;
 
         if (CURRENT_EFFECT.uniforms().isPresent()) {
             for (String uniform : CURRENT_EFFECT.uniforms().get()) {
-                // float radius = uniform.equals("Radius") && fadeIn != null ? fadeBackgroundBlurriness(fadeIn) : getUniformValue(uniform);
-                ((InterfaceMethods.PostChainMethods) PANORAMA_SHADER).setUniform(uniform, getUniformValue(uniform));
+                float radius = uniform.equals("Radius") && fadeIn != null && MellowConfigs.CLIENT_CONFIGS.fadingBlur.get() ?
+                        (int) fadeBackgroundBlurriness(fadeIn) :
+                        getUniformValue(uniform);
+                ((InterfaceMethods.PostChainMethods) PANORAMA_SHADER).setUniform(uniform, radius);
             }
         }
         PoseStack stack = RenderSystem.getModelViewStack();
@@ -134,20 +135,22 @@ public class ShaderManager {
 
     /// Processes the panorama {@linkplain PostEffect shader} fade in/out.
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
-    /// @apiNote Fading is **not** fully implemented.
-    private static float fadeBackgroundBlurriness(boolean fadeIn) {
+    public static float fadeBackgroundBlurriness(boolean fadeIn) {
         int targetValue = MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
-        float currentValue = BLUR_PROGRESS;
-        float shift = 0.08F * targetValue;
-
-        if (fadeIn) {
-            BLUR_PROGRESS += shift;
-        } else {
-            BLUR_PROGRESS -= shift;
+        Integer blurStrength = Panoramas.panorama().blurStrength();
+        if (blurStrength != null) {
+            targetValue = Mth.clamp(blurStrength, 0, 20);
+            fadeIn = true;
         }
-        BLUR_PROGRESS = Mth.clamp(BLUR_PROGRESS, 0, targetValue);
 
-        return currentValue == targetValue ? targetValue : Mth.clampedLerp(fadeIn ? targetValue : currentValue, fadeIn ? currentValue : targetValue, BLUR_PROGRESS);
+        float currentValue = blurProgress;
+        float shift = 0.1F * targetValue;
+
+        if (fadeIn) blurProgress += shift;
+        else blurProgress -= shift;
+        blurProgress = Mth.clamp(blurProgress, 0, targetValue);
+
+        return currentValue == targetValue ? targetValue : Mth.clampedLerp(fadeIn ? targetValue : currentValue, fadeIn ? currentValue : targetValue, blurProgress);
     }
 
     /// Renders the **end portal** effect onto the screen.

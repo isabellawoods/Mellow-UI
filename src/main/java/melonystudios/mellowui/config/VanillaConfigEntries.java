@@ -1,6 +1,7 @@
 package melonystudios.mellowui.config;
 
 import melonystudios.mellowui.config.option.*;
+import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
@@ -10,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.ProgressOption;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.packs.repository.PackRepository;
 
@@ -19,12 +19,16 @@ import static melonystudios.mellowui.element.RenderComponents.TOOLTIP_MAX_WIDTH;
 
 public class VanillaConfigEntries {
     // Tooltips
-    private static final MutableComponent CLASSIC_STEREO_TOOLTIP = new TranslatableComponent("config.minecraft.directional_audio.off_tooltip");
-    private static final MutableComponent HRTF_BASED_AUDIO_TOOLTIP = new TranslatableComponent("config.minecraft.directional_audio.on_tooltip");
+    private static final Component CLASSIC_STEREO_TOOLTIP = new TranslatableComponent("config.minecraft.directional_audio.off_tooltip");
+    private static final Component HRTF_BASED_AUDIO_TOOLTIP = new TranslatableComponent("config.minecraft.directional_audio.on_tooltip");
+    private static final Component NEVER_TOOLTIP = new TranslatableComponent("config.minecraft.music_toast.option_1.tooltip");
+    private static final Component PAUSE_MENU_TOOLTIP = new TranslatableComponent("config.minecraft.music_toast.option_2.tooltip");
+    private static final Component PAUSE_MENU_AND_TOAST_TOOLTIP = new TranslatableComponent("config.minecraft.music_toast.option_3.tooltip");
 
     // Separators
     public static final SeparatorOption ACCESSIBILITY_SEPARATOR = new SeparatorOption(new TranslatableComponent("menu.minecraft.accessibility_settings.title"));
     public static final SeparatorOption MUSIC_AND_SOUNDS_SEPARATOR = new SeparatorOption(new TranslatableComponent("options.sounds.title"));
+    public static final SeparatorOption MOUSE_SETTINGS_SEPARATOR = new SeparatorOption(new TranslatableComponent("options.mouse_settings.title"));
 
     // Backported options
     public static final ProgressOption PANORAMA_SCROLL_SPEED = new ProgressOption("config.minecraft.panorama_scroll_speed", 0, 1, 0.01F,
@@ -41,8 +45,21 @@ public class VanillaConfigEntries {
                 return new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.menu_background_blurriness"), value != 0 ? value : new TranslatableComponent("options.off"));
             },
             minecraft -> minecraft.font.split(new TranslatableComponent("config.minecraft.menu_background_blurriness.tooltip"), TOOLTIP_MAX_WIDTH));
-    public static final BooleanOption SHOW_MUSIC_TOAST = new MusicToastOption("config.minecraft.show_music_toast", new TranslatableComponent("config.minecraft.show_music_toast.tooltip"),
-            options -> CLIENT_CONFIGS.showMusicToast.get(), (options, newValue) -> CLIENT_CONFIGS.showMusicToast.set(newValue));
+    public static final IterableOption MUSIC_TOAST = new MusicToastOption("config.minecraft.music_toast", new TranslatableComponent("config.minecraft.music_toast.tooltip"),
+            (options, identifier) -> CLIENT_CONFIGS.musicToast.set(ThreeStyles.byId(CLIENT_CONFIGS.musicToast.get().getId() + identifier)),
+            (options, option) -> {
+                switch (CLIENT_CONFIGS.musicToast.get()) {
+                    case OPTION_1:
+                        option.setTooltip(NEVER_TOOLTIP);
+                        break;
+                    case OPTION_2:
+                        option.setTooltip(PAUSE_MENU_TOOLTIP);
+                        break;
+                    case OPTION_3:
+                        option.setTooltip(PAUSE_MENU_AND_TOAST_TOOLTIP);
+                }
+                return new TranslatableComponent("config.minecraft.music_toast", new TranslatableComponent("config.minecraft.music_toast." + CLIENT_CONFIGS.musicToast.get().toString()));
+            });
     public static final HighContrastOption HIGH_CONTRAST = new HighContrastOption("config.minecraft.high_contrast", new TranslatableComponent("config.minecraft.high_contrast.tooltip"),
             options -> CLIENT_CONFIGS.highContrastPack.get(), (options, newValue) -> {
         PackRepository packRepository = Minecraft.getInstance().getResourcePackRepository();
@@ -77,6 +94,8 @@ public class VanillaConfigEntries {
             });
     public static final BooleanOption REALMS_NEWS_AND_INVITES = new BooleanOption("config.minecraft.realms_notifications", new TranslatableComponent("config.minecraft.realms_notifications.tooltip"),
             options -> options.realmsNotifications, (options, newValue) -> options.realmsNotifications = newValue);
+    public static final BooleanOption ALLOW_CURSOR_CHANGES = new BooleanOption("config.minecraft.allow_cursor_changes", new TranslatableComponent("config.minecraft.allow_cursor_changes.tooltip"),
+            options -> CLIENT_CONFIGS.allowCursorChanges.get(), (options, newValue) -> CLIENT_CONFIGS.allowCursorChanges.set(newValue));
     public static final BooleanOption ONBOARD_ACCESSIBILITY = new BooleanOption("config.minecraft.onboard_accessibility", new TranslatableComponent("config.minecraft.onboard_accessibility.tooltip"),
             options -> CLIENT_CONFIGS.onboardAccessibility.get(), (options, newValue) -> CLIENT_CONFIGS.onboardAccessibility.set(newValue));
 

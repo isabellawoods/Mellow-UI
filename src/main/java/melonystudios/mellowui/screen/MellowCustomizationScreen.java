@@ -25,7 +25,7 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowCustomizationScreen extends OptionsSubScreen {
-    public static final List<Option> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, WORLD_LOADING_STYLE, PAUSE_STYLE, OPTIONS_STYLE, ONLINE_OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE, LOADING_ERRORS_STYLE);
+    public static final List<Option> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, PANEL_BACKGROUND_STYLE, UPDATE_AVAILABLE_ICON_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, WORLD_LOADING_STYLE, PAUSE_STYLE, OPTIONS_STYLE, ONLINE_OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE, LOADING_ERRORS_STYLE);
     private final RenderComponents components = RenderComponents.INSTANCE;
     private EditBox searchBox;
     public String search = "";
@@ -147,8 +147,8 @@ public class MellowCustomizationScreen extends OptionsSubScreen {
         this.components.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
         super.render(stack, mouseX, mouseY, partialTicks);
         if (this.activeList instanceof OptionsList list) {
-            List<FormattedCharSequence> processors = tooltipAt(list, mouseX, mouseY);
-            if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);
+            List<FormattedCharSequence> tooltip = tooltipAt(list, mouseX, mouseY);
+            if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
         }
     }
 

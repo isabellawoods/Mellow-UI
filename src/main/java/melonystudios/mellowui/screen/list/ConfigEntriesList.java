@@ -1,6 +1,8 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.ScrollingText;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.EditListConfigScreen;
@@ -68,12 +70,12 @@ public class ConfigEntriesList extends ObjectSelectionList<ConfigEntriesList.Ent
             return super.mouseClicked(mouseX, mouseY, item);
         }
 
-        protected void renderString(PoseStack stack, int x, int y, int width, int height, Alignment alignment, Component text) {
+        protected void renderString(int x, int y, int width, int height, Alignment alignment, Component text) {
             int padding = 2;
             int minX = x + padding - 2;
             int maxX = x + width - padding - 2;
             int maxY = y + height;
-            this.renderAlignedScrollingText(stack, this.font, text, alignment, minX, y, maxX, maxY, 0xFFFFFF);
+            this.renderAlignedScrollingText(this.font, text, alignment, minX, y, maxX, maxY, 0xFFFFFF);
         }
     }
 
@@ -88,7 +90,7 @@ public class ConfigEntriesList extends ObjectSelectionList<ConfigEntriesList.Ent
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean mouseOver, float partialTicks) {
             Component text = new TextComponent(this.entry).withStyle(TextComponents.selectableStyle(ConfigEntriesList.this.getSelected() == this, true));
             this.renderWidgetText(
-                    () -> this.renderString(stack, left, top, width, height, Alignment.LEFT, text),
+                    () -> this.renderString(left, top, width, height, Alignment.LEFT, text),
                     () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)
             );
         }
@@ -106,9 +108,10 @@ public class ConfigEntriesList extends ObjectSelectionList<ConfigEntriesList.Ent
             Component text = new TranslatableComponent("button.mellowui.add")
                     .withStyle(TextComponents.selectableStyle(ConfigEntriesList.this.getSelected() == this, true).withItalic(true));
             this.renderWidgetText(
-                    () -> this.renderString(stack, left, top, width, height, Alignment.CENTER, text),
+                    () -> this.renderString(left, top, width, height, Alignment.CENTER, text),
                     () -> drawCenteredString(stack, this.font, text, width / 2, top - 7, 0xFFFFFF)
             );
+            if (this.isMouseOver(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         @Override

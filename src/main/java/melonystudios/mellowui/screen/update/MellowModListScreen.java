@@ -62,7 +62,7 @@ public class MellowModListScreen extends Screen {
 
     // Sorting
     private ModListSorting sortingMethod = MellowConfigs.CLIENT_CONFIGS.modListSorting.get();
-    private static String LAST_SEARCH = "";
+    private String lastSearch = "";
     private boolean sorted = false;
 
     // Mod data
@@ -85,7 +85,7 @@ public class MellowModListScreen extends Screen {
     @Override
     public void tick() {
         this.searchBox.tick();
-        if (!this.searchBox.getValue().equals(LAST_SEARCH)) {
+        if (!this.searchBox.getValue().equals(this.lastSearch)) {
             this.reloadMods();
             this.sorted = false;
         }
@@ -126,7 +126,7 @@ public class MellowModListScreen extends Screen {
         this.searchBox = new EditBox(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
-        this.searchBox.setValue(LAST_SEARCH);
+        this.searchBox.setValue(this.lastSearch);
         this.searchBox.setResponder(value -> this.modList.setScrollAmount(!value.isEmpty() ? 0 : this.modList.getScrollAmount()));
         this.addWidget(this.searchBox);
 
@@ -168,16 +168,19 @@ public class MellowModListScreen extends Screen {
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, ForgeConfigEntries.SORTING_TOOLTIP, mouseX, mouseY)));
 
+        // Done button
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
+                button -> this.minecraft.setScreen(this.lastScreen)));
+
         // Open mods folder
         this.addRenderableWidget(new ImageSetButton(this.width / 2 + 105, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslatableComponent("button.mellowui.open_mods_folder")));
 
-        // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
-
-        if (this.selectedMod != null) this.modList.centerScrollOn(this.selectedMod);
+        if (this.selectedMod != null) {
+            MellowModList.Mod entry = this.modList.byModInfo(this.selectedMod.getModInformation());
+            if (entry != null) this.modList.centerScrollOn(entry);
+        }
         this.updateCache();
     }
 
@@ -301,7 +304,7 @@ public class MellowModListScreen extends Screen {
 
     private void reloadMods() {
         this.mods = this.unsortedMods.stream().filter(mod -> StringUtils.toLowerCase(mod.getDisplayName()).contains(StringUtils.toLowerCase(this.searchBox.getValue()))).collect(Collectors.toList());
-        LAST_SEARCH = this.searchBox.getValue();
+        this.lastSearch = this.searchBox.getValue();
     }
 
     private void resortMods(ModListSorting method) {

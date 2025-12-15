@@ -2,7 +2,9 @@ package melonystudios.mellowui.element.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.ScrollingText;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
@@ -79,24 +81,25 @@ public class TabButton extends Button implements ScrollingText {
         blit(stack, this.x + this.width / 2, this.y, 130 - this.width / 2F, 0, this.width / 2, this.height, 130, 24);
         this.renderBg(stack, minecraft, mouseX, mouseY);
         this.renderWidgetText(
-                () -> this.renderString(stack, font, color | Mth.ceil(this.alpha * 255F) << 24),
+                () -> this.renderString(font, color | Mth.ceil(this.alpha * 255F) << 24),
                 () -> drawCenteredString(stack, minecraft.font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2 + (this.selected() ? 0 : 2), color | Mth.ceil(this.alpha * 255F) << 24)
         );
 
         if (this.selected()) this.renderFocusUnderline(stack, font, color | Mth.ceil(this.alpha * 255F) << 24);
         RenderSystem.setShaderColor(1, 1, 1, 1);
 
+        if (this.isHovered && this.active && !this.selected()) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         if (this.isFocused()) this.renderToolTip(stack, this.x, this.y);
         else if (this.isHovered) this.renderToolTip(stack, mouseX, mouseY);
     }
 
-    public void renderString(PoseStack stack, Font font, int color) {
+    public void renderString(Font font, int color) {
         int padding = WidgetConfigs.WIDGET_CONFIGS.tabTextPadding.get();
         int minX = this.x + padding;
         int minY = this.y + (this.selected() ? 0 : 3);
         int maxX = this.x + this.getWidth() - padding;
         int maxY = this.y + this.getHeight();
-        this.renderAlignedScrollingText(stack, font, this.getMessage(), Alignment.CENTER, minX, minY, maxX, maxY, color);
+        this.renderAlignedScrollingText(font, this.getMessage(), Alignment.CENTER, minX, minY, maxX, maxY, color);
     }
 
     private void renderFocusUnderline(PoseStack stack, Font font, int color) {

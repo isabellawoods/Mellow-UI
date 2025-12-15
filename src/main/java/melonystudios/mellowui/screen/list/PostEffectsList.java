@@ -1,6 +1,8 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
@@ -100,6 +102,9 @@ public class PostEffectsList extends ObjectSelectionList<PostEffectsList.Shader>
             this.height = height;
             drawString(stack, this.parentScreen.getMinecraft().font, new TranslatableComponent("post_effect.dot", this.name())
                     .withStyle(TextComponents.selectableStyle(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders)), left + 5, top + 2, 0xFFFFFF);
+
+            // Cursor
+            if (this.isMouseOver(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         @Override

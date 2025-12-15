@@ -1,5 +1,9 @@
 package melonystudios.mellowui.element.widget.text;
 
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.ScrollingText;
+import melonystudios.mellowui.element.text.TooltipDisplayData;
+import melonystudios.mellowui.element.text.TooltipProvider;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -8,8 +12,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class AbstractStringWidget extends AbstractWidget {
+public abstract class AbstractStringWidget extends AbstractWidget implements TooltipProvider, ScrollingText {
+    protected final RenderComponents components = RenderComponents.INSTANCE;
     private final Font font;
+    private TooltipDisplayData tooltipData;
     private int color = 0xFFFFFF;
 
     public AbstractStringWidget(int x, int y, int width, int height, Component text, Font font) {
@@ -31,5 +37,21 @@ public abstract class AbstractStringWidget extends AbstractWidget {
     public AbstractStringWidget setColor(int color) {
         this.color = color;
         return this;
+    }
+
+    @Override
+    public TooltipDisplayData tooltipData() {
+        return this.tooltipData;
+    }
+
+    @Override
+    public void setTooltipData(TooltipDisplayData data) {
+        this.tooltipData = data;
+    }
+
+    @Override
+    public void setMessage(Component text) {
+        super.setMessage(text);
+        this.setWidth(this.getFont().width(text.getVisualOrderText()));
     }
 }

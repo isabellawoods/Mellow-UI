@@ -2,7 +2,9 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.ScrollingText;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.update.MellowModListScreen;
@@ -73,6 +75,11 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
         this.parentScreen.loadMods(this::addEntry, mod -> new Mod(this.parentScreen, mod));
     }
 
+    @Nullable
+    public Mod byModInfo(IModInfo info) {
+        return this.children().stream().filter(entry -> entry.modInfo == info).findFirst().orElse(null);
+    }
+
     public class Mod extends ObjectSelectionList.Entry<MellowModList.Mod> implements ScrollingText {
         private final MellowModListScreen parentScreen;
         private final IModInfo modInfo;
@@ -95,6 +102,8 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
             Font font = this.parentScreen.getMinecraft().font;
             int rowWidth = MellowModList.this.getRowWidth() - (MellowModList.this.getMaxScroll() > 0 ? 6 : 0);
 
+            // Background
+            // todo: background looks weird when "list background" is off ~isa 6-12-25
             RenderSystem.enableBlend();
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderTexture(0, MellowModList.this.getSelected() == this ? GUITextures.MOD_ENTRY_HIGHLIGHTED : GUITextures.MOD_ENTRY);
@@ -106,7 +115,7 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
             int padding = WidgetConfigs.WIDGET_CONFIGS.modNameTextPadding.get() - 2;
             int color = TextComponents.selectableColor(MellowModList.this.getSelected() == this, true);
             this.renderWidgetText(
-                    () -> this.renderAlignedScrollingText(stack, font, modName, Alignment.CENTER, left + padding, top, left + rowWidth - padding - 4, top + height - 8, color),
+                    () -> this.renderAlignedScrollingText(font, modName, Alignment.CENTER, left + padding, top, left + rowWidth - padding - 4, top + height - 8, color),
                     () -> drawCenteredString(stack, font, modName, left + rowWidth / 2, top + 4, color)
             );
 
@@ -114,12 +123,13 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
             FormattedText versionComponent = FormattedText.composite(font.substrByWidth(modVersion, MellowModList.this.listWidth));
             font.drawShadow(stack, Language.getInstance().getVisualOrder(versionComponent), left + 3, top + 4 + font.lineHeight, 0xFFFFFF);
 
+            // Update available icon
             if (checkResult.status().shouldDraw()) {
-                RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-                RenderSystem.setShaderTexture(0, GUITextures.VERSION_CHECKER_ICONS);
-                RenderSystem.setShaderColor(1, 1, 1, 1);
-                blit(stack, left + rowWidth - 16, top + height / 4 + 2, checkResult.status().getSheetOffset() * 8, (checkResult.status().isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1 ? 8 : 0), 8, 8, 64, 16);
+                RenderComponents.INSTANCE.renderUpdateAvailableIcon(left + rowWidth - 16, top + height / 4 + 3, 1, checkResult.status());
             }
+
+            // Cursor
+            if (this.isMouseOver(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         @Override

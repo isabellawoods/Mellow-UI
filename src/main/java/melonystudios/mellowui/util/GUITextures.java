@@ -44,12 +44,15 @@ public class GUITextures {
     public static final ResourceLocation MOD_ENTRY_HIGHLIGHTED = gui("widget/mod_entry_highlighted");
     public static final ResourceLocation HARDCORE_OFF = gui("widget/icon/hardcore_off");
     public static final ResourceLocation HARDCORE_ON = gui("widget/icon/hardcore_on");
+    public static final ResourceLocation UPDATE_AVAILABLE = mellowUI("widget/icon/update_available");
 
     // Backgrounds
     public static final ResourceLocation MENU_BACKGROUND = gui("background/menu");
     public static final ResourceLocation INWORLD_MENU_BACKGROUND = gui("background/inworld_menu");
     public static final ResourceLocation MENU_LIST_BACKGROUND = gui("background/menu_list");
     public static final ResourceLocation INWORLD_MENU_LIST_BACKGROUND = gui("background/inworld_menu_list");
+    public static final ResourceLocation MENU_PANEL_BACKGROUND = gui("background/menu_panel");
+    public static final ResourceLocation INWORLD_MENU_PANEL_BACKGROUND = gui("background/inworld_menu_panel");
     public static final ResourceLocation TAB_HEADER_BACKGROUND = gui("background/tab_header");
     public static final ResourceLocation OUT_OF_MEMORY_BACKGROUND = gui("background/out_of_memory");
     public static final ResourceLocation OVERSPIN_PROTECTION_BACKGROUND = gui("background/overspin_protection");
@@ -77,7 +80,7 @@ public class GUITextures {
 
     // Toasts
     public static final ResourceLocation NOW_PLAYING_TOAST = gui("toast/now_playing");
-    public static final ResourceLocation MUSIC_NOTES = gui("toast/music_notes");
+    public static final ResourceLocation MUSIC_NOTES = mellowUI("toast/music_notes");
 
     // Vanilla & Forge Textures
     public static final ResourceLocation MISSING_WORLD_ICON = new ResourceLocation("textures/misc/unknown_server.png");
@@ -107,9 +110,11 @@ public class GUITextures {
     }
 
     private static void registerGUISprites(GUITextureManager manager) {
+        // Widgets
+        manager.registerSprite(UPDATE_AVAILABLE);
+
         // Toasts
         manager.registerSprite(MUSIC_NOTES);
-        manager.registerSprite(mellowUI("toast/now_playing"));
     }
 
     /// Gets a texture from the **GUI sprites atlas**.

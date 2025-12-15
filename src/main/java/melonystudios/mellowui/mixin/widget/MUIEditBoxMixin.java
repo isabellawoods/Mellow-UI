@@ -1,6 +1,7 @@
 package melonystudios.mellowui.mixin.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
@@ -109,6 +110,8 @@ public abstract class MUIEditBoxMixin extends AbstractWidget implements TickingW
             int endX = textX + font.width(displayedText.substring(0, length));
             this.renderHighlight(cursorX, textY - 1, endX - 1, textY + 9);
         }
+
+        if (this.isHovered && this.isEditable()) RenderComponents.INSTANCE.requestCursor(CursorTypes.IBEAM);
 
         if (this.isFocused()) {
             this.renderToolTip(stack, this.x + this.width, this.y);

@@ -1,7 +1,10 @@
 package melonystudios.mellowui.element;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.backport.cursor.CursorType;
+import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -11,11 +14,15 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
+
 /// The vanilla ***Render Components***. Contains methods from `GuiComponent` that were updated and/or backported from `GuiGraphics`.
 @OnlyIn(Dist.CLIENT)
 public class VanillaRenderComponents extends GuiComponent {
     /// The default instance of vanilla's ***Render Components***.
     public static final VanillaRenderComponents INSTANCE = new VanillaRenderComponents(Minecraft.getInstance());
+    private static CursorType currentCursor = CursorTypes.DEFAULT;
+    private static CursorType pendingCursor = CursorTypes.DEFAULT;
     protected final Minecraft minecraft;
     protected final PoseStack stack;
 
@@ -64,6 +71,22 @@ public class VanillaRenderComponents extends GuiComponent {
         float green = FastColor.ARGB32.green(color);
         float blue = FastColor.ARGB32.blue(color);
         this.setColor(red, green, blue, alpha);
+    }
+
+    /// Requests a certain cursor to be used when hovering over this widget.
+    /// @param cursor One of {@linkplain CursorTypes these} cursor types.
+    public void requestCursor(CursorType cursor) {
+        pendingCursor = cursor;
+    }
+
+    /// Applies the selected cursor to the on-screen mouse cursor.
+    /// @param window *Minecraft*'s main window, provided by the **game renderer**.
+    public void applyCursor(Window window) {
+        CursorType cursor = CLIENT_CONFIGS.allowCursorChanges.get() ? pendingCursor : CursorTypes.DEFAULT;
+        if (currentCursor != cursor) {
+            currentCursor = cursor;
+            cursor.select(window);
+        }
     }
 
     /// Draws a **string** at the specified coordinates using the given text and color.
