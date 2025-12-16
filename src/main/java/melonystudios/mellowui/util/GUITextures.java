@@ -1,7 +1,7 @@
 package melonystudios.mellowui.util;
 
 import melonystudios.mellowui.element.WidgetTextureSet;
-import melonystudios.mellowui.resource.gui.GUISpriteUploader;
+import melonystudios.mellowui.resource.gui.GUITextureManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -25,7 +25,7 @@ public class GUITextures {
 
     // Atlases
     public static final ResourceLocation GUI_SPRITES_ATLAS = mellowUI("textures/atlas/gui.png");
-    private static GUISpriteUploader GUI_SPRITES;
+    private static GUITextureManager GUI_SPRITES;
 
     // Slots
     public static final ResourceLocation SLOT_HIGHLIGHT_BACK = gui("miscellaneous/slot_highlight_back");
@@ -100,22 +100,22 @@ public class GUITextures {
     public static final ResourceLocation MUI_HIGH_CONTRAST = mellowUI("high_contrast");
     public static final ResourceLocation LIBRARY_HIGH_CONTRAST = new ResourceLocation("melonylib", "high_contrast"); // adding this for compatibility with my older mods
 
-    public static void registerGUISpriteUploader() {
+    public static void registerGUITextureManager() {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.getResourceManager() instanceof IReloadableResourceManager) {
             IReloadableResourceManager manager = (IReloadableResourceManager) minecraft.getResourceManager();
-            GUI_SPRITES = new GUISpriteUploader(minecraft.getTextureManager());
+            GUI_SPRITES = new GUITextureManager(minecraft.getTextureManager());
             registerGUISprites(GUI_SPRITES);
             manager.registerReloadListener(GUI_SPRITES);
         }
     }
 
-    private static void registerGUISprites(GUISpriteUploader sprites) {
+    private static void registerGUISprites(GUITextureManager manager) {
         // Widgets
-        sprites.registerSprite(UPDATE_AVAILABLE);
+        manager.registerSprite(UPDATE_AVAILABLE);
 
         // Toasts
-        sprites.registerSprite(MUSIC_NOTES);
+        manager.registerSprite(MUSIC_NOTES);
     }
 
     /// Gets a texture from the **GUI sprites atlas**.

@@ -54,7 +54,7 @@ public class ColorLerper {
 
     static int getModifiedColor(DyeColor color, float brightness) {
         if (color == DyeColor.WHITE) {
-            return -1644826;
+            return 0xFFE6E6E6;
         } else {
             int diffuseColor = color.getColorValue();
             return color(255, MathHelper.floor(red(diffuseColor) * brightness), MathHelper.floor(green(diffuseColor) * brightness), MathHelper.floor(blue(diffuseColor) * brightness));

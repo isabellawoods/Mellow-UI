@@ -8,7 +8,6 @@ import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ColorHelper;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
@@ -26,7 +25,6 @@ public class VanillaRenderComponents extends AbstractGui {
     private static CursorType currentCursor = CursorTypes.DEFAULT;
     private static CursorType pendingCursor = CursorTypes.DEFAULT;
     protected final Minecraft minecraft;
-    protected final FontRenderer font;
     protected final MatrixStack stack;
 
     /// The vanilla ***Render Components***.
@@ -35,7 +33,6 @@ public class VanillaRenderComponents extends AbstractGui {
     /// @param stack The default {@link MatrixStack} used for rendering.
     protected VanillaRenderComponents(Minecraft minecraft, MatrixStack stack) {
         this.minecraft = minecraft;
-        this.font = minecraft.font;
         this.stack = stack;
     }
 
@@ -100,8 +97,8 @@ public class VanillaRenderComponents extends AbstractGui {
     /// @param y The y-position of the string.
     /// @param color The color of the string.
     public void drawString(String text, boolean textShadow, int x, int y, int color) {
-        if (textShadow) this.font.drawShadow(this.stack, text, x, y, color);
-        else this.font.draw(this.stack, text, x, y, color);
+        if (textShadow) this.minecraft.font.drawShadow(this.stack, text, x, y, color);
+        else this.minecraft.font.draw(this.stack, text, x, y, color);
     }
 
     /// Draws a **string** at the specified coordinates using the given text and color.
@@ -111,8 +108,8 @@ public class VanillaRenderComponents extends AbstractGui {
     /// @param y The y-position of the string.
     /// @param color The color of the string.
     public void drawString(ITextComponent text, boolean textShadow, int x, int y, int color) {
-        if (textShadow) this.font.drawShadow(this.stack, text, x, y, color);
-        else this.font.draw(this.stack, text, x, y, color);
+        if (textShadow) this.minecraft.font.drawShadow(this.stack, text, x, y, color);
+        else this.minecraft.font.draw(this.stack, text, x, y, color);
     }
 
     /// Draws a **string** at the specified coordinates using the given text and color.
@@ -122,8 +119,8 @@ public class VanillaRenderComponents extends AbstractGui {
     /// @param y The y-position of the string.
     /// @param color The color of the string.
     public void drawString(IReorderingProcessor text, boolean textShadow, int x, int y, int color) {
-        if (textShadow) this.font.drawShadow(this.stack, text, x, y, color);
-        else this.font.draw(this.stack, text, x, y, color);
+        if (textShadow) this.minecraft.font.drawShadow(this.stack, text, x, y, color);
+        else this.minecraft.font.draw(this.stack, text, x, y, color);
     }
 
     /// Draws a **centered string** at the specified coordinates using the given text and color.
@@ -166,11 +163,11 @@ public class VanillaRenderComponents extends AbstractGui {
     public void drawAlignedString(String text, Alignment alignment, boolean textShadow, int x, int y, int color) {
         switch (alignment) {
             case RIGHT: {
-                this.drawString(text, textShadow, x - this.font.width(text), y, color);
+                this.drawString(text, textShadow, x - this.minecraft.font.width(text), y, color);
                 break;
             }
             case CENTER: {
-                this.drawString(text, textShadow, x - this.font.width(text) / 2, y, color);
+                this.drawString(text, textShadow, x - this.minecraft.font.width(text) / 2, y, color);
                 break;
             }
             case LEFT: default: {
@@ -190,11 +187,11 @@ public class VanillaRenderComponents extends AbstractGui {
     public void drawAlignedString(ITextComponent text, Alignment alignment, boolean textShadow, int x, int y, int color) {
         switch (alignment) {
             case RIGHT: {
-                this.drawString(text, textShadow, x - this.font.width(text), y, color);
+                this.drawString(text, textShadow, x - this.minecraft.font.width(text), y, color);
                 break;
             }
             case CENTER: {
-                this.drawString(text, textShadow, x - this.font.width(text) / 2, y, color);
+                this.drawString(text, textShadow, x - this.minecraft.font.width(text) / 2, y, color);
                 break;
             }
             case LEFT: default: {
@@ -214,11 +211,11 @@ public class VanillaRenderComponents extends AbstractGui {
     public void drawAlignedString(IReorderingProcessor text, Alignment alignment, boolean textShadow, int x, int y, int color) {
         switch (alignment) {
             case RIGHT: {
-                this.drawString(text, textShadow, x - this.font.width(text), y, color);
+                this.drawString(text, textShadow, x - this.minecraft.font.width(text), y, color);
                 break;
             }
             case CENTER: {
-                this.drawString(text, textShadow, x - this.font.width(text) / 2, y, color);
+                this.drawString(text, textShadow, x - this.minecraft.font.width(text) / 2, y, color);
                 break;
             }
             case LEFT: default: {

@@ -95,6 +95,6 @@ public class MellowUI {
     private void clientSetup(final FMLClientSetupEvent event) {}
 
     private void registerGUISpriteUploader(ColorHandlerEvent.Block event) {
-        GUITextures.registerGUISpriteUploader();
+        GUITextures.registerGUITextureManager();
     }
 }

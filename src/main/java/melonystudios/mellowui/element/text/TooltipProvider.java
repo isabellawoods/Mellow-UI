@@ -2,7 +2,6 @@ package melonystudios.mellowui.element.text;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import melonystudios.mellowui.element.RenderComponents;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextProperties;
@@ -11,7 +10,7 @@ import net.minecraft.util.text.LanguageMap;
 import java.util.List;
 
 /// Provides a tooltip to a screen, in order for the tooltip to render on top and not get culled by
-/// {@linkplain RenderComponents#enableScissor(int, int, int, int) scissors}.
+/// {@linkplain melonystudios.mellowui.element.RenderComponents#enableScissor scissors}.
 public interface TooltipProvider {
     /// Gets the {@linkplain TooltipDisplayData display data} for this provider.
     TooltipDisplayData tooltipData();

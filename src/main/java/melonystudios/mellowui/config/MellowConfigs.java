@@ -129,7 +129,7 @@ public class MellowConfigs {
 
         builder.push("styleOptions");
         this.screenBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all screens for a transparent menu.").translation("config.mellowui.screen_background_style").define("screenBackground", true);
-        this.listBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu).").translation("config.mellowui.list_background_style").define("listBackground", true);
+        this.listBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all lists (like video settings or languages) for a transparent menu.").translation("config.mellowui.list_background_style").define("listBackground", true);
         this.panelBackgroundStyle = builder.comment("Whether Mellow UI should update the background of all panels added by Forge. Only used on Forge's mod list menu.").translation("config.mellowui.panel_background_style").define("panelBackground", true);
         this.logoStyle = builder.comment("Style to use for the Minecraft logo. Includes the pre-1.16 logo, the current logo (1.16), the new logo (1.20+), and the Mellomedley logo.", "Allowed values: PRE_ONE_SIXTEEN, ONE_SIXTEEN, ONE_TWENTY, MELLOMEDLEY").translation("config.mellowui.logo_style").defineEnum("logo", LogoStyles.ONE_TWENTY);
         this.titleStyle = builder.comment("Which style to use for the main menu / title screen.", "Defaults to 'Vanilla' as the main menu is frequently updated by modpacks using FancyMenu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Mellomedley").translation("config.mellowui.title_style").defineEnum("mainMenu", ThreeStyles.OPTION_1);

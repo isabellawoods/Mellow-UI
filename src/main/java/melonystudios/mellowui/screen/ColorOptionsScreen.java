@@ -32,7 +32,7 @@ public class ColorOptionsScreen extends SettingsScreen {
     private OptionsRowList list;
 
     public ColorOptionsScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, new TranslationTextComponent("menu.mellowui.color_options.title").withStyle(TextComponents.titleStyle())));
+        super(lastScreen, options, TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, new TranslationTextComponent("menu.mellowui.color_options.title")));
     }
 
     @Override

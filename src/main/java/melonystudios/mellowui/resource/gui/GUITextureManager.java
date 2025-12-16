@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @OnlyIn(Dist.CLIENT)
-public class GUISpriteUploader extends SpriteUploader {
+public class GUITextureManager extends SpriteUploader {
     private final Set<ResourceLocation> registeredSprites = new HashSet<>();
 
-    public GUISpriteUploader(TextureManager manager) {
+    public GUITextureManager(TextureManager manager) {
         super(manager, GUITextures.GUI_SPRITES_ATLAS, "gui");
     }
 

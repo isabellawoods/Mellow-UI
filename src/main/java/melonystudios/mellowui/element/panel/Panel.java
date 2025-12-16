@@ -57,7 +57,7 @@ public class Panel extends FocusableGui implements IRenderable {
         this.height = height;
         this.parentScreen = parentScreen;
         this.title = title;
-        this.barLeft = this.width - this.x / 2 - 1;
+        this.barLeft = this.getScrollbarPosition();
     }
 
     /// Renders the contents of this panel.

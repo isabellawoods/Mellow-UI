@@ -292,7 +292,7 @@ public class RenderComponents extends VanillaRenderComponents {
     /// @param maxLines The maximum amount of lines.
     /// @param color The color used for the background, usually it's `#55200000`
     public void renderCenteredLabelBackground(ITextComponent component, int width, int x, int y, int lineHeight, int maxWidth, int maxLines, int color) {
-        List<MultiLineLabel.TextAndWidth> entries = this.font.split(component, maxWidth).stream().limit(maxLines).map(line -> new MultiLineLabel.TextAndWidth(line, this.font.width(line))).collect(Collectors.toList());
+        List<MultiLineLabel.TextAndWidth> entries = this.minecraft.font.split(component, maxWidth).stream().limit(maxLines).map(line -> new MultiLineLabel.TextAndWidth(line, this.minecraft.font.width(line))).collect(Collectors.toList());
         int maxLineWidth = entries.stream().mapToInt(MultiLineLabel.TextAndWidth::width).max().orElse(0);
         if (maxLineWidth > 0) {
             fill(this.stack, width - maxLineWidth / 2 - lineHeight, x - lineHeight, width + maxLineWidth / 2 + lineHeight, x + entries.size() * y + lineHeight, color);
@@ -413,7 +413,7 @@ public class RenderComponents extends VanillaRenderComponents {
         return width / 2 - DEFAULT_TAB_WIDTH + 65 <= 0 ? 90 : DEFAULT_TAB_WIDTH;
     }
 
-    /// Renders the **\"Update Available!\"** icon at a *widget's position*. This is dependent on the {@linkplain MellowConfigs#updateAvailableIconStyle **Update Available Icon**} style option.
+    /// Renders the **"Update Available!"** icon at a *widget's position*. This is dependent on the {@linkplain MellowConfigs#updateAvailableIconStyle **Update Available Icon**} style option.
     /// @param x The x-position of the widget.
     /// @param y The y-position of the widget.
     /// @param width The width of the widget.
@@ -596,7 +596,7 @@ public class RenderComponents extends VanillaRenderComponents {
         int x = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.x : mouseX;
         int y = widget.isFocused() && !widget.isMouseOver(mouseX, mouseY) ? widget.y : mouseY;
         if (this.containsPointInScissor(mouseX, mouseY) || widget.isFocused()) {
-            screen.renderTooltip(this.stack, this.font.split(tooltipText, TOOLTIP_MAX_WIDTH), x, y);
+            screen.renderTooltip(this.stack, this.minecraft.font.split(tooltipText, TOOLTIP_MAX_WIDTH), x, y);
         }
     }
 

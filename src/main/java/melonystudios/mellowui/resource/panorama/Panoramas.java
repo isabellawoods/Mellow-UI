@@ -79,7 +79,7 @@ public class Panoramas {
         RenderSkybox panorama = MENU_TO_PANORAMAS.get(lastScreenWithPanorama);
 
         if (panoramaAlpha != 1) RenderComponents.PANORAMA.render(partialTicks, 1);
-        boolean shouldFadeIn = MENUS_WITH_DEFINED_PANORAMAS.contains(screenName); //&& panorama != null;
+        boolean shouldFadeIn = MENUS_WITH_DEFINED_PANORAMAS.contains(screenName);
 
         if (shouldFadeIn) {
             panoramaAlpha = MathHelper.clamp(panoramaAlpha + TRANSPARENCY_SHIFT_PER_TICK, 0, 1);

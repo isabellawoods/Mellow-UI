@@ -43,7 +43,7 @@ public class MellowCustomizationScreen extends SettingsScreen {
     private AbstractList<?> activeList = null;
 
     public MellowCustomizationScreen(Screen lastScreen, GameSettings options) {
-        super(lastScreen, options, TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, new TranslationTextComponent("menu.mellowui.customization.title").withStyle(TextComponents.titleStyle())));
+        super(lastScreen, options, TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, new TranslationTextComponent("menu.mellowui.customization.title")));
     }
 
     @Override

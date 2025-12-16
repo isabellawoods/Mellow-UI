@@ -7,6 +7,7 @@ import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.LanguageMap;
@@ -81,15 +82,17 @@ public class StringWidget extends AbstractStringWidget {
                     this.components.drawString(this.clipText(message, maxWidth), true, this.x, textY, this.getColor());
                     break;
                 case SCROLLING:
-                    this.renderScrollingString(font, WidgetConfigs.WIDGET_CONFIGS.stringWidgetTextPadding.get(), this.getColor());
+                    this.renderScrollingString(font, MathHelper.clamp(WidgetConfigs.WIDGET_CONFIGS.stringWidgetTextPadding.get(), 0, this.getWidth() / 2 - 1), this.getColor());
             }
         } else {
             this.components.drawString(message.getVisualOrderText(), true, this.x, textY, this.getColor());
         }
 
-        if (this.isHovered()) {
-            this.renderTooltip(stack, Minecraft.getInstance().screen);
-        }
+        if (this.isHovered(mouseX, mouseY)) this.renderTooltip(stack, Minecraft.getInstance().screen);
+    }
+
+    private boolean isHovered(int mouseX, int mouseY) {
+        return mouseX >= this.x && mouseY >= this.y && mouseX < this.x + (this.maxWidth > 0 ? this.maxWidth : this.getWidth()) && mouseY < this.y + this.getHeight();
     }
 
     protected void renderScrollingString(FontRenderer font, int padding, int color) {

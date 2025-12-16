@@ -53,7 +53,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
     }
 
     public MellomedleyTitleScreen(boolean fading, boolean keepLogoThroughFade) {
-        super(new TranslationTextComponent("menu.mellomedley.title"));
+        super(new TranslationTextComponent("menu.mellomedley.title").withStyle(TextComponents.titleStyle()));
         this.fading = fading;
         this.keepLogoThroughFade = keepLogoThroughFade;
     }

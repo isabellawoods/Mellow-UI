@@ -20,7 +20,7 @@ public class EditListConfigScreen extends Screen {
     private ConfigEntriesList list;
 
     public EditListConfigScreen(Screen lastScreen, ITextComponent configName, ForgeConfigSpec.ConfigValue<List<String>> config) {
-        super(TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, configName.copy().withStyle(TextComponents.titleStyle())));
+        super(TextComponents.buildScreenSubtitle(MellowUI.MOD_ID, MellowUI.MOD_NAME, configName));
         this.lastScreen = lastScreen;
         this.configName = configName;
         this.config = config;

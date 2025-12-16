@@ -1,5 +1,6 @@
 package melonystudios.mellowui.resource.panorama;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import melonystudios.mellowui.MellowUI;
@@ -213,6 +214,10 @@ public class Panorama {
                     }
                 }
 
+                // throw exception if the cube_map doesn't have exactly 6 textures ~isa 16-12-25
+                if (cubeMap.size() > 6) throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_many", "Panorama has more than 6 cube map textures"));
+                else if (cubeMap.size() < 6) throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_few", "Panorama has less than 6 cube map textures"));
+
                 // Overlay texture
                 ResourceLocation overlay = new ResourceLocation("gui/title/background/panorama_overlay");
                 if (object.has("overlay") && object.get("overlay").isJsonPrimitive() && object.get("overlay").getAsJsonPrimitive().isString()) {
@@ -253,6 +258,7 @@ public class Panorama {
                 if (object.has("blur_strength") && object.get("blur_strength").isJsonPrimitive() && object.get("blur_strength").getAsJsonPrimitive().isNumber()) {
                     blurStrength = object.get("blur_strength").getAsInt();
                 }
+                if (blurStrength != null) Preconditions.checkArgument(blurStrength > 0, TextComponents.translate("logger.mellowui.panorama.negative_blur", "Expected blur strength to be a positive value; got %s", blurStrength));
 
                 Panorama panorama = Panorama.builder(cubeMap).overlay(overlay).usedIn(usedIn).overrideSpeed(speedOverride).overridePitch(pitchOverride).applyShader(shader).blurStrength(blurStrength).build();
                 if (!usedIn.isEmpty()) {
@@ -262,7 +268,7 @@ public class Panorama {
 
                 return panorama;
             } else {
-                throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", element.toString()));
+                throw new JsonSyntaxException(TextComponents.translate("logger.mellowui.panorama.parsing", "Failed to parse panorama '%s'", element.toString()));
             }
         }
 
@@ -275,8 +281,8 @@ public class Panorama {
                 for (ResourceLocation location : panorama.cubeMap()) cubeMap.add(location.toString());
                 object.add("cube_map", cubeMap);
             } else {
-                if (cubeMapTextures > 6) throw new JsonSyntaxException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_many", "Panorama has more than 6 cube map textures"));
-                else throw new JsonSyntaxException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_few", "Panorama has less than 6 cube map textures"));
+                if (cubeMapTextures > 6) throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_many", "Panorama has more than 6 cube map textures"));
+                else throw new JsonParseException(TextComponents.translate("logger.mellowui.panorama.cube_map.too_few", "Panorama has less than 6 cube map textures"));
             }
 
             if (!panorama.overlayTexture().equals(GUITextures.PANORAMA_OVERLAY)) {
