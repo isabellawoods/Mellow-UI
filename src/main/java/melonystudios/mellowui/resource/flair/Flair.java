@@ -21,7 +21,7 @@ public record Flair(int accentColor) {
         @Override
         public Flair deserialize(JsonElement element, Type sourceType, JsonDeserializationContext context) throws JsonParseException {
             if (element.isJsonObject()) {
-                return new Flair(element.getAsJsonObject().get("accent_color").getAsInt());
+                return new Flair(Integer.decode(element.getAsJsonObject().get("accent_color").getAsString()));
             } else {
                 throw new JsonParseException(TextComponents.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", element.toString()));
             }
@@ -30,7 +30,7 @@ public record Flair(int accentColor) {
         @Override
         public JsonElement serialize(Flair flair, Type type, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.addProperty("accent_color", flair.accentColor());
+            object.addProperty("accent_color", "#" + Integer.toHexString(flair.accentColor()));
             return object;
         }
     }

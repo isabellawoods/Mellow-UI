@@ -15,7 +15,7 @@
   "error.mellowui.load_shader": "Failed to load shader: '%s'",
   "error.mellowui.parse_shader": "Failed to parse shader: '%s'",
   "error.mellowui.compatibility.blueprint_slabfish_hat": "Failed to add 'Slabfish Hat Settings' button to the updated skin customization menu",
-  "error.mellowui.compatibility.femalegender_breast_settings": "Failed to add 'Breast Settings' button to the updated skin customization menu",
+  "error.mellowui.compatibility.femalegender_breast_settings": "Failed to add 'Breast Settings' button to the updated options menu",
   "error.mellowui.cannot_load_advancements": "Cannot load advancements, as you're not logged into a world or server.",
   "error.mellowui.cannot_load_statistics": "Cannot load statistics, as you're not logged into a world or server.",
 
@@ -29,6 +29,7 @@
   "logger.mellowui.panorama.reset": "Set the panorama to default since '%s' was unloaded",
   "logger.mellowui.panorama.cube_map.too_many": "Panorama has more than 6 cube map textures",
   "logger.mellowui.panorama.cube_map.too_few": "Panorama has less than 6 cube map textures",
+  "logger.mellowui.panorama.negative_blur": "Expected blur strength to be a positive value; got %s",
 
   "logger.mellowui.library.no_capabilities": "Failed to get OpenAL capabilities!",
   "logger.mellowui.library.failed": "Failed to open OpenAL device",
@@ -186,15 +187,12 @@
   "panorama.mellowui.generated": "Generated (ID %s)",
   "panorama.mellowui.generated.desc": "A panorama added by another mod that substituted the default panorama.",
 
-  "panorama.blue_skies.everbright.basic": "Basic (Everbright)",
   "panorama.blue_skies.everbright.brisk_meadow": "Brisk Meadow",
   "panorama.blue_skies.everbright.calming_skies": "Calming Skies",
   "panorama.blue_skies.everbright.frostbitten_forest": "Frostbitten Forest",
   "panorama.blue_skies.everbright.nature_dungeon": "Nature Dungeon",
   "panorama.blue_skies.everbright.peeking_ocean": "Peeking Ocean",
   "panorama.blue_skies.everbright.snow_covered_pines": "Snow Covered Pines",
-  "panorama.blue_skies.everdawn.basic": "Basic (Everdawn)",
-  "panorama.blue_skies.everdawn.crystal_dunes": "Crystal Dunes",
   "panorama.blue_skies.everdawn.crystal_roughs": "Crystal Roughs",
   "panorama.blue_skies.everdawn.moonlit_reservoir": "Moonlit Reservoir",
   "panorama.blue_skies.everdawn.poison_dungeon": "Poison Dungeon",

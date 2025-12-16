@@ -5,6 +5,8 @@ import melonystudios.mellowui.config.type.ThreeStyles;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.update.MUIOptionsScreen;
+import melonystudios.mellowui.sound.MUISoundSource;
+import melonystudios.mellowui.sound.SoundPreviewHandler;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.AmbientOcclusionStatus;
 import net.minecraft.client.Minecraft;
@@ -45,7 +47,7 @@ public class VanillaConfigEntries {
                 return new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.menu_background_blurriness"), value != 0 ? value : new TranslatableComponent("options.off"));
             },
             minecraft -> minecraft.font.split(new TranslatableComponent("config.minecraft.menu_background_blurriness.tooltip"), TOOLTIP_MAX_WIDTH));
-    public static final IterableOption MUSIC_TOAST = new MusicToastOption("config.minecraft.music_toast", new TranslatableComponent("config.minecraft.music_toast.tooltip"),
+    public static final IterableOption MUSIC_TOAST = new MusicToastOption("config.minecraft.music_toast", new TranslatableComponent("config.minecraft.music_toast.option_1.tooltip"),
             (options, identifier) -> CLIENT_CONFIGS.musicToast.set(ThreeStyles.byId(CLIENT_CONFIGS.musicToast.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.musicToast.get()) {
@@ -73,7 +75,7 @@ public class VanillaConfigEntries {
         }
         CLIENT_CONFIGS.highContrastPack.set(newValue);
     });
-    public static final IterableOption DIRECTIONAL_AUDIO = new IterableOption("config.minecraft.directional_audio", new TranslatableComponent("config.minecraft.directional_audio.off_desc"),
+    public static final IterableOption DIRECTIONAL_AUDIO = new IterableOption("config.minecraft.directional_audio", new TranslatableComponent("config.minecraft.directional_audio.off_tooltip"),
             (options, identifier) -> CLIENT_CONFIGS.directionalAudio.set(TwoStyles.byId(CLIENT_CONFIGS.directionalAudio.get().getId() + identifier)),
             (options, option) -> {
                 switch (CLIENT_CONFIGS.directionalAudio.get()) {
@@ -87,7 +89,10 @@ public class VanillaConfigEntries {
             });
     public static final ProgressOption UI_VOLUME = new ProgressOption("config.minecraft.ui_volume", 0, 1, 0.01F,
             options -> CLIENT_CONFIGS.uiVolume.get(),
-            (options, newValue) -> CLIENT_CONFIGS.uiVolume.set(newValue),
+            (options, newValue) -> {
+                if (Minecraft.getInstance().level == null) SoundPreviewHandler.preview(Minecraft.getInstance().getSoundManager(), MUISoundSource.UI, newValue.floatValue());
+                CLIENT_CONFIGS.uiVolume.set(newValue);
+            },
             (options, slider) -> {
                 Component value = (int) (slider.get(options) * 100) == 0 ? CommonComponents.OPTION_OFF : new TranslatableComponent("config.minecraft.sound_category.percent", Integer.toString((int) (slider.get(options) * 100)));
                 return new TranslatableComponent("options.generic_value", new TranslatableComponent("config.minecraft.sound_category.ui"), value);

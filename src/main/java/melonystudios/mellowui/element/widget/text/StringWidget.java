@@ -10,6 +10,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -81,7 +82,7 @@ public class StringWidget extends AbstractStringWidget {
                     this.components.drawString(this.clipText(message, maxWidth), true, this.x, textY, this.getColor());
                     break;
                 case SCROLLING:
-                    this.renderScrollingString(font, WidgetConfigs.WIDGET_CONFIGS.stringWidgetTextPadding.get(), this.getColor());
+                    this.renderScrollingString(font, Mth.clamp(WidgetConfigs.WIDGET_CONFIGS.stringWidgetTextPadding.get(), 0, this.getWidth() / 2 - 1), this.getColor());
             }
         } else {
             this.components.drawString(message.getVisualOrderText(), true, this.x, textY, this.getColor());

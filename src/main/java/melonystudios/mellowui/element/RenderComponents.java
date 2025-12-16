@@ -78,6 +78,9 @@ public class RenderComponents extends VanillaRenderComponents {
     /// Renders the global **background** of a screen.
     /// @param screen The screen where the background is being rendered.
     /// @param partialTicks The partial tick time.
+    /// @param vOffset The vertical offset of the background texture.
+    /// @param width The GUI-scaled width of the screen.
+    /// @param height The GUI-scaled height of the screen.
     public void renderBackground(Screen screen, float partialTicks, int vOffset, int width, int height) {
         if (this.minecraft.level == null) {
             this.renderPanorama(partialTicks, width, height, 1);
@@ -110,6 +113,7 @@ public class RenderComponents extends VanillaRenderComponents {
 
     /// Renders the selected {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} onto the panorama, without fading,
     /// if the effect isn't the default "blur".
+    /// @param partialTicks The partial tick time.
     public void renderBackgroundShaders(float partialTicks) {
         if (ShaderManager.customShaderLoaded()) this.renderBlurredBackground(partialTicks, null);
     }

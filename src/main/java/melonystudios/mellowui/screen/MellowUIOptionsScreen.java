@@ -74,9 +74,9 @@ public class MellowUIOptionsScreen extends OptionsSubScreen {
     protected void init() {
         // Lists
         this.mellowUIList = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-        this.mellowUIList.addBig(PANORAMA_CAMERA_PITCH);
         this.mellowUIList.addSmall(this.customization, this.colorOptions);
         this.mellowUIList.addBig(BACKGROUNDS_SEPARATOR);
+        this.mellowUIList.addBig(PANORAMA_CAMERA_PITCH);
         this.mellowUIList.addSmall(BACKGROUNDS.toArray(new Option[0]));
         this.mellowUIList.addBig(MENU_UPDATES_SEPARATOR);
         this.mellowUIList.addSmall(MENU_UPDATES.toArray(new Option[0]));

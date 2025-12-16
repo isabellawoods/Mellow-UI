@@ -179,7 +179,10 @@ public class MellowModListScreen extends Screen {
 
         if (this.selectedMod != null) {
             MellowModList.Mod entry = this.modList.byModInfo(this.selectedMod.getModInformation());
-            if (entry != null) this.modList.centerScrollOn(entry);
+            if (entry != null) {
+                this.modList.centerScrollOn(entry);
+                this.modList.setSelected(entry);
+            }
         }
         this.updateCache();
     }
