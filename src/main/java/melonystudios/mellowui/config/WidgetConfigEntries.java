@@ -30,6 +30,8 @@ public class WidgetConfigEntries {
             new TranslationTextComponent("config.mellowui.highlighted_legacy_widget_text_color.tooltip"), WIDGET_CONFIGS.highlightedLegacyWidgetTextColor);
     public static final EditColorConfigOption DISABLED_LEGACY_WIDGET_TEXT_COLOR = new EditColorConfigOption("config.mellowui.disabled_legacy_widget_text_color",
             new TranslationTextComponent("config.mellowui.disabled_legacy_widget_text_color.tooltip"), WIDGET_CONFIGS.disabledLegacyWidgetTextColor);
+    public static final EditColorConfigOption LOCKED_WIDGET_TEXT_COLOR = new EditColorConfigOption("config.mellowui.locked_widget_text_color",
+            new TranslationTextComponent("config.mellowui.locked_widget_text_color.tooltip"), WIDGET_CONFIGS.lockedWidgetTextColor);
     public static final EditColorConfigOption HIGHLIGHTED_ICON_BUTTON_COLOR = new EditColorConfigOption("config.mellowui.highlighted_icon_button_color",
             new TranslationTextComponent("config.mellowui.highlighted_icon_button_color.tooltip"), WIDGET_CONFIGS.highlightedIconButtonColor);
 
@@ -90,6 +92,6 @@ public class WidgetConfigEntries {
             new TranslationTextComponent("config.mellowui.tab_text_padding.tooltip"), WIDGET_CONFIGS.tabTextPadding);
     public static final EditConfigOption STRING_WIDGET_TEXT_PADDING = new EditConfigOption("config.mellowui.string_widget_text_padding",
             new TranslationTextComponent("config.mellowui.string_widget_text_padding.tooltip"), WIDGET_CONFIGS.stringWidgetTextPadding);
-    public static final EditConfigOption MOD_NAME_TEXT_PADDING = new EditConfigOption("config.mellowui.mod_name_text_padding",
-            new TranslationTextComponent("config.mellowui.mod_name_text_padding.tooltip"), WIDGET_CONFIGS.modNameTextPadding);
+    public static final EditConfigOption MOD_ENTRY_TEXT_PADDING = new EditConfigOption("config.mellowui.mod_entry_text_padding",
+            new TranslationTextComponent("config.mellowui.mod_entry_text_padding.tooltip"), WIDGET_CONFIGS.modEntryTextPadding);
 }

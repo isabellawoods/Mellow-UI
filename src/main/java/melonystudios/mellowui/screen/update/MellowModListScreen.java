@@ -35,6 +35,8 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import java.util.Collections;
@@ -48,6 +50,7 @@ import java.util.stream.Collectors;
 import static melonystudios.mellowui.element.text.TextComponents.withColor;
 
 public class MellowModListScreen extends Screen {
+    private static final Marker MARKER = MarkerManager.getMarker("MellowModListScreen");
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
     private TextFieldWidget searchBox;
@@ -265,7 +268,8 @@ public class MellowModListScreen extends Screen {
             this.panel.addEntry(new TextPanelEntry(this.panel, Alignment.CENTER, new TranslationTextComponent("menu.mellowui.mods.changelogs").withStyle(withColor(accentColor).withBold(true))));
 
             for (Map.Entry<ComparableVersion, String> entry : result.changes.entrySet()) {
-                this.panel.addEntry(new TextPanelEntry(this.panel, new TranslationTextComponent("menu.mellowui.mods.changelog_line", entry.getKey(), entry.getValue())));
+                this.panel.addEntry(new TextPanelEntry(this.panel, new TranslationTextComponent("menu.mellowui.mods.changelog_line", entry.getKey(),
+                        new StringTextComponent(entry.getValue()).copy().withStyle(TextFormatting.WHITE)).withStyle(withColor(accentColor))));
             }
         }
     }
@@ -352,7 +356,7 @@ public class MellowModListScreen extends Screen {
         try {
             ConfigGuiHandler.getGuiFactoryFor(info).map(func -> func.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         } catch (final Exception exception) {
-            MellowUI.logger("MellowModListScreen").error(TextComponents.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
+            MellowUI.LOGGER.error(MARKER, TextComponents.translate("error.mellowui.broken_config_screen", "There was a critical issue trying to load the config screen for '%s'", info.getDisplayName()), exception);
         }
     }
 

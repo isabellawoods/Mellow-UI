@@ -69,14 +69,14 @@ public class VanillaConfigEntries {
             });
     public static final HighContrastOption HIGH_CONTRAST = new HighContrastOption("config.minecraft.high_contrast", new TranslationTextComponent("config.minecraft.high_contrast.tooltip"),
             options -> CLIENT_CONFIGS.highContrastPack.get(), (options, newValue) -> {
-        ResourcePackList packRepository = Minecraft.getInstance().getResourcePackRepository();
-        boolean highContrastEnabled = packRepository.getSelectedIds().contains("mellowui:high_contrast");
+        ResourcePackList repository = Minecraft.getInstance().getResourcePackRepository();
+        boolean highContrastEnabled = repository.getSelectedIds().contains("mellowui:high_contrast");
         if (!highContrastEnabled && newValue) {
-            if (((InterfaceMethods.PackRepositoryMethods) packRepository).addPack(GUITextures.MUI_HIGH_CONTRAST.toString())) {
-                MUIOptionsScreen.updateResourcePacksList(packRepository);
+            if (((InterfaceMethods.PackRepositoryMethods) repository).addPack(GUITextures.MUI_HIGH_CONTRAST.toString())) {
+                MUIOptionsScreen.updateResourcePacksList(repository);
             }
-        } else if (highContrastEnabled && !newValue && ((InterfaceMethods.PackRepositoryMethods) packRepository).removePack(GUITextures.MUI_HIGH_CONTRAST.toString())) {
-            MUIOptionsScreen.updateResourcePacksList(packRepository);
+        } else if (highContrastEnabled && !newValue && ((InterfaceMethods.PackRepositoryMethods) repository).removePack(GUITextures.MUI_HIGH_CONTRAST.toString())) {
+            MUIOptionsScreen.updateResourcePacksList(repository);
         }
         CLIENT_CONFIGS.highContrastPack.set(newValue);
     });

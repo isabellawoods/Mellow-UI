@@ -7,7 +7,6 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderSkybox;
 import net.minecraft.client.renderer.RenderSkyboxCube;
@@ -17,7 +16,6 @@ import net.minecraft.util.Util;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 /// A **panorama** is a set of textures and properties that are rendered on the background of nearly all screens.
 public class Panorama {
@@ -40,7 +38,7 @@ public class Panorama {
     /// @param usedIn A list of screen class paths that this panorama renders in. Panoramas fade in/out when switching screens.
     /// @param speedOverride A float that overrides the speed the panorama spins at.
     /// @param pitchOverride A {@linkplain PitchOverrider **pitch overrider**} that defines the pitch of fhe panoramic camera.
-    /// @param shader A *nullable* resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
+    /// @param shader A *nullable* resource location for a {@linkplain melonystudios.mellowui.resource.posteffect.PostEffect post-processing effect} to render on the panorama.
     /// @param blurStrength An integer overriding the strength of the {@linkplain melonystudios.mellowui.config.MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**}.
     private Panorama(List<ResourceLocation> cubeMap, ResourceLocation overlay, List<String> usedIn, Float speedOverride, PitchOverrider pitchOverride, @Nullable ResourceLocation shader, Integer blurStrength) {
         this.cubeMap = cubeMap;
@@ -102,11 +100,12 @@ public class Panorama {
 
     protected String getOrCreateDescriptionID() {
         if (this.descriptionID == null) {
-            MellowUtils.PANORAMAS.entrySet().stream()
-                    .filter(entry -> entry.getValue() == this)
-                    .map(Map.Entry::getKey).findFirst()
-                    .ifPresent(location -> this.descriptionID = Util.makeDescriptionId("panorama", location));
-            if (this.descriptionID == null) this.descriptionID = Util.makeDescriptionId("panorama", DEFAULT_LOCATION);
+            ResourceLocation location = Panoramas.locationFor(this);
+            if (location != null) {
+                this.descriptionID = Util.makeDescriptionId("panorama", location);
+            } else {
+                this.descriptionID = Util.makeDescriptionId("panorama", DEFAULT_LOCATION);
+            }
         }
         return this.descriptionID;
     }
@@ -178,7 +177,7 @@ public class Panorama {
         }
 
         /// Defines a shader to render on this panorama.
-        /// @param shader A *nullable* resource location for a {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} to render on the panorama.
+        /// @param shader A *nullable* resource location for a {@linkplain melonystudios.mellowui.resource.posteffect.PostEffect post-processing effect} to render on the panorama.
         public Builder applyShader(ResourceLocation shader) {
             this.shader = shader;
             return this;
@@ -244,7 +243,7 @@ public class Panorama {
                 if (object.has("pitch_override") && object.get("pitch_override").isJsonObject()) {
                     JsonObject override = object.get("pitch_override").getAsJsonObject();
                     ResourceLocation type = new ResourceLocation(override.get("type").getAsString());
-                    pitchOverride = MellowUtils.OVERRIDERS.get(type).apply(override);
+                    pitchOverride = Panoramas.OVERRIDERS.get(type).apply(override);
                 }
 
                 // Shader
@@ -258,7 +257,7 @@ public class Panorama {
                 if (object.has("blur_strength") && object.get("blur_strength").isJsonPrimitive() && object.get("blur_strength").getAsJsonPrimitive().isNumber()) {
                     blurStrength = object.get("blur_strength").getAsInt();
                 }
-                if (blurStrength != null) Preconditions.checkArgument(blurStrength > 0, TextComponents.translate("logger.mellowui.panorama.negative_blur", "Expected blur strength to be a positive value; got %s", blurStrength));
+                if (blurStrength != null) Preconditions.checkArgument(blurStrength >= 0, TextComponents.translate("logger.mellowui.panorama.negative_blur", "Expected blur strength to be a positive value; got %s", blurStrength));
 
                 Panorama panorama = Panorama.builder(cubeMap).overlay(overlay).usedIn(usedIn).overrideSpeed(speedOverride).overridePitch(pitchOverride).applyShader(shader).blurStrength(blurStrength).build();
                 if (!usedIn.isEmpty()) {
@@ -296,7 +295,11 @@ public class Panorama {
             if (panorama.speedOverride() != null) object.addProperty("speed_override", panorama.speedOverride());
             if (panorama.pitchOverride() != null) object.add("pitch_override", panorama.pitchOverride().save());
             if (panorama.shader() != null) object.addProperty("shader", panorama.shader().toString());
-            if (panorama.blurStrength() != null) object.addProperty("blur_strength", panorama.blurStrength());
+            Integer blurStrength = panorama.blurStrength();
+            if (blurStrength != null) {
+                Preconditions.checkArgument(blurStrength >= 0, TextComponents.translate("logger.mellowui.panorama.negative_blur", "Expected blur strength to be a positive value; got %s", blurStrength));
+                object.addProperty("blur_strength", blurStrength);
+            }
             return object;
         }
     }

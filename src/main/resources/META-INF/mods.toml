@@ -24,7 +24,7 @@ issueTrackerURL="https://github.com/isabellawoods/Mellow-UI/issues" #optional
     # A display name for the mod
     displayName="Mellow UI" #mandatory
     # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-    #updateJSONURL="https://raw.githubusercontent.com/isabellawoods/Mellow-UI/refs/heads/forge-1.16.5/update_checker.json" #optional
+    updateJSONURL="https://raw.githubusercontent.com/isabellawoods/Mellow-UI/refs/heads/forge-1.16.5/update_checker.json" #optional
     # A URL for the "homepage" for this mod, displayed in the mod UI
     displayURL="https://github.com/isabellawoods/Mellow-UI" #optional
     # A URL for the changelogs for this mod, displayed in the mod list when Mellow UI is loaded.

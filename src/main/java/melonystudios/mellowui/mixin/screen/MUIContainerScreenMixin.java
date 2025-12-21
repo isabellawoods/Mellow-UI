@@ -84,7 +84,7 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
                 RenderSystem.color4f(1, 1, 1, 1);
                 int x = slot.x;
                 int y = slot.y;
-                this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_BACK);
+                this.minecraft.getTextureManager().bind(GUITextures.SLOT_HIGHLIGHT_BACK);
                 blit(stack, x - 4, y - 4, 0, 0, 24, 24, 24, 24);
                 RenderSystem.enableDepthTest();
             }
@@ -99,7 +99,7 @@ public abstract class MUIContainerScreenMixin<T extends Container> extends Scree
                 RenderSystem.color4f(1, 1, 1, 1);
                 int x = slot.x;
                 int y = slot.y;
-                this.minecraft.textureManager.bind(GUITextures.SLOT_HIGHLIGHT_FRONT);
+                this.minecraft.getTextureManager().bind(GUITextures.SLOT_HIGHLIGHT_FRONT);
                 blit(stack, x - 4, y - 4, 0, 0, 24, 24, 24, 24);
                 RenderSystem.enableDepthTest();
             }

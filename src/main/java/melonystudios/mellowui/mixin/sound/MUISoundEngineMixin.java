@@ -2,11 +2,13 @@ package melonystudios.mellowui.mixin.sound;
 
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.audio.SoundSystem;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.Util;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,6 +23,8 @@ import static melonystudios.mellowui.methods.InterfaceMethods.DeviceCheckState.*
 
 @Mixin(SoundEngine.class)
 public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngineMethods {
+    @Unique
+    private static final Marker SOUND_ENGINE = MarkerManager.getMarker("SoundEngine");
     @Unique
     private final AtomicReference<InterfaceMethods.DeviceCheckState> devicePoolState = new AtomicReference<>(NO_CHANGE);
     @Unique
@@ -44,7 +48,7 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
     @Unique
     private boolean shouldChangeDevice() {
         if (((InterfaceMethods.SoundSystemMethods) this.library).isCurrentDeviceDisconnected()) {
-            MellowUI.logger("SoundEngine").info(I18n.get("logger.mellowui.sound_engine.lost_device"));
+            MellowUI.LOGGER.info(SOUND_ENGINE, TextComponents.translate("logger.mellowui.sound_engine.lost_device", "Connected audio device was lost!"));
             return true;
         } else {
             long millis = Util.getMillis();
@@ -56,11 +60,11 @@ public abstract class MUISoundEngineMixin implements InterfaceMethods.SoundEngin
                     Util.ioPool().execute(() -> {
                         if ("".equals(soundDevice)) {
                             if (((InterfaceMethods.SoundSystemMethods) this.library).hasDefaultDeviceChanged()) {
-                                MellowUI.logger("SoundEngine").info(I18n.get("logger.mellowui.sound_engine.changed_device"));
+                                MellowUI.LOGGER.info(SOUND_ENGINE, TextComponents.translate("logger.mellowui.sound_engine.changed_device", "System default audio device has changed!"));
                                 this.devicePoolState.compareAndSet(ONGOING, CHANGE_DETECTED);
                             }
                         } else if (!((InterfaceMethods.SoundSystemMethods) this.library).getCurrentDeviceName().equals(soundDevice) && this.getAvailableSoundDevices().contains(soundDevice)) {
-                            MellowUI.logger("SoundEngine").info(I18n.get("logger.mellowui.sound_engine.preferred_device"));
+                            MellowUI.LOGGER.info(SOUND_ENGINE, TextComponents.translate("logger.mellowui.sound_engine.preferred_device", "Preferred default audio device has become available!"));
                             this.devicePoolState.compareAndSet(ONGOING, CHANGE_DETECTED);
                         }
 

@@ -68,9 +68,9 @@ public class VanillaRenderComponents extends AbstractGui {
     /// @param color The color to set.
     /// @param alpha The alpha component to apply.
     public void setColor(int color, float alpha) {
-        float red = ColorHelper.PackedColor.red(color);
-        float green = ColorHelper.PackedColor.green(color);
-        float blue = ColorHelper.PackedColor.blue(color);
+        float red = ColorHelper.PackedColor.red(color) / 255F;
+        float green = ColorHelper.PackedColor.green(color) / 255F;
+        float blue = ColorHelper.PackedColor.blue(color) / 255F;
         this.setColor(red, green, blue, alpha);
     }
 

@@ -3,6 +3,7 @@ package melonystudios.mellowui.mixin.forge;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.resource.theme.Themes;
 import melonystudios.mellowui.screen.forge.LoadingErrorsScreen;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
@@ -44,11 +45,12 @@ public class MUILoadingErrorScreenMixin extends ErrorScreen {
     @Inject(method = "init", at = @At("HEAD"), remap = true, cancellable = true)
     protected void init(CallbackInfo callback) {
         // select the background panorama and shaders
+        Themes.selectTheme(Themes.theme(), MellowConfigs.CLIENT_CONFIGS.selectedTheme.get());
         Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
         if (!MellowConfigs.CLIENT_CONFIGS.loadingErrorsStyle.get()) return;
         callback.cancel();
         this.minecraft.setScreen(new LoadingErrorsScreen(this.modLoadErrors, this.modLoadWarnings, this.dumpedLocation));
-        MellowUtils.LOADING_ERRORS = !this.modLoadErrors.isEmpty();
+        MellowUtils.LOADING_ERRORS |= !this.modLoadErrors.isEmpty();
     }
 
     @Mixin(value = LoadingErrorScreen.LoadingEntryList.LoadingMessageEntry.class, remap = false)

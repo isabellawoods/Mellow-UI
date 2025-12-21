@@ -6,6 +6,8 @@ import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import net.minecraft.client.audio.SoundSystem;
 import net.minecraft.client.resources.I18n;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.openal.*;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +25,8 @@ import java.util.OptionalLong;
 
 @Mixin(SoundSystem.class)
 public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods {
+    @Unique
+    private static final Marker MARKER = MarkerManager.getMarker("SoundSystem");
     @Shadow
     private long device;
     @Unique
@@ -52,7 +56,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
             // Enabling HRTF audio
             String currentDeviceName = this.getCurrentDeviceName().replace("OpenAL Soft on ", "");
             String translation = "logger.mellowui.sound_system.initialized" + (currentDeviceName.isEmpty() ? ".unknown" : "");
-            MellowUI.logger("SoundSystem").info(I18n.get(translation, currentDeviceName));
+            MellowUI.LOGGER.info(MARKER, I18n.get(translation, currentDeviceName));
             this.setHRTF(capabilities.ALC_SOFT_HRTF && MellowConfigs.CLIENT_CONFIGS.directionalAudio.get() == TwoStyles.OPTION_2);
         }
     }
@@ -64,7 +68,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 IntBuffer buffer = (IntBuffer) stack.callocInt(10).put(6546).put(directionalAudio ? 1 : 0).put(6550).put(0).put(0).flip();
                 if (!SOFTHRTF.alcResetDeviceSOFT(this.device, buffer)) {
-                    MellowUI.logger("SoundSystem").warn(I18n.get("logger.mellowui.sound_system.reset", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device))));
+                    MellowUI.LOGGER.warn(MARKER, I18n.get("logger.mellowui.sound_system.reset", ALC10.alcGetString(this.device, ALC10.alcGetError(this.device))));
                 }
             }
         }
@@ -134,7 +138,7 @@ public class MUISoundSystemMixin implements InterfaceMethods.SoundSystemMethods 
     private static boolean checkForALCError(long deviceHandle, String operation) {
         int errorID = ALC10.alcGetError(deviceHandle);
         if (errorID != 0) {
-            MellowUI.logger("SoundSystem").error("[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
+            MellowUI.LOGGER.error(MARKER, "[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
             return true;
         } else {
             return false;

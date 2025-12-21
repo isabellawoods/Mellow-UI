@@ -6,6 +6,7 @@ import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.*;
+import org.apache.commons.lang3.StringUtils;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 import static melonystudios.mellowui.config.WidgetConfigs.WIDGET_CONFIGS;
@@ -55,6 +56,12 @@ public class TextComponents {
         return new TranslationTextComponent("button.mellowui.search").withStyle(withColor(WIDGET_CONFIGS.textFieldDefaultBorderColor.get()).withItalic(true));
     }
 
+    /// @return Whether the provided string is considered blank (either fully blank, only whitespace, or only a `@`).
+    /// @param search The search box text.
+    public static boolean isBlank(String search) {
+        return StringUtils.isBlank(search) || search.equals("@");
+    }
+
     /// Makes a {@linkplain Style style} using a specified color.
     /// @param color The color to use.
     public static Style withColor(int color) {
@@ -101,6 +108,32 @@ public class TextComponents {
             return !active ? WIDGET_CONFIGS.disabledLegacyWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedLegacyWidgetTextColor.get() : WIDGET_CONFIGS.defaultLegacyWidgetTextColor.get());
         } else {
             return !active ? WIDGET_CONFIGS.disabledWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedWidgetTextColor.get() : WIDGET_CONFIGS.defaultWidgetTextColor.get());
+        }
+    }
+
+    /// Creates a {@linkplain Style style} using the color that should be used for text rendering.
+    /// @param selected Whether the widget (or text) is selected.
+    /// @param unlocked Whether the widget (or text) is unlocked.
+    public static Style lockableStyle(boolean selected, boolean unlocked) {
+        return withColor(lockableColor(selected, unlocked));
+    }
+
+    /// Gets the color that should be used for rendering text. It is chosen based on the following circumstances:
+    /// - If either the {@linkplain melonystudios.mellowui.config.MellowConfigs#legacyButtonColors **Legacy Button Colors**} option or the "*Programmer Art*" resource pack are enabled:
+    ///   - If it's inactive, use **Locked Widget Text** (`#FF5555`);
+    ///   - if it's highlighted, use **Highlighted Legacy Widget Text** (`#FFFFA0`);
+    ///   - Or else, use **Legacy Widget Text** (`#E0E0E0`).
+    /// - Or else:
+    ///   - If it's inactive, use **Locked Widget Text** (`#FF5555`);
+    ///   - if it's highlighted, use **Highlighted Widget Text** (`#FFFFFF`);
+    ///   - Or else, use **Widget Text** (`#FFFFFF`).
+    /// @param selected Whether this text is selected/hovered/focused.
+    /// @param unlocked Whether this text is unlocked.
+    public static int lockableColor(boolean selected, boolean unlocked) {
+        if (CLIENT_CONFIGS.legacyButtonColors.get() || Minecraft.getInstance().getResourcePackRepository().getSelectedIds().contains(PROGRAMMER_ART_ID)) {
+            return !unlocked ? WIDGET_CONFIGS.lockedWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedLegacyWidgetTextColor.get() : WIDGET_CONFIGS.defaultLegacyWidgetTextColor.get());
+        } else {
+            return !unlocked ? WIDGET_CONFIGS.lockedWidgetTextColor.get() : (selected ? WIDGET_CONFIGS.highlightedWidgetTextColor.get() : WIDGET_CONFIGS.defaultWidgetTextColor.get());
         }
     }
 

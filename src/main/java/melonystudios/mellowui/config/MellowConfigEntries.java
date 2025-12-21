@@ -29,7 +29,9 @@ public class MellowConfigEntries {
     // Separators
     public static final SeparatorOption MENU_UPDATES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.menu_updates"));
     public static final SeparatorOption MISCELLANEOUS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.miscellaneous"));
-    public static final SeparatorOption STYLES_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.styles"));
+    public static final SeparatorOption SCREENS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.screens"));
+    public static final SeparatorOption OPTIONS_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.options"));
+    public static final SeparatorOption FORGE_SEPARATOR = new SeparatorOption(new TranslationTextComponent("separator.mellowui.forge"));
 
     // Options
     public static final SliderPercentageOption PANORAMA_CAMERA_PITCH = new SliderPercentageOption("config.mellowui.panorama_camera_pitch", -90, 90, 1,
@@ -80,8 +82,8 @@ public class MellowConfigEntries {
 
     public static final BooleanOption LEGACY_BUTTON_COLORS = new BooleanOption("config.mellowui.legacy_button_colors", new TranslationTextComponent("config.mellowui.legacy_button_colors.tooltip"),
             options -> CLIENT_CONFIGS.legacyButtonColors.get(), (options, newValue) -> CLIENT_CONFIGS.legacyButtonColors.set(newValue));
-    public static final BooleanOption DISABLE_BRANDING = new BooleanOption("config.mellowui.disable_branding", new TranslationTextComponent("config.mellowui.disable_branding.tooltip"),
-            options -> CLIENT_CONFIGS.disableBranding.get(), (options, newValue) -> CLIENT_CONFIGS.disableBranding.set(newValue));
+    public static final BooleanOption BRANDING_LINES = new BooleanOption("config.mellowui.branding_lines", new TranslationTextComponent("config.mellowui.branding_lines.tooltip"),
+            options -> CLIENT_CONFIGS.brandingLines.get(), (options, newValue) -> CLIENT_CONFIGS.brandingLines.set(newValue));
     public static final StyleBooleanOption SCREEN_BACKGROUND_STYLE = new StyleBooleanOption("config.mellowui.screen_background_style", new TranslationTextComponent("config.mellowui.screen_background_style.tooltip"),
             options -> CLIENT_CONFIGS.screenBackgroundStyle.get(), (options, newValue) -> CLIENT_CONFIGS.screenBackgroundStyle.set(newValue));
     public static final StyleBooleanOption LIST_BACKGROUND_STYLE = new StyleBooleanOption("config.mellowui.list_background_style", new TranslationTextComponent("config.mellowui.list_background_style.tooltip"),

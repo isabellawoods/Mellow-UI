@@ -250,12 +250,20 @@ public class Panel extends FocusableGui implements IRenderable {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.scrolling) {
-            int maxScroll = this.height - this.getBarHeight();
-            double moved = deltaY / maxScroll;
-            this.scrollAmount += this.getMaxScroll() * moved;
-            this.applyScrollLimits();
+        if (super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
             return true;
+        } else if (button == 0 && this.scrolling) {
+            if (mouseY < this.y) {
+                this.setScrollAmount(0);
+            } else if (mouseY > this.y + this.height) {
+                this.setScrollAmount(this.getMaxScroll());
+            } else {
+                int maxScroll = this.height - this.getBarHeight();
+                double moved = deltaY / maxScroll;
+                this.scrollAmount += this.getMaxScroll() * moved;
+                this.applyScrollLimits();
+                return true;
+            }
         }
         return false;
     }

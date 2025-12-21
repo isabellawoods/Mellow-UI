@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 @Mixin(AbstractList.class)
@@ -40,6 +42,7 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
     @Shadow protected int x1;
     @Shadow protected int y0;
     @Shadow protected int y1;
+    @Shadow @Nullable public abstract E getSelected();
     @Shadow protected abstract int getScrollbarPosition();
     @Shadow public abstract double getScrollAmount();
     @Shadow protected abstract int getMaxPosition();
@@ -53,7 +56,9 @@ public abstract class MUIAbstractListMixin<E extends AbstractList.AbstractListEn
 
     @Inject(method = "setSelected", at = @At("HEAD"))
     public void setSelected(E entry, CallbackInfo callback) {
-        if (entry != null) this.minecraft.getSoundManager().play(SimpleSound.forUI(MUISounds.LIST_ENTRY_SELECTED.get(), 1, 1));
+        if (entry != null && entry.hashCode() != (this.getSelected() == null ? 0 : this.getSelected().hashCode())) {
+            this.minecraft.getSoundManager().play(SimpleSound.forUI(MUISounds.LIST_ENTRY_SELECTED.get(), 1, 1));
+        }
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)

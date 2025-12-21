@@ -2,6 +2,8 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -23,6 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
     public MUIPackList(Minecraft minecraft, int width, int height, int y0, int y1, int itemHeight) {
         super(minecraft, width, height, y0, y1, itemHeight);
+        this.setRenderSelection(false);
     }
 
     @Override
@@ -59,6 +62,10 @@ public class MUIPackList extends ExtendedList<MUIPackList.PackEntry> {
 
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
+            // Render selection
+            int color = TextComponents.selectableColor(this.parent.getSelected() == this, true);
+            if (this.parent.getSelected() == this) RenderComponents.INSTANCE.renderListSelection(left, top, width, height, color);
+
             this.minecraft.getTextureManager().bind(this.pack.getIconTexture());
             RenderSystem.color4f(1, 1, 1, 1);
             AbstractGui.blit(stack, left, top, 0, 0, 32, 32, 32, 32);

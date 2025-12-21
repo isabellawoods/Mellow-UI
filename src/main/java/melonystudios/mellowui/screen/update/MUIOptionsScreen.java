@@ -157,13 +157,13 @@ public class MUIOptionsScreen extends SettingsScreen {
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
-    public static void updateResourcePacksList(ResourcePackList packList) {
+    public static void updateResourcePacksList(ResourcePackList repository) {
         Minecraft minecraft = Minecraft.getInstance();
         List<String> resourcePacks = ImmutableList.copyOf(minecraft.options.resourcePacks);
         minecraft.options.resourcePacks.clear();
         minecraft.options.incompatibleResourcePacks.clear();
 
-        for (ResourcePackInfo packInfo : packList.getSelectedPacks()) {
+        for (ResourcePackInfo packInfo : repository.getSelectedPacks()) {
             if (!packInfo.isFixedPosition()) {
                 minecraft.options.resourcePacks.add(packInfo.getId());
                 if (!packInfo.getCompatibility().isCompatible()) minecraft.options.incompatibleResourcePacks.add(packInfo.getId());

@@ -6,6 +6,10 @@ import net.minecraftforge.resource.IResourceType;
 public enum MUIResourceTypes implements IResourceType {
     /// Used when handling the loading of {@linkplain melonystudios.mellowui.resource.flair.Flair **flairs**}.
     FLAIRS,
+    /// Used when handling the loading of {@linkplain melonystudios.mellowui.resource.theme.Theme **themes**}.
+    THEMES,
     /// Used when handling the loading of {@linkplain melonystudios.mellowui.resource.panorama.Panorama **panoramas**}.
-    PANORAMAS
+    PANORAMAS,
+    /// Used when handling the loading of {@linkplain melonystudios.mellowui.resource.posteffect.PostEffect **post-processing effects**}.
+    POST_EFFECTS
 }

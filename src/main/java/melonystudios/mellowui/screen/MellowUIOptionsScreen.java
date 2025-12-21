@@ -39,7 +39,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     public static final List<AbstractOption> MENU_UPDATES = Lists.newArrayList(SPLASH_TEXT_POSITION, REPLACE_REALMS_NOTIFICATIONS, MAIN_MENU_MOD_BUTTON, PAUSE_MENU_MOD_BUTTON);
     public static final List<AbstractOption> MISCELLANEOUS = Lists.newArrayList(CULL_OVERSIZED_ITEMS, LOG_GL_ERRORS);
     public static final List<AbstractOption> WIDGETS_SMALL = Lists.newArrayList(LEGACY_BUTTON_COLORS, SCROLLING_TEXT);
-    public static final List<AbstractOption> WIDGETS_BIG = Lists.newArrayList(BUTTON_TEXT_PADDING, EDIT_BUTTON_TEXT_PADDING, TAB_TEXT_PADDING, STRING_WIDGET_TEXT_PADDING, MOD_NAME_TEXT_PADDING);
+    public static final List<AbstractOption> WIDGETS_BIG = Lists.newArrayList(BUTTON_TEXT_PADDING, EDIT_BUTTON_TEXT_PADDING, TAB_TEXT_PADDING, STRING_WIDGET_TEXT_PADDING, MOD_ENTRY_TEXT_PADDING);
     private OptionsRowList mellowUIList;
 
     // Mellomedley
@@ -53,21 +53,16 @@ public class MellowUIOptionsScreen extends SettingsScreen {
     private OptionsRowList vanillaList;
 
     // Forge
-    public static final List<AbstractOption> FORGE = Lists.newArrayList(MOD_LIST_STYLE, ForgeConfigEntries.MOD_LIST_SORTING, DISABLE_BRANDING);
+    public static final List<AbstractOption> FORGE = Lists.newArrayList(BRANDING_LINES, ForgeConfigEntries.MOD_LIST_SORTING);
     private OptionsRowList forgeList;
 
     // Tabs and lists
     private final List<TabButton> tabs = Lists.newArrayList();
+    private String selectedTab = "mellow_ui";
     private OptionsRowList activeList = null;
 
     public MellowUIOptionsScreen(Screen lastScreen, GameSettings options) {
         super(lastScreen, options, TextComponents.buildScreenTitle(MellowUI.MOD_ID, MellowUI.MOD_NAME));
-    }
-
-    @Override
-    public void resize(Minecraft minecraft, int width, int height) {
-        super.resize(minecraft, width, height);
-        this.tabs.get(0).setSelected(true);
     }
 
     @Override
@@ -128,18 +123,22 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         // Tabs
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth * 2, 10, tabWidth, 24, "mellow_ui", new TranslationTextComponent("tab.mellowui.mellow_ui"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.mellowUIList);
         })));
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth, 10, tabWidth, 24, "mellomedley", new TranslationTextComponent("tab.mellowui.mellomedley"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.mellomedleyList);
         })));
         this.tabs.add(this.addButton(new TabButton(this.width / 2, 10, tabWidth, 24, "vanilla", new TranslationTextComponent("tab.mellowui.vanilla"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.vanillaList);
         })));
         this.tabs.add(this.addButton(new TabButton(this.width / 2 + tabWidth, 10, tabWidth, 24, "forge", new TranslationTextComponent("tab.mellowui.forge"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.forgeList);
         })));
 
@@ -147,7 +146,19 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
-        this.tabs.get(0).setSelected(true);
+        this.tabs.stream().filter(tab -> tab.tabName().equals(this.selectedTab)).findFirst().ifPresent(tab -> {
+            tab.setSelected(true);
+            this.selectList(this.byName(this.selectedTab));
+        });
+    }
+
+    private OptionsRowList byName(String selectedTab) {
+        switch (selectedTab) {
+            case "mellomedley": return this.mellomedleyList;
+            case "forge": return this.forgeList;
+            case "vanilla": return this.vanillaList;
+            default: return this.mellowUIList;
+        }
     }
 
     private void selectList(OptionsRowList list) {

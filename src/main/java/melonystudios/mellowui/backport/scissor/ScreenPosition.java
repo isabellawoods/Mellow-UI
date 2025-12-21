@@ -36,4 +36,9 @@ public class ScreenPosition {
             case HORIZONTAL: default: return this.x;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.x + this.y;
+    }
 }

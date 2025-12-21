@@ -77,6 +77,7 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
     }
 
     public class Mod extends ExtendedList.AbstractListEntry<MellowModList.Mod> implements ScrollingText {
+        private final RenderComponents components = RenderComponents.INSTANCE;
         private final MellowModListScreen parentScreen;
         private final ModInfo modInfo;
 
@@ -107,7 +108,7 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
             RenderSystem.disableBlend();
 
             // Mod name
-            int padding = WidgetConfigs.WIDGET_CONFIGS.modNameTextPadding.get() - 2;
+            int padding = WidgetConfigs.WIDGET_CONFIGS.modEntryTextPadding.get() - 2;
             int color = TextComponents.selectableColor(MellowModList.this.getSelected() == this, true);
             this.renderWidgetText(
                     () -> this.renderAlignedScrollingText(font, modName, Alignment.CENTER, left + padding, top, left + rowWidth - padding - 4, top + height - 8, color),
@@ -115,16 +116,18 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
             );
 
             // Version
-            ITextProperties versionComponent = ITextProperties.composite(font.substrByWidth(modVersion, MellowModList.this.listWidth));
-            font.drawShadow(stack, LanguageMap.getInstance().getVisualOrder(versionComponent), left + 3, top + 4 + font.lineHeight, 0xFFFFFF);
+            this.renderWidgetText(
+                    () -> this.renderAlignedScrollingText(font, modVersion, Alignment.LEFT, left + padding + 1, top + 6, left + rowWidth - padding - 5, top + height + 6, color),
+                    () -> drawString(stack, font, modVersion, left + 3, top + 4 + font.lineHeight, color)
+            );
 
             // Update available icon
             if (checkResult.status.shouldDraw()) {
-                RenderComponents.INSTANCE.renderUpdateAvailableIcon(left + rowWidth - 16, top + height / 4 + 3, 1, checkResult.status);
+                this.components.renderUpdateAvailableIcon(left + rowWidth - 16, top + height / 4 + 3, 1, checkResult.status);
             }
 
             // Cursor
-            if (this.isMouseOver(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
+            if (this.isMouseOver(mouseX, mouseY) && this.components.containsPointInScissor(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         @Override

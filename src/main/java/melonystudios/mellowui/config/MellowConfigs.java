@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.type.*;
 import melonystudios.mellowui.resource.panorama.Panorama;
+import melonystudios.mellowui.resource.theme.Theme;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,7 +49,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue fadingBlur;
     public final ForgeConfigSpec.BooleanValue defaultBackground;
     public final ForgeConfigSpec.BooleanValue gradientBackground;
-    public final ForgeConfigSpec.BooleanValue disableBranding;
+    public final ForgeConfigSpec.BooleanValue brandingLines;
 
     // Mellomedley Configs
     public final ForgeConfigSpec.EnumValue<TwoStyles> mellomedleyMainMenuModButton;
@@ -85,6 +86,7 @@ public class MellowConfigs {
 
     // Dynamic resource config
     public final ForgeConfigSpec.ConfigValue<String> selectedPanorama;
+    public final ForgeConfigSpec.ConfigValue<String> selectedTheme;
     public final ForgeConfigSpec.ConfigValue<String> selectedEffect;
 
     public MellowConfigs(ForgeConfigSpec.Builder builder) {
@@ -124,7 +126,7 @@ public class MellowConfigs {
         this.fadingBlur = builder.comment("If the background blur should fade in/out instead of being static.").translation("config.mellowui.fading_blur").define("fadingBlur", false);
         this.defaultBackground = builder.comment("Whether to use the default dirt background texture instead of the current, transparent background.").translation("config.mellowui.default_background").define("defaultBackground", false);
         this.gradientBackground = builder.comment("Makes in-game screens use a gray gradient background instead of a regular transparent background.").translation("config.mellowui.gradient_background").define("gradientBackground", false);
-        this.disableBranding = builder.comment("Disables Forge's branding lines. Branding lines are the Forge and MCP versions in the bottom-left corner.").translation("config.mellowui.disable_branding").define("disableBranding", true);
+        this.brandingLines = builder.comment("Toggles Forge's branding lines. Branding lines are the Forge and MCP versions in the bottom-left corner.").translation("config.mellowui.branding_lines").define("brandingLines", false);
         builder.pop();
 
         builder.push("styleOptions");
@@ -154,11 +156,12 @@ public class MellowConfigs {
 
         builder.push("mellomedleyOptions");
         this.mellomedleyMainMenuModButton = builder.comment("Where the 'Mods' button should be located in Mellomedley's main menu.", "Option 1 = Icon | Option 2 = Below 'Options'").translation("config.mellomedley.main_menu_mod_button").defineEnum("mainMenuModButton", TwoStyles.OPTION_1);
-        this.mellomedleyVersion = builder.comment("The current version of the Mellomedley modpack, displayed on its variant of the main menu.").translation("config.mellomedley.mellomedley_version").define("mellomedleyVersion", "0.6");
+        this.mellomedleyVersion = builder.comment("The current version of the Mellomedley modpack, displayed on its variant of the main menu.").translation("config.mellomedley.mellomedley_version").define("mellomedleyVersion", "0.7");
         builder.pop();
 
         builder.push("dynamicResources");
-        this.selectedPanorama = builder.comment("The currently selected panorama. This overrides any panoramas added via resource packs.").define("selectedPanorama", Panorama.DEFAULT_LOCATION.toString());
+        this.selectedPanorama = builder.comment("The currently selected panorama. This overrides any panoramas added via resource packs, and is overridden by any themes that define their own panorama.").define("selectedPanorama", Panorama.DEFAULT_LOCATION.toString());
+        this.selectedTheme = builder.comment("The currently selected theme.").define("selectedTheme", Theme.DEFAULT_LOCATION.toString());
         this.selectedEffect = builder.comment("The currently selected post effect. This is overridden by any panoramas that define their own shaders.").define("selectedEffect", MellowUI.mellowUI("blur").toString());
         builder.pop();
     }

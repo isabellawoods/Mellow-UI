@@ -4,6 +4,8 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.resource.flair.FlairReloadListener;
 import melonystudios.mellowui.resource.panorama.PanoramaReloadListener;
+import melonystudios.mellowui.resource.posteffect.PostEffectReloadListener;
+import melonystudios.mellowui.resource.theme.ThemeReloadListener;
 import melonystudios.mellowui.screen.MellowUIOptionsScreen;
 import melonystudios.mellowui.sound.MUISounds;
 import melonystudios.mellowui.util.GUITextures;
@@ -53,15 +55,11 @@ public class MellowUI {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.getResourceManager() instanceof IReloadableResourceManager) {
             IReloadableResourceManager manager = (IReloadableResourceManager) minecraft.getResourceManager();
+            manager.registerReloadListener(new PostEffectReloadListener());
             manager.registerReloadListener(new FlairReloadListener());
             manager.registerReloadListener(new PanoramaReloadListener());
+            manager.registerReloadListener(new ThemeReloadListener());
         }
-    }
-
-    /// Gets a logger instance with the `mellowui/<name>` name.
-    /// @param name The name of this logger instance.
-    public static Logger logger(String name) {
-        return LogManager.getLogger(MOD_ID + "/" + name);
     }
 
     /// Creates a new resource location under ***Mellow UI***'s namespace.

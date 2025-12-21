@@ -12,7 +12,6 @@ import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
 import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
 import melonystudios.mellowui.screen.list.stats.MobsStatsList;
 import melonystudios.mellowui.util.GUITextures;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IProgressMeter;
@@ -52,6 +51,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
 
     // Tabs
     private final List<TabButton> tabs = Lists.newArrayList();
+    private String selectedTab = "general";
     private GeneralStatsList general;
     private ItemsStatsList items;
     private MobsStatsList mobs;
@@ -80,12 +80,6 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         if (System.currentTimeMillis() > this.createdAt + STATISTICS_RECEIVAL_WAIT_LIMIT_MS) {
             this.textAlpha = MathHelper.clamp(this.textAlpha + 0.06F, 0, 0.7F);
         }
-    }
-
-    @Override
-    public void resize(Minecraft minecraft, int width, int height) {
-        super.resize(minecraft, width, height);
-        this.tabs.get(0).setSelected(true);
     }
 
     @Override
@@ -136,6 +130,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         // General
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, "general", new TranslationTextComponent("stat.generalButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.general);
         })));
 
@@ -143,6 +138,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         TabButton itemsTab;
         this.tabs.add(itemsTab = this.addButton(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, "items", new TranslationTextComponent("stat.itemsButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.items);
         }, (button, stack, mouseX, mouseY) -> {
             if (!button.active) this.components.renderTooltip(this, button, new TranslationTextComponent("menu.mellowui.statistics.no_statistics_found"), mouseX, mouseY);
@@ -153,13 +149,25 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         TabButton mobsTab;
         this.tabs.add(mobsTab = this.addButton(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, "mobs", new TranslationTextComponent("stat.mobsButton"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.mobs);
         }, (button, stack, mouseX, mouseY) -> {
             if (!button.active) this.components.renderTooltip(this, button, new TranslationTextComponent("menu.mellowui.statistics.no_statistics_found"), mouseX, mouseY);
         })));
         mobsTab.active = !this.mobs.children().isEmpty();
 
-        this.tabs.get(0).setSelected(true);
+        this.tabs.stream().filter(tab -> tab.tabName().equals(this.selectedTab)).findFirst().ifPresent(tab -> {
+            tab.setSelected(true);
+            this.selectList(this.byName(this.selectedTab));
+        });
+    }
+
+    private ExtendedList<?> byName(String selectedTab) {
+        switch (selectedTab) {
+            case "items": return this.items;
+            case "mobs": return this.mobs;
+            default: return this.general;
+        }
     }
 
     @Override
@@ -183,7 +191,6 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
             this.doneButton.setAlpha(1);
             this.doneButton.active = this.doneButton.visible = true;
 
-            super.render(stack, mouseX, mouseY, partialTicks);
             if (!MellowConfigs.CLIENT_CONFIGS.listBackgroundStyle.get()) {
                 this.components.enableScissor(this.activeList.getLeft(), this.activeList.getTop() + 2, this.activeList.getRight(), this.activeList.getBottom());
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
@@ -193,6 +200,7 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
             }
             this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+            super.render(stack, mouseX, mouseY, partialTicks);
 
             if (this.getActiveList() instanceof TooltipProvider) {
                 TooltipProvider provider = (TooltipProvider) this.getActiveList();
@@ -212,7 +220,6 @@ public class StatisticsScreen extends Screen implements IProgressMeter {
         if (this.isLoading) {
             this.createLists();
             this.createButtons();
-            this.selectList(this.general);
             this.isLoading = false;
         }
     }

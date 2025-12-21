@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.text.TooltipDisplayData;
 import melonystudios.mellowui.element.text.TooltipProvider;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
@@ -58,6 +59,7 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> implement
         this.blockColumns.add(Stats.BLOCK_MINED);
         this.itemColumns = Lists.newArrayList(Stats.ITEM_BROKEN, Stats.ITEM_CRAFTED, Stats.ITEM_USED, Stats.ITEM_PICKED_UP, Stats.ITEM_DROPPED);
         this.setRenderHeader(true, 21);
+        this.setRenderSelection(false);
         Set<Item> items = Sets.newIdentityHashSet();
 
         for (Item item : ForgeRegistries.ITEMS) {
@@ -246,8 +248,12 @@ public class ItemsStatsList extends ExtendedList<ItemsStatsList.Entry> implement
     public class Entry extends ExtendedList.AbstractListEntry<ItemsStatsList.Entry> {
         @Override
         public void render(MatrixStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
+            // Render selection
+            int color = TextComponents.selectableColor(ItemsStatsList.this.getSelected() == this, true);
+            if (ItemsStatsList.this.getSelected() == this) RenderComponents.INSTANCE.renderListSelection(left, top, width, height, color);
+
             Item item = ItemsStatsList.this.statItemList.get(index);
-            boolean hovered = this.isHovered(mouseX, mouseY, left - 1, top - 1, 18, 18);
+            boolean hovered = this.isHovered(mouseX, mouseY, left - 1, top - 1, 18, 18) && RenderComponents.INSTANCE.containsPointInScissor(mouseX, mouseY);
             ItemsStatsList.this.parentScreen.blitSlot(stack, left - 2, top - 2, item, hovered || ItemsStatsList.this.getSelected() == this);
 
             for (int i = 0; i < ItemsStatsList.this.blockColumns.size(); ++i) {

@@ -13,6 +13,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ import static melonystudios.mellowui.element.text.TextComponents.withColor;
 
 /// Represents a **panel entry** that renders basic information, like mod id and authors, of a mod.
 public class InformationPanelEntry extends PanelEntry {
+    private static final Marker MARKER = MarkerManager.getMarker("MellowModListScreen");
     public static final List<String> WARN_ONCE_MODS = Lists.newArrayList();
     private final ModInfo mod;
     private final int accentColor;
@@ -72,7 +75,7 @@ public class InformationPanelEntry extends PanelEntry {
                 } catch (Exception exception) {
                     if (!WARN_ONCE_MODS.contains(this.mod.getModId())) {
                         WARN_ONCE_MODS.add(this.mod.getModId());
-                        MellowUI.logger("InformationPanelEntry").error(TextComponents.translate("panel.mellowui.mod_information.broken_authors", "Mod '%s' has a broken \"authors\" field! Please report to Mellow UI about this", this.mod.getModId()), exception);
+                        MellowUI.LOGGER.error(MARKER, TextComponents.translate("panel.mellowui.mod_information.broken_authors", "Mod '%s' has a broken \"authors\" field! Please report to Mellow UI about this", this.mod.getModId()), exception);
                     }
                 }
             }

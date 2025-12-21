@@ -15,6 +15,8 @@ public class GUITextures {
     // Texture Sets
     public static final WidgetTextureSet SWITCH_STYLE_SET = new WidgetTextureSet(gui("widget/icon/switch_style"), gui("widget/icon/switch_style_highlighted"), gui("widget/icon/switch_style_disabled"));
     public static final WidgetTextureSet CUSTOMIZE_SET = new WidgetTextureSet(gui("widget/icon/customize"), gui("widget/icon/customize_highlighted"), gui("widget/icon/customize_disabled"));
+    public static final WidgetTextureSet ENABLE_PACKS_SET = new WidgetTextureSet(gui("widget/icon/enable_packs"), gui("widget/icon/enable_packs_highlighted"), gui("widget/icon/enable_packs_disabled"));
+    public static final WidgetTextureSet DISABLE_PACKS_SET = new WidgetTextureSet(gui("widget/icon/disable_packs"), gui("widget/icon/disable_packs_highlighted"), gui("widget/icon/disable_packs_disabled"));
     public static final WidgetTextureSet MODS_SET = new WidgetTextureSet(gui("widget/icon/mods"), gui("widget/icon/mods_highlighted"));
     public static final WidgetTextureSet CONFIGURE_SET = new WidgetTextureSet(gui("widget/icon/configure"), gui("widget/icon/configure_highlighted"), gui("widget/icon/configure_disabled"));
     public static final WidgetTextureSet OPEN_FOLDER_SET = new WidgetTextureSet(gui("widget/icon/open_folder"), gui("widget/icon/open_folder_highlighted"));
@@ -56,12 +58,14 @@ public class GUITextures {
     public static final ResourceLocation TAB_HEADER_BACKGROUND = gui("background/tab_header");
     public static final ResourceLocation OUT_OF_MEMORY_BACKGROUND = gui("background/out_of_memory");
     public static final ResourceLocation OVERSPIN_PROTECTION_BACKGROUND = gui("background/overspin_protection");
-    public static final ResourceLocation TITLE_SCREEN_ICONS_BACKGROUND = gui("background/title_screen_icons_background");
+    public static final ResourceLocation TITLE_SCREEN_ICONS_BACKGROUND = gui("background/title_screen_icons");
     public static final ResourceLocation ALJANSTONE_BACKGROUND = new ResourceLocation("backmath", "textures/block/aljanstone.png");
     // #C0101010 to #D0101010 (Alpha 192 to 208)
     public static final ResourceLocation INWORLD_GRADIENT = gui("background/inworld_gradient");
     public static final ResourceLocation PANORAMA_FRAME = gui("background/panorama_frame");
     public static final ResourceLocation INWORLD_PANORAMA_FRAME = gui("background/inworld_panorama_frame");
+    public static final ResourceLocation PANORAMA_FRAME_LOCKED = gui("background/panorama_frame_locked");
+    public static final ResourceLocation INWORLD_PANORAMA_FRAME_LOCKED = gui("background/inworld_panorama_frame_locked");
 
     // Headers & Footers
     public static final ResourceLocation HEADER_SEPARATOR = gui("background/header_separator");
@@ -78,6 +82,10 @@ public class GUITextures {
     public static final ResourceLocation SERVER_SELECTION_OVERLAY = gui("miscellaneous/server_selection_overlay");
     public static final ResourceLocation PACK_SELECTION_OVERLAY = gui("miscellaneous/pack_selection_overlay");
 
+    // Dynamic resources
+    public static final ResourceLocation MISSING_THEME_ICON = gui("theme/missing_icon");
+    public static final ResourceLocation PANORAMA_LOCK = gui("widget/icon/panorama_lock");
+
     // Toasts
     public static final ResourceLocation NOW_PLAYING_TOAST = gui("toast/now_playing");
     public static final ResourceLocation MUSIC_NOTES = mellowUI("toast/music_notes");
@@ -92,7 +100,7 @@ public class GUITextures {
     public static final ResourceLocation PANORAMA_OVERLAY = new ResourceLocation("textures/gui/title/background/panorama_overlay.png");
 
     // Mellomedley
-    public static final ResourceLocation MAIN_MENU_GRADIENT = new ResourceLocation("mellomedley", "textures/gui/main_menu_gradient.png");
+    public static final ResourceLocation TITLE_SCREEN_GRADIENT_LIGHT = new ResourceLocation("mellomedley", "textures/gui/title_screen_gradient_light.png");
     public static final ResourceLocation MELLOMEDLEY_LOGO = new ResourceLocation("mellomedley", "textures/gui/mellomedley.png");
 
     // Other locations (not really textures, but I'll put these here anyway)

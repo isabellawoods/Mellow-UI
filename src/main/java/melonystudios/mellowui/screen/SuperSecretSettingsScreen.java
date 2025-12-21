@@ -2,31 +2,36 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.screen.list.PostEffectsList;
-import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.DebuggingFlags;
+import melonystudios.mellowui.util.ShaderManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.*;
-import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 public class SuperSecretSettingsScreen extends Screen {
+    private static final Marker MARKER = MarkerManager.getMarker("SuperSecretSettingsScreen");
     private final Screen lastScreen;
     private PostEffectsList list;
     private Button doneButton;
+
+    // Search
+    private TextFieldWidget searchBox;
+    public String search = "";
 
     public SuperSecretSettingsScreen(Screen lastScreen) {
         super(new TranslationTextComponent("menu.mellowui.super_secret_settings.title").withStyle(TextComponents.titleStyle()));
@@ -39,56 +44,67 @@ public class SuperSecretSettingsScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        this.searchBox.tick();
+    }
+
+    @Override
     protected void init() {
         this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
         this.list = new PostEffectsList(this.minecraft, this);
+        this.list.setSelected(this.list.children().stream()
+                .filter(shader -> shader.effect().assetID().equals(ShaderManager.CURRENT_EFFECT.assetID()))
+                .findFirst().orElse(null));
         this.children.add(this.list);
+
+        // Search box
+        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
+        this.searchBox.setFocus(false);
+        this.searchBox.setCanLoseFocus(true);
+        this.searchBox.setValue(this.search);
+        this.searchBox.setResponder(value -> {
+            this.search = value.trim();
+            this.list.refreshList(value);
+        });
+        this.addWidget(this.searchBox);
 
         // Done button
         this.addButton(this.doneButton = new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
-        this.list.setSelected(this.list.children().stream().filter(shader -> shader.effect().shaderIdentifier() == ShaderManager.CURRENT_EFFECT.shaderIdentifier()).findFirst().orElse(null));
+        this.list.setSelected(this.list.children().stream().filter(shader -> shader.effect().assetID().equals(ShaderManager.CURRENT_EFFECT.assetID())).findFirst().orElse(null));
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
-        super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> processors = tooltipAt(this.list, mouseX, mouseY);
-        if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
-    }
+        this.searchBox.render(stack, mouseX, mouseY, partialTicks);
+        RenderComponents.INSTANCE.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
 
-    @Nullable
-    public static List<IReorderingProcessor> tooltipAt(PostEffectsList list, int mouseX, int mouseY) {
-        Optional<PostEffectsList.Shader> shader = list.getMouseOver(mouseX, mouseY);
-        if (shader.isPresent()) {
-            boolean canSelectShader = Panoramas.panorama().shader() == null;
-            IFormattableTextComponent component = shader.get().name().copy().withStyle(TextComponents.selectableStyle(list.getSelected() == shader.get(), canSelectShader));
-            component.append("\n").append(new TranslationTextComponent(((TranslationTextComponent) shader.get().name()).getKey() + ".tooltip").withStyle(TextComponents.descriptionStyle()));
-            component.append("\n").append(new StringTextComponent(shader.get().effect().assetID().toString()).withStyle(TextFormatting.DARK_GRAY));
-            component.append(new TranslationTextComponent("post_effect.identifier", shader.get().effect().shaderIdentifier()).withStyle(TextFormatting.DARK_GRAY));
-            if (!canSelectShader) component.append("\n").append(new TranslationTextComponent("post_effect.locked"));
-            return Minecraft.getInstance().font.split(component, RenderComponents.TOOLTIP_MAX_WIDTH);
-        }
-        return null;
+        drawCenteredString(stack, this.font, this.title, this.width / 2, 5, 0xFFFFFF);
+        super.render(stack, mouseX, mouseY, partialTicks);
+        this.list.renderTooltip(stack, this);
     }
 
     public void updateButtonValidity() {
-        this.doneButton.active = this.list.getSelected() != null;
+        if (this.doneButton != null) this.doneButton.active = this.list.getSelected() != null;
     }
 
     public static void playRandomSound(Minecraft minecraft) {
         Random random = new Random();
-        SoundEvent[] allSounds = ForgeRegistries.SOUND_EVENTS.getValues().toArray(new SoundEvent[0]);
-        SoundEvent sound = allSounds[random.nextInt(allSounds.length)];
-        float pitch = MellowUtils.randomBetween(random, 0.01F, 2);
-        minecraft.getSoundManager().play(SimpleSound.forUI(sound, pitch, 1));
+        ResourceLocation[] allSounds = minecraft.getSoundManager().getAvailableSounds().toArray(new ResourceLocation[0]);
+        ResourceLocation sound = allSounds[random.nextInt(allSounds.length)];
+        float pitch = randomBetween(random, 0.01F, 2);
+        minecraft.getSoundManager().play(new SimpleSound(sound, SoundCategory.MASTER, MellowConfigs.CLIENT_CONFIGS.uiVolume.get().floatValue(), pitch, false, 0,
+                ISound.AttenuationType.NONE, 0, 0, 0, true));
 
-        if (minecraft.getLaunchedVersion().contains("melony-studios-dev")) {
-            MellowUI.logger("SuperSecretSettings").debug("Played sound '{}' at {} pitch", sound.getLocation(), pitch);
+        if (DebuggingFlags.DEBUG_LOG_SECRET_SETTINGS_SOUNDS) {
+            MellowUI.LOGGER.debug(MARKER, TextComponents.translate("logger.mellowui.secret_settings_sound", "Played sound '%s' at pitch %s", sound, pitch));
         }
+    }
+
+    public static float randomBetween(Random rand, float minimum, float maximum) {
+        return rand.nextFloat() * (maximum - minimum) + minimum;
     }
 }

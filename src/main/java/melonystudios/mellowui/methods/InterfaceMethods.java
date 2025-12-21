@@ -11,13 +11,11 @@ import net.minecraft.client.renderer.RenderSkyboxCube;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.config.ModConfig;
 import org.lwjgl.openal.ALUtil;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class InterfaceMethods {
     @OnlyIn(Dist.CLIENT)
@@ -46,12 +44,14 @@ public class InterfaceMethods {
     public interface PackRepositoryMethods {
         /// Adds a pack to the list of currently selected resource packs.
         /// @param id The id of the resource pack.
+        /// @return Whether the pack was applied, `false` if it was already selected.
         default boolean addPack(String id) {
             return false;
         }
 
         /// Removes a pack from the list of currently selected resource packs.
         /// @param id The id of the resource pack.
+        /// @return Whether the pack was removed, `false` if it was already removed.
         default boolean removePack(String id) {
             return false;
         }
@@ -134,6 +134,13 @@ public class InterfaceMethods {
         /// @return A map of all registered world types and their screen factories.
         default Map<Optional<BiomeGeneratorTypeScreens>, BiomeGeneratorTypeScreens.IFactory> getEditors() {
             return Maps.newHashMap();
+        }
+    }
+
+    public interface ModContainerMethods {
+        /// @return A list of {@linkplain ModConfig mod configs} for a specified mod container.
+        default Collection<ModConfig> getModConfigs() {
+            return Lists.newArrayList();
         }
     }
 }

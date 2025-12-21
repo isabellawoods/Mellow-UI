@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.config.WidgetConfigEntries;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.TabButton;
@@ -11,7 +12,6 @@ import melonystudios.mellowui.screen.list.PanoramaList;
 import melonystudios.mellowui.screen.list.ThemeList;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
@@ -29,13 +29,17 @@ import java.util.List;
 import static melonystudios.mellowui.config.MellowConfigEntries.*;
 
 public class MellowCustomizationScreen extends SettingsScreen {
-    public static final List<AbstractOption> STYLES = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, PANEL_BACKGROUND_STYLE, UPDATE_AVAILABLE_ICON_STYLE, LOGO_STYLE, TITLE_STYLE, CREATE_NEW_WORLD_STYLE, WORLD_LOADING_STYLE, PAUSE_STYLE, OPTIONS_STYLE, SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, OUT_OF_MEMORY_STYLE, STATISTICS_STYLE, MOD_LIST_STYLE, LOADING_ERRORS_STYLE);
+    public static final List<AbstractOption> BACKGROUNDS = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, PANEL_BACKGROUND_STYLE);
+    public static final List<AbstractOption> SCREENS = Lists.newArrayList(TITLE_STYLE, LOGO_STYLE, CREATE_NEW_WORLD_STYLE, WORLD_LOADING_STYLE, PAUSE_STYLE, STATISTICS_STYLE, OUT_OF_MEMORY_STYLE);
+    public static final List<AbstractOption> OPTIONS = Lists.newArrayList(SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE);
+    public static final List<AbstractOption> FORGE = Lists.newArrayList(UPDATE_AVAILABLE_ICON_STYLE, MOD_LIST_STYLE, LOADING_ERRORS_STYLE);
     private final RenderComponents components = RenderComponents.INSTANCE;
     private TextFieldWidget searchBox;
     public String search = "";
 
     // Tabs
     private final List<TabButton> tabs = Lists.newArrayList();
+    private String selectedTab = "styles";
     private OptionsRowList styles;
     private ThemeList themes;
     private PanoramaList panoramas;
@@ -47,12 +51,6 @@ public class MellowCustomizationScreen extends SettingsScreen {
     }
 
     @Override
-    public void resize(Minecraft minecraft, int x, int y) {
-        super.resize(minecraft, x, y);
-        this.tabs.get(0).setSelected(true);
-    }
-
-    @Override
     public void tick() {
         this.searchBox.tick();
     }
@@ -61,19 +59,27 @@ public class MellowCustomizationScreen extends SettingsScreen {
     protected void init() {
         // Lists
         this.styles = new OptionsRowList(this.minecraft, this.width, this.height, 22, this.height - 32, 25);
-        this.styles.addBig(STYLES_SEPARATOR);
-        this.styles.addSmall(STYLES.toArray(new AbstractOption[0]));
+        this.styles.addBig(WidgetConfigEntries.BACKGROUNDS_SEPARATOR);
+        this.styles.addSmall(BACKGROUNDS.toArray(new AbstractOption[0]));
+        this.styles.addBig(SCREENS_SEPARATOR);
+        this.styles.addSmall(SCREENS.toArray(new AbstractOption[0]));
+        this.styles.addBig(OPTIONS_SEPARATOR);
+        this.styles.addBig(OPTIONS_STYLE);
+        this.styles.addSmall(OPTIONS.toArray(new AbstractOption[0]));
+        this.styles.addBig(FORGE_SEPARATOR);
+        this.styles.addSmall(FORGE.toArray(new AbstractOption[0]));
         this.styles.setRenderBackground(false);
         this.styles.setRenderTopAndBottom(false);
 
         this.themes = new ThemeList(this.minecraft, this);
         this.themes.setRenderBackground(false);
         this.themes.setRenderTopAndBottom(false);
+        this.themes.setSelected(this.themes.children().stream().filter(entry -> entry.assetID.toString().equals(MellowConfigs.CLIENT_CONFIGS.selectedTheme.get())).findFirst().orElse(null));
 
         this.panoramas = new PanoramaList(this.minecraft, this);
         this.panoramas.setRenderBackground(false);
         this.panoramas.setRenderTopAndBottom(false);
-        this.panoramas.setSelected(this.panoramas.children().stream().filter(entry -> entry.location().equals(MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get())).findFirst().orElse(null));
+        this.panoramas.setSelected(this.panoramas.children().stream().filter(entry -> entry.assetID.toString().equals(MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get())).findFirst().orElse(null));
 
         this.activeList = this.styles;
         this.children.add(this.activeList);
@@ -89,18 +95,22 @@ public class MellowCustomizationScreen extends SettingsScreen {
         // Styles
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth / 2 - tabWidth, 0, tabWidth, 24, "styles", new TranslationTextComponent("tab.mellowui.styles"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.selectList(this.styles);
         })));
 
         // Themes
         this.tabs.add(this.addButton(new TabButton(this.width / 2 - tabWidth / 2, 0, tabWidth, 24, "themes", new TranslationTextComponent("tab.mellowui.themes"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
+            this.themes.refreshList(this.search);
             this.selectList(this.themes);
         })));
 
         // Panoramas
         this.tabs.add(this.addButton(new TabButton(this.width / 2 + tabWidth / 2, 0, tabWidth, 24, "panoramas", new TranslationTextComponent("tab.mellowui.panoramas"), button -> {
             this.tabs.forEach(tab -> tab.setSelected(false));
+            this.selectedTab = ((TabButton) button).tabName();
             this.panoramas.refreshList(this.search);
             this.selectList(this.panoramas);
         })));
@@ -112,6 +122,7 @@ public class MellowCustomizationScreen extends SettingsScreen {
         this.searchBox.setValue(this.search);
         this.searchBox.setResponder(value -> {
             this.search = value.trim();
+            this.themes.refreshList(value);
             this.panoramas.refreshList(value);
         });
         this.addWidget(this.searchBox);
@@ -120,7 +131,18 @@ public class MellowCustomizationScreen extends SettingsScreen {
         this.addButton(new Button(this.width / 2 + 5, this.height - 25, 150, 20, DialogTexts.GUI_DONE,
                 button -> this.minecraft.setScreen(this.lastScreen)));
 
-        this.tabs.get(0).setSelected(true);
+        this.tabs.stream().filter(tab -> tab.tabName().equals(this.selectedTab)).findFirst().ifPresent(tab -> {
+            tab.setSelected(true);
+            this.selectList(this.byName(this.selectedTab));
+        });
+    }
+
+    private AbstractList<?> byName(String selectedTab) {
+        switch (selectedTab) {
+            case "themes": return this.themes;
+            case "panoramas": return this.panoramas;
+            default: return this.styles;
+        }
     }
 
     private void selectList(AbstractList<?> list) {

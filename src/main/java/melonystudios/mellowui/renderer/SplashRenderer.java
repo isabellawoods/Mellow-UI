@@ -20,7 +20,7 @@ public class SplashRenderer extends AbstractGui {
     }
 
     public static void mellomedleySplash(MatrixStack stack, FontRenderer font, String splash, int textAlpha) {
-        render(stack, font, splash, 185, 80, TextComponents.splashColor(WIDGET_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
+        render(stack, font, splash, 185, 85, TextComponents.splashColor(WIDGET_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
     }
 
     public static void render(MatrixStack stack, FontRenderer font, String splash, int x, int y, int color, int textAlpha) {

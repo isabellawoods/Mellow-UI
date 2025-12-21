@@ -6,6 +6,7 @@ import melonystudios.mellowui.backport.ColorLerper;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
+import melonystudios.mellowui.util.DebuggingFlags;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -65,9 +66,12 @@ public class MusicToast implements IToast {
         // Text
         AbstractGui.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xFFFFFF);
 
-        if (this.fromPauseMenu && ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null) {
-            return minecraft.screen instanceof IngameMenuScreen ? Visibility.SHOW : Visibility.HIDE;
-        }
+        // if toast debugging is enabled, render it
+        boolean isPlaying =  ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null;
+        if (DebuggingFlags.DEBUG_CONSTANT_MUSIC_TOAST && isPlaying) return Visibility.SHOW;
+
+        // if it's from, and in, the pause screen (and the song is playing), render it
+        if (this.fromPauseMenu && isPlaying) return minecraft.screen instanceof IngameMenuScreen ? Visibility.SHOW : Visibility.HIDE;
         return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? IToast.Visibility.SHOW : IToast.Visibility.HIDE;
     }
 

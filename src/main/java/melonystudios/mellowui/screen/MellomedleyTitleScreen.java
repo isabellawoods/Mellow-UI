@@ -36,11 +36,14 @@ import net.minecraft.world.storage.SaveFormat;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 
 public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.TitleScreenMethods {
+    private static final Marker MARKER = MarkerManager.getMarker("MellomedleyTitleScreen");
     private final RenderComponents components = RenderComponents.INSTANCE;
     private final boolean fading;
     private long fadeInStart;
@@ -147,10 +150,10 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
                 new TranslationTextComponent("menu.minecraft.credits"), button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this)), this.font));
 
         // Switch Style
-        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 20, 8));
+        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 21, 8));
 
         // Customize
-        this.addButton(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 20, 21));
+        this.addButton(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 21, 21));
     }
 
     private void defaultMenu() {
@@ -194,7 +197,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
                 }
             } catch (IOException exception) {
                 SystemToast.onWorldAccessFailure(this.minecraft, "Demo_World");
-                MellowUI.logger("MellomedleyTitleScreen").warn("Failed to access demo world", exception);
+                MellowUI.LOGGER.warn(MARKER, "Failed to access demo world", exception);
             }
         }));
         resetDemoButton.active = demoWorldPresent;
@@ -205,7 +208,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             return demoWorldSource.getSummary() != null;
         } catch (IOException exception) {
             SystemToast.onWorldAccessFailure(this.minecraft, "Demo_World");
-            MellowUI.logger("MellomedleyTitleScreen").warn("Failed to read demo world data", exception);
+            MellowUI.LOGGER.warn(MARKER, "Failed to read demo world data", exception);
             return false;
         }
     }
@@ -216,7 +219,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
                 demoWorldSource.deleteLevel();
             } catch (IOException exception) {
                 SystemToast.onWorldDeleteFailure(this.minecraft, "Demo_World");
-                MellowUI.logger("MellomedleyTitleScreen").warn("Failed to delete demo world", exception);
+                MellowUI.LOGGER.warn(MARKER, "Failed to delete demo world", exception);
             }
         }
 
@@ -238,13 +241,13 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
         // Background Gradient
         RenderSystem.enableBlend();
         RenderSystem.color4f(1, 1, 1, buttonAlpha);
-        this.minecraft.getTextureManager().bind(GUITextures.MAIN_MENU_GRADIENT);
+        this.minecraft.getTextureManager().bind(GUITextures.TITLE_SCREEN_GRADIENT_LIGHT);
         blit(stack, 0, 0, 0, 0, 220, this.height, 220, this.height);
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
 
         // Logo
-        LogoRenderer.renderMellomedleyLogo(stack, 10, 16, 210, 75, buttonAlpha, this.keepLogoThroughFade);
+        LogoRenderer.renderMellomedleyLogo(stack, 10, 20, 194, 75, buttonAlpha, this.keepLogoThroughFade);
 
         if ((textAlpha & 0xFC000000) != 0) {
             int textColor = TextComponents.selectableColor(false, true);
@@ -253,7 +256,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
 
             // Title screen icons background
-            this.components.renderTitleScreenIconsBackground(this.width - 21, 7, buttonAlpha);
+            this.components.renderTitleScreenIconsBackground(this.width - 22, 7, buttonAlpha);
 
             // Splashes
             if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) SplashRenderer.mellomedleySplash(stack, this.font, this.splash, textAlpha);

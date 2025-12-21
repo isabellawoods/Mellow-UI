@@ -6,7 +6,7 @@
 while adding more functionality to existing menus, like readding super secret settings.
 
 ## Updated Screens
-As of version **4.7.0**, most screens accessed from the title screen have been updated, except for a few (like the resource packs screen).
+As of version **5.0.0 Beta 3**, most screens accessed from the title screen have been updated, except for a few (like the resource packs screen).
 
 Below is a demonstration of some of these updated screens:
 
@@ -25,4 +25,4 @@ Below are some of the new screens added by *Mellow UI*:
 |-|-|
 | <img src="assets/super_secret_settings_ntsc.png" width=1170/> | *The super secret settings screen, now with a convenient list. The **NTSC** shader is selected, which renders differently based on your graphics card or something.* |
 | <img src="assets/mellowui_options.png" width=1170/> | *Mellow UI's options screen. It can be used to customize most of the mod's features.* |
-| <img src="assets/customization.png" width=1170/> | *Mellow UI's customization screen. It can be used to change screen styles, panoramas and, in the future, themes.* |
+| <img src="assets/customization.png" width=1170/> | *Mellow UI's customization screen. It can be used to change screen styles, panoramas and themes.* |
