@@ -7,9 +7,10 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.ImageSetButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.PackLoadingManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -54,26 +55,25 @@ public class MUIPackSelectionScreen extends Screen {
 
     @Override
     protected void init() {
-        this.packList = new MUIPackList(this.minecraft, this.width, this.height, 32, this.height - 32, 36);
+        this.packList = new MUIPackList(this.minecraft, this.width, this.height, 33, this.height - 33, 36);
         this.children.add(this.packList);
 
         // Open Folder button
-        this.addButton(new ImageSetButton(this.width / 2 + 104, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addButton(new ImageSetButton(this.width / 2 + 104, this.height - 26, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(this.packDirectory), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_pack_folder"), mouseX, mouseY),
                 new TranslationTextComponent("button.mellowui.open_pack_folder")));
 
         // Done button
-        this.doneButton = this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        this.doneButton = WidgetComponents.components(this, this::addButton).done(Alignment.CENTER);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.packList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 8, 0xFFFFFF);
-        drawCenteredString(stack, this.font, new TranslationTextComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), this.width / 2, 20, 0xFFFFFF);
+        this.components.drawTitle(this.title.copy().withStyle(TextComponents.titleStyle()), this.width, 8);
+        this.components.drawCenteredString(new TranslationTextComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), true, this.width / 2, 20, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

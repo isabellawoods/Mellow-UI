@@ -24,8 +24,8 @@ public class MellowModList extends ExtendedList<MellowModList.Mod> {
     private final MellowModListScreen parentScreen;
     private final int listWidth;
 
-    public MellowModList(MellowModListScreen parentScreen, int width, int height, int y0, int y1, int entryWidth) {
-        super(parentScreen.getMinecraft(), width, height, y0, y1, entryWidth);
+    public MellowModList(MellowModListScreen parentScreen, int width, int height, int y0, int y1, int itemHeight) {
+        super(parentScreen.getMinecraft(), width, height, y0, y1, itemHeight);
         this.parentScreen = parentScreen;
         this.listWidth = width;
         this.setRenderSelection(false);

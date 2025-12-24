@@ -3,7 +3,7 @@ package melonystudios.mellowui.util;
 /// Debugging flags used for *Mellow UI*'s development.
 public class DebuggingFlags {
     /// Allows texture overrides of themes to override ***every*** texture, including things like texture atlases and the
-    /// {@linkplain net.minecraft.client.renderer.LightTexture light map} (didn't seem to work when I tested but it's allowed).
+    /// {@linkplain net.minecraft.client.renderer.LightTexture light map} (didn't seem to work when I tested, but it's allowed).
     ///
     /// By default, it only allows overrides for textures inside the `gui` folder.
     /// @since 5.0.0-beta3

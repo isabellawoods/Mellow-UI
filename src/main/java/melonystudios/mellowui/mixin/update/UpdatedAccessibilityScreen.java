@@ -4,14 +4,16 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.option.OpenMenuOption;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AccessibilityScreen;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
@@ -54,56 +56,47 @@ public abstract class UpdatedAccessibilityScreen extends SettingsScreen {
 
     @Override
     protected void init() {
-        if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
-            this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-            for (AbstractOption option : OPTIONS) {
-                if (!UPDATED_OPTIONS.contains(option) && option != FOV_EFFECTS_SCALE && option != NARRATOR && option != AUTO_JUMP && option != SHOW_SUBTITLES &&
-                        option != TOGGLE_CROUCH && option != TOGGLE_SPRINT) {
-                    UPDATED_OPTIONS.add(option);
-                }
+        if (!MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) super.init();
+        this.list = WidgetComponents.components(this, this::addButton).optionsList(33, this.height - 33);
+        for (AbstractOption option : OPTIONS) {
+            if (!UPDATED_OPTIONS.contains(option) && option != FOV_EFFECTS_SCALE && option != NARRATOR && option != AUTO_JUMP && option != SHOW_SUBTITLES &&
+                    option != TOGGLE_CROUCH && option != TOGGLE_SPRINT) {
+                UPDATED_OPTIONS.add(option);
             }
-            this.list.addSmall(NARRATOR, this.controls);
-            this.list.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
-            this.children.add(this.list);
-            this.createFooter();
-            Widget narratorButton = this.list.findOption(NARRATOR);
-            if (narratorButton != null) narratorButton.active = NarratorChatListener.INSTANCE.isActive();
-
-            Widget highContrastButton = this.list.findOption(HIGH_CONTRAST);
-            if (highContrastButton != null && MellowUtils.highContrastUnavailable()) {
-                highContrastButton.active = false;
-            }
-        } else {
-            super.init();
         }
+        this.list.addSmall(NARRATOR, this.controls);
+        this.list.addSmall(UPDATED_OPTIONS.toArray(new AbstractOption[0]));
+        this.children.add(this.list);
+        this.createFooter();
+
+        Widget narratorButton = this.list.findOption(NARRATOR);
+        if (narratorButton != null) narratorButton.active = NarratorChatListener.INSTANCE.isActive();
+
+        Widget highContrastButton = this.list.findOption(HIGH_CONTRAST);
+        if (highContrastButton != null && MellowUtils.highContrastUnavailable()) highContrastButton.active = false;
     }
 
     @Inject(method = "createFooter", at = @At("HEAD"), cancellable = true)
     public void createFooter(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
-            callback.cancel();
+        if (!MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) return;
+        callback.cancel();
 
-            // Accessibility Guide
-            this.addButton(new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslationTextComponent("options.accessibility.link"),
-                    button -> MellowUtils.openLink(this, "https://aka.ms/MinecraftJavaAccessibility", false)));
+        // Accessibility Guide
+        this.addButton(new Button(this.width / 2 - 155, this.height - 26, 150, 20, new TranslationTextComponent("options.accessibility.link"),
+                button -> WidgetComponents.openLink(this, "https://aka.ms/MinecraftJavaAccessibility", false)));
 
-            // Done
-            this.addButton(new Button(this.width / 2 + 5, this.height - 25, 150, 20, DialogTexts.GUI_DONE,
-                    button -> this.minecraft.setScreen(this.lastScreen)));
-        }
+        // Done
+        WidgetComponents.components(this, this::addButton).done(Alignment.RIGHT);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        if (MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) {
-            this.renderBackground(stack);
-            this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, new TranslationTextComponent("menu.minecraft.accessibility_settings.title").withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
-            for (Widget button : this.buttons) button.render(stack, mouseX, mouseY, partialTicks);
-            List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
-            if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
-        } else {
-            super.render(stack, mouseX, mouseY, partialTicks);
-        }
+        if (!MellowConfigs.CLIENT_CONFIGS.accessibilitySettingsStyle.get()) super.render(stack, mouseX, mouseY, partialTicks);
+        this.renderBackground(stack);
+        this.list.render(stack, mouseX, mouseY, partialTicks);
+        RenderComponents.INSTANCE.drawTitle(new TranslationTextComponent("menu.minecraft.accessibility_settings.title").withStyle(TextComponents.titleStyle()), this.width);
+        for (Widget widget : this.buttons) widget.render(stack, mouseX, mouseY, partialTicks);
+        List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
+        if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

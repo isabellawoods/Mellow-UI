@@ -9,7 +9,6 @@ import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.element.text.MultiLineLabel;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.element.widget.IconButton;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.resource.panorama.Panoramas;
@@ -23,7 +22,6 @@ import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderSkybox;
@@ -66,6 +64,9 @@ public class RenderComponents extends VanillaRenderComponents {
     public static float PANORAMA_PITCH = 10;
     public static final int TOOLTIP_MAX_WIDTH = 170; // tooltip width is 200 in 1.16.5
     public static final int DEFAULT_TAB_WIDTH = 130;
+    public static final int DEFAULT_TITLE_HEIGHT = 12;
+    public static final int TABBED_TITLE_HEIGHT = 2;
+    public static final int PAUSE_MENU_Y_OFFSET = -16;
     public static final int DEFAULT_BACKGROUND_BRIGHTNESS = 255;
     public static final int OLD_BACKGROUND_BRIGHTNESS = 64;
     public static final int OLD_LIST_BACKGROUND_BRIGHTNESS = 32;
@@ -357,8 +358,8 @@ public class RenderComponents extends VanillaRenderComponents {
         } else {
             // Header
             this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_HEADER_SEPARATOR : GUITextures.HEADER_SEPARATOR);
-            blit(this.stack, x, maxY, 0, 0, headerOneEnd, 2, 32, 2);
-            blit(this.stack, headerTwoStart, maxY, 0, 0, width, 2, 32, 2);
+            blit(this.stack, x, maxY - 2, 0, 0, headerOneEnd, 2, 32, 2);
+            blit(this.stack, headerTwoStart, maxY - 2, 0, 0, width, 2, 32, 2);
 
             // Footer
             this.minecraft.getTextureManager().bind(this.minecraft.level != null ? GUITextures.INWORLD_FOOTER_SEPARATOR : GUITextures.FOOTER_SEPARATOR);
@@ -494,6 +495,21 @@ public class RenderComponents extends VanillaRenderComponents {
         this.setColor(1, 1, 1, 1);
     }
 
+    /// Draws the **title** of a screen at its center and at the default y-position (`12`).
+    /// @param component The title text component from the screen.
+    /// @param width The width of the screen.
+    public void drawTitle(ITextComponent component, int width) {
+        this.drawTitle(component, width, DEFAULT_TITLE_HEIGHT);
+    }
+
+    /// Draws the **title** of a screen at its center and at the specified y-position.
+    /// @param component The title text component from the screen.
+    /// @param width The width of the screen.
+    /// @param y The y-position of the title, defaults to `12`.
+    public void drawTitle(ITextComponent component, int width, int y) {
+        this.drawCenteredString(component, true, width / 2, y, 0xFFFFFF);
+    }
+
     /// Renders the **text suggestion** of a {@link TextFieldWidget}, overriding the color to match the border.
     /// @param textField A nullable text box widget.
     /// @param suggestion A text component for the text to render, usually the "{@linkplain melonystudios.mellowui.element.text.TextComponents#searchText *Search...*}" suggestion.
@@ -548,38 +564,6 @@ public class RenderComponents extends VanillaRenderComponents {
 
     public void renderScreenHeader() {
 
-    }
-
-    /// Creates a new *"Switch Style"* {@link IconButton}.
-    /// @param onPressed What happens when this button is {@linkplain net.minecraft.client.gui.widget.button.Button.IPressable pressed}.
-    /// @param x The x-position of the button.
-    /// @param y The y-position of the button.
-    public IconButton switchStyle(Button.IPressable onPressed, int x, int y) {
-        return new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslationTextComponent("button.mellowui.switch_style"), onPressed);
-    }
-
-    /// Creates a new *"Customize"* {@link IconButton}.
-    /// @param onPressed What happens when this button is {@linkplain net.minecraft.client.gui.widget.button.Button.IPressable pressed}.
-    /// @param x The x-position of the button.
-    /// @param y The y-position of the button.
-    public IconButton customize(Button.IPressable onPressed, int x, int y) {
-        return new IconButton(x, y, 12, 12, GUITextures.CUSTOMIZE_SET, new TranslationTextComponent("button.mellowui.customize.title"), onPressed);
-    }
-
-    /// Creates a new *"Enable Packs"* {@link IconButton}.
-    /// @param onPressed What happens when this button is {@linkplain net.minecraft.client.gui.widget.button.Button.IPressable pressed}.
-    /// @param x The x-position of the button.
-    /// @param y The y-position of the button.
-    public IconButton enablePacks(Button.IPressable onPressed, int x, int y) {
-        return new IconButton(x, y, 12, 12, GUITextures.ENABLE_PACKS_SET, new TranslationTextComponent("button.mellowui.enable_packs.title"), onPressed);
-    }
-
-    /// Creates a new *"Disable Packs"* {@link IconButton}.
-    /// @param onPressed What happens when this button is {@linkplain net.minecraft.client.gui.widget.button.Button.IPressable pressed}.
-    /// @param x The x-position of the button.
-    /// @param y The y-position of the button.
-    public IconButton disablePacks(Button.IPressable onPressed, int x, int y) {
-        return new IconButton(x, y, 12, 12, GUITextures.DISABLE_PACKS_SET, new TranslationTextComponent("button.mellowui.disable_packs.title"), onPressed);
     }
 
     /// Creates a new **scissor** rectangle to blit things into.

@@ -8,15 +8,15 @@ import melonystudios.mellowui.config.option.OpenMenuOption;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.TabButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -67,8 +67,10 @@ public class MellowUIOptionsScreen extends SettingsScreen {
 
     @Override
     protected void init() {
+        WidgetComponents components = WidgetComponents.components(this, this::addButton);
+
         // Lists
-        this.mellowUIList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.mellowUIList = components.optionsList(34, this.height - 33);
         this.mellowUIList.addSmall(this.customization, this.colorOptions);
         this.mellowUIList.addBig(BACKGROUNDS_SEPARATOR);
         this.mellowUIList.addBig(PANORAMA_CAMERA_PITCH);
@@ -83,12 +85,12 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.mellowUIList.setRenderTopAndBottom(false);
         this.mellowUIList.setRenderBackground(false);
 
-        this.mellomedleyList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.mellomedleyList = components.optionsList(35, this.height - 33);
         for (AbstractOption option : MELLOMEDLEY) this.mellomedleyList.addBig(option);
         this.mellomedleyList.setRenderTopAndBottom(false);
         this.mellomedleyList.setRenderBackground(false);
 
-        this.vanillaList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.vanillaList = components.optionsList(35, this.height - 33);
         this.vanillaList.addSmall(ONBOARD_ACCESSIBILITY, null);
         this.vanillaList.addBig(ACCESSIBILITY_SEPARATOR);
         this.vanillaList.addSmall(ACCESSIBILITY.toArray(new AbstractOption[0]));
@@ -100,7 +102,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.vanillaList.setRenderTopAndBottom(false);
         this.vanillaList.setRenderBackground(false);
 
-        this.forgeList = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.forgeList = components.optionsList(35, this.height - 33);
         this.forgeList.addSmall(FORGE.toArray(new AbstractOption[0]));
         this.forgeList.setRenderTopAndBottom(false);
         this.forgeList.setRenderBackground(false);
@@ -143,8 +145,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         })));
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.CENTER);
 
         this.tabs.stream().filter(tab -> tab.tabName().equals(this.selectedTab)).findFirst().ifPresent(tab -> {
             tab.setSelected(true);
@@ -188,10 +189,10 @@ public class MellowUIOptionsScreen extends SettingsScreen {
             this.components.renderListSeparators(this.activeList, this.width, 4, this.components.fourTabWidth(this.width));
         }
 
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.TABBED_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width, RenderComponents.TABBED_TITLE_HEIGHT);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> processors = tooltipAt(this.activeList, mouseX, mouseY);
-        if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
+        List<IReorderingProcessor> tooltip = tooltipAt(this.activeList, mouseX, mouseY);
+        if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 
     @Override

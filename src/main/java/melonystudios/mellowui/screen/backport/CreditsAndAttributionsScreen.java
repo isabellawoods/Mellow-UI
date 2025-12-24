@@ -1,15 +1,17 @@
 package melonystudios.mellowui.screen.backport;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.gui.DialogTexts;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.WinGameScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class CreditsAndAttributionsScreen extends Screen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
 
     public CreditsAndAttributionsScreen(Screen lastScreen) {
@@ -24,25 +26,28 @@ public class CreditsAndAttributionsScreen extends Screen {
 
     @Override
     protected void init() {
+        int yOffset = 63;
+
         // Credits
-        this.addButton(new Button(this.width / 2 - 105, 58, 210, 20, new TranslationTextComponent("button.mellowui.credits"),
+        this.addButton(new Button(this.width / 2 - 105, yOffset, 210, 20, new TranslationTextComponent("button.mellowui.credits"),
                 button -> this.minecraft.setScreen(new WinGameScreen(false, () -> this.minecraft.setScreen(this)))));
+        yOffset += 28;
         // Attribution
-        this.addButton(new Button(this.width / 2 - 105, 86, 210, 20, new TranslationTextComponent("button.mellowui.attribution"),
-                button -> MellowUtils.openLink(this, "https://aka.ms/MinecraftJavaAttribution", false)));
+        this.addButton(new Button(this.width / 2 - 105, yOffset, 210, 20, new TranslationTextComponent("button.mellowui.attribution"),
+                button -> WidgetComponents.openLink(this, "https://aka.ms/MinecraftJavaAttribution", false)));
+        yOffset += 28;
         // Licenses
-        this.addButton(new Button(this.width / 2 - 105, 114, 210, 20, new TranslationTextComponent("button.mellowui.licenses"),
-                button -> MellowUtils.openLink(this, "https://aka.ms/MinecraftJavaLicenses", false)));
+        this.addButton(new Button(this.width / 2 - 105, yOffset, 210, 20, new TranslationTextComponent("button.mellowui.licenses"),
+                button -> WidgetComponents.openLink(this, "https://aka.ms/MinecraftJavaLicenses", false)));
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        WidgetComponents.components(this, this::addButton).done(Alignment.CENTER);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
-        drawCenteredString(stack, this.minecraft.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 }

@@ -12,12 +12,12 @@ import melonystudios.mellowui.element.panel.*;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.ImageSetButton;
 import melonystudios.mellowui.element.widget.ModButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.resource.flair.Flairs;
 import melonystudios.mellowui.screen.list.MellowModList;
 import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -112,26 +112,29 @@ public class MellowModListScreen extends Screen {
 
     @Override
     protected void init() {
+        WidgetComponents components = WidgetComponents.components(this, this::addButton);
+
         // Mod list
-        this.modList = new MellowModList(this, this.width / 4, this.height, 32, this.height - 32, this.font.lineHeight * 2 + 8);
+        this.modList = new MellowModList(this, this.width / 4, this.height, 33, this.height - 33, this.font.lineHeight * 2 + 8);
         this.modList.setRenderTopAndBottom(false);
         this.modList.setRenderBackground(false);
         this.children.add(this.modList);
 
         // Mod information panel
-        this.panel = new Panel(this.modList.getRight() + 2, 34, (this.modList.getRight() / 2) + (this.width / 4) * 3, this.height - 66, this, new TranslationTextComponent("panel.mellowui.mod_information").withStyle(TextComponents.titleStyle()));
+        this.panel = new Panel(this.modList.getRight() + 2, 34, (this.modList.getRight() / 2) + (this.width / 4) * 3, this.height - 67, this, new TranslationTextComponent("panel.mellowui.mod_information").withStyle(TextComponents.titleStyle()));
         this.children.add(this.panel);
         this.selectMod(this.selectedMod);
         this.panel.init();
         this.panel.widgets().forEach(this::addButton);
 
         // Search box
-        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
+        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 100, 15, 200, 15, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
         this.searchBox.setValue(this.lastSearch);
         this.searchBox.setResponder(value -> this.modList.setScrollAmount(!value.isEmpty() ? 0 : this.modList.getScrollAmount()));
         this.addWidget(this.searchBox);
+        this.setInitialFocus(this.searchBox);
 
         int xPos = (this.modList.getRight() / 2) + (this.width / 4) * 3;
         int yPos = 40;
@@ -165,18 +168,17 @@ public class MellowModListScreen extends Screen {
 
         // Sort
         IteratableOption sortingConfig = ForgeConfigEntries.MOD_LIST_SORTING;
-        this.addButton(new Button(this.width / 2 - 125, this.height - 25, 20, 20, sortingConfig.getMessage(this.minecraft.options), button -> {
+        this.addButton(new Button(this.width / 2 - 125, this.height - 26, 20, 20, sortingConfig.getMessage(this.minecraft.options), button -> {
             sortingConfig.toggle(this.minecraft.options, 1);
             button.setMessage(sortingConfig.getMessage(this.minecraft.options));
             this.resortMods(MellowConfigs.CLIENT_CONFIGS.modListSorting.get());
         }, (button, stack, mouseX, mouseY) -> this.components.renderTooltip(this, button, ForgeConfigEntries.SORTING_TOOLTIP, mouseX, mouseY)));
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.CENTER);
 
         // Open mods folder
-        this.addButton(new ImageSetButton(this.width / 2 + 105, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addButton(new ImageSetButton(this.width / 2 + 105, this.height - 26, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.open_mods_folder"), mouseX, mouseY), new TranslationTextComponent("button.mellowui.open_mods_folder")));
 
@@ -194,21 +196,21 @@ public class MellowModListScreen extends Screen {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.modList.render(stack, mouseX, mouseY, partialTicks);
-        this.components.renderListSeparators(this.width, 0, this.height - 32, 32, 0, 0);
+        this.components.renderListSeparators(this.width, 0, this.height - 33, 34, 0, 0);
 
         int rightSeparatorX = (this.width / 4) * 3;
-        this.components.enableScissor(this.modList.getRight(), 34, rightSeparatorX + 4, this.height - 32);
-        this.components.renderVerticalSeparator(this.modList.getRight(), 34, this.height - 32, false);
-        if (this.panel.getMaxScroll() <= 0) this.components.renderVerticalSeparator(rightSeparatorX, 34, this.height - 32, true);
+        this.components.enableScissor(this.modList.getRight(), 34, rightSeparatorX + 4, this.height - 33);
+        this.components.renderVerticalSeparator(this.modList.getRight(), 34, this.height - 33, false);
+        if (this.panel.getMaxScroll() <= 0) this.components.renderVerticalSeparator(rightSeparatorX, 34, this.height - 33, true);
         this.panel.render(stack, mouseX, mouseY, partialTicks);
         this.components.disableScissor();
 
         this.searchBox.render(stack, mouseX, mouseY, partialTicks);
         this.components.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
-        drawCenteredString(stack, this.font, this.title, this.width / 2, 6, 0xFFFFFF);
-        drawCenteredString(stack, this.font, new TranslationTextComponent("menu.mellowui.mods.links").withStyle(TextComponents.titleStyle()), (this.modList.getRight() / 2) + rightSeparatorX, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width, 5);
+        this.components.drawCenteredString(new TranslationTextComponent("menu.mellowui.mods.links").withStyle(TextComponents.titleStyle()), true, (this.modList.getRight() / 2) + rightSeparatorX, RenderComponents.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
         if (this.selectedMod == null) {
-            drawCenteredString(stack, this.font, new TranslationTextComponent("menu.mellowui.mods.no_mod_selected").withStyle(TextComponents.descriptionStyle()), this.width / 2, this.height / 2 - 5, 0xFFFFFF);
+            this.components.drawCenteredString(new TranslationTextComponent("menu.mellowui.mods.no_mod_selected").withStyle(TextComponents.descriptionStyle()), true, this.width / 2, this.height / 2 - 5, 0xFFFFFF);
         }
         super.render(stack, mouseX, mouseY, partialTicks);
     }
@@ -367,11 +369,11 @@ public class MellowModListScreen extends Screen {
         ModInfo info = this.selectedMod.getModInformation();
 
         if (info.getModId().equals("minecraft")) {
-            MellowUtils.openLink(this, "https://minecraft.net", false);
+            WidgetComponents.openLink(this, "https://minecraft.net", false);
         } else if (info.getModId().equals("forge")) {
-            MellowUtils.openLink(this, "https://files.minecraftforge.net", true);
+            WidgetComponents.openLink(this, "https://files.minecraftforge.net", true);
         } else {
-            info.getConfigElement("displayURL").ifPresent(displayURL -> MellowUtils.openLink(this, (String) displayURL, true));
+            info.getConfigElement("displayURL").ifPresent(displayURL -> WidgetComponents.openLink(this, (String) displayURL, true));
         }
     }
 
@@ -380,12 +382,12 @@ public class MellowModListScreen extends Screen {
         ModInfo info = this.selectedMod.getModInformation();
 
         if (info.getModId().equals("minecraft")) {
-            MellowUtils.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false);
+            WidgetComponents.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false);
         } else if (info.getModId().equals("forge")) {
-            MellowUtils.openLink(this, "https://github.com/MinecraftForge/MinecraftForge/issues", true);
+            WidgetComponents.openLink(this, "https://github.com/MinecraftForge/MinecraftForge/issues", true);
         } else {
             if (info.getOwningFile().getIssueURL() != null) {
-                MellowUtils.openLink(this, info.getOwningFile().getIssueURL().toString(), true);
+                WidgetComponents.openLink(this, info.getOwningFile().getIssueURL().toString(), true);
             }
         }
     }
@@ -395,17 +397,17 @@ public class MellowModListScreen extends Screen {
         ModInfo info = this.selectedMod.getModInformation();
 
         if (info.getModId().equals("minecraft")) {
-            MellowUtils.openLink(this, "https://feedback.minecraft.net/hc/en-us/sections/360002267532-Snapshot-Information-and-Changelogs", false);
+            WidgetComponents.openLink(this, "https://feedback.minecraft.net/hc/en-us/sections/360002267532-Snapshot-Information-and-Changelogs", false);
         } else if (info.getModId().equals("forge")) {
-            MellowUtils.openLink(this, "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.39/forge-1.16.5-36.2.39-changelog.txt", true);
+            WidgetComponents.openLink(this, "https://maven.minecraftforge.net/net/minecraftforge/forge/1.16.5-36.2.39/forge-1.16.5-36.2.39-changelog.txt", true);
         } else {
-            info.getConfigElement("changelogsURL").ifPresent(changelogsURL -> MellowUtils.openLink(this, (String) changelogsURL, true));
+            info.getConfigElement("changelogsURL").ifPresent(changelogsURL -> WidgetComponents.openLink(this, (String) changelogsURL, true));
         }
     }
 
     public void openUpdateCheckerHomepage() {
         if (this.selectedMod == null) return;
         VersionChecker.CheckResult checkResult = VersionChecker.getResult(this.selectedMod.getModInformation());
-        if (checkResult.url != null) MellowUtils.openLink(this, checkResult.url, true);
+        if (checkResult.url != null) WidgetComponents.openLink(this, checkResult.url, true);
     }
 }

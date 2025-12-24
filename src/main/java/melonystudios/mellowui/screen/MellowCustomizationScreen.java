@@ -8,16 +8,16 @@ import melonystudios.mellowui.config.WidgetConfigEntries;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.TabButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.list.PanoramaList;
 import melonystudios.mellowui.screen.list.ThemeList;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractList;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.IReorderingProcessor;
@@ -31,7 +31,7 @@ import static melonystudios.mellowui.config.MellowConfigEntries.*;
 public class MellowCustomizationScreen extends SettingsScreen {
     public static final List<AbstractOption> BACKGROUNDS = Lists.newArrayList(SCREEN_BACKGROUND_STYLE, LIST_BACKGROUND_STYLE, PANEL_BACKGROUND_STYLE);
     public static final List<AbstractOption> SCREENS = Lists.newArrayList(TITLE_STYLE, LOGO_STYLE, CREATE_NEW_WORLD_STYLE, WORLD_LOADING_STYLE, PAUSE_STYLE, STATISTICS_STYLE, OUT_OF_MEMORY_STYLE);
-    public static final List<AbstractOption> OPTIONS = Lists.newArrayList(SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, MOUSE_SETTINGS_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE);
+    public static final List<AbstractOption> OPTIONS = Lists.newArrayList(SKIN_CUSTOMIZATION_STYLE, MUSIC_AND_SOUNDS_STYLE, VIDEO_SETTINGS_STYLE, CONTROLS_STYLE, LANGUAGE_STYLE, CHAT_SETTINGS_STYLE, PACK_LIST_STYLE, ACCESSIBILITY_SETTINGS_STYLE, MOUSE_SETTINGS_STYLE);
     public static final List<AbstractOption> FORGE = Lists.newArrayList(UPDATE_AVAILABLE_ICON_STYLE, MOD_LIST_STYLE, LOADING_ERRORS_STYLE);
     private final RenderComponents components = RenderComponents.INSTANCE;
     private TextFieldWidget searchBox;
@@ -57,8 +57,10 @@ public class MellowCustomizationScreen extends SettingsScreen {
 
     @Override
     protected void init() {
+        WidgetComponents components = WidgetComponents.components(this, this::addButton);
+
         // Lists
-        this.styles = new OptionsRowList(this.minecraft, this.width, this.height, 22, this.height - 32, 25);
+        this.styles = components.optionsList(24, this.height - 33);
         this.styles.addBig(WidgetConfigEntries.BACKGROUNDS_SEPARATOR);
         this.styles.addSmall(BACKGROUNDS.toArray(new AbstractOption[0]));
         this.styles.addBig(SCREENS_SEPARATOR);
@@ -116,7 +118,7 @@ public class MellowCustomizationScreen extends SettingsScreen {
         })));
 
         // Search box
-        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 155, this.height - 25, 150, 20, TextComponents.searchText());
+        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 155, this.height - 26, 150, 20, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
         this.searchBox.setValue(this.search);
@@ -126,10 +128,10 @@ public class MellowCustomizationScreen extends SettingsScreen {
             this.panoramas.refreshList(value);
         });
         this.addWidget(this.searchBox);
+        this.setInitialFocus(this.searchBox);
 
         // Done button
-        this.addButton(new Button(this.width / 2 + 5, this.height - 25, 150, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.RIGHT);
 
         this.tabs.stream().filter(tab -> tab.tabName().equals(this.selectedTab)).findFirst().ifPresent(tab -> {
             tab.setSelected(true);
@@ -166,7 +168,7 @@ public class MellowCustomizationScreen extends SettingsScreen {
             this.components.renderTabHeaderBackground(0, 0, this.width, 24);
             this.activeList.render(stack, mouseX, mouseY, partialTicks);
         }
-        this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+        this.components.renderListSeparators(this.width, 0, this.height - 33, 24, 3, this.components.threeTabWidth(this.width));
         this.searchBox.render(stack, mouseX, mouseY, partialTicks);
         this.components.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
         super.render(stack, mouseX, mouseY, partialTicks);

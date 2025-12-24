@@ -1,19 +1,21 @@
 package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import net.minecraft.client.gui.DialogTexts;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.gui.advancements.AdvancementTabGui;
 import net.minecraft.client.gui.advancements.AdvancementsScreen;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @OnlyIn(Dist.CLIENT)
 @Mixin(value = AdvancementsScreen.class, priority = 900)
 public abstract class UpdatedAdvancementsScreen extends Screen {
+    @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow
     private AdvancementTabGui selectedTab;
     @Shadow
@@ -30,16 +34,20 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
         super(title);
     }
 
+    @Override
+    public void onClose() {
+        if (this.minecraft != null) this.minecraft.setScreen(new IngameMenuScreen(true));
+    }
+
     @Inject(method = "init", at = @At("TAIL"))
     protected void init(CallbackInfo callback) {
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(new IngameMenuScreen(true))));
+        WidgetComponents.components(this, this::addButton).done(Alignment.CENTER);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     public void renderScreenName(MatrixStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        drawCenteredString(stack, this.font, new TranslationTextComponent("gui.advancements").withStyle(TextComponents.titleStyle()), this.width / 2, 16, 0xFFFFFF);
+        this.components.drawTitle(new TranslationTextComponent("gui.advancements").withStyle(TextComponents.titleStyle()), this.width, 16);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
@@ -47,7 +55,7 @@ public abstract class UpdatedAdvancementsScreen extends Screen {
     public void renderTabName(MatrixStack stack, int x, int y, CallbackInfo callback) {
         if (this.selectedTab == null) return;
         callback.cancel();
-        this.font.draw(stack, this.selectedTab.getTitle(), (float) (x + 8), (float) (y + 6), 0x404040);
+        this.components.drawString(this.selectedTab.getTitle(), false, x + 8, y + 6, 0x404040);
     }
 
     @Override

@@ -2,15 +2,15 @@ package melonystudios.mellowui.screen.forge;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.config.option.OpenMenuOption;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TextFormatting;
@@ -19,9 +19,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 
 public class ForgeOptionsScreen extends SettingsScreen {
-    public final OpenMenuOption clientSettings = new OpenMenuOption("menu.forge.client_options", new ForgeClientOptionsScreen(this, Minecraft.getInstance().options));
-    public final OpenMenuOption serverSettings = new OpenMenuOption("menu.forge.server_options", new TranslationTextComponent("config.forge.server_settings.only_in_world").withStyle(TextFormatting.RED),
+    private final OpenMenuOption clientSettings = new OpenMenuOption("menu.forge.client_options", new ForgeClientOptionsScreen(this, Minecraft.getInstance().options));
+    private final OpenMenuOption serverSettings = new OpenMenuOption("menu.forge.server_options", new TranslationTextComponent("config.forge.server_settings.only_in_world").withStyle(TextFormatting.RED),
             new ForgeServerOptionsScreen(this, Minecraft.getInstance().options));
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private OptionsRowList list;
 
     public ForgeOptionsScreen(Screen lastScreen, GameSettings options) {
@@ -30,7 +31,8 @@ public class ForgeOptionsScreen extends SettingsScreen {
 
     @Override
     protected void init() {
-        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        WidgetComponents components = WidgetComponents.components(this, this::addButton);
+        this.list = components.optionsList(33, this.height - 33);
         this.list.addBig(this.clientSettings);
         this.list.addBig(this.serverSettings);
         this.children.add(this.list);
@@ -39,15 +41,14 @@ public class ForgeOptionsScreen extends SettingsScreen {
         if (serverSettings != null) serverSettings.active = Minecraft.getInstance().level != null;
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.CENTER);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
         List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
         if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);

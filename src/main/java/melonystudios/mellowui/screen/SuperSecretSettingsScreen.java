@@ -5,13 +5,14 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.list.PostEffectsList;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.DebuggingFlags;
 import melonystudios.mellowui.util.ShaderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -25,6 +26,7 @@ import java.util.Random;
 
 public class SuperSecretSettingsScreen extends Screen {
     private static final Marker MARKER = MarkerManager.getMarker("SuperSecretSettingsScreen");
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
     private PostEffectsList list;
     private Button doneButton;
@@ -51,14 +53,14 @@ public class SuperSecretSettingsScreen extends Screen {
     @Override
     protected void init() {
         this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        this.list = new PostEffectsList(this.minecraft, this);
+        this.list = new PostEffectsList(this);
         this.list.setSelected(this.list.children().stream()
                 .filter(shader -> shader.effect().assetID().equals(ShaderManager.CURRENT_EFFECT.assetID()))
                 .findFirst().orElse(null));
         this.children.add(this.list);
 
         // Search box
-        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 101, 16, 202, 14, TextComponents.searchText());
+        this.searchBox = new TextFieldWidget(this.font, this.width / 2 - 100, 17, 200, 15, TextComponents.searchText());
         this.searchBox.setFocus(false);
         this.searchBox.setCanLoseFocus(true);
         this.searchBox.setValue(this.search);
@@ -69,9 +71,9 @@ public class SuperSecretSettingsScreen extends Screen {
         this.addWidget(this.searchBox);
 
         // Done button
-        this.addButton(this.doneButton = new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        this.doneButton = WidgetComponents.components(this, this::addButton).done(Alignment.CENTER);
 
+        this.setInitialFocus(this.searchBox);
         this.list.setSelected(this.list.children().stream().filter(shader -> shader.effect().assetID().equals(ShaderManager.CURRENT_EFFECT.assetID())).findFirst().orElse(null));
     }
 
@@ -80,9 +82,8 @@ public class SuperSecretSettingsScreen extends Screen {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
         this.searchBox.render(stack, mouseX, mouseY, partialTicks);
-        RenderComponents.INSTANCE.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
-
-        drawCenteredString(stack, this.font, this.title, this.width / 2, 5, 0xFFFFFF);
+        this.components.renderTextBoxSuggestion(this.searchBox, this.searchBox.getMessage());
+        this.components.drawTitle(this.title, this.width, 5);
         super.render(stack, mouseX, mouseY, partialTicks);
         this.list.renderTooltip(stack, this);
     }

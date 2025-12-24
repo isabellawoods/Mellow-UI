@@ -8,6 +8,7 @@ import melonystudios.mellowui.screen.update.MUIOptionsScreen;
 import melonystudios.mellowui.sound.MUISoundCategory;
 import melonystudios.mellowui.sound.SoundPreviewHandler;
 import melonystudios.mellowui.util.GUITextures;
+import net.minecraft.client.AbstractOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.settings.AmbientOcclusionStatus;
@@ -145,4 +146,11 @@ public class VanillaConfigEntries {
     });
     public static final BooleanOption CLOSED_CAPTIONS = new BooleanOption("config.minecraft.closed_captions", new TranslationTextComponent("config.minecraft.closed_captions.tooltip"),
             options -> options.showSubtitles, (options, newValue) -> options.showSubtitles = newValue);
+    public static final BooleanOption FORCE_UNICODE_FONT = new BooleanOption("options.forceUnicodeFont",
+            AbstractOption.FORCE_UNICODE_FONT::get,
+            (options, newValue) -> {
+                Minecraft minecraft = Minecraft.getInstance();
+                AbstractOption.FORCE_UNICODE_FONT.set(options, Boolean.toString(newValue));
+                minecraft.resizeDisplay();
+            });
 }

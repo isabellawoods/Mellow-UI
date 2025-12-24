@@ -54,7 +54,7 @@ public class MUILoadingTerrainScreen extends Screen {
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack, 0);
         super.render(stack, mouseX, mouseY, partialTicks);
-        this.components.drawCenteredString(DOWNLOADING_TERRAIN_TEXT, true, this.width / 2, this.height / 2 - 50, 0xFFFFFF);
+        this.components.drawTitle(DOWNLOADING_TERRAIN_TEXT, this.width, this.height / 2 - 50);
     }
 
     @Override

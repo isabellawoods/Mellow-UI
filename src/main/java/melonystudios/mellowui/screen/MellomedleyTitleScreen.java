@@ -6,10 +6,8 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
 import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.widget.*;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.element.widget.ImageSetButton;
-import melonystudios.mellowui.element.widget.ImageSetModButton;
-import melonystudios.mellowui.element.widget.ModButton;
 import melonystudios.mellowui.element.widget.text.PlainTextButton;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
@@ -17,7 +15,6 @@ import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.gui.AccessibilityScreen;
 import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.*;
@@ -99,14 +96,14 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
 
         // Options
         this.addButton(new Button(10, 158, 140, 20, new TranslationTextComponent("menu.options"),
-                button -> this.minecraft.setScreen(MellowUtils.options(this, this.minecraft))));
+                button -> this.minecraft.setScreen(WidgetLocations.openOptions(this, this.minecraft))));
 
         // Mods
         int modsOffset = 0;
         if (MellowConfigs.CLIENT_CONFIGS.mellomedleyMainMenuModButton.get() == TwoStyles.OPTION_2 && !this.minecraft.isDemo()) {
             modsOffset += 24;
             this.addButton(new ModButton(10, 182, 140, 20, new TranslationTextComponent("fml.menu.mods"),
-                    button -> this.minecraft.setScreen(MellowUtils.modList(this))));
+                    button -> this.minecraft.setScreen(WidgetLocations.openModList(this))));
         }
 
         // Quit Game
@@ -122,7 +119,7 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
 
             // Language
             this.addButton(new ImageSetButton(82, 206 + modsOffset, 20, 20, GUITextures.LANGUAGE_SET,
-                    button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
+                    button -> this.minecraft.setScreen(WidgetLocations.openLanguage(this, this.minecraft)), (button, stack, mouseX, mouseY) ->
                     this.components.renderTooltip(this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
         } else {
@@ -134,13 +131,13 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
 
             // Mods
             this.addButton(new ImageSetModButton(70, 206 + modsOffset, 20, 20,
-                    GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
+                    GUITextures.MODS_SET, button -> this.minecraft.setScreen(WidgetLocations.openModList(this)), (button, stack, mouseX, mouseY) ->
                     this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.tooltip", ModList.get().getMods().size()), mouseX, mouseY),
                     new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
 
             // Language
             this.addButton(new ImageSetButton(104, 206 + modsOffset, 20, 20, GUITextures.LANGUAGE_SET,
-                    button -> this.minecraft.setScreen(new LanguageScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
+                    button -> this.minecraft.setScreen(WidgetLocations.openLanguage(this, this.minecraft)), (button, stack, mouseX, mouseY) ->
                     this.components.renderTooltip(this, button, new TranslationTextComponent("options.language"), mouseX, mouseY),
                     new TranslationTextComponent("narrator.button.language")));
         }
@@ -148,12 +145,13 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
         // Copyright text
         this.addButton(new PlainTextButton(this.width - copyrightWidth - 2, this.height - 10, copyrightWidth, 10,
                 new TranslationTextComponent("menu.minecraft.credits"), button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this)), this.font));
+        WidgetComponents components = WidgetComponents.components(this, this::addButton);
 
         // Switch Style
-        this.addButton(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 21, 8));
+        components.switchStyle(button -> WidgetLocations.switchTitleScreenStyle(this.minecraft), this.width - 21, 8);
 
         // Customize
-        this.addButton(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 21, 21));
+        components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 21, 21);
     }
 
     private void defaultMenu() {
@@ -264,8 +262,8 @@ public class MellomedleyTitleScreen extends Screen implements InterfaceMethods.T
             // Text
             ITextComponent mellomedleyVersion = new TranslationTextComponent("menu.mellomedley.version.modpack", MellowConfigs.CLIENT_CONFIGS.mellomedleyVersion.get());
             ITextComponent vanillaVersion = new TranslationTextComponent(this.minecraft.isDemo() ? "menu.mellomedley.version.vanilla_demo" : "menu.mellomedley.version.vanilla", SharedConstants.getCurrentVersion().getName(), ForgeVersion.getVersion());
-            drawString(stack, this.font, mellomedleyVersion, this.width - this.font.width(mellomedleyVersion) - 2, this.height - 30, textColor | textAlpha);
-            drawString(stack, this.font, vanillaVersion, this.width - this.font.width(vanillaVersion) - 2, this.height - 20, textColor | textAlpha);
+            this.components.drawString(mellomedleyVersion, true, this.width - this.font.width(mellomedleyVersion) - 2, this.height - 30, textColor | textAlpha);
+            this.components.drawString(vanillaVersion, true, this.width - this.font.width(vanillaVersion) - 2, this.height - 20, textColor | textAlpha);
 
             for (Widget widget : this.buttons) widget.setAlpha(buttonAlpha);
             super.render(stack, mouseX, mouseY, partialTicks);

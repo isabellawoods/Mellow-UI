@@ -119,6 +119,8 @@ public class MellowConfigEntries {
             });
     public static final StyleBooleanOption CONTROLS_STYLE = new StyleBooleanOption("config.mellowui.controls_style", new TranslationTextComponent("config.mellowui.controls_style.tooltip"),
             options -> CLIENT_CONFIGS.controlsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.controlsStyle.set(newValue));
+    public static final StyleBooleanOption LANGUAGE_STYLE = new StyleBooleanOption("config.mellowui.language_style", new TranslationTextComponent("config.mellowui.language_style.tooltip"),
+            options -> CLIENT_CONFIGS.languageStyle.get(), (options, newValue) -> CLIENT_CONFIGS.languageStyle.set(newValue));
     public static final StyleBooleanOption MOUSE_SETTINGS_STYLE = new StyleBooleanOption("config.mellowui.mouse_settings_style", new TranslationTextComponent("config.mellowui.mouse_settings_style.tooltip"),
             options -> CLIENT_CONFIGS.mouseSettingsStyle.get(), (options, newValue) -> CLIENT_CONFIGS.mouseSettingsStyle.set(newValue));
     public static final StyleBooleanOption CHAT_SETTINGS_STYLE = new StyleBooleanOption("config.mellowui.chat_settings_style", new TranslationTextComponent("config.mellowui.chat_settings_style.tooltip"),

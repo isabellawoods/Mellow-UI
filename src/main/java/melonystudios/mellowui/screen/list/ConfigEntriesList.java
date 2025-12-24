@@ -25,7 +25,7 @@ public class ConfigEntriesList extends ExtendedList<ConfigEntriesList.Entry> {
     private final Minecraft minecraft;
 
     public ConfigEntriesList(Minecraft minecraft, EditListConfigScreen parentScreen) {
-        super(minecraft, parentScreen.width, parentScreen.height, 32, parentScreen.height - 32, 25);
+        super(minecraft, parentScreen.width, parentScreen.height, 33, parentScreen.height - 33, 25);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
 

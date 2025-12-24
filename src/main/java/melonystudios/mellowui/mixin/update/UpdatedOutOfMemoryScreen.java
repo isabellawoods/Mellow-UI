@@ -34,9 +34,9 @@ public abstract class UpdatedOutOfMemoryScreen extends Screen {
         if (!MellowConfigs.CLIENT_CONFIGS.outOfMemoryStyle.get()) return;
         callback.cancel();
 
-        this.addButton(new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslationTextComponent("gui.toTitle"),
+        this.addButton(new Button(this.width / 2 - 155, this.height - 26, 150, 20, new TranslationTextComponent("gui.toTitle"),
                 button -> this.minecraft.setScreen(new MainMenuScreen())));
-        this.addButton(new Button(this.width / 2 + 5, this.height - 25, 150, 20, new TranslationTextComponent("menu.quit"),
+        this.addButton(new Button(this.width / 2 + 5, this.height - 26, 150, 20, new TranslationTextComponent("menu.quit"),
                 button -> this.minecraft.stop()));
     }
 

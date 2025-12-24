@@ -5,6 +5,7 @@ import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.element.text.MultiLineLabel;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.IconButton;
@@ -14,6 +15,7 @@ import melonystudios.mellowui.screen.MellowCustomizationScreen;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.IReorderingProcessor;
@@ -35,7 +37,7 @@ public class ThemeList extends ExtendedList<ThemeList.Entry> {
     private final Minecraft minecraft;
 
     public ThemeList(Minecraft minecraft, MellowCustomizationScreen parentScreen) {
-        super(minecraft, parentScreen.width, parentScreen.height, 22, parentScreen.height - 32, 36);
+        super(minecraft, parentScreen.width, parentScreen.height, 24, parentScreen.height - 33, 36);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
         this.setRenderSelection(false);
@@ -93,7 +95,10 @@ public class ThemeList extends ExtendedList<ThemeList.Entry> {
     @Override
     public void setSelected(@Nullable Entry entry) {
         super.setSelected(entry);
-        if (entry != null && !MellowConfigs.CLIENT_CONFIGS.selectedTheme.get().equals(entry.assetID.toString())) {
+        if (entry == null) return;
+
+        NarratorChatListener.INSTANCE.sayNow(new TranslationTextComponent("narrator.select", new TranslationTextComponent(entry.theme.getDescriptionID())).getString());
+        if (!MellowConfigs.CLIENT_CONFIGS.selectedTheme.get().equals(entry.assetID.toString())) {
             Themes.selectTheme(entry.theme, entry.assetID.toString());
         }
     }
@@ -139,8 +144,9 @@ public class ThemeList extends ExtendedList<ThemeList.Entry> {
             this.assetID = assetID;
             this.theme = theme;
             if (!theme.resourcePacks().isEmpty()) {
-                this.applyPacks = this.components.enablePacks(button -> Themes.enablePacksFrom(theme), 0, 0);
-                this.removePacks = this.components.disablePacks(button -> Themes.disablePacksFrom(theme), 0, 0);
+                WidgetComponents provider = WidgetComponents.components(ThemeList.this.parentScreen, widget -> {});
+                this.applyPacks = provider.enablePacks(button -> Themes.enablePacksFrom(theme), 0, 0);
+                this.removePacks = provider.disablePacks(button -> Themes.disablePacksFrom(theme), 0, 0);
             }
         }
 

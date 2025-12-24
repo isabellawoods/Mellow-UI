@@ -4,15 +4,15 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigEntries;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.MUICommsProcessor;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,6 +29,7 @@ public class ColorOptionsScreen extends SettingsScreen {
     public static final List<AbstractOption> BACKGROUNDS = Lists.newArrayList(BACKGROUNDS_SEPARATOR, MONOCHROME_LOADING_SCREEN_COLOR, WARNING_32BIT_COLOR);
     public static final List<AbstractOption> TOASTS = Lists.newArrayList(TOASTS_SEPARATOR, SYSTEM_TOAST_TITLE_COLOR, SYSTEM_TOAST_DESCRIPTION_COLOR, MUSIC_TOAST_TEXT_COLOR);
     public static final List<AbstractOption> MISCELLANEOUS = Lists.newArrayList(MellowConfigEntries.MISCELLANEOUS_SEPARATOR, TITLE_TEXT_COLOR, DESCRIPTION_TEXT_COLOR);
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private OptionsRowList list;
 
     public ColorOptionsScreen(Screen lastScreen, GameSettings options) {
@@ -37,8 +38,10 @@ public class ColorOptionsScreen extends SettingsScreen {
 
     @Override
     protected void init() {
+        WidgetComponents components = WidgetComponents.components(this, this::addButton);
+
         // List
-        this.list = new OptionsRowList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        this.list = components.optionsList(33, this.height - 33);
         for (AbstractOption option : WIDGETS) this.list.addBig(option);
         for (AbstractOption option : TEXT_FIELDS) this.list.addBig(option);
         for (AbstractOption option : SPLASHES) this.list.addBig(option);
@@ -53,17 +56,16 @@ public class ColorOptionsScreen extends SettingsScreen {
         this.children.add(this.list);
 
         // Done button
-        this.addButton(new Button(this.width / 2 - 100, this.height - 25, 200, 20, DialogTexts.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.CENTER);
     }
 
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<IReorderingProcessor> processors = tooltipAt(this.list, mouseX, mouseY);
-        if (processors != null) this.renderTooltip(stack, processors, mouseX, mouseY);
+        List<IReorderingProcessor> tooltip = tooltipAt(this.list, mouseX, mouseY);
+        if (tooltip != null) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

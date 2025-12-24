@@ -9,10 +9,11 @@ import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.toast.MusicToast;
 import melonystudios.mellowui.element.widget.ImageSetModButton;
 import melonystudios.mellowui.element.widget.ModButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.element.widget.WidgetLocations;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.screen.backport.FeedbackScreen;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.client.gui.advancements.AdvancementsScreen;
@@ -54,7 +55,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             if (this.minecraft == null) return;
             callback.cancel();
             FourStyles buttonStyle = MellowConfigs.CLIENT_CONFIGS.pauseMenuModButton.get();
-            int yOffset = buttonStyle == FourStyles.OPTION_4 ? MellowUtils.PAUSE_MENU_Y_OFFSET - 6: MellowUtils.PAUSE_MENU_Y_OFFSET;
+            int yOffset = buttonStyle == FourStyles.OPTION_4 ? RenderComponents.PAUSE_MENU_Y_OFFSET - 6: RenderComponents.PAUSE_MENU_Y_OFFSET;
 
             MusicTicker manager = this.minecraft.getMusicManager();
             ISound currentMusic = ((InterfaceMethods.MusicManagerMethods) manager).mui$getNowPlaying();
@@ -78,8 +79,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
 
             // Statistics
             this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 48 + yOffset, 98, 20, new TranslationTextComponent("gui.stats"), button -> {
-                if (this.minecraft.player != null)
-                    this.minecraft.setScreen(MellowUtils.statistics(this, this.minecraft));
+                if (this.minecraft.player != null) this.minecraft.setScreen(WidgetLocations.openStatistics(this, this.minecraft));
             }, (button, stack, mouseX, mouseY) -> {
                 if (this.minecraft.level == null) this.components.renderTooltip(this, button, new TranslationTextComponent("error.mellowui.cannot_load_statistics").withStyle(TextFormatting.RED), mouseX, mouseY);
             })).active = this.minecraft.level != null;
@@ -94,29 +94,29 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
 
                 // Mods
                 this.addButton(new ModButton(this.width / 2 + 4, this.height / 4 + 72 + yOffset, 98, 20, new TranslationTextComponent("fml.menu.mods"), button ->
-                        this.minecraft.setScreen(MellowUtils.modList(this))));
+                        this.minecraft.setScreen(WidgetLocations.openModList(this))));
             } else if (buttonStyle == FourStyles.OPTION_3 && !this.minecraft.isDemo()) {
                 // shadow feedback button (so Create's button always shows up)
                 this.addShadowFeedbackButton(this.width / 2 - 102, this.height / 4 + 72 + yOffset);
 
                 // Mods
                 this.addButton(new ModButton(this.width / 2 - 102, this.height / 4 + 72 + yOffset, 204, 20, new TranslationTextComponent("fml.menu.mods"), button ->
-                        this.minecraft.setScreen(MellowUtils.modList(this))));
+                        this.minecraft.setScreen(WidgetLocations.openModList(this))));
             } else {
                 String feedbackURL = SharedConstants.getCurrentVersion().isStable() ? "https://aka.ms/javafeedback?ref=game" : "https://aka.ms/snapshotfeedback?ref=game";
 
                 // Give Feedback
                 this.addButton(new Button(this.width / 2 - 102, this.height / 4 + 72 + yOffset, 98, 20, new TranslationTextComponent("menu.sendFeedback"), button ->
-                        MellowUtils.openLink(this, feedbackURL, false)));
+                        WidgetComponents.openLink(this, feedbackURL, false)));
 
                 // Report Bugs
                 this.addButton(new Button(this.width / 2 + 4, this.height / 4 + 72 + yOffset, 98, 20, new TranslationTextComponent("menu.reportBugs"), button ->
-                        MellowUtils.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false)));
+                        WidgetComponents.openLink(this, "https://aka.ms/snapshotbugs?ref=game", false)));
 
                 // Mods
                 if (!this.minecraft.isDemo() && buttonStyle == FourStyles.OPTION_2) {
                     this.addButton(new ImageSetModButton(this.width / 2 + 106, this.height / 4 + 72 + yOffset, 20, 20,
-                            GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
+                            GUITextures.MODS_SET, button -> this.minecraft.setScreen(WidgetLocations.openModList(this)), (button, stack, mouseX, mouseY) ->
                             this.components.renderTooltip(this, button, new TranslationTextComponent("button.mellowui.mods.tooltip", ModList.get().getMods().size()), mouseX, mouseY),
                             new TranslationTextComponent("fml.menu.mods")).renderOnCorner(true));
                 }
@@ -140,7 +140,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             int heightOffset = buttonStyle == FourStyles.OPTION_4 && !this.minecraft.isDemo() ? 24 : 0;
             if (buttonStyle == FourStyles.OPTION_4 && !this.minecraft.isDemo()) {
                 this.addButton(new ModButton(this.width / 2 - 102, this.height / 4 + 120 + yOffset, 204, 20, new TranslationTextComponent("fml.menu.mods"), button ->
-                        this.minecraft.setScreen(MellowUtils.modList(this))));
+                        this.minecraft.setScreen(WidgetLocations.openModList(this))));
             }
 
             // Save and Quit to Title | Disconnect
@@ -183,7 +183,7 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             callback.cancel();
             if (this.showPauseMenu) {
                 this.renderBackground(stack);
-                drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 56 + MellowUtils.PAUSE_MENU_Y_OFFSET, 0xFFFFFF);
+                drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 56 + RenderComponents.PAUSE_MENU_Y_OFFSET, 0xFFFFFF);
             } else {
                 drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 10, 0xFFFFFF);
             }
