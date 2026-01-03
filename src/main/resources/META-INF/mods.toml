@@ -31,6 +31,8 @@ issueTrackerURL="https://github.com/isabellawoods/Mellow-UI/issues" #optional
     changelogsURL="https://github.com/isabellawoods/Informational-Mod-Features/tree/main/Mellow%20UI/Changelogs"
     # A file name (in the root of the mod JAR) containing a logo for display
     logoFile="mellowui.png" #optional
+    # Whether the logo is blurry when viewed from up close
+    logoBlur=false
     # A text field displayed in the mod UI
     #credits="Thanks for this example mod goes to Java" #optional
     # A text field displayed in the mod UI
