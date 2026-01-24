@@ -20,7 +20,7 @@ public class SplashRenderer extends GuiComponent {
     }
 
     public static void mellomedleySplash(PoseStack stack, Font font, String splash, int textAlpha) {
-        render(stack, font, splash, 185, 80, TextComponents.splashColor(WIDGET_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
+        render(stack, font, splash, 185, 85, TextComponents.splashColor(WIDGET_CONFIGS.mellomedleySplashTextColor.get()), textAlpha);
     }
 
     public static void render(PoseStack stack, Font font, String splash, int x, int y, int color, int textAlpha) {

@@ -5,6 +5,8 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.TwoStyles;
 import net.minecraft.client.resources.language.I18n;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.openal.*;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,6 +20,8 @@ import java.nio.IntBuffer;
 
 @Mixin(Library.class)
 public abstract class MUILibraryMixin {
+    @Unique
+    private static final Marker MARKER = MarkerManager.getMarker("Library");
     @Shadow
     private long currentDevice;
 
@@ -41,7 +45,7 @@ public abstract class MUILibraryMixin {
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 IntBuffer buffer = stack.callocInt(10).put(6546).put(directionalAudio ? 1 : 0).put(6550).put(0).put(0).flip();
                 if (!SOFTHRTF.alcResetDeviceSOFT(this.currentDevice, buffer)) {
-                    MellowUI.logger("Library").warn(I18n.get("logger.mellowui.library.reset", ALC10.alcGetString(this.currentDevice, ALC10.alcGetError(this.currentDevice))));
+                    MellowUI.LOGGER.warn(MARKER, I18n.get("logger.mellowui.library.reset", ALC10.alcGetString(this.currentDevice, ALC10.alcGetError(this.currentDevice))));
                 }
             }
         }
@@ -51,7 +55,7 @@ public abstract class MUILibraryMixin {
     private static boolean checkForALCError(long deviceHandle, String operation) {
         int errorID = ALC10.alcGetError(deviceHandle);
         if (errorID != 0) {
-            MellowUI.logger("Library").error("[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
+            MellowUI.LOGGER.error(MARKER, "[{}-{}]: {}", operation, deviceHandle, getErrorMessage(errorID));
             return true;
         } else {
             return false;

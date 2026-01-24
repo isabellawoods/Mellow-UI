@@ -1,18 +1,12 @@
 package melonystudios.mellowui.util;
 
-import com.google.gson.JsonObject;
-import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
-import melonystudios.mellowui.resource.flair.Flair;
-import melonystudios.mellowui.resource.panorama.BobbingPitch;
-import melonystudios.mellowui.resource.panorama.ConstantPitch;
-import melonystudios.mellowui.resource.panorama.Panorama;
-import melonystudios.mellowui.resource.panorama.PitchOverrider;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.backport.MUIControlsScreen;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import melonystudios.mellowui.screen.update.*;
+import melonystudios.mellowui.util.debug.MUIDebuggingFlags;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.*;
@@ -21,7 +15,6 @@ import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraftforge.client.gui.ModListScreen;
 import net.minecraftforge.fml.ModList;
@@ -31,27 +24,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 
 public class MellowUtils {
-    // Resource pack entries
-    public static final Map<ResourceLocation, Flair> FLAIRS = new HashMap<>();
-    public static final Map<ResourceLocation, Panorama> PANORAMAS = new HashMap<>();
-    public static final Map<ResourceLocation, Function<JsonObject, PitchOverrider>> OVERRIDERS = Util.make(new HashMap<>(), map -> {
-        map.put(MellowUI.mellowUI("constant"), ConstantPitch.DEFAULT::fromJSON);
-        map.put(MellowUI.mellowUI("bobbing"), BobbingPitch.DEFAULT::fromJSON);
-    });
-    public static boolean LOADING_ERRORS = false;
-
     public static final DateFormat WORLD_DATE_FORMAT = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
     public static final int DEFAULT_TITLE_HEIGHT = 12;
     public static final int TABBED_TITLE_HEIGHT = 2;
     public static final int PAUSE_MENU_Y_OFFSET = -16;
+    public static boolean LOADING_ERRORS = MUIDebuggingFlags.DEBUG_FAKE_LOADING_ERRORS;
 
     @SuppressWarnings("deprecation")
     public static Screen modList(Screen lastScreen) {

@@ -20,4 +20,9 @@ public record ScreenPosition(int x, int y) {
             default -> this.x;
         };
     }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.x() + this.y();
+    }
 }

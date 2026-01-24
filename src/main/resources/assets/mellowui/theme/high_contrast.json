@@ -1,0 +1,8 @@
+{
+  "flairs": {
+    "mellowui:builtin/default": "#ffff55"
+  },
+  "resource_packs": [
+    "mellowui:high_contrast"
+  ]
+}

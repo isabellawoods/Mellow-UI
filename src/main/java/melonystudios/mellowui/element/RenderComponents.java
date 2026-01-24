@@ -9,13 +9,15 @@ import melonystudios.mellowui.backport.scissor.ScissorStack;
 import melonystudios.mellowui.backport.scissor.ScreenRectangle;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.WidgetConfigs;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.IconButton;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.resource.panorama.Panoramas;
 import melonystudios.mellowui.util.GUITextures;
 import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.debug.MUIDebuggingFlags;
+import melonystudios.mellowui.util.ShaderManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -111,14 +113,14 @@ public class RenderComponents extends VanillaRenderComponents {
         return vanillaScreens || moddedScreens;
     }
 
-    /// Renders the selected {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} onto the panorama, without fading,
+    /// Renders the selected {@linkplain melonystudios.mellowui.resource.posteffect.PostEffect post-processing effect} onto the panorama, without fading,
     /// if the effect isn't the default "blur".
     /// @param partialTicks The partial tick time.
     public void renderBackgroundShaders(float partialTicks) {
         if (ShaderManager.customShaderLoaded()) this.renderBlurredBackground(partialTicks, null);
     }
 
-    /// Renders the currently selected {@link melonystudios.mellowui.util.shader.PostEffect PostEffect} onto the panorama.
+    /// Renders the currently selected {@linkplain melonystudios.mellowui.resource.posteffect.PostEffect post-processing effect} onto the panorama.
     /// @param partialTicks The partial tick time.
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
     public void renderBlurredBackground(float partialTicks, Boolean fadeIn) {
@@ -150,8 +152,8 @@ public class RenderComponents extends VanillaRenderComponents {
         Screen screen = Minecraft.getInstance().screen;
         if (fromTitleScreen && screen instanceof TitleScreen) {
             int hashCode = panorama.hashCode();
-            if (hashCode != -1294886725) { // hash code of the default panorama from the vanilla title screen ~isa 28-9-25
-                MellowUtils.PANORAMAS.put(MellowUI.generated("id_" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) screen).getPanoramaOverlay()));
+            if (!Panoramas.exists(hashCode)) {
+                Panoramas.PANORAMAS.put(MellowUI.generated("id_" + hashCode), Panoramas.createGenerated(panorama, ((InterfaceMethods.TitleScreenMethods) screen).getPanoramaOverlay()));
             }
         }
         if (((InterfaceMethods.PanoramaRendererMethods) PANORAMA).differentPanorama(panorama)) PANORAMA = panorama;
@@ -300,6 +302,17 @@ public class RenderComponents extends VanillaRenderComponents {
         fill(this.stack, x + width - 1, y + 1, x + width, y + height - 1, color);
     }
 
+    /// Renders a **list selection** on the screen with the specified color.
+    /// @param left The x-coordinate of the top-left corner of the entry.
+    /// @param top The y-coordinate of the top-left corner of the entry.
+    /// @param width The width of the list entry.
+    /// @param height The height of the list entry.
+    /// @param color The color of the selection.
+    public void renderListSelection(int left, int top, int width, int height, int color) {
+        this.renderOutline(left - 2, top - 1, width, height + 4, TextComponents.darkenColor(color, 1, 0.25F));
+        this.renderOutline(left - 2, top - 2, width, height + 4, color | 255 << 24);
+    }
+
     /// Renders the **list separators** on the top and bottom of the screen.
     /// @param list An {@linkplain OptionsList options list} to grab the separator positions.
     /// @param width The width of the separator, usually the screen width.
@@ -348,7 +361,7 @@ public class RenderComponents extends VanillaRenderComponents {
     /// @param color The color to use for the separators. Defaults to `0` (black).
     public void renderGradientListSeparators(int minX, int maxX, int minY, int maxY, int color) {
         Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder builder = tessellator.getBuilder();
+        BufferBuilder buffer = tessellator.getBuilder();
         RenderSystem.enableDepthTest();
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
@@ -360,15 +373,15 @@ public class RenderComponents extends VanillaRenderComponents {
         int green = FastColor.ARGB32.green(color);
         int blue = FastColor.ARGB32.blue(color);
 
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        builder.vertex(minX, maxY + 4, 0).uv(0, 1).color(red, green, blue, 0).endVertex();
-        builder.vertex(maxX, maxY + 4, 0).uv(1, 1).color(red, green, blue, 0).endVertex();
-        builder.vertex(maxX, maxY, 0).uv(1, 0).color(red, green, blue, 255).endVertex();
-        builder.vertex(minX, maxY, 0).uv(0, 0).color(red, green, blue, 255).endVertex();
-        builder.vertex(minX, minY, 0).uv(0, 1).color(red, green, blue, 255).endVertex();
-        builder.vertex(maxX, minY, 0).uv(1, 1).color(red, green, blue, 255).endVertex();
-        builder.vertex(maxX, minY - 4, 0).uv(1, 0).color(red, green, blue, 0).endVertex();
-        builder.vertex(minX, minY - 4, 0).uv(0, 0).color(red, green, blue, 0).endVertex();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        buffer.vertex(minX, maxY + 4, 0).uv(0, 1).color(red, green, blue, 0).endVertex();
+        buffer.vertex(maxX, maxY + 4, 0).uv(1, 1).color(red, green, blue, 0).endVertex();
+        buffer.vertex(maxX, maxY, 0).uv(1, 0).color(red, green, blue, 255).endVertex();
+        buffer.vertex(minX, maxY, 0).uv(0, 0).color(red, green, blue, 255).endVertex();
+        buffer.vertex(minX, minY, 0).uv(0, 1).color(red, green, blue, 255).endVertex();
+        buffer.vertex(maxX, minY, 0).uv(1, 1).color(red, green, blue, 255).endVertex();
+        buffer.vertex(maxX, minY - 4, 0).uv(1, 0).color(red, green, blue, 0).endVertex();
+        buffer.vertex(minX, minY - 4, 0).uv(0, 0).color(red, green, blue, 0).endVertex();
         tessellator.end();
         RenderSystem.enableTexture();
     }
@@ -537,6 +550,22 @@ public class RenderComponents extends VanillaRenderComponents {
         return new IconButton(x, y, 12, 12, GUITextures.CUSTOMIZE_SET, new TranslatableComponent("button.mellowui.customize.title"), onPress);
     }
 
+    /// Creates a new *"Enable Packs"* {@link IconButton}.
+    /// @param onPressed What happens when this button is {@linkplain net.minecraft.client.gui.components.Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public IconButton enablePacks(Button.OnPress onPressed, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.ENABLE_PACKS_SET, new TranslatableComponent("button.mellowui.enable_packs.title"), onPressed);
+    }
+
+    /// Creates a new *"Disable Packs"* {@link IconButton}.
+    /// @param onPressed What happens when this button is {@linkplain net.minecraft.client.gui.components.Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public IconButton disablePacks(Button.OnPress onPressed, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.DISABLE_PACKS_SET, new TranslatableComponent("button.mellowui.disable_packs.title"), onPressed);
+    }
+
     /// Creates a new **scissor** rectangle to blit things into.
     /// @param minX The starting x-position of the scissor area.
     /// @param minY The starting y-position of the scissor area.
@@ -560,6 +589,7 @@ public class RenderComponents extends VanillaRenderComponents {
 
     private void applyScissor(@Nullable ScreenRectangle rectangle) {
         if (rectangle != null) {
+            if (MUIDebuggingFlags.DEBUG_RECTANGLE_RAVE) fill(this.stack, rectangle.left(), rectangle.top(), rectangle.right(), rectangle.bottom(), rectangle.hashCode() | 128 << 24);
             Window window = this.minecraft.getWindow();
             int height = window.getHeight();
             double guiScale = window.getGuiScale();

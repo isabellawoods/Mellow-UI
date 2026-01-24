@@ -1,6 +1,7 @@
 package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.forge.LoadingErrorsScreen;
 import net.minecraft.ChatFormatting;
@@ -30,6 +31,7 @@ public class LoadingMessageList extends ObjectSelectionList<LoadingMessageList.M
                 loadWarnings.stream().mapToInt(warning -> parentScreen.getMinecraft().font.split(new TextComponent(warning.formatToString()), ROW_WIDTH - 10).size()).max().orElse(0)) *
                 parentScreen.getMinecraft().font.lineHeight + 11);
         this.parentScreen = parentScreen;
+        this.setRenderSelection(false);
         boolean both = !loadErrors.isEmpty() && !loadWarnings.isEmpty();
 
         // Load errors
@@ -81,6 +83,10 @@ public class LoadingMessageList extends ObjectSelectionList<LoadingMessageList.M
             List<FormattedCharSequence> lines = font.split(this.component, LoadingMessageList.this.getRowWidth());
             int y = top + 2;
             int lineHeight = top + (height / 2);
+
+            // Render selection
+            int textColor = TextComponents.selectableColor(LoadingMessageList.this.getSelected() == this, true);
+            if (LoadingMessageList.this.getSelected() == this) RenderComponents.INSTANCE.renderListSelection(left, top, width, height, textColor);
 
             for (FormattedCharSequence line : lines) {
                 if (this.header) {

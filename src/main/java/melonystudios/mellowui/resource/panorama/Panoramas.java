@@ -1,12 +1,12 @@
 package melonystudios.mellowui.resource.panorama;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonObject;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
-import melonystudios.mellowui.util.MellowUtils;
-import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.ShaderManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.CubeMap;
@@ -18,19 +18,23 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /// Utility class for handling {@linkplain Panorama panoramas} added by *Mellow UI*.
 public class Panoramas {
+    public static final Map<ResourceLocation, Panorama> PANORAMAS = new HashMap<>();
+
+    /// A map of all {@linkplain PitchOverrider pitch overriders} used by *Mellow UI*.
+    public static final Map<ResourceLocation, Function<JsonObject, PitchOverrider>> OVERRIDERS = Util.make(new HashMap<>(), map -> {
+        map.put(MellowUI.mellowUI("constant"), ConstantPitch.DEFAULT::fromJSON);
+        map.put(MellowUI.mellowUI("bobbing"), BobbingPitch.DEFAULT::fromJSON);
+    });
+
     /// A list of all screens that have their own panorama defined.
-    public static final List<String> MENUS_WITH_DEFINED_PANORAMAS = Lists.newArrayList(
-            "com.simibubi.create.infrastructure.gui.CreateMainMenuScreen"
-    );
+    public static final List<String> MENUS_WITH_DEFINED_PANORAMAS = Lists.newArrayList();
 
     /// Maps the class name of screens with defined panoramas with their {@linkplain PanoramaRenderer panorama renderers}.
-    public static final Map<String, PanoramaRenderer> MENU_TO_PANORAMAS = Util.make(new HashMap<>(), map -> {
-        // Create
-        map.put(MENUS_WITH_DEFINED_PANORAMAS.get(0), getRenderer(new ResourceLocation("create", "factory")));
-    });
+    public static final Map<String, PanoramaRenderer> MENU_TO_PANORAMAS = new HashMap<>();
 
     /// Represents an instance of the `mellowui:default` panorama.
     public static final Panorama DEFAULT = Panorama.builder(Lists.newArrayList(
@@ -42,8 +46,8 @@ public class Panoramas {
             new ResourceLocation("gui/title/background/panorama_5")
     )).overlay(new ResourceLocation("gui/title/background/panorama_overlay")).build();
 
-    /// Represents an instance of the currently selected panorama.
-    public static Panorama CURRENT_PANORAMA = null;
+    /// Represents the instance of the currently selected panorama.
+    private static Panorama CURRENT_PANORAMA = null;
     public static final float TRANSPARENCY_SHIFT_PER_TICK = 0.02F;
     private static String lastScreenWithPanorama = "";
     private static float panoramaAlpha = 0;
@@ -103,16 +107,27 @@ public class Panoramas {
         if ((shouldFadeIn || panoramaAlpha > 0) && !samePanorama) panorama.render(partialTicks, panoramaAlpha);
     }
 
-    /// @return The **asset id** of the currently selected panorama.
-    public static ResourceLocation panoramaLocation() {
-        ResourceLocation location = ResourceLocation.tryParse(MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
-        return location == null ? Panorama.DEFAULT_LOCATION : location;
+    /// Gets the **asset id** for a panorama from the {@linkplain #PANORAMAS panoramas map}.
+    /// @param panorama The panorama to get.
+    @Nullable
+    public static ResourceLocation locationFor(Panorama panorama) {
+        return PANORAMAS.entrySet().stream()
+                .filter(entry -> entry.getValue() == panorama)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 
     /// @return The currently selected panorama.
     public static Panorama panorama() {
-        if (CURRENT_PANORAMA == null) CURRENT_PANORAMA = MellowUtils.PANORAMAS.getOrDefault(panoramaLocation(), DEFAULT);
+        if (CURRENT_PANORAMA == null) CURRENT_PANORAMA = PANORAMAS.getOrDefault(assetID(), DEFAULT);
         return CURRENT_PANORAMA;
+    }
+
+    /// @return The **asset id** of the currently selected panorama.
+    public static ResourceLocation assetID() {
+        ResourceLocation location = ResourceLocation.tryParse(MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
+        return location == null ? Panorama.DEFAULT_LOCATION : location;
     }
 
     /// Gets a panorama cube map texture from the specified panorama.
@@ -138,11 +153,20 @@ public class Panoramas {
         return Panorama.builder(Lists.newArrayList(textures)).overlay(overlay).build();
     }
 
+    /// @param hashCode The hash code of the generated panorama's renderer.
+    /// @return If an existing panorama has the same hash code as this panorama.
+    public static boolean exists(int hashCode) {
+        // -1294886725 = hash code of the default panorama from the vanilla title screen ~isa 28-9-25
+        return PANORAMAS.values().stream()
+                .map(panorama -> panorama.panorama().hashCode())
+                .anyMatch(hash -> hash == hashCode);
+    }
+
     /// Gets the panorama renderer of a given panorama based on its id, or `null` if it doesn't exist.
     /// @param panoramaID The id of the panorama.
     @Nullable
     private static PanoramaRenderer getRenderer(ResourceLocation panoramaID) {
-        Panorama panorama = MellowUtils.PANORAMAS.get(panoramaID);
+        Panorama panorama = PANORAMAS.get(panoramaID);
         if (panorama != null) return panorama.panorama();
         return null;
     }

@@ -1,0 +1,30 @@
+{
+  "panorama": "mellowui:beta",
+  "textures": {
+    "mellowui:textures/gui/background/menu.png": "mellowui:gui/theme/programmer_art/background/menu",
+    "mellowui:textures/gui/background/menu_list.png": "mellowui:gui/theme/programmer_art/background/menu_list",
+    "mellowui:textures/gui/background/menu_panel.png": "mellowui:gui/theme/programmer_art/background/menu_panel",
+    "mellowui:textures/gui/background/inworld_menu.png": "mellowui:gui/theme/programmer_art/background/inworld_menu",
+    "mellowui:textures/gui/background/inworld_menu_list.png": "mellowui:gui/theme/programmer_art/background/inworld_menu_list",
+    "mellowui:textures/gui/background/inworld_menu_panel.png": "mellowui:gui/theme/programmer_art/background/inworld_menu_panel",
+    "mellowui:textures/gui/background/tab_header.png": "mellowui:gui/theme/programmer_art/background/tab_header",
+    "mellowui:textures/gui/background/title_screen_icons.png": "mellowui:gui/theme/programmer_art/background/title_screen_icons",
+    "mellowui:textures/gui/background/header_separator.png": "mellowui:gui/theme/programmer_art/background/header_separator",
+    "mellowui:textures/gui/background/footer_separator.png": "mellowui:gui/theme/programmer_art/background/footer_separator",
+    "mellowui:textures/gui/background/left_separator.png": "mellowui:gui/theme/programmer_art/background/left_separator",
+    "mellowui:textures/gui/background/right_separator.png": "mellowui:gui/theme/programmer_art/background/right_separator",
+    "mellowui:textures/gui/miscellaneous/slot_highlight_back.png": "mellowui:gui/theme/programmer_art/miscellaneous/slot_highlight_back",
+    "mellowui:textures/gui/miscellaneous/slot_highlight_front.png": "mellowui:gui/theme/programmer_art/miscellaneous/slot_highlight_front",
+    "mellowui:textures/gui/miscellaneous/stat_slot_highlight_back.png": "mellowui:gui/theme/programmer_art/miscellaneous/stat_slot_highlight_back",
+    "mellowui:textures/gui/miscellaneous/stat_slot_highlight_front.png": "mellowui:gui/theme/programmer_art/miscellaneous/stat_slot_highlight_front",
+    "mellowui:textures/gui/widget/tab.png": "mellowui:gui/theme/programmer_art/widget/tab",
+    "mellowui:textures/gui/widget/tab_highlighted.png": "mellowui:gui/theme/programmer_art/widget/tab_highlighted",
+    "mellowui:textures/gui/widget/tab_selected.png": "mellowui:gui/theme/programmer_art/widget/tab_selected",
+    "mellowui:textures/gui/widget/tab_selected_highlighted.png": "mellowui:gui/theme/programmer_art/widget/tab_selected_highlighted",
+    "mellowui:textures/gui/widget/mod_entry_highlighted.png": "mellowui:gui/theme/programmer_art/widget/mod_entry_highlighted",
+    "mellowui:textures/gui/widget/separator_highlighted.png": "mellowui:gui/theme/programmer_art/widget/separator_highlighted"
+  },
+  "resource_packs": [
+    "programer_art"
+  ]
+}

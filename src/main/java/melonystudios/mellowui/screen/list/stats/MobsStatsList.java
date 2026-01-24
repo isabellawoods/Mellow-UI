@@ -1,6 +1,8 @@
 package melonystudios.mellowui.screen.list.stats;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -24,6 +26,7 @@ public class MobsStatsList extends ObjectSelectionList<MobsStatsList.Entry> {
         super(minecraft, width, height, y0, y1, entryWidth);
         this.parentScreen = parentScreen;
         this.setRenderHeader(true, 2);
+        this.setRenderSelection(false);
 
         for (EntityType<?> type : ForgeRegistries.ENTITIES) {
             if (this.parentScreen.statisticsManager().getValue(Stats.ENTITY_KILLED.get(type)) > 0 || this.parentScreen.statisticsManager().getValue(Stats.ENTITY_KILLED_BY.get(type)) > 0) {
@@ -55,7 +58,6 @@ public class MobsStatsList extends ObjectSelectionList<MobsStatsList.Entry> {
 
     @OnlyIn(Dist.CLIENT)
     public class Entry extends ObjectSelectionList.Entry<MobsStatsList.Entry> {
-        private final EntityType<?> type;
         private final Component mobName;
         private final Component kills;
         private final boolean hasKills;
@@ -63,7 +65,6 @@ public class MobsStatsList extends ObjectSelectionList<MobsStatsList.Entry> {
         private final boolean wasKilledBy;
 
         public Entry(EntityType<?> type) {
-            this.type = type;
             this.mobName = type.getDescription();
             int kills = MobsStatsList.this.parentScreen.statisticsManager().getValue(Stats.ENTITY_KILLED.get(type));
             if (kills == 0) {
@@ -86,6 +87,10 @@ public class MobsStatsList extends ObjectSelectionList<MobsStatsList.Entry> {
 
         @Override
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
+            // Render selection
+            int color = TextComponents.selectableColor(MobsStatsList.this.getSelected() == this, true);
+            if (MobsStatsList.this.getSelected() == this) RenderComponents.INSTANCE.renderListSelection(left, top, width, height, color);
+
             Font font = MobsStatsList.this.parentScreen.getMinecraft().font;
             drawString(stack, font, this.mobName, left + 2, top + 1, 0xFFFFFF);
             drawString(stack, font, this.kills, left + 12, top + 10, this.hasKills ? 0xBBBBBB : 0x818181);

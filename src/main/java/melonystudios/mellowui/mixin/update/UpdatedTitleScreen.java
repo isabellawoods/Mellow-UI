@@ -14,6 +14,7 @@ import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
 import melonystudios.mellowui.renderer.SplashRenderer;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.resource.theme.Themes;
 import melonystudios.mellowui.screen.MellomedleyTitleScreen;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
 import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
@@ -88,8 +89,10 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     public void init(CallbackInfo callback) {
-        // Go to Mellomedley's main menu if set.
+        Themes.selectTheme(Themes.theme(), MellowConfigs.CLIENT_CONFIGS.selectedTheme.get());
         Panoramas.selectPanorama(Panoramas.panorama(), MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get());
+
+        // Go to Mellomedley's main menu if set.
         if (MellowConfigs.CLIENT_CONFIGS.titleStyle.get() == ThreeStyles.OPTION_3) {
             this.minecraft.setScreen(new MellomedleyTitleScreen(this.fading, MellowConfigs.CLIENT_CONFIGS.onboardAccessibility.get()));
             return;
@@ -174,10 +177,10 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
         }
 
         // Switch Style
-        this.addRenderableWidget(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 20, 8));
+        this.addRenderableWidget(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 21, 8));
 
         // Customize
-        this.addRenderableWidget(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 20, 21));
+        this.addRenderableWidget(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 21, 21));
     }
 
     /// Adds Singleplayer and Multiplayer buttons on Main Menu for players who have bought the game.
@@ -241,7 +244,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 this.components.renderForgeBetaText(this.width, 3, textColor, textAlpha);
 
                 // Title screen icons background
-                this.components.renderTitleScreenIconsBackground(this.width - 21, 7, buttonAlpha);
+                this.components.renderTitleScreenIconsBackground(this.width - 22, 7, buttonAlpha);
 
                 // Splashes
                 if (!MellowConfigs.CLIENT_CONFIGS.hideSplashTexts.get()) {
@@ -250,7 +253,7 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 }
 
                 // Text
-                if (!MellowConfigs.CLIENT_CONFIGS.disableBranding.get()) {
+                if (MellowConfigs.CLIENT_CONFIGS.brandingLines.get()) {
                     BrandingControl.forEachLine(true, true, (lineHeight, text) ->
                             drawString(stack, this.font, text, 2, this.height - (10 + lineHeight * (this.font.lineHeight + 1)), textColor | textAlpha));
                     BrandingControl.forEachAboveCopyrightLine((lineHeight, text) ->

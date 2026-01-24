@@ -2,7 +2,7 @@ package melonystudios.mellowui.mixin.client;
 
 import melonystudios.mellowui.backport.cursor.CursorTypes;
 import melonystudios.mellowui.element.RenderComponents;
-import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.ShaderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static melonystudios.mellowui.util.shader.ShaderManager.PANORAMA_SHADER;
+import static melonystudios.mellowui.util.ShaderManager.PANORAMA_SHADER;
 
 @Mixin(GameRenderer.class)
 public class MUIGameRendererMixin {

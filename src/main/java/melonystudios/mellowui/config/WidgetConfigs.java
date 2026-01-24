@@ -13,7 +13,7 @@ public class WidgetConfigs {
     public final ForgeConfigSpec.IntValue editButtonTextPadding;
     public final ForgeConfigSpec.IntValue tabTextPadding;
     public final ForgeConfigSpec.IntValue stringWidgetTextPadding;
-    public final ForgeConfigSpec.IntValue modNameTextPadding;
+    public final ForgeConfigSpec.IntValue modEntryTextPadding;
 
     // Colors for text in various locations
     public final ForgeConfigSpec.IntValue defaultWidgetTextColor;
@@ -22,6 +22,7 @@ public class WidgetConfigs {
     public final ForgeConfigSpec.IntValue defaultLegacyWidgetTextColor;
     public final ForgeConfigSpec.IntValue highlightedLegacyWidgetTextColor;
     public final ForgeConfigSpec.IntValue disabledLegacyWidgetTextColor;
+    public final ForgeConfigSpec.IntValue lockedWidgetTextColor;
     public final ForgeConfigSpec.IntValue highlightedIconButtonColor;
 
     public final ForgeConfigSpec.IntValue highContrastUpdateAvailableColor;
@@ -56,7 +57,7 @@ public class WidgetConfigs {
         this.editButtonTextPadding = builder.comment("Border padding for an edit button with scrolling text. Defaults to 2px.", "Effectively capped at the 'buttonWidth / 2 - 1'.").translation("config.mellowui.edit_button_text_padding").defineInRange("editButtonTextPadding", 2, 0, Integer.MAX_VALUE);
         this.tabTextPadding = builder.comment("Border padding for a tab with scrolling text. Defaults to 2px.", "Effectively capped at the 'tabWidth / 2 - 1'.").translation("config.mellowui.tab_text_padding").defineInRange("tabTextPadding", 2, 0, Integer.MAX_VALUE);
         this.stringWidgetTextPadding = builder.comment("Border padding for a string widget with scrolling text. Defaults to 2mpx.", "Effectively capped at 'widgetWidth / 2 - 1'.").translation("config.mellowui.string_widget_text_padding").defineInRange("stringWidgetTextPadding", 2, 0, Integer.MAX_VALUE);
-        this.modNameTextPadding = builder.comment("Border padding for a mod list entry's name. Defaults to 2px.", "Effectively capped at the 'entryWidth / 2 - 1'.").translation("config.mellowui.mod_name_text_padding").defineInRange("modNameTextPadding", 2, 0, Integer.MAX_VALUE);
+        this.modEntryTextPadding = builder.comment("Border padding for a mod list entry's text. Defaults to 2px.", "Effectively capped at the 'entryWidth / 2 - 1'.").translation("config.mellowui.mod_entry_text_padding").defineInRange("modEntryTextPadding", 2, 0, Integer.MAX_VALUE);
 
         builder.pop().push("color");
         // Widgets
@@ -66,6 +67,7 @@ public class WidgetConfigs {
         this.defaultLegacyWidgetTextColor = builder.comment("Text color for an unselected widget with 'Legacy Button Colors' turned on.").translation("config.mellowui.default_legacy_widget_text_color").defineInRange("widget.defaultLegacyTextColor", 0xE0E0E0, 0, 0xFFFFFF);
         this.highlightedLegacyWidgetTextColor = builder.comment("Text color for a selected/hovered widget with 'Legacy Button Colors' turned on.").translation("config.mellowui.highlighted_legacy_widget_text_color").defineInRange("widget.highlightedLegacyTextColor", 0xFFFFA0, 0, 0xFFFFFF);
         this.disabledLegacyWidgetTextColor = builder.comment("Text color for a disabled widget with 'Legacy Button Colors' turned on.").translation("config.mellowui.disabled_legacy_widget_text_color").defineInRange("widget.disabledLegacyTextColor", 0xA0A0A0, 0, 0xFFFFFF);
+        this.lockedWidgetTextColor = builder.comment("Text color for an locked widget or list entry.").translation("config.mellowui.locked_widget_text_color").defineInRange("widget.lockedTextColor", 0xFF5555, 0, 0xFFFFFF);
         this.highlightedIconButtonColor = builder.comment("Text color for a highlighted icon button on the title screen.").translation("config.mellowui.default_icon_button_color").defineInRange("widget.highlightedIconButtonColor", 0xFFFFA0, 0, 0xFFFFFF);
 
         // Text field widgets

@@ -16,7 +16,6 @@ public class IconButton extends Button {
     private final WidgetTextureSet textureSet;
     private final int textureWidth;
     private final int textureHeight;
-    private boolean renderShadow = true;
     private float textAlpha = 0;
 
     public IconButton(int x, int y, int width, int height, WidgetTextureSet textureSet, Component text, OnPress onPress) {
@@ -33,9 +32,8 @@ public class IconButton extends Button {
         this.textureHeight = height;
     }
 
-    public IconButton shouldRenderShadow(boolean renderShadow) {
-        this.renderShadow = renderShadow;
-        return this;
+    public boolean isRenderingText() {
+        return this.textAlpha > 0;
     }
 
     @Override
@@ -48,15 +46,8 @@ public class IconButton extends Button {
         RenderSystem.enableDepthTest();
 
         // Text alpha
-        if (this.isHoveredOrFocused()) this.textAlpha = Mth.clamp(this.textAlpha + 0.15F, 0, 1);
+        if (this.isHoveredOrFocused() && this.active) this.textAlpha = Mth.clamp(this.textAlpha + 0.15F, 0, 1);
         else this.textAlpha = Mth.clamp(this.textAlpha - 0.15F, 0, 1);
-
-        // Icon shadow
-        if (this.renderShadow) {
-            RenderSystem.setShaderColor(0.25F, 0.25F, 0.25F, this.alpha);
-            blit(stack, this.x + 1, this.y + 1, 0, 0, this.width + 1, this.height + 1, this.textureWidth, this.textureHeight);
-            RenderSystem.setShaderColor(1, 1, 1, this.alpha);
-        }
 
         // Icon
         blit(stack, this.x, this.y, 0, 0, this.width, this.height, this.textureWidth, this.textureHeight);

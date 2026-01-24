@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.CubeMap;
 import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.config.ModConfig;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,12 +37,14 @@ public class InterfaceMethods {
     public interface PackRepositoryMethods {
         /// Adds a pack to the list of currently selected resource packs.
         /// @param id The id of the resource pack.
+        /// @return Whether the pack was applied, `false` if it was already selected.
         default boolean addPack(String id) {
             return false;
         }
 
         /// Removes a pack from the list of currently selected resource packs.
         /// @param id The id of the resource pack.
+        /// @return Whether the pack was removed, `false` if it was already removed.
         default boolean removePack(String id) {
             return false;
         }
@@ -100,6 +104,13 @@ public class InterfaceMethods {
         /// @return A map of all registered world presets and their editors.
         default Map<Optional<WorldPreset>, WorldPreset.PresetEditor> getEditors() {
             return Maps.newHashMap();
+        }
+    }
+
+    public interface ModContainerMethods {
+        /// @return A list of {@linkplain ModConfig mod configs} for a specified mod container.
+        default Collection<ModConfig> getModConfigs() {
+            return Lists.newArrayList();
         }
     }
 }

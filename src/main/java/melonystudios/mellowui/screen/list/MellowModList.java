@@ -14,9 +14,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
@@ -81,6 +79,7 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
     }
 
     public class Mod extends ObjectSelectionList.Entry<MellowModList.Mod> implements ScrollingText {
+        private final RenderComponents components = RenderComponents.INSTANCE;
         private final MellowModListScreen parentScreen;
         private final IModInfo modInfo;
 
@@ -112,7 +111,7 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
             RenderSystem.disableBlend();
 
             // Mod name
-            int padding = WidgetConfigs.WIDGET_CONFIGS.modNameTextPadding.get() - 2;
+            int padding = WidgetConfigs.WIDGET_CONFIGS.modEntryTextPadding.get() - 2;
             int color = TextComponents.selectableColor(MellowModList.this.getSelected() == this, true);
             this.renderWidgetText(
                     () -> this.renderAlignedScrollingText(font, modName, Alignment.CENTER, left + padding, top, left + rowWidth - padding - 4, top + height - 8, color),
@@ -120,16 +119,18 @@ public class MellowModList extends ObjectSelectionList<MellowModList.Mod> {
             );
 
             // Version
-            FormattedText versionComponent = FormattedText.composite(font.substrByWidth(modVersion, MellowModList.this.listWidth));
-            font.drawShadow(stack, Language.getInstance().getVisualOrder(versionComponent), left + 3, top + 4 + font.lineHeight, 0xFFFFFF);
+            this.renderWidgetText(
+                    () -> this.renderAlignedScrollingText(font, modVersion, Alignment.LEFT, left + padding + 1, top + 6, left + rowWidth - padding - 5, top + height + 6, color),
+                    () -> drawString(stack, font, modVersion, left + 3, top + 4 + font.lineHeight, color)
+            );
 
             // Update available icon
             if (checkResult.status().shouldDraw()) {
-                RenderComponents.INSTANCE.renderUpdateAvailableIcon(left + rowWidth - 16, top + height / 4 + 3, 1, checkResult.status());
+                this.components.renderUpdateAvailableIcon(left + rowWidth - 16, top + height / 4 + 3, 1, checkResult.status());
             }
 
             // Cursor
-            if (this.isMouseOver(mouseX, mouseY)) RenderComponents.INSTANCE.requestCursor(CursorTypes.POINTING_HAND);
+            if (this.isMouseOver(mouseX, mouseY) && this.components.containsPointInScissor(mouseX, mouseY)) this.components.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         @Override

@@ -2,6 +2,8 @@ package melonystudios.mellowui.screen.list;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -26,6 +28,7 @@ import javax.annotation.Nonnull;
 public class MUIPackList extends ObjectSelectionList<MUIPackList.PackEntry> {
     public MUIPackList(Minecraft minecraft, int width, int height, int y0, int y1, int itemHeight) {
         super(minecraft, width, height, y0, y1, itemHeight);
+        this.setRenderSelection(false);
     }
 
     @Override
@@ -62,6 +65,10 @@ public class MUIPackList extends ObjectSelectionList<MUIPackList.PackEntry> {
 
         @Override
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
+            // Render selection
+            int textColor = TextComponents.selectableColor(this.parent.getSelected() == this, true);
+            if (this.parent.getSelected() == this) RenderComponents.INSTANCE.renderListSelection(left, top, width, height, textColor);
+
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderTexture(0, this.pack.getIconTexture());
             RenderSystem.setShaderColor(1, 1, 1, 1);

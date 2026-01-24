@@ -37,7 +37,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(value = PauseScreen.class, priority = 900)
+@Mixin(value = PauseScreen.class, priority = 1100)
 public abstract class UpdatedPauseMenuScreen extends Screen {
     @Unique
     private final RenderComponents components = RenderComponents.INSTANCE;

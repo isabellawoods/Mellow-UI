@@ -1,16 +1,15 @@
-package melonystudios.mellowui.util.shader;
+package melonystudios.mellowui.util;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import melonystudios.mellowui.MellowUI;
-import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.resource.panorama.Panoramas;
+import melonystudios.mellowui.resource.posteffect.PostEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -19,27 +18,34 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static melonystudios.mellowui.util.shader.PostEffects.*;
+import static melonystudios.mellowui.config.MellowConfigs.CLIENT_CONFIGS;
 
 /// *Mellow UI*'s default **shader manager**, for handling the selection and rendering of panoramic or world shaders.
 public class ShaderManager {
+    /// Represents an instance of the `mellowui:blur` post-processing effect.
+    public static final PostEffect MUI_BLUR = new PostEffect(MellowUI.mellowUI("blur"), "Radius");
+    public static final String MUI_BLUR_ID = MellowUI.mellowUI("blur").toString();
+
+    /// Represents an instance of the currently selected post-processing effect.
     public static PostEffect CURRENT_EFFECT = MUI_BLUR;
-    // todo: make make post effects loaded from resource packs (like panoramas) instead of being hardcoded ~isa 15-10-25
-    public static List<PostEffect> EFFECTS = Lists.newArrayList(MUI_BLUR, ANTIALIAS, ART, BITS, BLOBS, BLOBS2, BLUR, BUMPY, COLOR_CONVOLVE, CREEPER, DECONVERGE,
-            DESATURATE, ENTITY_OUTLINE, FLIP, FXAA, GREEN, INVERT, LOVE, NOTCH, NTSC, OUTLINE, PENCIL, PHOSPHOR, SCAN_PINCUSHION, SOBEL, SPIDER, WOBBLE);
     @Nullable
     public static PostChain PANORAMA_SHADER;
+    public static List<PostEffect> EFFECTS = new ArrayList<>();
+    private static final Marker MARKER = MarkerManager.getMarker("ShaderManager");
     public static float blurProgress = 0;
 
     /// @return `true` whether a custom {@link PostEffect} is loaded.
     public static boolean customShaderLoaded() {
-        return CURRENT_EFFECT.shaderIdentifier() != -1;
+        return !CURRENT_EFFECT.isDefault();
     }
 
     /// Sets the currently selected {@link PostEffect}.
@@ -59,8 +65,8 @@ public class ShaderManager {
     public static void setPostEffect(Minecraft minecraft, PostEffect effect, boolean applyInWorld, boolean saveToDisk) {
         CURRENT_EFFECT = effect;
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
-        if (saveToDisk && MellowConfigs.CLIENT_CONFIGS.selectedEffect != null && !MellowConfigs.CLIENT_CONFIGS.selectedEffect.get().equals(effect.assetID().toString())) {
-            MellowConfigs.CLIENT_CONFIGS.selectedEffect.set(effect.assetID().toString());
+        if (saveToDisk && CLIENT_CONFIGS.selectedEffect != null && !CLIENT_CONFIGS.selectedEffect.get().equals(effect.assetID().toString())) {
+            CLIENT_CONFIGS.selectedEffect.set(effect.assetID().toString());
         }
         if (minecraft.level != null && applyInWorld) minecraft.gameRenderer.loadEffect(CURRENT_EFFECT.getPostEffectFile());
     }
@@ -69,7 +75,9 @@ public class ShaderManager {
     /// @param minecraft The *Minecraft* client instance.
     public static void clearPostEffect(Minecraft minecraft) {
         CURRENT_EFFECT = MUI_BLUR;
-        MellowConfigs.CLIENT_CONFIGS.selectedEffect.set(MellowUI.mellowUI("blur").toString());
+        if (CLIENT_CONFIGS.selectedEffect != null && !CLIENT_CONFIGS.selectedEffect.get().equals(MUI_BLUR_ID)) {
+            CLIENT_CONFIGS.selectedEffect.set(MUI_BLUR_ID);
+        }
         reloadPanoramaShaders(minecraft.getResourceManager(), minecraft);
         minecraft.gameRenderer.shutdownEffect();
     }
@@ -85,9 +93,9 @@ public class ShaderManager {
             PANORAMA_SHADER = new PostChain(minecraft.getTextureManager(), resourceManager, minecraft.getMainRenderTarget(), shaderLocation);
             PANORAMA_SHADER.resize(minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
         } catch (IOException exception) {
-            MellowUI.logger("ShaderManager").warn(TextComponents.translate("error.mellowui.load_shader", "Failed to load shader: '%s'", shaderLocation), exception);
+            MellowUI.LOGGER.warn(MARKER, TextComponents.translate("error.mellowui.load_shader", "Failed to load shader: '%s'", shaderLocation), exception);
         } catch (JsonSyntaxException exception) {
-            MellowUI.logger("ShaderManager").warn(TextComponents.translate("error.mellowui.parse_shader", "Failed to parse shader: '%s'", shaderLocation), exception);
+            MellowUI.LOGGER.warn(MARKER, TextComponents.translate("error.mellowui.parse_shader", "Failed to parse shader: '%s'", shaderLocation), exception);
         }
     }
 
@@ -96,15 +104,10 @@ public class ShaderManager {
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
     public static void preparePanoramaShaders(float partialTicks, Boolean fadeIn) {
         if (PANORAMA_SHADER == null) return;
-        if (CURRENT_EFFECT.shaderIdentifier() == -1 && MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get() <= 0) return;
+        if (CURRENT_EFFECT.isDefault() && CLIENT_CONFIGS.menuBackgroundBlurriness.get() <= 0) return;
 
-        if (CURRENT_EFFECT.uniforms().isPresent()) {
-            for (String uniform : CURRENT_EFFECT.uniforms().get()) {
-                float radius = uniform.equals("Radius") && fadeIn != null && MellowConfigs.CLIENT_CONFIGS.fadingBlur.get() ?
-                        (int) fadeBackgroundBlurriness(fadeIn) :
-                        getUniformValue(uniform);
-                ((InterfaceMethods.PostChainMethods) PANORAMA_SHADER).setUniform(uniform, radius);
-            }
+        for (String uniform : CURRENT_EFFECT.uniforms()) {
+            ((InterfaceMethods.PostChainMethods) PANORAMA_SHADER).setUniform(uniform, getUniformValue(uniform, partialTicks, fadeIn));
         }
         PoseStack stack = RenderSystem.getModelViewStack();
 
@@ -120,15 +123,21 @@ public class ShaderManager {
 
     /// Gets the value of a uniform based on its name.
     /// @param name The shader uniform name.
-    /// @return {@linkplain MellowConfigs#menuBackgroundBlurriness **Menu Background Blur**} if the uniform is `Radius`, or `0` if not.
+    /// @param partialTicks The partial tick time.
+    /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
+    /// @return The value of the provided uniform.
     // todo: eventually make a convenient list to change the values of shader uniforms ~isa 15-10-25
-    private static float getUniformValue(String name) {
+    // todo: make this support all types of uniforms ~isa 20-12-25
+    private static float getUniformValue(String name, float partialTicks, Boolean fadeIn) {
         switch (name) {
             case "Radius": {
+                if (CLIENT_CONFIGS.fadingBlur.get() && fadeIn != null) return fadeBackgroundBlurriness(fadeIn);
                 Integer blurStrength = Panoramas.panorama().blurStrength();
-                if (blurStrength != null) return Mth.clamp(blurStrength, 0, 20);
-                return MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+                if (blurStrength != null && Minecraft.getInstance().level == null) return Mth.clamp(blurStrength, 0, 20);
+                return CLIENT_CONFIGS.menuBackgroundBlurriness.get();
             }
+            case "LumaRamp": return 16;
+            case "Time": return partialTicks;
             default: return 0;
         }
     }
@@ -136,7 +145,7 @@ public class ShaderManager {
     /// Processes the panorama {@linkplain PostEffect shader} fade in/out.
     /// @param fadeIn Whether the shader should fade in (`true`), fade out (`false`) or not fade at all  (`null`).
     public static float fadeBackgroundBlurriness(boolean fadeIn) {
-        int targetValue = MellowConfigs.CLIENT_CONFIGS.menuBackgroundBlurriness.get();
+        int targetValue = CLIENT_CONFIGS.menuBackgroundBlurriness.get();
         Integer blurStrength = Panoramas.panorama().blurStrength();
         if (blurStrength != null) {
             targetValue = Mth.clamp(blurStrength, 0, 20);

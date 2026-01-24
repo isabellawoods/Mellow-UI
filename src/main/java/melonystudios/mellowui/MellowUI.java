@@ -40,12 +40,6 @@ public class MellowUI {
         context.registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (remoteVersion, network) -> true));
     }
 
-    /// Gets a logger instance with the `mellowui/<name>` name.
-    /// @param name The name of this logger instance.
-    public static Logger logger(String name) {
-        return LogManager.getLogger(MOD_ID + "/" + name);
-    }
-
     /// Creates a new resource location under ***Mellow UI***'s namespace.
     /// @param name The path of this resource location.
     public static ResourceLocation mellowUI(String name) {

@@ -67,9 +67,9 @@ public class VanillaRenderComponents extends GuiComponent {
     /// @param color The color to set.
     /// @param alpha The alpha component to apply.
     public void setColor(int color, float alpha) {
-        float red = FastColor.ARGB32.red(color);
-        float green = FastColor.ARGB32.green(color);
-        float blue = FastColor.ARGB32.blue(color);
+        float red = FastColor.ARGB32.red(color) / 255F;
+        float green = FastColor.ARGB32.green(color) / 255F;
+        float blue = FastColor.ARGB32.blue(color) / 255F;
         this.setColor(red, green, blue, alpha);
     }
 

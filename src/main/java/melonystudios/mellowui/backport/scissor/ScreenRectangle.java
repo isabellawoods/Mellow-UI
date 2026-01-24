@@ -89,4 +89,9 @@ public record ScreenRectangle(ScreenPosition position, int width, int height) {
     public boolean containsPoint(int x, int y) {
         return x >= this.left() && x < this.right() && y >= this.top() && y < this.bottom();
     }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.position().hashCode() + this.width() + this.height();
+    }
 }

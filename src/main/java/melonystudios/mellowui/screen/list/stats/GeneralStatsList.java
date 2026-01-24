@@ -2,6 +2,8 @@ package melonystudios.mellowui.screen.list.stats;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.backport.StatisticsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -28,6 +30,7 @@ public class GeneralStatsList extends ObjectSelectionList<GeneralStatsList.Entry
         super(minecraft, width, height, y0, y1, entryWidth);
         this.parentScreen = parentScreen;
         this.setRenderHeader(true, 1);
+        this.setRenderSelection(false);
         ObjectArrayList<Stat<ResourceLocation>> customStats = new ObjectArrayList<>(Stats.CUSTOM.iterator());
         customStats.sort(Comparator.comparing(stat -> I18n.get(StatisticsScreen.getTranslationKey(stat))));
         for (Stat<ResourceLocation> stat : customStats) this.addEntry(new Entry(stat));
@@ -66,6 +69,10 @@ public class GeneralStatsList extends ObjectSelectionList<GeneralStatsList.Entry
 
         @Override
         public void render(PoseStack stack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hoveringOver, float partialTicks) {
+            // Render selection
+            int color = TextComponents.selectableColor(GeneralStatsList.this.getSelected() == this, true);
+            if (GeneralStatsList.this.getSelected() == this) RenderComponents.INSTANCE.renderListSelection(left, top, width, height, color);
+
             Font font = GeneralStatsList.this.minecraft.font;
             drawString(stack, font, this.name, left + 2, top + 1, index % 2 == 0 ? 0xFFFFFF : 0xBBBBBB);
             String value = this.stat.format(GeneralStatsList.this.parentScreen.statisticsManager().getValue(this.stat));

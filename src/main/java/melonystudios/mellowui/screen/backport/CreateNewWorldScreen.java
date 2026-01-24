@@ -60,6 +60,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
@@ -72,6 +74,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class CreateNewWorldScreen extends Screen {
+    protected static final Marker MARKER = MarkerManager.getMarker("CreateNewWorldScreen");
     private final RenderComponents components = RenderComponents.INSTANCE;
     @Nullable
     private final Screen lastScreen;
@@ -225,7 +228,7 @@ public class CreateNewWorldScreen extends Screen {
             this.manager.openTab(game);
             this.tabs.get(0).setSelected(true);
         }
-        // MellowUI.LOGGER.debug("all children: {}", this.children);
+        // MellowUI.LOGGER.debug(MARKER, "all children: {}", this.children);
     }
 
     private static void queueLoadScreen(Minecraft minecraft, Component title) {
@@ -332,7 +335,7 @@ public class CreateNewWorldScreen extends Screen {
         try {
             Util.copyBetweenDirs(fromPath, toPath, path);
         } catch (IOException exception) {
-            MellowUI.LOGGER.warn("Failed to copy datapack file from {} to {}", path, toPath);
+            MellowUI.LOGGER.warn(MARKER, "Failed to copy datapack file from {} to {}", path, toPath);
             throw new DatapackException(exception);
         }
     }
@@ -343,7 +346,7 @@ public class CreateNewWorldScreen extends Screen {
             try {
                 this.tempDataPackDirectory = Files.createTempDirectory("mcworld-");
             } catch (IOException exception) {
-                MellowUI.LOGGER.warn("Failed to create temporary data packs directory", exception);
+                MellowUI.LOGGER.warn(MARKER, "Failed to create temporary data packs directory", exception);
                 SystemToast.onPackCopyFailure(this.minecraft, this.uiState.getTargetFolder());
                 this.popScreen();
             }
@@ -362,7 +365,7 @@ public class CreateNewWorldScreen extends Screen {
                 Files.createDirectories(datapacksFolder);
                 stream.filter(path -> !path.equals(this.tempDataPackDirectory)).forEach(path -> copyBetweenDirectories(this.tempDataPackDirectory, datapacksFolder, path));
             } catch (DatapackException | IOException exception) {
-                MellowUI.LOGGER.warn("Failed to copy datapacks to world {}", this.uiState.getTargetFolder(), exception);
+                MellowUI.LOGGER.warn(MARKER, "Failed to copy datapacks to world {}", this.uiState.getTargetFolder(), exception);
                 SystemToast.onPackCopyFailure(this.minecraft, this.uiState.getTargetFolder());
                 this.popScreen();
                 return false;
@@ -379,11 +382,11 @@ public class CreateNewWorldScreen extends Screen {
                     try {
                         Files.delete(path);
                     } catch (IOException exception) {
-                        MellowUI.LOGGER.warn("Failed to remove temporary file {}", path, exception);
+                        MellowUI.LOGGER.warn(MARKER, "Failed to remove temporary file {}", path, exception);
                     }
                 });
             } catch (IOException exception) {
-                MellowUI.LOGGER.warn("Failed to list temporary directory {}", this.tempDataPackDirectory);
+                MellowUI.LOGGER.warn(MARKER, "Failed to list temporary directory {}", this.tempDataPackDirectory);
             }
 
             this.tempDataPackDirectory = null;
@@ -412,9 +415,9 @@ public class CreateNewWorldScreen extends Screen {
                 this.dataPacks = config;
                 this.uiState.tryUpdateDataConfiguration(stem);
                 stem.close();
-            }, this.minecraft).handle((p_205431_, exception) -> {
+            }, this.minecraft).handle((void1, exception) -> {
                 if (exception != null) {
-                    MellowUI.LOGGER.warn("Failed to validate datapack", exception);
+                    MellowUI.LOGGER.warn(MARKER, "Failed to validate datapack", exception);
                     this.minecraft.tell(() -> this.minecraft.setScreen(new ConfirmScreen(onTrue -> {
                         if (onTrue) {
                             this.openDataPacksSelectionScreen();
@@ -510,7 +513,7 @@ public class CreateNewWorldScreen extends Screen {
             CreateNewWorldScreen.this.uiState().addListener(state -> allowCommandsButton.active = !state.isDebug() && !state.isHardcore());
             this.addWidget(allowCommandsButton);
 
-            // MellowUI.LOGGER.debug("all widgets: {}", this.widgets);
+            // MellowUI.LOGGER.debug(MARKER, "all widgets: {}", this.widgets);
             super.init();
         }
 

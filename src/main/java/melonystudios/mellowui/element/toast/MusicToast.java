@@ -7,18 +7,16 @@ import melonystudios.mellowui.config.WidgetConfigs;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.util.GUITextures;
-import net.minecraft.Util;
+import melonystudios.mellowui.util.debug.MUIDebuggingFlags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.GuiUtils;
@@ -68,10 +66,13 @@ public class MusicToast implements Toast {
         // Text
         GuiComponent.drawString(stack, minecraft.font, this.getMusicName(), 32, (height - 8) / 2, 0xFFFFFF);
 
-        if (this.fromPauseMenu && ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null) {
-            return minecraft.screen instanceof PauseScreen ? Visibility.SHOW : Visibility.HIDE;
-        }
-        return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? Toast.Visibility.SHOW : Toast.Visibility.HIDE;
+        // if toast debugging is enabled, render it.
+        boolean isPlaying = ((InterfaceMethods.MusicManagerMethods) minecraft.getMusicManager()).mui$getNowPlaying() != null;
+        if (MUIDebuggingFlags.DEBUG_CONSTANT_MUSIC_TOAST && isPlaying) return Visibility.SHOW;
+
+        // If it's from, and in, the pause screen (and the song is playing), render it
+        if (this.fromPauseMenu && isPlaying) return minecraft.screen instanceof PauseScreen ? Visibility.SHOW : Visibility.HIDE;
+        return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? Visibility.SHOW : Visibility.HIDE;
     }
 
     private void tickMusicNoteColor() {

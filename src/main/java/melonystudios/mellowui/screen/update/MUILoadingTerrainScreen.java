@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.util.CompatUtils;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.shader.ShaderManager;
+import melonystudios.mellowui.util.ShaderManager;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -56,7 +56,7 @@ public class MUILoadingTerrainScreen extends Screen {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack, 0);
         super.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, DOWNLOADING_TERRAIN_TEXT, this.width / 2, this.height / 2 - 50, 0xFFFFFF);
+        this.components.drawCenteredString(DOWNLOADING_TERRAIN_TEXT, true, this.width / 2, this.height / 2 - 50, 0xFFFFFF);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class MUILoadingTerrainScreen extends Screen {
                 break;
             case ALJAN_PORTAL_STAND: // From Back Math
                 this.components.renderPanorama(partialTicks, this.width, this.height, 1); // in case the aljanstone texture is transparent ~isa 20-6-25
-                this.components.renderTiledBackground(GUITextures.ALJANSTONE_BACKGROUND, 64, 0, 0, this.width, this.height, vOffset);
+                this.components.renderTiledBackground(GUITextures.ALJANSTONE_BACKGROUND, RenderComponents.OLD_BACKGROUND_BRIGHTNESS, 0, 0, this.width, this.height, vOffset);
                 this.components.renderBackgroundShaders(partialTicks);
                 break;
             case EVERBRIGHT_PORTAL: // From Blue Skies

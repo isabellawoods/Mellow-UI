@@ -3,6 +3,8 @@ package melonystudios.mellowui.event;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.resource.flair.FlairReloadListener;
 import melonystudios.mellowui.resource.panorama.PanoramaReloadListener;
+import melonystudios.mellowui.resource.posteffect.PostEffectReloadListener;
+import melonystudios.mellowui.resource.theme.ThemeReloadListener;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.packs.PackResources;
@@ -44,7 +46,9 @@ public class MUIClientEvents {
     @SubscribeEvent
     public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
         GUITextures.registerGUITextureManager();
+        event.registerReloadListener(new PostEffectReloadListener());
         event.registerReloadListener(new FlairReloadListener());
         event.registerReloadListener(new PanoramaReloadListener());
+        event.registerReloadListener(new ThemeReloadListener());
     }
 }

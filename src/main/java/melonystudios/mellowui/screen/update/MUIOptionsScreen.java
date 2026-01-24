@@ -155,13 +155,13 @@ public class MUIOptionsScreen extends OptionsSubScreen {
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
-    public static void updateResourcePacksList(PackRepository packList) {
+    public static void updateResourcePacksList(PackRepository repository) {
         Minecraft minecraft = Minecraft.getInstance();
         List<String> resourcePacks = ImmutableList.copyOf(minecraft.options.resourcePacks);
         minecraft.options.resourcePacks.clear();
         minecraft.options.incompatibleResourcePacks.clear();
 
-        for (Pack packInfo : packList.getSelectedPacks()) {
+        for (Pack packInfo : repository.getSelectedPacks()) {
             if (!packInfo.isFixedPosition()) {
                 minecraft.options.resourcePacks.add(packInfo.getId());
                 if (!packInfo.getCompatibility().isCompatible()) minecraft.options.incompatibleResourcePacks.add(packInfo.getId());

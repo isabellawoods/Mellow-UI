@@ -6,17 +6,16 @@ import com.google.gson.JsonElement;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.resource.AssetReloadListener;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Map;
 
 public class FlairReloadListener extends AssetReloadListener {
-    public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/FlairReloader");
+    private static final Marker MARKER = MarkerManager.getMarker("FlairReloader");
     public static final Gson GSON = Flair.createFlairSerializer().create();
 
     public FlairReloadListener() {
@@ -31,11 +30,11 @@ public class FlairReloadListener extends AssetReloadListener {
             try {
                 if (element.isJsonObject()) flairs.put(location, GSON.fromJson(element, Flair.class));
             } catch (Exception exception) {
-                LOGGER.error(TextComponents.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", location), exception);
+                MellowUI.LOGGER.error(MARKER, TextComponents.translate("logger.mellowui.flair.parsing", "Failed to parse flair '%s'", location), exception);
             }
         });
-        MellowUtils.FLAIRS.clear();
-        MellowUtils.FLAIRS.putAll(flairs.build());
-        LOGGER.info(TextComponents.translate("logger.mellowui.flair.loaded", "Loaded %s flair(s)", flairs.build().size()));
+        Flairs.FLAIRS.clear();
+        Flairs.FLAIRS.putAll(flairs.build());
+        MellowUI.LOGGER.info(MARKER, TextComponents.translate("logger.mellowui.flair.loaded", "Loaded %s flair(s)", flairs.build().size()));
     }
 }

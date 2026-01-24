@@ -10,8 +10,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AssetReloadListener extends SimplePreparableReloadListener<Map<ResourceLocation, JsonElement>> {
-    public static final Logger LOGGER = LogManager.getLogger(MellowUI.MOD_ID + "/AssetReloader");
+    private static final Marker MARKER = MarkerManager.getMarker("AssetReloader");
     public static final int PATH_SUFFIX_LENGTH = ".json".length();
     private final Gson gson;
     private final String directory;
@@ -49,10 +49,10 @@ public abstract class AssetReloadListener extends SimplePreparableReloadListener
                     JsonElement element1 = entries.put(entryLocation, element);
                     if (element1 != null) throw new IllegalArgumentException(TextComponents.translate("logger.mellowui.asset_reloader.duplicate", "Ignored duplicate asset file with ID '%s'", entryLocation));
                 } else {
-                    LOGGER.error(TextComponents.translate("logger.mellowui.asset_reloader.loading", "Couldn't load asset file '%s' from '%s' as it's null or empty", entryLocation, fileLocation));
+                    MellowUI.LOGGER.error(MARKER, TextComponents.translate("logger.mellowui.asset_reloader.loading", "Couldn't load asset file '%s' from '%s' as it's null or empty", entryLocation, fileLocation));
                 }
             } catch (IllegalArgumentException | IOException | JsonParseException exception) {
-                LOGGER.error(TextComponents.translate("logger.mellowui.asset_reloader.parsing", "Couldn't parse asset file '%s' from '%s'", entryLocation, fileLocation), exception);
+                MellowUI.LOGGER.error(MARKER, TextComponents.translate("logger.mellowui.asset_reloader.parsing", "Couldn't parse asset file '%s' from '%s'", entryLocation, fileLocation), exception);
             }
         }
 

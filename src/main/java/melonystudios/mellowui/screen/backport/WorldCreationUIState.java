@@ -248,7 +248,7 @@ public class WorldCreationUIState {
         DataResult<WorldGenSettings> result = WorldGenSettings.CODEC.encodeStart(settingsExport, this.settings).flatMap(
                 element -> WorldGenSettings.CODEC.parse(settingsImport, element));
 
-        result.resultOrPartial(Util.prefix("Error parsing world generation settings after loading data packs: ", MellowUI.LOGGER::error)).ifPresent(settings -> {
+        result.resultOrPartial(Util.prefix("Error parsing world generation settings after loading data packs: ", error -> MellowUI.LOGGER.error(CreateNewWorldScreen.MARKER, error))).ifPresent(settings -> {
             this.settings = settings;
             this.registryHolder = registryHolder;
         });
