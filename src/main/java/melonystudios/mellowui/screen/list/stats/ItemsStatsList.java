@@ -117,7 +117,8 @@ public class ItemsStatsList extends ObjectSelectionList<ItemsStatsList.Entry> im
         if (!this.minecraft.mouseHandler.isLeftPressed()) this.headerPressed = -1;
 
         for (int i = 0; i < this.iconOffsets.length; ++i) {
-            boolean iconHovered = this.mouseX >= x + StatisticsScreen.getColumnX(i) - 18 && this.mouseY >= (y + 1) && this.mouseX < (x + StatisticsScreen.getColumnX(i)) && this.mouseY < (y + 19);
+            boolean iconHovered = this.mouseX >= x + StatisticsScreen.getColumnX(i) - 18 && this.mouseY >= (y + 1) && this.mouseX < (x + StatisticsScreen.getColumnX(i)) && this.mouseY < (y + 19) &&
+                    RenderComponents.INSTANCE.containsPointInScissor(this.mouseX, this.mouseY);
             boolean columnPressed = StatisticsScreen.getColumnX(this.getColumnIndex(this.sortColumn)) == StatisticsScreen.getColumnX(i);
             this.parentScreen.blitSlotIcon(stack, x + StatisticsScreen.getColumnX(i) - 18, y + 1, 0, this.headerPressed == i || columnPressed || iconHovered ? 0 : 18);
         }

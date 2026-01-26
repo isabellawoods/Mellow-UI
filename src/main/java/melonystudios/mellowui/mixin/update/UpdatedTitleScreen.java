@@ -9,6 +9,8 @@ import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.ImageSetModButton;
 import melonystudios.mellowui.element.widget.ModButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.element.widget.WidgetLocations;
 import melonystudios.mellowui.element.widget.text.MUIPlainTextButton;
 import melonystudios.mellowui.methods.InterfaceMethods;
 import melonystudios.mellowui.renderer.LogoRenderer;
@@ -21,7 +23,6 @@ import melonystudios.mellowui.screen.backport.AccessibilityOnboardingScreen;
 import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
 import melonystudios.mellowui.screen.update.TitleScreen32BitWarning;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.*;
@@ -123,24 +124,24 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 // Mods
                 if (buttonStyle == FourStyles.OPTION_1) {
                     this.addRenderableWidget(new ModButton(this.width / 2 + 2, buttonsPos + 48, 98, 20,
-                            new TranslatableComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
+                            new TranslatableComponent("fml.menu.mods"), button -> this.minecraft.setScreen(WidgetLocations.openModList(this))));
                 } else if (buttonStyle == FourStyles.OPTION_3) {
                     this.addRenderableWidget(new ModButton(this.width / 2 - 100, buttonsPos + 48, 200, 20,
-                            new TranslatableComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
+                            new TranslatableComponent("fml.menu.mods"), button -> this.minecraft.setScreen(WidgetLocations.openModList(this))));
                 } else if (buttonStyle == FourStyles.OPTION_2) {
                     this.addRenderableWidget(new ImageSetModButton(this.width / 2 + 104, buttonsPos + 48, 20, 20,
-                            GUITextures.MODS_SET, button -> this.minecraft.setScreen(MellowUtils.modList(this)), (button, stack, mouseX, mouseY) ->
+                            GUITextures.MODS_SET, button -> this.minecraft.setScreen(WidgetLocations.openModList(this)), (button, stack, mouseX, mouseY) ->
                             this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.mods.tooltip", ModList.get().getMods().size()), mouseX, mouseY),
                             new TranslatableComponent("fml.menu.mods")).renderOnCorner(true));
                 } else if (buttonStyle == FourStyles.OPTION_4) {
                     this.addRenderableWidget(new ModButton(this.width / 2 - 100, buttonsPos + 72, 200, 20,
-                            new TranslatableComponent("fml.menu.mods"), button -> this.minecraft.setScreen(MellowUtils.modList(this))));
+                            new TranslatableComponent("fml.menu.mods"), button -> this.minecraft.setScreen(WidgetLocations.openModList(this))));
                 }
             }
 
             // Language
             this.addRenderableWidget(new ImageButton(this.width / 2 - 124, buttonsPos + 84 + heightOffset, 20, 20, 0, 106, 20,
-                    Button.WIDGETS_LOCATION, 256, 256, button -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), (button, stack, mouseX, mouseY) ->
+                    Button.WIDGETS_LOCATION, 256, 256, button -> this.minecraft.setScreen(WidgetLocations.openLanguage(this, this.minecraft)), (button, stack, mouseX, mouseY) ->
                     this.components.renderTooltip(this, button, new TranslatableComponent("options.language"), mouseX, mouseY),
                     new TranslatableComponent("narrator.button.language")));
 
@@ -175,12 +176,13 @@ public abstract class UpdatedTitleScreen extends Screen implements InterfaceMeth
                 this.warning32Bit = new TitleScreen32BitWarning(MultiLineLabel.create(this.font, new TranslatableComponent("title.32bit.deprecation"), 350, 2), this.width / 2, buttonsPos - 36, subscriptionFuture);
             }
         }
+        WidgetComponents components = WidgetComponents.components(this, this::addRenderableWidget);
 
         // Switch Style
-        this.addRenderableWidget(this.components.switchStyle(button -> MellowUtils.switchTitleScreenStyle(this.minecraft), this.width - 21, 8));
+        components.switchStyle(button -> WidgetLocations.switchTitleScreenStyle(this.minecraft), this.width - 21, 8);
 
         // Customize
-        this.addRenderableWidget(this.components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 21, 21));
+        components.customize(button -> this.minecraft.setScreen(new MellowCustomizationScreen(this, this.minecraft.options)), this.width - 21, 21);
     }
 
     /// Adds Singleplayer and Multiplayer buttons on Main Menu for players who have bought the game.

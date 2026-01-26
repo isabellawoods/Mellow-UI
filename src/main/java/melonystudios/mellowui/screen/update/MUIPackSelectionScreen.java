@@ -8,7 +8,9 @@ import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.ImageSetButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.list.MUIPackList;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
@@ -16,7 +18,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -54,26 +55,25 @@ public class MUIPackSelectionScreen extends Screen {
 
     @Override
     protected void init() {
-        this.packList = new MUIPackList(this.minecraft, this.width, this.height, 32, this.height - 32, 36);
+        this.packList = new MUIPackList(this.minecraft, this.width, this.height, 33, this.height - 33, 36);
         this.addWidget(this.packList);
 
         // Open Folder button
-        this.addRenderableWidget(new ImageSetButton(this.width / 2 + 104, this.height - 25, 20, 20, GUITextures.OPEN_FOLDER_SET,
+        this.addRenderableWidget(new ImageSetButton(this.width / 2 + 104, this.height - 26, 20, 20, GUITextures.OPEN_FOLDER_SET,
                 button -> Util.getPlatform().openFile(this.packDirectory), (button, stack, mouseX, mouseY) ->
                 this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.open_pack_folder"), mouseX, mouseY),
                 new TranslatableComponent("button.mellowui.open_pack_folder")));
 
         // Done button
-        this.doneButton = this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        this.doneButton = WidgetComponents.components(this, this::addRenderableWidget).done(Alignment.CENTER);
     }
 
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.packList.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 8, 0xFFFFFF);
-        drawCenteredString(stack, this.font, new TranslatableComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), this.width / 2, 20, 0xFFFFFF);
+        this.components.drawTitle(this.title.copy().withStyle(TextComponents.titleStyle()), this.width, 8);
+        this.components.drawCenteredString(new TranslatableComponent("pack.dropInfo").withStyle(TextComponents.descriptionStyle()), true, this.width / 2, 20, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

@@ -1,0 +1,111 @@
+package melonystudios.mellowui.element.widget;
+
+import melonystudios.mellowui.element.RenderComponents;
+import melonystudios.mellowui.util.Alignment;
+import melonystudios.mellowui.util.GUITextures;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.TranslatableComponent;
+
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
+
+/// ***Widget Components*** is a utility class that provides instances of widgets that are
+/// used more than once throughout the codebase.
+public class WidgetComponents {
+    private final Minecraft minecraft;
+    private final Screen screen;
+    private final Consumer<AbstractWidget> addButton;
+
+    /// ***Widget Components*** is a utility class that provides instances of widgets that are
+    /// used more than once throughout the codebase.
+    /// @param minecraft The *Minecraft* instance class.
+    /// @param screen The screen where these widgets are being added. Can be `null`.
+    /// @param addButton A consumer to add buttons to the screen.
+    private WidgetComponents(Minecraft minecraft, Screen screen, Consumer<AbstractWidget> addButton) {
+        this.minecraft = minecraft;
+        this.screen = screen;
+        this.addButton = addButton;
+    }
+
+    /// Creates a new instance of the ***Widget Components***.
+    /// @param screen The screen where these widgets are being added. Can be `null`.
+    /// @param addButton A consumer to add buttons to the screen.
+    public static WidgetComponents components(@Nullable Screen screen, Consumer<AbstractWidget> addButton) {
+        return new WidgetComponents(Minecraft.getInstance(), screen, addButton);
+    }
+
+    /// @return The default instance of the ***Render Components***.
+    public RenderComponents components() {
+        return RenderComponents.INSTANCE;
+    }
+
+    /// Opens the confirmation screen when trying to open a link.
+    /// @param lastScreen The parent screen, or the one that lead to this confirmation screen.
+    /// @param url The URL to be opened (or not).
+    /// @param showWarning Whether to show the "Never open links from people that you don't trust!" text.
+    public static void openLink(Screen lastScreen, String url, boolean showWarning) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.setScreen(new ConfirmLinkScreen(confirmed -> {
+            if (confirmed) Util.getPlatform().openUri(url);
+            minecraft.setScreen(lastScreen);
+        }, url, !showWarning));
+    }
+
+    public Button done(Alignment alignment) {
+        return switch (alignment) {
+            case LEFT -> this.done(this.screen.width / 2 - 155, 150);
+            case RIGHT -> this.done(this.screen.width / 2 + 5, 150);
+            default -> this.done(this.screen.width / 2 - 100, 200);
+        };
+    }
+
+    public Button done(int x, int width) {
+        Button doneButton = new Button(x, this.screen.height - 26, width, 20, CommonComponents.GUI_DONE,
+                button -> this.screen.onClose());
+        this.addButton.accept(doneButton);
+        return doneButton;
+    }
+
+    /// Creates and adds a new *"Switch Style"* {@link IconButton}.
+    /// @param onPressed What happens when this button is {@linkplain Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public void switchStyle(Button.OnPress onPressed, int x, int y) {
+        this.addButton.accept(new IconButton(x, y, 12, 12, GUITextures.SWITCH_STYLE_SET, new TranslatableComponent("button.mellowui.switch_style"), onPressed));
+    }
+
+    /// Creates and adds a new *"Customize"* {@link IconButton}.
+    /// @param onPressed What happens when this button is {@linkplain Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public void customize(Button.OnPress onPressed, int x, int y) {
+        this.addButton.accept(new IconButton(x, y, 12, 12, GUITextures.CUSTOMIZE_SET, new TranslatableComponent("button.mellowui.customize.title"), onPressed));
+    }
+
+    /// Creates a new *"Enable Packs"* {@link IconButton}.
+    /// @param onPressed What happens when this button is {@linkplain Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public IconButton enablePacks(Button.OnPress onPressed, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.ENABLE_PACKS_SET, new TranslatableComponent("button.mellowui.enable_packs.title"), onPressed);
+    }
+
+    /// Creates a new *"Disable Packs"* {@link IconButton}.
+    /// @param onPressed What happens when this button is {@linkplain Button.OnPress pressed}.
+    /// @param x The x-position of the button.
+    /// @param y The y-position of the button.
+    public IconButton disablePacks(Button.OnPress onPressed, int x, int y) {
+        return new IconButton(x, y, 12, 12, GUITextures.DISABLE_PACKS_SET, new TranslatableComponent("button.mellowui.disable_packs.title"), onPressed);
+    }
+
+    public OptionsList optionsList(int minY, int maxY) {
+        return new OptionsList(this.minecraft, this.screen.width, this.screen.height, minY, maxY, 25);
+    }
+}

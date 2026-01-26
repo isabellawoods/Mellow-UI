@@ -3,6 +3,7 @@ package melonystudios.mellowui.screen.update;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.Util;
 import net.minecraft.client.gui.chat.NarratorChatListener;
@@ -63,7 +64,7 @@ public class WorldLoadingScreen extends Screen {
         this.renderChunkMap(stack, halfWidth, halfHeight + 10, 2, 0);
         fill(stack, halfWidth - 100, halfHeight - 49, halfWidth + 100, halfHeight - 47, 0xFF000000);
         fill(stack, halfWidth - 100, halfHeight - 49, halfWidth  - 100 + (progress * 2), halfHeight - 47, 0xFF00FF00);
-        drawCenteredString(stack, this.font, new TranslatableComponent("multiplayer.downloadingTerrain").withStyle(TextComponents.titleStyle()), halfWidth, halfHeight - 61, 0xFFFFFF);
+        RenderComponents.INSTANCE.drawTitle(new TranslatableComponent("multiplayer.downloadingTerrain").withStyle(TextComponents.titleStyle()), this.width, halfHeight - 61);
     }
 
     private void renderChunkMap(PoseStack stack, int x, int y, int i2, int i3) {

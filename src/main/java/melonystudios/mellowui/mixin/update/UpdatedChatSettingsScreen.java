@@ -2,18 +2,18 @@ package melonystudios.mellowui.mixin.update;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ChatOptionsScreen;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -26,6 +26,8 @@ import java.util.List;
 
 @Mixin(value = ChatOptionsScreen.class, priority = 900)
 public class UpdatedChatSettingsScreen extends OptionsSubScreen {
+    @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow
     @Final
     private static Option[] CHAT_OPTIONS;
@@ -38,32 +40,26 @@ public class UpdatedChatSettingsScreen extends OptionsSubScreen {
 
     @Override
     protected void init() {
-        if (MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) {
-            this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-            this.list.addSmall(CHAT_OPTIONS);
-            this.addWidget(this.list);
+        if (!MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) super.init();
+        WidgetComponents components = WidgetComponents.components(this, this::addRenderableWidget);
+        this.list = components.optionsList(33, this.height - 33);
+        this.list.addSmall(CHAT_OPTIONS);
+        this.addWidget(this.list);
 
-            // Done button
-            this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                    button -> this.minecraft.setScreen(this.lastScreen)));
-        } else {
-            super.init();
-        }
+        // Done button
+        components.done(Alignment.CENTER);
     }
 
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        if (MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) {
-            this.renderBackground(stack);
-            this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, new TranslatableComponent("menu.minecraft.chat_settings.title").withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
-            for (GuiEventListener listener : this.children()) {
-                if (listener instanceof AbstractWidget widget) widget.render(stack, mouseX, mouseY, partialTicks);
-            }
-            List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
-            if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
-        } else {
-            super.render(stack, mouseX, mouseY, partialTicks);
+        if (!MellowConfigs.CLIENT_CONFIGS.mouseSettingsStyle.get()) super.render(stack, mouseX, mouseY, partialTicks);
+        this.renderBackground(stack);
+        this.list.render(stack, mouseX, mouseY, partialTicks);
+        this.components.drawTitle(new TranslatableComponent("menu.minecraft.chat_settings.title").withStyle(TextComponents.titleStyle()), this.width);
+        for (GuiEventListener listener : this.children()) {
+            if (listener instanceof Widget widget) widget.render(stack, mouseX, mouseY, partialTicks);
         }
+        List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
+        if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

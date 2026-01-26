@@ -14,7 +14,7 @@ import java.util.List;
 public class MellowConfigs {
     public static final List<String> CLASSIFIED_AS_CONTAINERS = Lists.newArrayList(
             "com.wildfire.gui.screen.WardrobeBrowserScreen", "com.wildfire.gui.screen.WildfireBreastCustomizationScreen", "com.wildfire.gui.screen.WildfireCharacterSettingsScreen", "com.wildfire.gui.screen.WildfirePlayerListScreen",
-            "mezz.jei.gui.recipes.RecipesGui", "me.shedaniel.rei.impl.client.gui.screen.DefaultDisplayViewingScreen");
+            "mezz.jei.common.gui.recipes.RecipesGui", "me.shedaniel.rei.impl.client.gui.screen.DefaultDisplayViewingScreen");
     private static final Pair<MellowConfigs, ForgeConfigSpec> CLIENT_CONFIG_PAIR = new ForgeConfigSpec.Builder().configure(MellowConfigs::new);
     public static final MellowConfigs CLIENT_CONFIGS = CLIENT_CONFIG_PAIR.getLeft();
     public static final ForgeConfigSpec CLIENT_SPEC = CLIENT_CONFIG_PAIR.getRight();
@@ -65,6 +65,7 @@ public class MellowConfigs {
     public final ForgeConfigSpec.BooleanValue musicAndSoundsStyle;
     public final ForgeConfigSpec.EnumValue<ThreeStyles> videoSettingsStyle;
     public final ForgeConfigSpec.BooleanValue controlsStyle;
+    public final ForgeConfigSpec.BooleanValue languageStyle;
     public final ForgeConfigSpec.BooleanValue mouseSettingsStyle;
     public final ForgeConfigSpec.BooleanValue chatSettingsStyle;
     public final ForgeConfigSpec.BooleanValue packListStyle;
@@ -140,6 +141,7 @@ public class MellowConfigs {
         this.musicAndSoundsStyle = builder.comment("Which style to use for the music & sounds menu.").translation("config.mellowui.music_and_sounds_style").define("musicAndSoundsMenu", true);
         this.videoSettingsStyle = builder.comment("Which style to use for the video settings menu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Rubidium").translation("config.mellowui.video_settings_style").defineEnum("videoSettingsMenu", ThreeStyles.OPTION_3);
         this.controlsStyle = builder.comment("Which style to use for the menu accessed from the controls button.").translation("config.mellowui.controls_style").define("controlsMenu", true);
+        this.languageStyle = builder.comment("Which style to use for the language menu..").translation("config.mellowui.language_style").define("languageMenu", true);
         this.mouseSettingsStyle = builder.comment("Which style to use for the mouse settings menu.").translation("config.mellowui.mouse_settings_style").define("mouseSettingsMenu", true);
         this.chatSettingsStyle = builder.comment("Which style to use for the chat settings menu.").translation("config.mellowui.chat_settings_style").define("chatSettingsMenu", true);
         this.packListStyle = builder.comment("Which style to use for the resource and data packs list.", "True = Mellow UI | False = Vanilla.").translation("config.mellowui.pack_list_style").define("packListMenu", false);

@@ -22,7 +22,7 @@ public abstract class MUIOptionsListMixin<E extends ContainerObjectSelectionList
 
     @Inject(method = "getScrollbarPosition", at = @At("HEAD"), cancellable = true)
     protected void getScrollbarPosition(CallbackInfoReturnable<Integer> callback) {
-        callback.setReturnValue(this.getRealRowRight() + 10);
+        callback.setReturnValue(this.getRealRowRight() + 8);
     }
 
     @Unique

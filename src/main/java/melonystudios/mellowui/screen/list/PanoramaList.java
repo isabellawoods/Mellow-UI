@@ -15,6 +15,7 @@ import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.GameRenderer;
@@ -38,7 +39,7 @@ public class PanoramaList extends ObjectSelectionList<PanoramaList.Entry> {
     private final Minecraft minecraft;
 
     public PanoramaList(Minecraft minecraft, MellowCustomizationScreen parentScreen) {
-        super(minecraft, parentScreen.width, parentScreen.height, 22, parentScreen.height - 32, 84);
+        super(minecraft, parentScreen.width, parentScreen.height, 24, parentScreen.height - 33, 84);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
         this.setRenderSelection(false);
@@ -101,6 +102,7 @@ public class PanoramaList extends ObjectSelectionList<PanoramaList.Entry> {
     public void setSelected(@Nullable Entry entry) {
         super.setSelected(entry);
         if (entry == null || !this.canSelectPanorama()) return;
+        NarratorChatListener.INSTANCE.sayNow(new TranslatableComponent("narrator.select", new TranslatableComponent(entry.assetID.getNamespace().equals("generated") ? "panorama.mellowui.generated" : entry.panorama.getDescriptionID()).getString()));
 
         Themes.lastSelectedPanorama = entry.assetID;
         if (!MellowConfigs.CLIENT_CONFIGS.selectedPanorama.get().equals(entry.assetID.toString())) {

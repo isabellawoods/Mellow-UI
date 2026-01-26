@@ -4,17 +4,17 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.type.ThreeStyles;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.FullscreenResolutionProgressOption;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.VideoSettingsScreen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.spongepowered.asm.mixin.Final;
@@ -33,6 +33,8 @@ import static net.minecraft.client.Option.*;
 
 @Mixin(value = VideoSettingsScreen.class, priority = 900)
 public class UpdatedVideoSettingsScreen extends OptionsSubScreen {
+    @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
     @Shadow
     @Final
     private static Option[] OPTIONS;
@@ -49,7 +51,8 @@ public class UpdatedVideoSettingsScreen extends OptionsSubScreen {
     protected void init(CallbackInfo callback) {
         if (MellowConfigs.CLIENT_CONFIGS.videoSettingsStyle.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
-        this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        WidgetComponents components = WidgetComponents.components(this, this::addRenderableWidget);
+        this.list = components.optionsList(33, this.height - 33);
         this.list.addBig(new FullscreenResolutionProgressOption(this.minecraft.getWindow()));
         this.list.addBig(BIOME_BLEND_RADIUS);
 
@@ -63,8 +66,7 @@ public class UpdatedVideoSettingsScreen extends OptionsSubScreen {
         this.addWidget(this.list);
 
         // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.CENTER);
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
@@ -73,7 +75,7 @@ public class UpdatedVideoSettingsScreen extends OptionsSubScreen {
         callback.cancel();
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title.copy().withStyle(TextComponents.titleStyle()), this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
         List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
         if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
@@ -84,6 +86,7 @@ public class UpdatedVideoSettingsScreen extends OptionsSubScreen {
         if (MellowConfigs.CLIENT_CONFIGS.videoSettingsStyle.get() == ThreeStyles.OPTION_1) return;
         callback.cancel();
         int guiScale = this.options.guiScale;
+
         if (super.mouseReleased(mouseX, mouseY, button)) {
             callback.setReturnValue(true);
         } else if (this.list.mouseReleased(mouseX, mouseY, button)) {

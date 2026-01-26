@@ -9,6 +9,7 @@ import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.MUIMultiLineLabel;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.IconButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.resource.theme.Theme;
 import melonystudios.mellowui.resource.theme.Themes;
 import melonystudios.mellowui.screen.MellowCustomizationScreen;
@@ -40,7 +41,7 @@ public class ThemeList extends ObjectSelectionList<ThemeList.Entry> {
     private final Minecraft minecraft;
 
     public ThemeList(Minecraft minecraft, MellowCustomizationScreen parentScreen) {
-        super(minecraft, parentScreen.width, parentScreen.height, 22, parentScreen.height - 32, 36);
+        super(minecraft, parentScreen.width, parentScreen.height, 24, parentScreen.height - 33, 36);
         this.minecraft = minecraft;
         this.parentScreen = parentScreen;
         this.setRenderSelection(false);
@@ -147,8 +148,9 @@ public class ThemeList extends ObjectSelectionList<ThemeList.Entry> {
             this.assetID = assetID;
             this.theme = theme;
             if (!theme.resourcePacks().isEmpty()) {
-                this.applyPacks = this.components.enablePacks(button -> Themes.enablePacksFrom(theme), 0, 0);
-                this.removePacks = this.components.disablePacks(button -> Themes.disablePacksFrom(theme), 0, 0);
+                WidgetComponents components = WidgetComponents.components(ThemeList.this.parentScreen, widget -> {});
+                this.applyPacks = components.enablePacks(button -> Themes.enablePacksFrom(theme), 0, 0);
+                this.removePacks = components.disablePacks(button -> Themes.disablePacksFrom(theme), 0, 0);
             }
         }
 

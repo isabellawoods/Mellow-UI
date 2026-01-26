@@ -26,7 +26,7 @@ public class LoadingMessageList extends ObjectSelectionList<LoadingMessageList.M
     private final LoadingErrorsScreen parentScreen;
 
     public LoadingMessageList(LoadingErrorsScreen parentScreen, List<ModLoadingException> loadErrors, List<ModLoadingWarning> loadWarnings) {
-        super(parentScreen.getMinecraft(), parentScreen.width, parentScreen.height, 32, parentScreen.height - 56, Math.max(
+        super(parentScreen.getMinecraft(), parentScreen.width, parentScreen.height, 33, parentScreen.height - 57, Math.max(
                 loadErrors.stream().mapToInt(error -> parentScreen.getMinecraft().font.split(new TextComponent(error.formatToString()), ROW_WIDTH - 10).size()).max().orElse(0),
                 loadWarnings.stream().mapToInt(warning -> parentScreen.getMinecraft().font.split(new TextComponent(warning.formatToString()), ROW_WIDTH - 10).size()).max().orElse(0)) *
                 parentScreen.getMinecraft().font.lineHeight + 11);

@@ -148,7 +148,7 @@ public class CreateNewWorldScreen extends Screen {
 
     @Override
     public void tick() {
-        if (this.manager.getCurrentTab() != null) this.manager.getCurrentTab().tickingWidgets.forEach(TickingWidget::tick);
+        if (this.manager.getCurrentTab() != null) this.manager.getCurrentTab().tickingWidgets.forEach(TickingWidget::tickWidget);
     }
 
     @Override

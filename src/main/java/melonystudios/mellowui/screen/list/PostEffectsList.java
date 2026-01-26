@@ -38,9 +38,9 @@ public class PostEffectsList extends ObjectSelectionList<PostEffectsList.Shader>
     private TooltipDisplayData tooltipData;
     private final boolean canSelectShaders = Panoramas.panorama().shader() == null;
 
-    public PostEffectsList(Minecraft minecraft, SuperSecretSettingsScreen parentScreen) {
-        super(minecraft, parentScreen.width, parentScreen.height, 32, parentScreen.height - 32, 16);
-        this.minecraft = minecraft;
+    public PostEffectsList(SuperSecretSettingsScreen parentScreen) {
+        super(parentScreen.getMinecraft(), parentScreen.width, parentScreen.height, 36, parentScreen.height - 33, 18);
+        this.minecraft = parentScreen.getMinecraft();
         this.parentScreen = parentScreen;
         this.setRenderSelection(false);
         this.refreshList(parentScreen.search);
@@ -139,7 +139,7 @@ public class PostEffectsList extends ObjectSelectionList<PostEffectsList.Shader>
 
             // Text
             drawString(stack, this.parentScreen.getMinecraft().font, new TranslatableComponent("post_effect.dot", this.name())
-                    .withStyle(TextComponents.selectableStyle(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders)), left + 5, top + 2, 0xFFFFFF);
+                    .withStyle(TextComponents.selectableStyle(PostEffectsList.this.getSelected() == this, PostEffectsList.this.canSelectShaders)), left + 5, top + 3, 0xFFFFFF);
 
             if (this.isMouseOver(mouseX, mouseY) && this.components.containsPointInScissor(mouseX, mouseY)) {
                 // Tooltip

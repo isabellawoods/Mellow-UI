@@ -2,18 +2,19 @@ package melonystudios.mellowui.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.list.ConfigEntriesList;
-import melonystudios.mellowui.util.MellowUtils;
-import net.minecraft.client.gui.components.Button;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 
 public class EditListConfigScreen<T> extends Screen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final Screen lastScreen;
     private final Component configName;
     private final ForgeConfigSpec.ConfigValue<List<T>> config;
@@ -46,15 +47,14 @@ public class EditListConfigScreen<T> extends Screen {
         this.addWidget(this.list);
 
         // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        WidgetComponents.components(this, this::addRenderableWidget).done(Alignment.CENTER);
     }
 
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 }

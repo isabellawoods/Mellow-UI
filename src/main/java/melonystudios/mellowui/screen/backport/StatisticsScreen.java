@@ -8,9 +8,11 @@ import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.text.TooltipProvider;
 import melonystudios.mellowui.element.widget.TabButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
 import melonystudios.mellowui.screen.list.stats.GeneralStatsList;
 import melonystudios.mellowui.screen.list.stats.ItemsStatsList;
 import melonystudios.mellowui.screen.list.stats.MobsStatsList;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -20,7 +22,6 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.achievement.StatsUpdateListener;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -98,8 +99,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
         this.addWidget(this.textBackground);
 
         // Done button
-        this.addRenderableWidget(this.doneButton = new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        this.doneButton = WidgetComponents.components(this, this::addRenderableWidget).done(Alignment.CENTER);
 
         if (this.minecraft.getConnection() != null) {
             this.minecraft.getConnection().send(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.REQUEST_STATS));
@@ -107,13 +107,13 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
     }
 
     public void createLists() {
-        this.general = new GeneralStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 14);
+        this.general = new GeneralStatsList(this, this.minecraft, this.width, this.height, 24, this.height - 33, 14);
         this.general.setRenderBackground(false);
         this.general.setRenderTopAndBottom(false);
-        this.items = new ItemsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 20);
+        this.items = new ItemsStatsList(this, this.minecraft, this.width, this.height, 24, this.height - 33, 20);
         this.items.setRenderBackground(false);
         this.items.setRenderTopAndBottom(false);
-        this.mobs = new MobsStatsList(this, this.minecraft, this.width, this.height, 22, this.height - 32, 36);
+        this.mobs = new MobsStatsList(this, this.minecraft, this.width, this.height, 24, this.height - 33, 36);
         this.mobs.setRenderBackground(false);
         this.mobs.setRenderTopAndBottom(false);
     }
@@ -179,12 +179,12 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
                 this.doneButton.render(stack, mouseX, mouseY, partialTicks);
             }
             int textAlpha = Mth.ceil(this.textAlpha * 255) << 24;
-            if (this.textAlpha > 0F) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.statistics.too_long").withStyle(TextComponents.descriptionStyle().withItalic(true)),
-                    this.width / 2, this.height / 2 + 26, 0xFFFFFF | textAlpha);
+            if (this.textAlpha > 0F) this.components.drawCenteredString(new TranslatableComponent("menu.mellowui.statistics.too_long").withStyle(TextComponents.descriptionStyle().withItalic(true)),
+                    true, this.width / 2, this.height / 2 + 26, 0xFFFFFF | textAlpha);
 
-            drawCenteredString(stack, this.font, RETRIEVING_STATISTICS, this.width / 2, this.height / 2 - 5, 0xFFFFFF);
-            drawCenteredString(stack, this.font, new TextComponent(LOADING_SYMBOLS[(int) (Util.getMillis() / 150L % (long) LOADING_SYMBOLS.length)]).withStyle(ChatFormatting.GRAY),
-                    this.width / 2, this.height / 2 + 4, 0xFFFFFF);
+            this.components.drawCenteredString(RETRIEVING_STATISTICS, true, this.width / 2, this.height / 2 - 5, 0xFFFFFF);
+            this.components.drawCenteredString(new TextComponent(LOADING_SYMBOLS[(int) (Util.getMillis() / 150L % (long) LOADING_SYMBOLS.length)]).withStyle(ChatFormatting.GRAY),
+                    true, this.width / 2, this.height / 2 + 4, 0xFFFFFF);
         } else {
             this.doneButton.setAlpha(1);
             this.doneButton.active = this.doneButton.visible = true;
@@ -197,7 +197,7 @@ public class StatisticsScreen extends Screen implements StatsUpdateListener {
                 this.components.renderTabHeaderBackground(0, 0, this.width, 24);
                 if (this.getActiveList() != null) this.getActiveList().render(stack, mouseX, mouseY, partialTicks);
             }
-            this.components.renderListSeparators(this.width, 0, this.height - 32, 22, 3, this.components.threeTabWidth(this.width));
+            this.components.renderListSeparators(this.width, 0, this.height - 33, 24, 3, this.components.threeTabWidth(this.width));
 
             super.render(stack, mouseX, mouseY, partialTicks);
             if (this.getActiveList() instanceof TooltipProvider provider && provider.tooltipData() != null) provider.renderTooltip(stack, this);

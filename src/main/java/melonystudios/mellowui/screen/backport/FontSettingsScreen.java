@@ -1,8 +1,7 @@
-package melonystudios.mellowui.screen.update;
+package melonystudios.mellowui.screen.backport;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.WidgetComponents;
@@ -17,13 +16,13 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
-public class MUIOnlineOptionsScreen extends OptionsSubScreen {
-    private static final List<Option> SETTINGS = Lists.newArrayList(VanillaConfigEntries.REALMS_NEWS_AND_INVITES, Option.ALLOW_SERVER_LISTING);
+public class FontSettingsScreen extends OptionsSubScreen {
+    public static final List<Option> SETTINGS = Lists.newArrayList(Option.FORCE_UNICODE_FONT);
     private final RenderComponents components = RenderComponents.INSTANCE;
     private OptionsList list;
 
-    public MUIOnlineOptionsScreen(Screen lastScreen, Options options) {
-        super(lastScreen, options, new TranslatableComponent("options.online.title").withStyle(TextComponents.titleStyle()));
+    public FontSettingsScreen(Screen lastScreen, Options options) {
+        super(lastScreen, options, new TranslatableComponent("menu.mellowui.font_settings.title").withStyle(TextComponents.titleStyle()));
     }
 
     @Override

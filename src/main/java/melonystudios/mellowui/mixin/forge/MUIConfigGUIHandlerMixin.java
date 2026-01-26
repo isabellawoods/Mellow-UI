@@ -1,7 +1,7 @@
 package melonystudios.mellowui.mixin.forge;
 
+import melonystudios.mellowui.element.widget.WidgetLocations;
 import melonystudios.mellowui.screen.forge.ForgeOptionsScreen;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +22,7 @@ public class MUIConfigGUIHandlerMixin {
     @Inject(method = "getGuiFactoryFor", at = @At("HEAD"), cancellable = true, remap = false)
     private static void getGuiFactoryFor(IModInfo selectedMod, CallbackInfoReturnable<Optional<BiFunction<Minecraft, Screen, Screen>>> callback) {
         if (selectedMod.getModId().equals("minecraft")) {
-            callback.setReturnValue(Optional.of((minecraft, lastScreen) -> MellowUtils.options(lastScreen, minecraft)));
+            callback.setReturnValue(Optional.of((minecraft, lastScreen) -> WidgetLocations.openOptions(lastScreen, minecraft)));
         } else if (selectedMod.getModId().equals("forge")) {
             callback.setReturnValue(Optional.of((minecraft, lastScreen) -> new ForgeOptionsScreen(lastScreen, minecraft.options)));
         }

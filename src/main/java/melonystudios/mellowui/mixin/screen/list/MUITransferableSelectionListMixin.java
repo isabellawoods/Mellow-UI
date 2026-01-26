@@ -1,9 +1,10 @@
 package melonystudios.mellowui.mixin.screen.list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
 import net.minecraft.network.chat.Component;
@@ -11,8 +12,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(TransferableSelectionList.class)
 public abstract class MUITransferableSelectionListMixin<E extends ObjectSelectionList.Entry<E>> extends ObjectSelectionList<E> {
@@ -24,10 +24,10 @@ public abstract class MUITransferableSelectionListMixin<E extends ObjectSelectio
         super(minecraft, width, height, y0, y1, itemHeight);
     }
 
-    @Inject(method = "renderHeader", at = @At("HEAD"), cancellable = true)
-    protected void renderHeader(PoseStack stack, int x, int y, Tesselator tessellator, CallbackInfo callback) {
-        callback.cancel();
+    @Redirect(method = "renderHeader", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;draw(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/network/chat/Component;FFI)I"))
+    protected int renderHeader(Font font, PoseStack stack, Component oldTitle, float x, float y, int color) {
         Component title = this.title.copy().withStyle(TextComponents.titleStyle().withBold(true).withUnderlined(true));
-        this.minecraft.font.drawShadow(stack, title, (float) (x + this.width / 2 - this.minecraft.font.width(title) / 2), (float) Math.min(this.y0 + 3, y), 0xFFFFFF);
+        RenderComponents.INSTANCE.drawTitle(title, this.width, (int) Math.min(this.y0 + 3, y));
+        return color;
     }
 }

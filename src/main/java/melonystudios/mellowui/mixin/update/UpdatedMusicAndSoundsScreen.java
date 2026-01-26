@@ -5,16 +5,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.config.MellowConfigs;
 import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.config.option.SoundSourceOption;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FormattedCharSequence;
@@ -29,6 +29,8 @@ import java.util.List;
 @Mixin(value = SoundOptionsScreen.class, priority = 990)
 public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
     @Unique
+    private final RenderComponents components = RenderComponents.INSTANCE;
+    @Unique
     private OptionsList list;
 
     public UpdatedMusicAndSoundsScreen(Screen lastScreen, Options options, Component title) {
@@ -37,20 +39,19 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
 
     @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     protected void init(CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.musicAndSoundsStyle.get()) {
-            callback.cancel();
-            this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
-            this.list.addBig(new SoundSourceOption("soundCategory.master", SoundSource.MASTER));
-            this.list.addSmall(this.makeSoundSliders().toArray(new Option[0]));
-            this.list.addBig(Option.AUDIO_DEVICE);
-            this.list.addSmall(VanillaConfigEntries.CLOSED_CAPTIONS, VanillaConfigEntries.DIRECTIONAL_AUDIO);
-            this.list.addSmall(VanillaConfigEntries.MUSIC_TOAST, null);
-            this.addWidget(this.list);
+        if (!MellowConfigs.CLIENT_CONFIGS.musicAndSoundsStyle.get()) return;
+        callback.cancel();
+        WidgetComponents components = WidgetComponents.components(this, this::addRenderableWidget);
+        this.list = components.optionsList(33, this.height - 33);
+        this.list.addBig(new SoundSourceOption("soundCategory.master", SoundSource.MASTER));
+        this.list.addSmall(this.makeSoundSliders().toArray(new Option[0]));
+        this.list.addBig(Option.AUDIO_DEVICE);
+        this.list.addSmall(VanillaConfigEntries.CLOSED_CAPTIONS, VanillaConfigEntries.DIRECTIONAL_AUDIO);
+        this.list.addSmall(VanillaConfigEntries.MUSIC_TOAST, null);
+        this.addWidget(this.list);
 
-            // Done button
-            this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                    button -> this.minecraft.setScreen(this.lastScreen)));
-        }
+        // Done button
+        components.done(Alignment.CENTER);
     }
 
     @Unique
@@ -66,14 +67,13 @@ public class UpdatedMusicAndSoundsScreen extends OptionsSubScreen {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
-        if (MellowConfigs.CLIENT_CONFIGS.musicAndSoundsStyle.get()) {
-            callback.cancel();
-            this.renderBackground(stack);
-            this.list.render(stack, mouseX, mouseY, partialTicks);
-            drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
-            super.render(stack, mouseX, mouseY, partialTicks);
-            List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
-            if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
-        }
+        if (!MellowConfigs.CLIENT_CONFIGS.musicAndSoundsStyle.get()) return;
+        callback.cancel();
+        this.renderBackground(stack);
+        this.list.render(stack, mouseX, mouseY, partialTicks);
+        this.components.drawTitle(this.title.copy().withStyle(TextComponents.titleStyle()), this.width);
+        super.render(stack, mouseX, mouseY, partialTicks);
+        List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
+        if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

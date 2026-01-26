@@ -5,15 +5,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.mellowui.MellowUI;
 import melonystudios.mellowui.config.option.ModelPartBooleanOption;
 import melonystudios.mellowui.config.option.OpenMenuOption;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
-import melonystudios.mellowui.util.MellowUtils;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.util.Alignment;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MUISkinCustomizationScreen extends OptionsSubScreen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private OptionsList list;
 
     public MUISkinCustomizationScreen(Screen lastScreen, Options options) {
@@ -32,7 +33,8 @@ public class MUISkinCustomizationScreen extends OptionsSubScreen {
 
     @Override
     protected void init() {
-        this.list = new OptionsList(this.minecraft, this.width, this.height, 32, this.height - 32, 25);
+        WidgetComponents components = WidgetComponents.components(this, this::addRenderableWidget);
+        this.list = components.optionsList(33, this.height - 33);
         List<Option> settings = Lists.newArrayList();
         // Compatibility
         if (ModList.get().isLoaded("blueprint")) { // add slabfish hat settings button
@@ -57,17 +59,16 @@ public class MUISkinCustomizationScreen extends OptionsSubScreen {
         this.addWidget(this.list);
 
         // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        components.done(Alignment.CENTER);
     }
 
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.list.render(stack, mouseX, mouseY, partialTicks);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
-        List<FormattedCharSequence> processors = tooltipAt(this.list, mouseX, mouseY);
-        if (!processors.isEmpty()) this.renderTooltip(stack, processors, mouseX, mouseY);
+        List<FormattedCharSequence> tooltip = tooltipAt(this.list, mouseX, mouseY);
+        if (!tooltip.isEmpty()) this.renderTooltip(stack, tooltip, mouseX, mouseY);
     }
 }

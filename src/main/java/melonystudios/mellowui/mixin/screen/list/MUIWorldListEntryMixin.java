@@ -9,7 +9,6 @@ import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.text.TooltipDisplayData;
 import melonystudios.mellowui.element.widget.text.StringWidget;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -33,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -134,7 +134,8 @@ public abstract class MUIWorldListEntryMixin extends ObjectSelectionList.Entry<W
             this.worldNameText.setTooltipData(new TooltipDisplayData(worldName, TOOLTIP_MAX_WIDTH, mouseX, mouseY));
         }
 
-        Component playSummary = new TranslatableComponent("selectWorld.world_info", this.summary.getLevelId(), MellowUtils.WORLD_DATE_FORMAT.format(new Date(this.summary.getLastPlayed())));
+        SimpleDateFormat worldDateFormat = new SimpleDateFormat(); // "dd-MM-yyyy '('EEE') - 'HH:mm:ss"
+        Component playSummary = new TranslatableComponent("selectWorld.world_info", this.summary.getLevelId(), worldDateFormat.format(new Date(this.summary.getLastPlayed())));
         this.playSummaryText = new StringWidget(playSummary, this.minecraft.font).setColor(0x808080);
         this.playSummaryText.setMaxWidth(maxWidth);
         if (this.minecraft.font.width(playSummary) > maxWidth) {

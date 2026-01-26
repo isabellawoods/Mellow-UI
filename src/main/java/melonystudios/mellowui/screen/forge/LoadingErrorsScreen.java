@@ -2,6 +2,7 @@ package melonystudios.mellowui.screen.forge;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
+import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.screen.list.LoadingMessageList;
 import net.minecraft.ChatFormatting;
@@ -22,6 +23,7 @@ import java.util.List;
 
 public class LoadingErrorsScreen extends Screen {
     private final Path logFilePath = FMLPaths.GAMEDIR.get().resolve(Paths.get("logs","latest.log"));
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private final List<ModLoadingException> loadErrors;
     private final List<ModLoadingWarning> loadWarnings;
     @Nullable
@@ -48,24 +50,24 @@ public class LoadingErrorsScreen extends Screen {
         this.addWidget(this.list);
 
         // Open mods folder
-        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 50, 150, 20, new TranslatableComponent("button.mellowui.open_mods_folder"),
+        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 51, 150, 20, new TranslatableComponent("button.mellowui.open_mods_folder"),
                 button -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile())));
 
         // Open latest.log
-        this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 50, 150, 20, new TranslatableComponent("button.mellowui.open_file", String.valueOf(this.logFilePath.getFileName())),
+        this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 51, 150, 20, new TranslatableComponent("button.mellowui.open_file", String.valueOf(this.logFilePath.getFileName())),
                 button -> Util.getPlatform().openFile(this.logFilePath.toFile())));
 
         // Quit game
-        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 25, 150, 20, new TranslatableComponent("menu.quit"),
+        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 26, 150, 20, new TranslatableComponent("menu.quit"),
                 button -> this.minecraft.stop()));
 
         if (this.loadErrors.isEmpty()) {
             // Proceed to title screen
-            this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 25, 150, 20, new TranslatableComponent("button.mellowui.proceed_to_title_screen"),
+            this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 26, 150, 20, new TranslatableComponent("button.mellowui.proceed_to_title_screen"),
                     button -> this.minecraft.setScreen(new TitleScreen())));
         } else if (this.dumpedLocation != null) {
             // Open [log file].txt
-            this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 25, 150, 20, new TranslatableComponent("button.mellowui.open_file", String.valueOf(this.dumpedLocation.getFileName())),
+            this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 26, 150, 20, new TranslatableComponent("button.mellowui.open_file", String.valueOf(this.dumpedLocation.getFileName())),
                     button -> Util.getPlatform().openFile(this.dumpedLocation.toFile())));
         }
     }
@@ -76,17 +78,13 @@ public class LoadingErrorsScreen extends Screen {
         this.list.render(stack, mouseX, mouseY, partialTicks);
 
         if (this.loadErrors.isEmpty()) {
-            drawCenteredString(stack, this.font, this.warningHeader, this.width / 2, 5, 0xFFFFFF);
-            drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.loading_errors.warning_desc", this.loadWarnings.size()).withStyle(ChatFormatting.YELLOW), this.width / 2, 17, 0xFFFFFF);
-            drawCenteredString(stack, this.font, this.warningHeader, this.width / 2, 6, 0xFFFFFF);
-            if (this.loadWarnings.size() == 1) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.loading_errors.warning_desc.single", this.loadWarnings.size()).withStyle(ChatFormatting.YELLOW), this.width / 2, 18, 0xFFFFFF);
-            else drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.loading_errors.warning_desc.multiple", this.loadWarnings.size()).withStyle(ChatFormatting.YELLOW), this.width / 2, 18, 0xFFFFFF);
+            this.components.drawCenteredString(this.warningHeader, true, this.width / 2, 6, 0xFFFFFF);
+            if (this.loadWarnings.size() == 1) this.components.drawCenteredString(new TranslatableComponent("menu.mellowui.loading_errors.warning_desc.single", this.loadWarnings.size()).withStyle(ChatFormatting.YELLOW), true, this.width / 2, 18, 0xFFFFFF);
+            else this.components.drawCenteredString(new TranslatableComponent("menu.mellowui.loading_errors.warning_desc.multiple", this.loadWarnings.size()).withStyle(ChatFormatting.YELLOW), true, this.width / 2, 18, 0xFFFFFF);
         } else {
-            drawCenteredString(stack, this.font, this.errorHeader, this.width / 2, 5, 0xFFFFFF);
-            drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.loading_errors.error_desc", this.loadErrors.size()).withStyle(ChatFormatting.RED), this.width / 2, 17, 0xFFFFFF);
-            drawCenteredString(stack, this.font, this.errorHeader, this.width / 2, 6, 0xFFFFFF);
-            if (this.loadErrors.size() == 1) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.loading_errors.error_desc.single", this.loadErrors.size()).withStyle(ChatFormatting.RED), this.width / 2, 18, 0xFFFFFF);
-            else drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.loading_errors.error_desc.multiple", this.loadErrors.size()).withStyle(ChatFormatting.RED), this.width / 2, 18, 0xFFFFFF);
+            this.components.drawCenteredString(this.errorHeader, true, this.width / 2, 6, 0xFFFFFF);
+            if (this.loadErrors.size() == 1) this.components.drawCenteredString(new TranslatableComponent("menu.mellowui.loading_errors.error_desc.single", this.loadErrors.size()).withStyle(ChatFormatting.RED), true, this.width / 2, 18, 0xFFFFFF);
+            else this.components.drawCenteredString(new TranslatableComponent("menu.mellowui.loading_errors.error_desc.multiple", this.loadErrors.size()).withStyle(ChatFormatting.RED), true, this.width / 2, 18, 0xFFFFFF);
         }
 
         super.render(stack, mouseX, mouseY, partialTicks);

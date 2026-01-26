@@ -19,6 +19,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.Consumer;
 
 public class EditValueScreen extends Screen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private Component title;
     private final Screen lastScreen;
     private final Component configName;
@@ -187,13 +188,13 @@ public class EditValueScreen extends Screen {
 
             MutableComponent component = new TranslatableComponent("menu.mellowui.edit_value.title",
                     this.configName.copy().withStyle(TextComponents.withColor(color))).withStyle(TextComponents.titleStyle().withBold(true));
-            drawCenteredString(stack, this.font, component, this.width / 2, this.height / 2 - 40, 0xFFFFFF);
+            this.components.drawTitle(component, this.width, this.height / 2 - 40);
         } else {
-            drawCenteredString(stack, this.font, this.getTitle(), this.width / 2, this.height / 2 - (showHexMessage ? 40 : 30), 0xFFFFFF);
+            this.components.drawTitle(this.getTitle(), this.width, this.height / 2 - (showHexMessage ? 40 : 30));
         }
 
-        if (showHexMessage) drawCenteredString(stack, this.font, new TranslatableComponent("menu.mellowui.edit_value.accepts_hex").withStyle(TextComponents.descriptionStyle()),
-                this.width / 2, this.height / 2 - 27, 0xFFFFFF);
+        if (showHexMessage) this.components.drawCenteredString(new TranslatableComponent("menu.mellowui.edit_value.accepts_hex").withStyle(TextComponents.descriptionStyle()),
+                true, this.width / 2, this.height / 2 - 27, 0xFFFFFF);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

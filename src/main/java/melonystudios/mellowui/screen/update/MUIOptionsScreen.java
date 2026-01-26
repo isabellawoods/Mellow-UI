@@ -8,17 +8,18 @@ import melonystudios.mellowui.config.VanillaConfigEntries;
 import melonystudios.mellowui.element.RenderComponents;
 import melonystudios.mellowui.element.text.TextComponents;
 import melonystudios.mellowui.element.widget.ImageSetButton;
+import melonystudios.mellowui.element.widget.WidgetComponents;
+import melonystudios.mellowui.element.widget.WidgetLocations;
 import melonystudios.mellowui.screen.SuperSecretSettingsScreen;
 import melonystudios.mellowui.screen.backport.CreditsAndAttributionsScreen;
+import melonystudios.mellowui.util.Alignment;
 import melonystudios.mellowui.util.GUITextures;
-import melonystudios.mellowui.util.MellowUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Option;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.LockIconButton;
 import net.minecraft.client.gui.screens.*;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ServerboundChangeDifficultyPacket;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class MUIOptionsScreen extends OptionsSubScreen {
+    private final RenderComponents components = RenderComponents.INSTANCE;
     private Button difficultyButton;
     private LockIconButton lockButton;
     private Difficulty currentDifficulty;
@@ -43,14 +45,17 @@ public class MUIOptionsScreen extends OptionsSubScreen {
 
     @Override
     protected void init() {
-        int buttonHeight = 32;
+        int buttonHeight = 29;
+        int leftOffset = this.width / 2 - 154;
+        int rightOffset = this.width / 2 + 4;
+
         // FOV
-        this.addRenderableWidget(Option.FOV.createButton(this.options, this.width / 2 - 155, buttonHeight, 150));
+        this.addRenderableWidget(Option.FOV.createButton(this.options, leftOffset, buttonHeight, 150));
 
         if (this.minecraft.level != null) {
             this.currentDifficulty = this.minecraft.level.getDifficulty();
             // Difficulty
-            this.difficultyButton = this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, this.getDifficultyText(this.currentDifficulty), button -> {
+            this.difficultyButton = this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, this.getDifficultyText(this.currentDifficulty), button -> {
                 this.currentDifficulty = Difficulty.byId(this.currentDifficulty.getId() + 1);
                 this.minecraft.getConnection().send(new ServerboundChangeDifficultyPacket(this.currentDifficulty));
                 this.difficultyButton.setMessage(this.getDifficultyText(this.currentDifficulty));
@@ -71,75 +76,74 @@ public class MUIOptionsScreen extends OptionsSubScreen {
         } else {
             if (MellowConfigs.CLIENT_CONFIGS.replaceRealmsNotifications.get()) {
                 // Online...
-                this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("options.online"), button ->
-                        this.minecraft.setScreen(MellowUtils.onlineOptions(this, this.minecraft))));
+                this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, new TranslatableComponent("options.online"), button ->
+                        this.minecraft.setScreen(WidgetLocations.openOnlineOptions(this, this.minecraft))));
             } else {
                 // Realms News & Invites
-                this.addRenderableWidget(VanillaConfigEntries.REALMS_NEWS_AND_INVITES.createButton(this.minecraft.options, this.width / 2 + 5, 32, 150));
+                this.addRenderableWidget(VanillaConfigEntries.REALMS_NEWS_AND_INVITES.createButton(this.minecraft.options, rightOffset, 32, 150));
             }
         }
-        buttonHeight += 54;
+        buttonHeight += 62;
 
         // Breast Settings (Female Gender Mod)
-        this.addBreastSettingsButton(buttonHeight);
+        this.addBreastSettingsButton(buttonHeight, leftOffset);
 
         // Skin Customization
-        this.addRenderableWidget(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslatableComponent("options.skinCustomisation"),
+        this.addRenderableWidget(new Button(leftOffset, buttonHeight, 150, 20, new TranslatableComponent("options.skinCustomisation"),
                 button -> this.minecraft.setScreen(new SkinCustomizationScreen(this, this.minecraft.options))));
 
         // Music & Sounds
-        this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("options.sounds"),
+        this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, new TranslatableComponent("options.sounds"),
                 button -> this.minecraft.setScreen(new SoundOptionsScreen(this, this.minecraft.options))));
-        buttonHeight += 25;
+        buttonHeight += 24;
 
         // Video Settings
-        this.addRenderableWidget(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslatableComponent("options.video"),
-                button -> this.minecraft.setScreen(MellowUtils.videoSettings(this, this.minecraft))));
+        this.addRenderableWidget(new Button(leftOffset, buttonHeight, 150, 20, new TranslatableComponent("options.video"),
+                button -> this.minecraft.setScreen(WidgetLocations.openVideoSettings(this, this.minecraft))));
 
         // Controls
-        this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("options.controls"),
-                button -> this.minecraft.setScreen(MellowUtils.controls(this, this.minecraft))));
-        buttonHeight += 25;
+        this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, new TranslatableComponent("options.controls"),
+                button -> this.minecraft.setScreen(WidgetLocations.openControls(this, this.minecraft))));
+        buttonHeight += 24;
 
         // Language
-        this.addRenderableWidget(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslatableComponent("options.language"),
-                button -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()))));
+        this.addRenderableWidget(new Button(leftOffset, buttonHeight, 150, 20, new TranslatableComponent("options.language"),
+                button -> this.minecraft.setScreen(WidgetLocations.openLanguage(this, this.minecraft))));
 
         // Chat Settings
-        this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("options.chat.title"),
+        this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, new TranslatableComponent("options.chat.title"),
                 button -> this.minecraft.setScreen(new ChatOptionsScreen(this, this.minecraft.options))));
-        buttonHeight += 25;
+        buttonHeight += 24;
 
         // Resource Packs
-        this.addRenderableWidget(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslatableComponent("options.resourcepack"),
-                button -> this.minecraft.setScreen(MellowUtils.resourcePackList(this, this.minecraft, MUIOptionsScreen::updateResourcePacksList))));
+        this.addRenderableWidget(new Button(leftOffset, buttonHeight, 150, 20, new TranslatableComponent("options.resourcepack"),
+                button -> this.minecraft.setScreen(WidgetLocations.openResourcePacksList(this, this.minecraft, MUIOptionsScreen::updateResourcePacksList))));
 
         // Accessibility Settings
-        this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("options.accessibility.title"),
+        this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, new TranslatableComponent("options.accessibility.title"),
                 button -> this.minecraft.setScreen(new AccessibilityOptionsScreen(this, this.minecraft.options))));
-        buttonHeight += 25;
+        buttonHeight += 24;
 
         // Super Secret Settings
-        this.addRenderableWidget(new Button(this.width / 2 - 155, buttonHeight, 150, 20, new TranslatableComponent("button.mellowui.super_secret_settings"),
+        this.addRenderableWidget(new Button(leftOffset, buttonHeight, 150, 20, new TranslatableComponent("button.mellowui.super_secret_settings"),
                 button -> this.minecraft.setScreen(new SuperSecretSettingsScreen(this))));
 
         // Credits & Attribution
-        this.addRenderableWidget(new Button(this.width / 2 + 5, buttonHeight, 150, 20, new TranslatableComponent("button.mellowui.credits_and_attribution"),
+        this.addRenderableWidget(new Button(rightOffset, buttonHeight, 150, 20, new TranslatableComponent("button.mellowui.credits_and_attribution"),
                 button -> this.minecraft.setScreen(new CreditsAndAttributionsScreen(this))));
 
         // Done button
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 25, 200, 20, CommonComponents.GUI_DONE,
-                button -> this.minecraft.setScreen(this.lastScreen)));
+        WidgetComponents.components(this, this::addRenderableWidget).done(Alignment.CENTER);
     }
 
-    private void addBreastSettingsButton(int buttonHeight) {
+    private void addBreastSettingsButton(int buttonHeight, int leftOffset) {
         if (ModList.get().isLoaded("wildfire_gender")) {
             try {
                 Class<?> screen = Class.forName("com.wildfire.gui.screen.WardrobeBrowserScreen");
                 Screen wardrobeScreen = (Screen) screen.getConstructor(Screen.class, UUID.class).newInstance(this, this.minecraft.getUser().getGameProfile().getId());
-                Button settingsButton = this.addRenderableWidget(new ImageSetButton(this.width / 2 - 180, buttonHeight, 20, 20, GUITextures.BREAST_SETTINGS_SET,
+                Button settingsButton = this.addRenderableWidget(new ImageSetButton(leftOffset - 24, buttonHeight, 20, 20, GUITextures.BREAST_SETTINGS_SET,
                         button -> this.minecraft.setScreen(wardrobeScreen), (button, stack, mouseX, mouseY) ->
-                        RenderComponents.INSTANCE.renderTooltip(this, button, new TranslatableComponent("button.mellowui.breast_settings.tooltip" + (this.minecraft.level == null ? ".in_world" : "")), mouseX, mouseY),
+                        this.components.renderTooltip(this, button, new TranslatableComponent("button.mellowui.breast_settings.tooltip" + (this.minecraft.level == null ? ".in_world" : "")), mouseX, mouseY),
                         new TranslatableComponent("button.mellowui.breast_settings")));
                 settingsButton.active = this.minecraft.level != null;
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
@@ -151,7 +155,7 @@ public class MUIOptionsScreen extends OptionsSubScreen {
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, MellowUtils.DEFAULT_TITLE_HEIGHT, 0xFFFFFF);
+        this.components.drawTitle(this.title, this.width);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 

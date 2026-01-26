@@ -75,8 +75,8 @@ public abstract class MUIAbstractSelectionListMixin<E extends AbstractSelectionL
             this.renderBackground(stack);
 
             // List contents (background, header and entries)
-            components.enableScissor(this.x0, this.y0 + 2, this.x1, this.y1);
-            if (this.renderBackground) components.renderListBackground(this.x0, this.y0 + 2, this.width, this.height, this.x1, this.y1, this.getScrollAmount());
+            components.enableScissor(this.x0, this.y0, this.x1, this.y1);
+            if (this.renderBackground) components.renderListBackground(this.x0, this.y0, this.x1, this.y1 - 2, 0, 0, this.getScrollAmount());
             if (this.renderHeader) this.renderHeader(stack, leftRow, y, tessellator);
             this.renderList(stack, leftRow, y, mouseX, mouseY, partialTicks);
             components.disableScissor();
@@ -92,10 +92,10 @@ public abstract class MUIAbstractSelectionListMixin<E extends AbstractSelectionL
                 RenderSystem.setShader(GameRenderer::getPositionColorShader);
                 int scrollX0 = this.getScrollbarPosition();
                 int scrollX1 = scrollX0 + 6;
-                int scrollY0 = this.y0 + 2;
-                int i1 = (int) ((float) ((this.y1 - scrollY0) * (this.y1 - scrollY0)) / (float) this.getMaxPosition());
-                i1 = Mth.clamp(i1, 32, this.y1 - scrollY0 - 8);
-                int i2 = (int) this.getScrollAmount() * (this.y1 - scrollY0 - i1) / maxScroll + scrollY0;
+                int scrollY0 = this.y0;
+                int scrollerSize = (int) ((float) ((this.y1 - scrollY0) * (this.y1 - scrollY0)) / (float) this.getMaxPosition());
+                scrollerSize = Mth.clamp(scrollerSize, 32, this.y1 - scrollY0 - 8);
+                int i2 = (int) this.getScrollAmount() * (this.y1 - scrollY0 - scrollerSize) / maxScroll + scrollY0;
                 if (i2 < scrollY0) i2 = scrollY0;
 
                 buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -103,12 +103,12 @@ public abstract class MUIAbstractSelectionListMixin<E extends AbstractSelectionL
                 buffer.vertex(scrollX1, this.y1, 0).uv(1, 1).color(0, 0, 0, 255).endVertex();
                 buffer.vertex(scrollX1, scrollY0, 0).uv(1, 0).color(0, 0, 0, 255).endVertex();
                 buffer.vertex(scrollX0, scrollY0, 0).uv(0, 0).color(0, 0, 0, 255).endVertex();
-                buffer.vertex(scrollX0, (i2 + i1), 0).uv(0, 1).color(128, 128, 128, 255).endVertex();
-                buffer.vertex(scrollX1, (i2 + i1), 0).uv(1, 1).color(128, 128, 128, 255).endVertex();
+                buffer.vertex(scrollX0, (i2 + scrollerSize), 0).uv(0, 1).color(128, 128, 128, 255).endVertex();
+                buffer.vertex(scrollX1, (i2 + scrollerSize), 0).uv(1, 1).color(128, 128, 128, 255).endVertex();
                 buffer.vertex(scrollX1, i2, 0).uv(1, 0).color(128, 128, 128, 255).endVertex();
                 buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(128, 128, 128, 255).endVertex();
-                buffer.vertex(scrollX0, (i2 + i1 - 1), 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
-                buffer.vertex((scrollX1 - 1), (i2 + i1 - 1), 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
+                buffer.vertex(scrollX0, (i2 + scrollerSize - 1), 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
+                buffer.vertex((scrollX1 - 1), (i2 + scrollerSize - 1), 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
                 buffer.vertex((scrollX1 - 1), i2, 0).uv(1, 0).color(192, 192, 192, 255).endVertex();
                 buffer.vertex(scrollX0, i2, 0).uv(0, 0).color(192, 192, 192, 255).endVertex();
                 tessellator.end();

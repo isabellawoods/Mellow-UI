@@ -27,6 +27,7 @@ import java.util.function.BiFunction;
 @OnlyIn(Dist.CLIENT)
 @Mixin(EditBox.class)
 public abstract class MUIEditBoxMixin extends AbstractWidget implements TickingWidget {
+    @Shadow public abstract void tick();
     @Shadow public abstract boolean isVisible();
     @Shadow public abstract int getInnerWidth();
     @Shadow protected abstract int getMaxLength();
@@ -139,5 +140,10 @@ public abstract class MUIEditBoxMixin extends AbstractWidget implements TickingW
         if (startX > this.x + this.width) startX = this.x + this.width - 1;
 
         fill(RenderComponents.INSTANCE.poseStack(), startX, startY, endX, endY, WidgetConfigs.WIDGET_CONFIGS.textFieldHighlightColor.get() | 153 << 24);
+    }
+
+    @Override
+    public void tickWidget() {
+        this.tick();
     }
 }
