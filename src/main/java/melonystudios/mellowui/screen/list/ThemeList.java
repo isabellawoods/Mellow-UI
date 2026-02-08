@@ -97,7 +97,7 @@ public class ThemeList extends ObjectSelectionList<ThemeList.Entry> {
     }
 
     @Override
-    public void setSelected(@javax.annotation.Nullable Entry entry) {
+    public void setSelected(@Nullable Entry entry) {
         super.setSelected(entry);
         if (entry == null) return;
 

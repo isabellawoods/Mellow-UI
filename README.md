@@ -4,7 +4,7 @@
 
 <sup>*For Forge 1.16.5 and 1.18.2*</sup>
 
-***Mellow UI*** is a mod that brings the updated interfaces from [**Java Edition 1.20.5**](https://minecraft.wiki/w/Java_Edition_1.20.5) into 1.16, with various toggles for newer and older features.
+***Mellow UI*** is a mod that brings the updated interfaces from [**Java Edition 1.20.5**](https://minecraft.wiki/w/Java_Edition_1.20.5) into 1.18, with various toggles for newer and older features.
 
 This mod is *meant* to be **client-side only**, and it doesn't have any dependencies besides *Minecraft* 1.16.4, 1.16.5 or 1.18.2.
 

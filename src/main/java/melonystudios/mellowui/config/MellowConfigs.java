@@ -141,7 +141,7 @@ public class MellowConfigs {
         this.musicAndSoundsStyle = builder.comment("Which style to use for the music & sounds menu.").translation("config.mellowui.music_and_sounds_style").define("musicAndSoundsMenu", true);
         this.videoSettingsStyle = builder.comment("Which style to use for the video settings menu.", "Option 1 = Vanilla | Option 2 = Mellow UI | Option 3 = Rubidium").translation("config.mellowui.video_settings_style").defineEnum("videoSettingsMenu", ThreeStyles.OPTION_3);
         this.controlsStyle = builder.comment("Which style to use for the menu accessed from the controls button.").translation("config.mellowui.controls_style").define("controlsMenu", true);
-        this.languageStyle = builder.comment("Which style to use for the language menu..").translation("config.mellowui.language_style").define("languageMenu", true);
+        this.languageStyle = builder.comment("Which style to use for the language menu.").translation("config.mellowui.language_style").define("languageMenu", true);
         this.mouseSettingsStyle = builder.comment("Which style to use for the mouse settings menu.").translation("config.mellowui.mouse_settings_style").define("mouseSettingsMenu", true);
         this.chatSettingsStyle = builder.comment("Which style to use for the chat settings menu.").translation("config.mellowui.chat_settings_style").define("chatSettingsMenu", true);
         this.packListStyle = builder.comment("Which style to use for the resource and data packs list.", "True = Mellow UI | False = Vanilla.").translation("config.mellowui.pack_list_style").define("packListMenu", false);
