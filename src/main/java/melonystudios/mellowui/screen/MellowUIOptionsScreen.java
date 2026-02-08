@@ -85,12 +85,12 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.mellowUIList.setRenderTopAndBottom(false);
         this.mellowUIList.setRenderBackground(false);
 
-        this.mellomedleyList = components.optionsList(35, this.height - 33);
+        this.mellomedleyList = components.optionsList(34, this.height - 33);
         for (AbstractOption option : MELLOMEDLEY) this.mellomedleyList.addBig(option);
         this.mellomedleyList.setRenderTopAndBottom(false);
         this.mellomedleyList.setRenderBackground(false);
 
-        this.vanillaList = components.optionsList(35, this.height - 33);
+        this.vanillaList = components.optionsList(34, this.height - 33);
         this.vanillaList.addSmall(ONBOARD_ACCESSIBILITY, null);
         this.vanillaList.addBig(ACCESSIBILITY_SEPARATOR);
         this.vanillaList.addSmall(ACCESSIBILITY.toArray(new AbstractOption[0]));
@@ -102,7 +102,7 @@ public class MellowUIOptionsScreen extends SettingsScreen {
         this.vanillaList.setRenderTopAndBottom(false);
         this.vanillaList.setRenderBackground(false);
 
-        this.forgeList = components.optionsList(35, this.height - 33);
+        this.forgeList = components.optionsList(34, this.height - 33);
         this.forgeList.addSmall(FORGE.toArray(new AbstractOption[0]));
         this.forgeList.setRenderTopAndBottom(false);
         this.forgeList.setRenderBackground(false);

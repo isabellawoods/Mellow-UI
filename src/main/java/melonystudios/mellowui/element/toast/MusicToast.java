@@ -72,7 +72,7 @@ public class MusicToast implements IToast {
 
         // if it's from, and in, the pause screen (and the song is playing), render it
         if (this.fromPauseMenu && isPlaying) return minecraft.screen instanceof IngameMenuScreen ? Visibility.SHOW : Visibility.HIDE;
-        return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? IToast.Visibility.SHOW : IToast.Visibility.HIDE;
+        return timeSinceLastChanged - this.timeSinceLastChanged < 5000L ? Visibility.SHOW : Visibility.HIDE;
     }
 
     private void tickMusicNoteColor() {

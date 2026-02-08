@@ -183,9 +183,9 @@ public abstract class UpdatedPauseMenuScreen extends Screen {
             callback.cancel();
             if (this.showPauseMenu) {
                 this.renderBackground(stack);
-                drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 56 + RenderComponents.PAUSE_MENU_Y_OFFSET, 0xFFFFFF);
+                this.components.drawTitle(this.title.copy().withStyle(TextComponents.titleStyle()), this.width, 56 + RenderComponents.PAUSE_MENU_Y_OFFSET);
             } else {
-                drawCenteredString(stack, this.font, this.title.copy().withStyle(TextComponents.titleStyle()), this.width / 2, 10, 0xFFFFFF);
+                this.components.drawTitle(this.title.copy().withStyle(TextComponents.titleStyle()), this.width, 10);
             }
 
             super.render(stack, mouseX, mouseY, partialTicks);

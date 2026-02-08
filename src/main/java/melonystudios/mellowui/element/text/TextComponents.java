@@ -56,8 +56,8 @@ public class TextComponents {
         return new TranslationTextComponent("button.mellowui.search").withStyle(withColor(WIDGET_CONFIGS.textFieldDefaultBorderColor.get()).withItalic(true));
     }
 
-    /// @return Whether the provided string is considered blank (either fully blank, only whitespace, or only a `@`).
     /// @param search The search box text.
+    /// @return Whether the provided string is considered blank (either fully blank, only whitespace, or only a `@`).
     public static boolean isBlank(String search) {
         return StringUtils.isBlank(search) || search.equals("@");
     }
@@ -120,11 +120,11 @@ public class TextComponents {
 
     /// Gets the color that should be used for rendering text. It is chosen based on the following circumstances:
     /// - If either the {@linkplain melonystudios.mellowui.config.MellowConfigs#legacyButtonColors **Legacy Button Colors**} option or the "*Programmer Art*" resource pack are enabled:
-    ///   - If it's inactive, use **Locked Widget Text** (`#FF5555`);
+    ///   - If it's locked, use **Locked Widget Text** (`#FF5555`);
     ///   - if it's highlighted, use **Highlighted Legacy Widget Text** (`#FFFFA0`);
     ///   - Or else, use **Legacy Widget Text** (`#E0E0E0`).
     /// - Or else:
-    ///   - If it's inactive, use **Locked Widget Text** (`#FF5555`);
+    ///   - If it's locked, use **Locked Widget Text** (`#FF5555`);
     ///   - if it's highlighted, use **Highlighted Widget Text** (`#FFFFFF`);
     ///   - Or else, use **Widget Text** (`#FFFFFF`).
     /// @param selected Whether this text is selected/hovered/focused.

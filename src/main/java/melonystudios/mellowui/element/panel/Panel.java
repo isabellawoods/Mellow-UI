@@ -262,8 +262,8 @@ public class Panel extends FocusableGui implements IRenderable {
                 double moved = deltaY / maxScroll;
                 this.scrollAmount += this.getMaxScroll() * moved;
                 this.applyScrollLimits();
-                return true;
             }
+            return true;
         }
         return false;
     }

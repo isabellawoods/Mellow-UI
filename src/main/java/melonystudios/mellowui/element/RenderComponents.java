@@ -440,10 +440,10 @@ public class RenderComponents extends VanillaRenderComponents {
     /// @param checkStatus *(optional)* The Version Checker status of the Forge Emerald.
     public void renderUpdateAvailableIcon(int x, int y, int width, int height, float alpha, boolean renderOnCorner, @Nullable VersionChecker.Status checkStatus) {
         if (CLIENT_CONFIGS.updateAvailableIconStyle.get()) {
-            if (renderOnCorner) this.renderRealmsDiamond(x + width - 6, y - 3, alpha);
+            if (renderOnCorner) this.renderRealmsDiamond(x + width - 6, y - 2, alpha);
             else this.renderRealmsDiamond(x + width - (height / 2 + 4), y + (height / 2 - 4), alpha);
         } else if (checkStatus != null) {
-            if (renderOnCorner) this.renderForgeEmerald(x + width - 6, y - 3, alpha, checkStatus);
+            if (renderOnCorner) this.renderForgeEmerald(x + width - 6, y - 2, alpha, checkStatus);
             else this.renderForgeEmerald(x + width - (height / 2 + 4), y + (height / 2 - 4), alpha, checkStatus);
         }
     }
